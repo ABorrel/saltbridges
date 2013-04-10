@@ -21,7 +21,7 @@ def histStat(distance, type, file, typeStudyStruct, logFile):
     system(cmd)
 
 
-def histAA(distance, aminoAcid, file, logFile):
+def histAA(distance, aminoAcid, file, logFile, dir_out):
     """Plot file count amino acid proportion
     in: distance for legend plot, type histogram (coplar or length), file with data, type of study, logFile
     out: CMD in terminal -> plot """
@@ -29,8 +29,7 @@ def histAA(distance, aminoAcid, file, logFile):
     if empty(file) == 1 : 
         return
     rep = repertory.scriptR()
-    repResult = repertory.resultAminoAcidGlobal()
-    fileGlobal = repResult + "Global" + aminoAcid
+    fileGlobal = dir_out + "Global" + aminoAcid
     cmd = rep + "barplotQuantityAA.R " + file + " " + str("%.2f" % distance) + " " + aminoAcid + " " + str("%.2f" % distance)
     cmdGlobal = rep + "barplotQuantityAA.R " + fileGlobal + " " + str("%.2f" % distance) + " " + aminoAcid + " " + str("%.2f" % distance)
     logFile.write(cmd + "\n")
@@ -39,14 +38,13 @@ def histAA(distance, aminoAcid, file, logFile):
     system(cmdGlobal)
 
 
-def plotDistanceOx(logFile):
+def plotDistanceOx(logFile, rep_out):
     """Plot list distance
     in: distance for legend plot, type histogram (coplar or length), file with data, type of study, logFile
     out: CMD in terminal -> plot """
 
     repScript = repertory.scriptR()
-    repFile = repertory.resultDistance()
-    file = repFile + "resultDistanceOx"
+    file = rep_out + "resultDistanceOx"
     if empty(file) == 1 : 
         return
     cmd = repScript + "plotDistanceOx.R " + file
@@ -54,7 +52,7 @@ def plotDistanceOx(logFile):
     system(cmd)
 
 
-def globalStat(distanceAtoms, distanceResidues):
+def globalStat(distanceAtoms, distanceResidues, dir_out):
     """MAIN draw plot
     in: distance Atom study, distance Residues study"""
 
@@ -62,11 +60,10 @@ def globalStat(distanceAtoms, distanceResidues):
     listStruct = structure.listStructure()
     listType = ["Ligands", "Residues", "Atoms"]
     listAminoAcid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS"]
-    rep = repertory.result()
 
 
     for element in listStruct:
-        repStruct = rep + element + "/"
+        repStruct = dir_out + element + "/"
         for type in listType:
             file = repStruct + "stat" + type + element
             if type == "atom":
@@ -85,38 +82,37 @@ def globalStat(distanceAtoms, distanceResidues):
                 histStat(distanceResidues, type, file, element, logFile)
 
         for aminoAcid in listAminoAcid:
-            repAA = repertory.aminoAcid(element)
-            file = repAA + element + aminoAcid
-            histAA(distanceResidues, aminoAcid, file, logFile)
+            repAA = repertory.aminoAcid(element, dir_out)
+            path_file = repAA + element + aminoAcid
+            histAA(distanceResidues, aminoAcid, path_file, logFile)
 
     plotDistanceOx(logFile)
     histGlobalProportion(logFile)
     histGlobalResidue(logFile)
     histProportionType(distanceResidues, logFile)
-    histAtleastOne(distanceResidues, logFile)###################################3
+    histAtleastOne(distanceResidues, logFile)  ###################################3
     plotAngle(distanceResidues, logFile)
     plotAngle(distanceResidues, logFile)
     
     log.endAction("Run R Scripts", timeStart, logFile)
 
 
-def histProportionType(distanceMax, logFile):
+def histProportionType(distanceMax, logFile, dir_out):
     """Draw proportion type graphe
     in: Distance Max study, log file
     out: excecute CMD -> draw plot"""
     
     
     repScript = repertory.scriptR()
-    repFile = repertory.globalProportionType()
     listDistance = structure.listDistance(distanceMax)
     
     
-    cmd = repScript + "barplotPercentClasse.R " + str(len(listDistance)) + " " + repFile
+    cmd = repScript + "barplotPercentClasse.R " + str(len(listDistance)) + " " + dir_out
     logFile.write(cmd + "\n")
     system (cmd)
 
     
-def histProportionTypeNeighbors(distance, logFile):
+def histProportionTypeNeighbors(distance, logFile, dir_out):
     """Draw proportion type neighbor
     in: Distance Max study, log file
     out: excecute CMD -> draw plot"""
@@ -125,16 +121,16 @@ def histProportionTypeNeighbors(distance, logFile):
     listStruct.append("GlobalAmine")
     listStruct.append("Global")
     for type in listStruct : 
-        file = repertory.globalProportionType() + "proportionType" + type + str("%.2f" % distance)
+        file = dir_out + "proportionType" + type + str("%.2f" % distance)
         if empty(file) == 1 : 
             continue
-        cmd = repertory.scriptR() + "barplotTypeNumberOfneighbors.R " + repertory.globalProportionType() + "proportionType" + type + str("%.2f" % distance) + " " + type + " " + str("%.2f" % distance)
+        cmd = repertory.scriptR() + "barplotTypeNumberOfneighbors.R " + dir_out + "proportionType" + type + str("%.2f" % distance) + " " + type + " " + str("%.2f" % distance)
         
         logFile.write(cmd + "\n")
         system(cmd)
     
     
-def histProportion (distance, logFile):
+def histProportion (distance, logFile, dir_out):
     """Draw proportion type neighbor
     in: Distance Max study, log file
     out: excecute CMD -> draw plot"""
@@ -146,8 +142,7 @@ def histProportion (distance, logFile):
 
 
     for type in listType:
-        repFile = repertory.globalProportionAtom()
-        file = repFile + "proportionAtom" + type + str("%.2f" % distance)
+        file = dir_out + "proportionAtom" + type + str("%.2f" % distance)
         if empty(file) == 1 : 
             continue
         cmd = repScript + "barplotQuantityGlobalAnalysis.R " + type + " " + file + " " + str(distance)
@@ -156,14 +151,14 @@ def histProportion (distance, logFile):
         logFile.write(cmd + "\n")
 
 
-def histGlobalProportion(logFile):
+def histGlobalProportion(logFile, dir_out):
     """Proportion for each atom
     in: log file
     out: execute -> CMD
     """
     
     repScript = repertory.scriptR()
-    file = repertory.result() + "GlobalproportionCounterIonGlobal"
+    file = dir_out + "GlobalproportionCounterIonGlobal"
     if empty(file) == 1 : 
         return
     cmd = repScript + "barplotProportionGlobal.R " + file
@@ -171,59 +166,59 @@ def histGlobalProportion(logFile):
     system (cmd)
 
 
-def histGlobalResidue(logFile):
+def histGlobalResidue(logFile, dir_out):
     """Draw barplot proportion residue
     in: log file
     out: execute CMD"""
     
     listStructure = structure.listStructure()
     for element in listStructure:
-        file = repertory.resultStruct(element) + "GlobalResidue" + element
+        file = repertory.resultStruct(element, dir_out) + "GlobalResidue" + element
         if empty (file) == 1 : 
             continue
         cmd = repertory.scriptR() + "barplotResidueDistance.R " + file + " " + element 
         logFile.write(cmd + "\n")
         system(cmd)
-    fileGlobal = repertory.result() + "globalResidueAllAtoms"
+    fileGlobal = dir_out + "globalResidueAllAtoms"
     if empty(fileGlobal) == 1 : 
         return
-    cmd2 = repertory.scriptR() + "barplotResidueDistance.R " + repertory.result() + "globalResidueAllAtoms" + " all"
+    cmd2 = repertory.scriptR() + "barplotResidueDistance.R " + dir_out + "globalResidueAllAtoms" + " all"
     logFile.write(cmd2 + "\n")
     system(cmd2)
 
 
-def histDistance(nameFile, type, base):
+def histDistance(nameFile, type_distance, base, dir_out):
     """Draw CN length histogram and coplar histogram
     in: nameFile data, option for execute R script
     out: execute R script -> draw histogram distance"""
 
 
-    file = str(repertory.resultDistance() + nameFile)
-    if empty(file) == 1 : 
+    file_distance = str(dir_out + nameFile)
+    if empty(file_distance) == 1 : 
         return
-    cmd = repertory.scriptR() + "distance.R " + str(repertory.resultDistance() + nameFile) + " " + str(type) + " " + str(base)
+    cmd = repertory.scriptR() + "distance.R " + str(dir_out + nameFile) + " " + str(type_distance) + " " + str(base)
+    print cmd
     system(cmd)
 
 
-def histAtleastOne(distanceMax, logFile):
+def histAtleastOne(distanceMax, logFile, dir_out):
     """Draw at least one plot
     in: distance max, log file
     out: Excecute CMD -> draw all at least one plot
     """
-    repResult = repertory.result()
+    repResult = dir_out
     listFile = listdir(repResult)
     
     for file in listFile:
-        
         if search("^atLeastOne_", file) :
             type = file.split("One_")[1]
             fileGobal = "atLeastOneGlobal" + file[10:]
-            cmd = repertory.scriptR() + "barplotAtLeastOne.R " + repertory.result() + file + " " + repertory.result() + fileGobal + " " + str(distanceMax) + " " + type.upper()[0] + type[1:]
+            cmd = repertory.scriptR() + "barplotAtLeastOne.R " + dir_out + file + " " + dir_out + fileGobal + " " + str(distanceMax) + " " + type.upper()[0] + type[1:]
             logFile.write(cmd + "\n")
             system(cmd)
 
 
-def plotAngle(distanceMax, logFile):
+def plotAngle(distanceMax, logFile, dir_out):
     """Excecute commande for draw angle plot
     in: distance MAX and log file
     out: Execute CMD -> draw plot
@@ -232,14 +227,14 @@ def plotAngle(distanceMax, logFile):
     listStruct = structure.listStructure()
     for struct in listStruct : 
         if struct == "Imidazole" or struct == "Pyridine": 
-            cmd = repertory.scriptR() + "angle_Secondary" + ".R " + repertory.resultAngle(struct) + "angle_" + str(struct)
-            cmdBarplot = repertory.scriptR() + "angle_barplot.R " + repertory.resultAngle(struct) + "angle_" + str(struct) + " " + str(distanceMax)
+            cmd = repertory.scriptR() + "angle_Secondary" + ".R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct)
+            cmdBarplot = repertory.scriptR() + "angle_barplot.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct) + " " + str(distanceMax)
         elif struct == "Diamine" : 
-            cmd = repertory.scriptR() + "angle_Primary" + ".R " + repertory.resultAngle(struct) + "angle_" + str(struct)
-            cmdBarplot = repertory.scriptR() + "angle_barplot.R " + repertory.resultAngle(struct) + "angle_" + str(struct) + " " + str(distanceMax)
+            cmd = repertory.scriptR() + "angle_Primary" + ".R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct)
+            cmdBarplot = repertory.scriptR() + "angle_barplot.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct) + " " + str(distanceMax)
         else : 
-            cmd = repertory.scriptR() + "angle_" + str(struct) + ".R " + repertory.resultAngle(struct) + "angle_" + str(struct)
-            cmdBarplot = repertory.scriptR() + "angle_barplot.R " + repertory.resultAngle(struct) + "angle_" + str(struct) + " " + str(distanceMax)
+            cmd = repertory.scriptR() + "angle_" + str(struct) + ".R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct)
+            cmdBarplot = repertory.scriptR() + "angle_barplot.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct) + " " + str(distanceMax)
         
         logFile.write(cmd + "\n")
         logFile.write(cmdBarplot + "\n")

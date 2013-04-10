@@ -48,8 +48,8 @@ def testCompareSeq(pdbFile1, pdbFile2) :
     out = checkPDBfile.compareSeqofPDB(pdbFile1, pdbFile2, list)
 
     print out
-    #print h1["name"],h2["name"]
-    #print h1["resolution"],h2["resolution"]
+    # print h1["name"],h2["name"]
+    # print h1["resolution"],h2["resolution"]
 
 
 def testRetrieveligand (pdbName, nameLigands) :
@@ -96,7 +96,7 @@ def testSearch():
     while (i < 8066):
         nameLigand = listligand[i]
         print nameLigand, i
-        #logFile.write(str(nameLigand) + " " + str(i) + "\n")
+        # logFile.write(str(nameLigand) + " " + str(i) + "\n")
 
         atomLigand = loadFile.ligandInPDBConnectMatrixLigand(ligandInPDB[nameLigand][0], nameLigand)
         listStruct = searchPDB.interestStructure(atomLigand)

@@ -1,15 +1,16 @@
-import repertory
 import structure
 
 
 
-def resultFilterLigandPDB(struct):
+def resultFilterLigandPDB(struct, dir_out):
 
-    repout = repertory.result()
+    list_path_file_dataset = []
     for resolutionKey in struct.keys():
-        fileWriteXRay = open(repout + "dataset_" + resolutionKey, "w")
+        # open filout dataset
+        fileWriteXRay = open(dir_out + "dataset_" + resolutionKey, "w")
+        list_path_file_dataset.append (dir_out + "dataset_" + resolutionKey)
         if resolutionKey != "NMR" and resolutionKey != "OUT":
-            fileWriteXRayRMN = open(repout + "dataset_" + resolutionKey + "_RMN", "w")
+            fileWriteXRayRMN = open(dir_out + "dataset_" + resolutionKey + "_RMN", "w")
             for ligandNMR in struct["NMR"].keys():
                 if not ligandNMR in struct[resolutionKey]:
                     fileWriteXRayRMN.write(str(ligandNMR) + "\t")
@@ -34,13 +35,14 @@ def resultFilterLigandPDB(struct):
         fileWriteXRay.close()
         if resolutionKey != "NMR" and resolutionKey != "OUT":
             fileWriteXRayRMN.close()
+        
+    return list_path_file_dataset
 
 
 
-def resultLigandInPDB(structResult):
+def resultLigandInPDB(structResult, directory_out):
 
-    rep = repertory.result()
-    filout = open(rep + "resultLigandInPDB", "w")
+    filout = open(directory_out + "resultLigandInPDB", "w")
 
     for pdb in structResult:
         filout.write(pdb["name"] + "\t")
@@ -49,13 +51,13 @@ def resultLigandInPDB(structResult):
                 filout.write(ligand + " ")
         filout.write("\n")
     filout.close()
+    return directory_out + "resultLigandInPDB"
 
 
 
-def resultCoplanar(struct, name):
+def resultCoplanar(struct, name, directory_out):
     
-    rep = repertory.resultDistance()
-    filout = open(rep + name, "w")
+    filout = open(directory_out + name, "w")
 
     for element in struct:
         filout.write("%.2f\n" % element)
@@ -63,10 +65,9 @@ def resultCoplanar(struct, name):
 
 
 
-def resultLengthCNBond(structResult, file):
+def resultLengthCNBond(structResult, file, directory_out):
 
-    rep = repertory.resultDistance()
-    filout = open(rep + file, "w")
+    filout = open(directory_out + file, "w")
 
     for element in structResult:
         filout.write("%.2f\n" % element)
@@ -75,10 +76,9 @@ def resultLengthCNBond(structResult, file):
 
 
 
-def parsingDataSet(listCount, countAmine, numberPDB, datasetFile):
+def parsingDataSet(listCount, countAmine, numberPDB, path_file_dataset):
 
-    rep = repertory.parsingDataset()
-    filout = open(rep + "parsing_" + datasetFile , "w")
+    filout = open(path_file_dataset  + ".stat", "w")
     maxRepetition = 0
     SumPDB = 0.0
     
@@ -113,10 +113,9 @@ def parsingDataSet(listCount, countAmine, numberPDB, datasetFile):
 
 
 
-def resultDistanceOx(count):
+def resultDistanceOx(count, directory_out):
 
-    rep = repertory.resultDistance()
-    filout = open(rep + "resultDistanceOx", "w")
+    filout = open(directory_out + "resultDistanceOx", "w")
 
     for element in count.keys():
         for distance in count[element]:
@@ -140,15 +139,14 @@ def amine(listAmine, files):
             files[typeStructure].write(lineWrite)
 
 
-def openFileAmine():
+def openFileAmine(directory_out):
 
     listS = structure.listStructure()
 
     dictFile = {}
 
     for element in listS:
-        rep = repertory.resultStruct(element)
-        filout = open(rep + "summary" + element, "w")
+        filout = open(directory_out + "summary" + element, "w")
         dictFile[element] = filout
 
     return dictFile
@@ -161,94 +159,88 @@ def closeFileAmine(dictFile):
         dictFile[key].close()
 
 
-def countGlobalAmine(distanceGlobal, countGlobalAmine):
+def countGlobalAmine(distanceGlobal, countGlobalAmine, dir_out):
 
-    resultDistanceOx(countGlobalAmine[str(distanceGlobal)]["distanceOx"])
-    resultLigand(countGlobalAmine[str(distanceGlobal)]["ligand"])
-    resultAtom(countGlobalAmine[str(distanceGlobal)]["atom"])
-    resultByAA(countGlobalAmine[str(distanceGlobal)]["byAA"])
+    resultDistanceOx(countGlobalAmine[str(distanceGlobal)]["distanceOx"], dir_out)
+    resultLigand(countGlobalAmine[str(distanceGlobal)]["ligand"], dir_out)
+    resultAtom(countGlobalAmine[str(distanceGlobal)]["atom"], dir_out)
+    resultByAA(countGlobalAmine[str(distanceGlobal)]["byAA"], dir_out)
     resultAngle(countGlobalAmine, distanceGlobal)
 
     for distance in countGlobalAmine.keys():
-        resultResidue(float(distance), countGlobalAmine[str(distance)]["residue"])
-        resultProportion(float(distance), countGlobalAmine[str(distance)]["proportionAtom"])
-        resultProportionType(float(distance), countGlobalAmine[str(distance)]["proportionType"])
+        resultResidue(float(distance), countGlobalAmine[str(distance)]["residue"], dir_out)
+        resultProportion(float(distance), countGlobalAmine[str(distance)]["proportionAtom"], dir_out)
+        resultProportionType(float(distance), countGlobalAmine[str(distance)]["proportionType"], dir_out)
 
         
-    resultAtLeastOne(countGlobalAmine, distanceGlobal)
-    resultProportionGlobalType(countGlobalAmine, distanceGlobal,)
-    resultGlobalResidue(countGlobalAmine, distanceGlobal)
-    resultResidueDistance(countGlobalAmine, distanceGlobal)
+    resultAtLeastOne(countGlobalAmine, distanceGlobal, dir_out)
+    resultProportionGlobalType(countGlobalAmine, distanceGlobal, dir_out)
+    resultGlobalResidue(countGlobalAmine, distanceGlobal, dir_out)
+    resultResidueDistance(countGlobalAmine, distanceGlobal, dir_out)
     
 
-def resultLigand(count):
+def resultLigand(count, directory_out):
 
     listStructure = structure.listStructure()
 
     for element in listStructure:
-        rep = repertory.resultStruct(element)
-        filout = open(rep + "statLigands" + element, "w")
+        filout = open(directory_out + "statLigands" + element, "w")
         for ligand in count[element].keys():
             filout.write(str(ligand) + "\t" + str(count[element][ligand]) + "\n")
 
         filout.close()
 
 
-def resultAtom(count):
+def resultAtom(count, directory_out):
 
     listStructure = structure.listStructure()
 
     for element in listStructure:
-        rep = repertory.resultStruct(element)
-        filout = open(rep + "statAtoms" + element, "w")
+        filout = open(directory_out + "statAtoms" + element, "w")
         for atom in count[element].keys():
             filout.write(str(atom) + "\t" + str(count[element][atom]) + "\n")
 
         filout.close()
 
 
-def resultResidue(distance, count):
+def resultResidue(distance, count, directory_out):
 
     listStructure = structure.listStructure()
     
     for element in listStructure:
-        rep = repertory.resultStruct(element)
-        filout = open(rep + "statResidues" + element + str("%.2f" % distance), "w")
+        filout = open(directory_out + "statResidues" + element + str("%.2f" % distance), "w")
         for residue in count[element].keys():
             filout.write(str(residue) + "\t" + str(count[element][residue]["main"]) + "\t" + str(count[element][residue]["side"]) + "\n")
 
         filout.close()
 
 
-def resultByAA(count):
+def resultByAA(count, directory_out):
 
     listStructure = structure.listStructure()
 
     for element in listStructure:
-        rep = repertory.aminoAcid(element)
         for aminoAcid in count[element].keys():
-            filout = open(rep + element + aminoAcid, "w")
+            filout = open(directory_out + element + aminoAcid, "w")
             for atom in count[element][aminoAcid].keys():
                 lineWrite = str(atom) + "\t" + str(count[element][aminoAcid][atom]["3.5"]) + "\t" + str(count[element][aminoAcid][atom]["4.5"]) + "\n"
                 filout.write(lineWrite)
             filout.close()
 
-    rep = repertory.resultAminoAcidGlobal()
     for aminoAcid in count["global"].keys():
-        filout = open(rep + "Global" + aminoAcid, "w")
+        filout = open(directory_out + "Global" + aminoAcid, "w")
         for atom in count["global"][aminoAcid].keys():
             lineWrite = str(atom) + "\t" + str(count["global"][aminoAcid][atom]["3.5"]) + "\t" + str(count["global"][aminoAcid][atom]["4.5"]) + "\n"
             filout.write(lineWrite)
         filout.close()
 
 
-def resultProportion (distance, count):
+def resultProportion (distance, count, directory_out):
     """Write file proportion number of neighbors"""
 
-    repout = repertory.globalProportionAtom()
 
     for type in count.keys():
-        filout = open (repout + "proportionAtom" + type + str("%.2f" % distance), "w")
+        filout = open (directory_out + "proportionAtom" + type + str("%.2f" % distance), "w")
         for nbNeighbor in count[type].keys():
             filout.write(str(nbNeighbor) + "\t" + str(count[type][nbNeighbor]["C"]) + "\t" + str(count[type][nbNeighbor]["O"]) + "\t" + str(count[type][nbNeighbor]["N"]) + "\t" + str(count[type][nbNeighbor]["S"]) + "\t" + str(count[type][nbNeighbor]["others"]) + "\n")
 
@@ -256,12 +248,11 @@ def resultProportion (distance, count):
         filout.close()
         
         
-def resultProportionType (distance, count):
+def resultProportionType (distance, count, directory_out):
 
-    repout = repertory.globalProportionType()
     listClasse = ["OxAcid", "amphiprotic", "OxAccept", "Carom", "H2O", "Ndonnor", "Nbasic", "others"]
     for type in count.keys():
-        filout = open (repout + "proportionType" + type + str("%.2f" % distance), "w")
+        filout = open (directory_out + "proportionType" + type + str("%.2f" % distance), "w")
 
         for nbNeighbor in count[type].keys():
             if not nbNeighbor == "allNumberNeighbors" : 
@@ -276,16 +267,15 @@ def resultProportionType (distance, count):
         filout.close()
 
 
-def resultProportionGlobalType(count, distanceGlobal,) : 
+def resultProportionGlobalType(count, distanceGlobal,directory_out) : 
     
-    repout = repertory.globalProportionType()
     listDistance = structure.listDistance(distanceGlobal)
     listClasse = ["OxAcid", "amphiprotic", "H2O", "OxAccept", "Nbasic", "Ndonnor", "Carom", "others"]
     listStruct = structure.listStructure()
     listStruct.append("Global") 
     
     for type in listStruct : 
-        filout = open (repout + "proportionType" + type , "w")
+        filout = open (directory_out + "proportionType" + type , "w")
         
         for distance in listDistance :
             for classe in listClasse : 
@@ -297,14 +287,13 @@ def resultProportionGlobalType(count, distanceGlobal,) :
     
     
 
-def resultResidueDistance(countGlobalAmine, distanceMax):
+def resultResidueDistance(countGlobalAmine, distanceMax, directory_out):
 
     listDistance = structure.listDistance(distanceMax)
     listAminoAcid = ["HOH", "ASP", "GLU", "THR", "SER", "ASN", "GLN", "TYR", "HIS", "LYS", "ARG", "PHE", "TRP", "ALA", "ILE", "LEU", "MET", "VAL", "CYS", "GLY", "PRO"]
 
     for type in  countGlobalAmine["2.5"]["residue"].keys():
-        repResult = repertory.resultStruct(type)
-        filout = open(repResult + str("Global") + "Residue" + str(type), "w")
+        filout = open(directory_out + str("Global") + "Residue" + str(type), "w")
         for aminoAcid in listAminoAcid:
             line = str(aminoAcid)
             for distance in listDistance:
@@ -320,14 +309,13 @@ def resultResidueDistance(countGlobalAmine, distanceMax):
 
 
 
-def resultAtLeastOneGlobal(countGlobal, distanceMax):
+def resultAtLeastOneGlobal(countGlobal, distanceMax, directory_out):
 
     listDistance = structure.listDistance(distanceMax)
     listStudyAtLeastOne = countGlobal[str(distanceMax)]["atLeastOne"].keys()
-    repResult = repertory.result() #may be atLeastOne repertory ??
     
     for StudyAtleastOne in listStudyAtLeastOne : 
-        filout = open(repResult + "atLeastOneGlobal_" + StudyAtleastOne, "w")
+        filout = open(directory_out + "atLeastOneGlobal_" + StudyAtleastOne, "w")
         line = ""
         for distance in listDistance :  
             line = line + str(countGlobal[distance]["atLeastOne"][StudyAtleastOne][StudyAtleastOne]) + "\t" + str(countGlobal[distance]["atLeastOne"][StudyAtleastOne]["others"]) + "\t"
@@ -337,11 +325,11 @@ def resultAtLeastOneGlobal(countGlobal, distanceMax):
         filout.close()
 
 
-def resultGlobalResidue(count, distanceMax):
+def resultGlobalResidue(count, distanceMax, directory_out):
 
     listDistance = structure.listDistance(distanceMax)
     listAminoAcid = ["HOH", "ASP", "GLU", "THR", "SER", "ASN", "GLN", "TYR", "HIS", "LYS", "ARG", "PHE", "TRP", "ALA", "ILE", "LEU", "MET", "VAL", "CYS", "GLY", "PRO"]
-    filout = open(repertory.result() + str("global") + "ResidueAllAtoms", "w")
+    filout = open(directory_out + str("global") + "ResidueAllAtoms", "w")
     for aminoAcid in listAminoAcid:
         line = str(aminoAcid)
         for distance in listDistance:
@@ -354,15 +342,14 @@ def resultGlobalResidue(count, distanceMax):
         filout.write(line)
 
 
-def resultAtLeastOne(count, distanceMax):
+def resultAtLeastOne(count, distanceMax, directory_out):
 
     listDist = structure.listDistance(distanceMax)
     listStructureStudy = structure.listStructure()
     listStudyAtLeastOne = count[str(distanceMax)]["atLeastOne"].keys()
-    repResult = repertory.result() #may be atLeastOne repertory ??
     
     for StudyAtleastOne in listStudyAtLeastOne : 
-        filout = open(repResult + "atLeastOne_" + StudyAtleastOne, "w")
+        filout = open(directory_out + "atLeastOne_" + StudyAtleastOne, "w")
         line = ""
         for structureStudy in listStructureStudy :
             for distance in listDist :  
@@ -374,11 +361,10 @@ def resultAtLeastOne(count, distanceMax):
 
 
 
-def resultAngle(count, distanceMax):
+def resultAngle(count, distanceMax, directory_out):
     
     for type in count[str(distanceMax)]["angle"].keys():
-        rep = repertory.resultAngle(type)
-        filoutGlobal = open(rep + "angle_" + str(type), "w")
+        filoutGlobal = open(directory_out + "angle_" + str(type), "w")
         
         for classe in  count[str(distanceMax)]["angle"][type].keys():
             nbDistance = len(count[str(distanceMax)]["angle"][type][classe]["distance"])
@@ -395,13 +381,12 @@ def resultAngle(count, distanceMax):
     countAngle(countType) 
     
 
-def countAngle (count):
+def countAngle (count, directory_out):
     
     listClasse = ["OxAcid", "amphiprotic", "H2O", "OxAccept", "Nbasic", "Ndonnor", "Carom", "others"]
     for type in count.keys() : 
-        rep = repertory.resultAngle(type)
         for distance in count[type].keys() : 
-            filout = open(rep + "angle_" + type + "_" + distance, "w")
+            filout = open(directory_out + "angle_" + type + "_" + distance, "w")
             for angle in count[type][distance].keys() : 
                 filout.write(str(angle))
                 for classe in listClasse : 
@@ -412,7 +397,7 @@ def countAngle (count):
            
 
 
-def openFilesWithoutSummary(distanceMax):
+def openFilesWithoutSummary(distanceMax, directory_out):
     
     fileClass = {}
     
@@ -422,7 +407,7 @@ def openFilesWithoutSummary(distanceMax):
     for distance in listDistance : 
         fileClass[distance] = {}
         for struct in listStructureStudy :
-            fileClass[distance][struct] = open(repertory.withoutAtLeastOneSummary() + struct + "_<" + distance, "w")
+            fileClass[distance][struct] = open(directory_out + struct + "_<" + distance, "w")
     
     
     return fileClass

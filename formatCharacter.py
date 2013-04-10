@@ -6,7 +6,7 @@ def suppSpace(string):
     out : string without space
     """
 
-    string  = sub(" ", "", string)
+    string = sub(" ", "", string)
     return string
 
 
@@ -36,7 +36,7 @@ def date(date):
     in : date
     out : date formated"""
     
-    date = sub("/","-",date)
-    date = sub(" ","_",date)
+    date = sub("/", "-", date)
+    date = sub(" ", "_", date)
 
-    return date +"_"
+    return date + "_"

@@ -11,7 +11,7 @@ import toolSubstructure
 import runScriptR
 import parsing
 
-def construction():
+def construction(name_folder_dataset):
     """
     Dataset construction
     in : - open file result of filter ligand PDB
@@ -20,48 +20,52 @@ def construction():
     """
 
     start, logFile = log.initAction("Dataset construction")
-    ligandInPDB = loadFile.resultLigandPDB(repertory.result() + "resultLigandInPDB")
+    rep_dataset = repertory.result(name_folder_dataset)
+    ligandInPDB = loadFile.resultLigandPDB(rep_dataset + "resultLigandInPDB")
     resultFilterPDB = structure.resolutionFilter()
-
+ 
     nbLigand = len(ligandInPDB.keys())
     listligand = ligandInPDB.keys()
     listDistanceCN = []
     listDistanceCoplanar = []
-    
+     
     i = 0
     while (i < nbLigand):
         nameLigand = listligand[i]
         PDBFile = ligandInPDB[nameLigand][0]
-        print nameLigand,PDBFile, i
-
+        print nameLigand, PDBFile, i
+ 
         listAtomLigand = loadFile.ligandInPDBConnectMatrixLigand(PDBFile, nameLigand)
-        controlLenCNBond(listAtomLigand, listDistanceCN) # only one PDB by ligands
-        controlCoplanarTertiaryAmine(listAtomLigand, listDistanceCoplanar) # only one PDB by ligands
+        controlLenCNBond(listAtomLigand, listDistanceCN)  # only one PDB by ligands
+        controlCoplanarTertiaryAmine(listAtomLigand, listDistanceCoplanar)  # only one PDB by ligands
         listStruct = searchPDB.interestStructure(listAtomLigand)
-        
+         
         if listStruct == []:
             i = i + 1
             continue
         else:
-            checkPDBfile.checkPDB(ligandInPDB[nameLigand], nameLigand) ###seq check + ligand hooked
-
+            checkPDBfile.checkPDB(ligandInPDB[nameLigand], nameLigand)  # ##seq check + ligand hooked
+ 
         if ligandInPDB[nameLigand] == []:
             i = i + 1
             continue
-
-        for file_pdb in ligandInPDB[nameLigand]:# append PDB file_pdb
+ 
+        for file_pdb in ligandInPDB[nameLigand]:  # append PDB file_pdb
             appendStruct(file_pdb, nameLigand, resultFilterPDB)
-
+ 
         i = i + 1
 
-    writeFile.resultFilterLigandPDB(resultFilterPDB)
+    list_files_dataset = writeFile.resultFilterLigandPDB(resultFilterPDB, rep_dataset )
     
-    writeFile.resultLengthCNBond(listDistanceCN, "lengthCNallLigand")
-    runScriptR.histDistance("lengthCNallLigand", "CN", "PDB")
-    writeFile.resultCoplanar(listDistanceCoplanar, "distanceCoplanar")
-    runScriptR.histDistance("distanceCoplanar", "coplar", "PDB")
+    dir_distance = repertory.resultDistance(rep_dataset)
+    writeFile.resultLengthCNBond(listDistanceCN, "lengthCNallLigand", dir_distance )
+    runScriptR.histDistance("lengthCNallLigand", "CN", "PDB", dir_distance )
+    writeFile.resultCoplanar(listDistanceCoplanar, "distanceCoplanar", dir_distance )
+    runScriptR.histDistance("distanceCoplanar", "coplar", "PDB", dir_distance )
     
     log.endAction("Dataset construction", start, logFile)
+    
+    return  list_files_dataset
 
 
 def controlLenCNBond (listAtomLigand, listDistance):

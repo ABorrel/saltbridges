@@ -24,8 +24,9 @@ deviation = function(matrixAngle){
 ########################
 
 
-library(lattice,lib.loc="/home/student10/R_libs/")
-library(scatterplot3d,lib.loc="/home/student10/R_libs/")
+library(lattice)
+library(scatterplot3d)
+
 
 require(methods)
 

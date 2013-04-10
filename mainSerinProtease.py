@@ -11,7 +11,7 @@ import writePDBfile
 repData = repertory.datasetSerineProtease()
 listRep = listdir(repData)
 
-#for rep in listRep :
+# for rep in listRep :
 #    rep = repData + rep + "/"
 #    managePDB.appendExtention(rep)
 
@@ -34,13 +34,13 @@ while j < nbLigand :
     atomLigand = loadFile.ligandInPDBConnectMatrixLigand(pdb, ligand)
     writePDBfile.globalStruct(ligand + "_" + pdb + ".pdb", atomLigand)
     nbAtom = len(atomLigand)
-    #print atomLigand
+    # print atomLigand
 
     searchPDB.cycleGlobal(atomLigand)
 #    print atomLigand
     listResult = []
     for atom in atomLigand : 
-        if atom["element"] == "N" or atom["element"] == "O" or atom["element"] == "C":# impact point
+        if atom["element"] == "N" or atom["element"] == "O" or atom["element"] == "C":  # impact point
             if atom["cycle"] == 1 : 
                 cycleRetrieve = retrieveAtom.cycle(atom, atomLigand)
                 listResult.append(cycleRetrieve)

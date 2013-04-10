@@ -18,9 +18,9 @@ while i < nbLigand :
     if searchPDB.riboseFromADPRibose(listAtomLigand) == 1 : 
         listLigandWithRibose.append(listLigand[i])
     
-    i = i +1 
+    i = i + 1 
         
-fileResultRibose = open(repertory.result()+"riboseList","w")
+fileResultRibose = open(repertory.result() + "riboseList", "w")
 
 print len(listLigandWithRibose)
 

@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 import searchPDB
 import datasetFinal
 import tool
@@ -8,65 +6,69 @@ import statistic
 import runScriptR
 import volumeFonction
 import managePDB
+import repertory
 
-"""Typage code : 
--> programme procedural, separation des modules en fonction de leur utilite, calcul pour faire les calculs ....
--> Je ne rappel pas dans le nom des fonctions le modules par exemple je ne mets pas calculDistancetoAtom mais distanceTowAtom
--> Pour le nom de fonction je n utilise pas de caracteres speciaux type _ mais je met des MAJ pour separer les noms
--> J essais d avoir des noms de varibles explicites et de preciser le typage a la sortie des fonctions par exemple listAtom
--> Je commente tres peu :) mais je mets toujours au debut de fonction le in et out et descriptif rapide
 
-NB : 1) Si tu veux lancer le script ailleur modifie bien les repertoires et garde la meme architecture de dossier et si tu veux faire tourner 
-le script sur une autre database tu dois le pouvoir en changant juste le repertoire de la PDB (je pense nottament sur le projet de Leslie)
-     2) Eclipse plante un peu chez Youe, je n ai pas eu le temps de le debuger mais pour faire tourner mon script sur eclipse je te conseil de faire
-un nouveau projet et de ensuite copie coller mes scripts dans le dossier et ca devrait passer sans trop de pb. Et pour specifier linterpreteur,
-jai explique a Youe mais pas sur quil est compris, il installe python 2.7 dans /usr/local tu as juste a preciser ce repertoire
- 
- Bonne continuation
-"""
+
+
+
+
+def constructDataSet (path_folder_PDB, name_folder_result):
+    """
+    Search ligand in dataset and select with different resolution filters
+    arg: - path folder database
+         - name folder result
+         - parsing dataset, simple analysis
+    return: NONE
+    """
+    
+    path_dir_result = repertory.result (name_folder_result)
+    searchPDB.ligands(path_folder_PDB, path_dir_result)
+    list_path_file_dataset = datasetFinal.construction(name_folder_result)
+    print list_path_file_dataset, "check"
     
 
+    
+    ########################
+    #   Parsing dataset   #
+    ########################
+    
+    for path_dataSet in list_path_file_dataset : 
+        statistic.parseDataSet(path_dataSet)
+    
+    return list_path_file_dataset
+        
 
-listDataSet = ["dataset_3.00", "dataset_2.00"]
-
-###########################
-#   Manage PDB file       #
-###########################
-
-#managePDB.formatFilePDB()
-
-
-############################
-#    dataset construction  #
-############################
+def statisticWithGroup (path_file_dataset, max_distance = 5.0, option_on_complexes_by_ligand = 0, option_angle = 0):
+    
+    # format 
+    max_distance = float (max_distance)
+    
+    # stat
+    statistic.neighborsAmine(max_distance, path_file_dataset, option_on_complexes_by_ligand, option_angle)
 
 
-#searchPDB.ligands()
-datasetFinal.construction()
 
-########################
-#   Parsing dataset   #
-########################
+        
 
-#for dataSet in listDataSet : 
-#    statistic.parseDataSet(dataSet)
 
 ##############################
 #     statistic neighbors    #
 ##############################
 
 #########################################################################################
-#dataset = listDataSet[1]
-#onlyOnePDBByLigand = 0
+# dataset = listDataSet[0]
+# onlyOnePDBByLigand = 0
 #
 #print tool.searchLigandInDataSetFile(dataset, "IMD")
 #
-#optionAngle = 1
-#statistic.neighborsAmine(5.0, dataset,onlyOnePDBByLigand, optionAngle)
-#runScriptR.globalStat(3.5, 5.0)
-###if onlyOnePDBByLigand == 1 : 
-###dataset = dataset + "_only1PDBbyligand"
-#tool.moveResult("test")
+# optionAngle = 1
+# statistic.neighborsAmine(5.0, dataset, onlyOnePDBByLigand, optionAngle)
+# runScriptR.globalStat(3.5, 5.0)
+
+ ##if onlyOnePDBByLigand == 1 : 
+# ##dataset = dataset + "_only1PDBbyligand"
+# tool.moveResult("test")
 
 
 ##########################################################################################
@@ -94,13 +96,15 @@ for dataset in listDataSet :
 #       Volume fonction      #
 ##############################
 
-#volumeFonction.primaryAmine("Primary.pdb", 90, 150, "primary")
-#volumeFonction.secondaryAmine("Secondary.pdb", 90, 150, "secondary")
-#volumeFonction.tertiaryAmine("Tertiary.pdb", 90, 150, "tertiary")
-#volumeFonction.imidazole("IMD.pdb", 1, 30, "imidazole")
-#volumeFonction.guanidium("Guanidium.pdb", 90, 150,1,30, "guanidium")
-#volumeFonction.pyridine("Pyridine.pdb", 1, 30, "pyridine")
-#volumeFonction.diamine("Diamine.pdb", 90, 150, "diamine")
+# volumeFonction.primaryAmine("Primary.pdb", 90, 150, "primary")
+# volumeFonction.secondaryAmine("Secondary.pdb", 90, 150, "secondary")
+# volumeFonction.tertiaryAmine("Tertiary.pdb", 90, 150, "tertiary")
+# volumeFonction.imidazole("IMD.pdb", 1, 30, "imidazole")
+# volumeFonction.guanidium("Guanidium.pdb", 90, 150,1,30, "guanidium")
+# volumeFonction.pyridine("Pyridine.pdb", 1, 30, "pyridine")
+# volumeFonction.diamine("Diamine.pdb", 90, 150, "diamine")
+
+
 
 
 
@@ -110,7 +114,40 @@ for dataset in listDataSet :
 
 
 ##############################
-#       Help fonctions       #
+#           MAIN             #
+##############################
+#Parameters
+path_folder_PDB = "/home/borrel/saltBridgesProject/PDBTest/"
+name_folder_result = "PDBTest"
+
+
+###########################
+#   Manage PDB file       #
+###########################
+
+# extract file and uncompress
+#managePDB.formatFilePDB()
+
+
+#####################################
+#   Dataset building PDB file       #
+#####################################
+list_path_dataset = constructDataSet (path_folder_PDB, name_folder_result)
+
+print list_path_dataset
+
+# statisticWithGroup (path_file_dataset, max_distance = 5.0, option_on_complexes_by_ligand = 0, option_angle = 0)
+
+
+
+
+
+
+
+"""
+
+##############################
+#       Help fonctions       # -> found IMZ
 ##############################
 
 import loadFile
@@ -123,16 +160,15 @@ list_ligand = ligandInPDB.keys()
 nb_ligand = len(list_ligand)
 
 i = 0
-while i< nb_ligand : 
+while i < nb_ligand : 
     if list_ligand[i] == "IMD" : 
         
         print i
         i = nb_ligand
     else :
-        i = i+1
+        i = i + 1
 
-
-
+"""
 
 
 

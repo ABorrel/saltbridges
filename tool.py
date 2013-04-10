@@ -113,7 +113,7 @@ def atLeastOneClassification(atom):
         if atom["name"] == "OE1" or atom["name"] == "OE2" or atom["name"] == "OD1" or atom["name"] == "OD2":
             return "counterIon"
         
-        #Amphiprotic
+        # Amphiprotic
     if atom["resName"] == "TYR":
         if atom["name"] == "OH":
             return "amphiprotic"
@@ -158,12 +158,12 @@ def classification (atom):
     out: classification (string)"""
     
     listAminoAcid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS"]
-    #Oxygen acid
+    # Oxygen acid
     if atom["resName"] == "GLU" or atom["resName"] == "ASP":
         if atom["name"] == "OE1" or atom["name"] == "OE2" or atom["name"] == "OD1" or atom["name"] == "OD2":
             return "OxAcid"
 
-    #Oxygen Amphiprotique
+    # Oxygen Amphiprotique
     if atom["resName"] == "TYR":
         if atom["name"] == "OH":
             return "amphiprotic"
@@ -182,7 +182,7 @@ def classification (atom):
         if atom["name"] == "OG":
             return "amphiprotic"
     
-    #Nitrogen basic
+    # Nitrogen basic
     if atom["resName"] == "HIS" : 
         if atom["name"] == "NE2" or atom["name"] == "ND1" : 
             return "Nbasic"
@@ -199,7 +199,7 @@ def classification (atom):
         if atom["name"] == "NXT" : 
             return "Nbasic"
 
-    #Nitrogen donnor
+    # Nitrogen donnor
     if atom["resName"] == "ASN" : 
         if atom["name"] == "ND2" : 
             return "Ndonnor"
@@ -212,7 +212,7 @@ def classification (atom):
         if atom["name"] == "N" : 
             return "Ndonnor"
     
-    #Caromatic
+    # Caromatic
     if atom["resName"] == "PHE" or atom["resName"] == "TYR": 
         if atom["name"] != "CA" : 
             if atom["name"] != "C" :
@@ -242,33 +242,6 @@ def classification (atom):
     return "others"
     
      
-def moveResult(fileDataset):
-    """Move result of search neighbors
-    in: dataset
-    out: System command (repertory out -> result_[dataset])"""
-    
-    repResult = repertory.result()
-    system("rm " + repResult + "*~")
-    fileResult = listdir(repResult)
-    listStruct = structure.listStructure()
-    listStruct.append("globalProportion")
-    listStruct.append("AminoAcidGlobal")
-    listStruct.append("angle")
-    listStruct.append("result_distance")
-    listStruct.append("withoutAtLeastOne")
-    
-    rep = str(repResult + "result_" + fileDataset + "/")
-    system("rm -r " + rep)
-    
-    try: makedirs(rep, mode = 0777)
-    except: pass
-
-   
-        
-    for file in fileResult : 
-        if file in listStruct or search("^proportion", file) or search("^global", file) or search("^atLeastOne", file): 
-            cmd = "mv " + repResult + file + " " + rep + file
-            system(cmd)
     
 
 ##################Serine Protease###########################
@@ -325,12 +298,12 @@ def searchLigandInDataSetFile (datasetFile, nameLigand):
     return 0
         
         
-def searchElementInList(list, stringSearch):        
+def searchElementInList(list_element, stringSearch):        
     """Search element in list of string
     in: list, string search
     out: index or 0"""
     
-    nbLigand = len(list)
+    nbLigand = len(list_element)
     
     i = 0
     while i < nbLigand : 

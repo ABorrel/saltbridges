@@ -8,10 +8,9 @@ import parsing
 import retrieveAtom
 from sympy import solve
 from sympy import symbols
-import writePDBfile
 
 
-def distanceTwoatoms(atom1, atom2):##############to review
+def distanceTwoatoms(atom1, atom2):  ##############to review
     '''calculate distance of 2 atoms
     in : - atom1 structure
          - atom2 structure
@@ -62,11 +61,11 @@ def coplanar (atom, listAtom):
         point3 = [float(atom3["x"]), float(atom3["y"]), float(atom3["z"])]
 
 
-        v1 = [point3[0]-point1[0], point3[1]-point1[1], point3[2]-point1[2]]
-        v2 = [point2[0]-point1[0], point2[1]-point1[1], point2[2]-point1[2]]
-        a = v1[1] * v2[2]-v1[2] * v2[1]
-        b = v1[2] * v2[0]-v1[0] * v2[2]
-        c = v1[0] * v2[1]-v1[1] * v2[0]
+        v1 = [point3[0] - point1[0], point3[1] - point1[1], point3[2] - point1[2]]
+        v2 = [point2[0] - point1[0], point2[1] - point1[1], point2[2] - point1[2]]
+        a = v1[1] * v2[2] - v1[2] * v2[1]
+        b = v1[2] * v2[0] - v1[0] * v2[2]
+        c = v1[0] * v2[1] - v1[1] * v2[0]
 
         d = float(solve(a * point1[0] + b * point1[1] + c * point1[2] - d, d)[0])
 
@@ -107,29 +106,29 @@ def buildConnectMatrix(listAtomLigand, namePDB):
 
 def equationPlan (A, B, C):
     
-    a = (B['y'] - A['y'])*(C['z'] - A['z']) - (B ['z']- A['z'])*(C['y'] - A['y'])
-    b = - ( (B['x'] - A['x'])*(C['z'] - A['z']) - (B ['z']-A['z'])*(C ['x']- A['x']) )
-    c = (B ['x']- A['x'])*(C['y'] - A['y']) - (B['y'] - A['y'])*(C['x'] - A['x'])
-    d = - (a*A['x'] + b*A['y'] + c*A['z'])
+    a = (B['y'] - A['y']) * (C['z'] - A['z']) - (B ['z'] - A['z']) * (C['y'] - A['y'])
+    b = -((B['x'] - A['x']) * (C['z'] - A['z']) - (B ['z'] - A['z']) * (C ['x'] - A['x']))
+    c = (B ['x'] - A['x']) * (C['y'] - A['y']) - (B['y'] - A['y']) * (C['x'] - A['x'])
+    d = -(a * A['x'] + b * A['y'] + c * A['z'])
     
-    return [a,b,c,d]
+    return [a, b, c, d]
     
 
-def vectoriel (N,C1):
+def vectoriel (N, C1):
     
     
-    NC1x = C1["x"] -N["x"]
-    NC1y = C1["y"] -N["y"]
-    NC1z = C1["z"] -N["z"]
+    NC1x = C1["x"] - N["x"]
+    NC1y = C1["y"] - N["y"]
+    NC1z = C1["z"] - N["z"]
     
-    return [NC1x,NC1y, NC1z]
+    return [NC1x, NC1y, NC1z]
 
 
 def normeVectoriel (listVectoriel1, listVectoriel2):
     
-    terme1 = pow(listVectoriel1[1] * listVectoriel2[2] - listVectoriel1[2]*listVectoriel2[1],2)
-    terme2 = pow(listVectoriel1[2] * listVectoriel2[0]- listVectoriel1[0]*listVectoriel2[2],2)
-    terme3 = pow(listVectoriel1[0] * listVectoriel2[1]- listVectoriel1[1]*listVectoriel2[0],2)
+    terme1 = pow(listVectoriel1[1] * listVectoriel2[2] - listVectoriel1[2] * listVectoriel2[1], 2)
+    terme2 = pow(listVectoriel1[2] * listVectoriel2[0] - listVectoriel1[0] * listVectoriel2[2], 2)
+    terme3 = pow(listVectoriel1[0] * listVectoriel2[1] - listVectoriel1[1] * listVectoriel2[0], 2)
     
     return sqrt (terme1 + terme2 + terme3)
 
@@ -148,29 +147,29 @@ def scalar(vector1, vector2):
     y = vector1[1] * vector2[1]
     z = vector1[2] * vector2[2]
 
-    return x+y+z
+    return x + y + z
 
 
 def angleVector(pointD, pointCentral, pointG):
     
     vectorNC1 = vectoriel(pointCentral, pointD)
     vectorNC2 = vectoriel(pointCentral, pointG)
-    normeNC1 = normeVector(pointCentral,pointD )
-    normeNC2 = normeVector(pointCentral,pointG )
+    normeNC1 = normeVector(pointCentral, pointD)
+    normeNC2 = normeVector(pointCentral, pointG)
 
     scalarNC1NC2 = scalar(vectorNC1, vectorNC2) 
 
     try :
-        alpha = degrees(acos(scalarNC1NC2/(normeNC1 * normeNC2)))
+        alpha = degrees(acos(scalarNC1NC2 / (normeNC1 * normeNC2)))
         return alpha
     except :
         return 0
     
     
 
-def checkPoint(pointTest,pointN,pointC1, pointC2,plan,alpha):
-    Eqplan = pointTest["x"] * plan[0] + pointTest["y"] *plan[1] + pointTest["z"] * plan[2] + plan[3]
-    angleRef = (360 - alpha)/2 - 5
+def checkPoint(pointTest, pointN, pointC1, pointC2, plan, alpha):
+    Eqplan = pointTest["x"] * plan[0] + pointTest["y"] * plan[1] + pointTest["z"] * plan[2] + plan[3]
+    angleRef = (360 - alpha) / 2 - 5
     
     
     
@@ -179,7 +178,7 @@ def checkPoint(pointTest,pointN,pointC1, pointC2,plan,alpha):
     
     if angleC1NTest > angleRef and angleC2NTest > angleRef : 
         diffAngle = abs(angleC1NTest - angleC2NTest)
-        return  diffAngle + abs(Eqplan) *10
+        return  diffAngle + abs(Eqplan) * 10
     else :
         return 1000
 
@@ -223,9 +222,9 @@ def angleTertiaryAmine (atomNitrogen, atomCounterIon, listAtomLigand):
         distanceNitrogenCarbon3 = distanceTwoatoms(atomNitrogen, carbon3)
 
 
-        angle1 = degrees(acos((distanceNitrogenCarbon1 * distanceNitrogenCarbon1 + distanceNitrogenCounterIon * distanceNitrogenCounterIon- distanceCarbon1CounterIon * distanceCarbon1CounterIon) / (2 * distanceNitrogenCarbon1 * distanceNitrogenCounterIon)))
-        angle2 = degrees(acos((distanceNitrogenCarbon2 * distanceNitrogenCarbon2 + distanceNitrogenCounterIon * distanceNitrogenCounterIon- distanceCarbon2CounterIon * distanceCarbon2CounterIon) / (2 * distanceNitrogenCarbon2 * distanceNitrogenCounterIon)))
-        angle3 = degrees(acos((distanceNitrogenCarbon3 * distanceNitrogenCarbon3 + distanceNitrogenCounterIon * distanceNitrogenCounterIon- distanceCarbon3CounterIon * distanceCarbon3CounterIon) / (2 * distanceNitrogenCarbon3 * distanceNitrogenCounterIon)))
+        angle1 = degrees(acos((distanceNitrogenCarbon1 * distanceNitrogenCarbon1 + distanceNitrogenCounterIon * distanceNitrogenCounterIon - distanceCarbon1CounterIon * distanceCarbon1CounterIon) / (2 * distanceNitrogenCarbon1 * distanceNitrogenCounterIon)))
+        angle2 = degrees(acos((distanceNitrogenCarbon2 * distanceNitrogenCarbon2 + distanceNitrogenCounterIon * distanceNitrogenCounterIon - distanceCarbon2CounterIon * distanceCarbon2CounterIon) / (2 * distanceNitrogenCarbon2 * distanceNitrogenCounterIon)))
+        angle3 = degrees(acos((distanceNitrogenCarbon3 * distanceNitrogenCarbon3 + distanceNitrogenCounterIon * distanceNitrogenCounterIon - distanceCarbon3CounterIon * distanceCarbon3CounterIon) / (2 * distanceNitrogenCarbon3 * distanceNitrogenCounterIon)))
 
         return [angle1, angle2, angle3]
 
@@ -253,8 +252,8 @@ def angleSecondaryAmine(atomNitrogen, atomCounterIon, listAtomLigand):
         distanceNitrogenCarbon1 = distanceTwoatoms(atomNitrogen, carbon1)
         distanceNitrogenCarbon2 = distanceTwoatoms(atomNitrogen, carbon2)
 
-        angle1 = degrees(acos((distanceNitrogenCarbon1 * distanceNitrogenCarbon1 + distanceNitrogenCounterIon * distanceNitrogenCounterIon- distanceCarbon1CounterIon * distanceCarbon1CounterIon) / (2 * distanceNitrogenCarbon1 * distanceNitrogenCounterIon)))
-        angle2 = degrees(acos((distanceNitrogenCarbon2 * distanceNitrogenCarbon2 + distanceNitrogenCounterIon * distanceNitrogenCounterIon- distanceCarbon2CounterIon * distanceCarbon2CounterIon) / (2 * distanceNitrogenCarbon2 * distanceNitrogenCounterIon)))
+        angle1 = degrees(acos((distanceNitrogenCarbon1 * distanceNitrogenCarbon1 + distanceNitrogenCounterIon * distanceNitrogenCounterIon - distanceCarbon1CounterIon * distanceCarbon1CounterIon) / (2 * distanceNitrogenCarbon1 * distanceNitrogenCounterIon)))
+        angle2 = degrees(acos((distanceNitrogenCarbon2 * distanceNitrogenCarbon2 + distanceNitrogenCounterIon * distanceNitrogenCounterIon - distanceCarbon2CounterIon * distanceCarbon2CounterIon) / (2 * distanceNitrogenCarbon2 * distanceNitrogenCounterIon)))
 
 
         return [angle1, angle2]
@@ -277,7 +276,7 @@ def anglePrimaryAmine(atomNitrogen, atomCounterIon, atomLigands):
         distanceCarbon1CounterIon = distanceTwoatoms(atomCounterIon, carbon1)
         distanceNitrogenCarbon1 = distanceTwoatoms(atomNitrogen, carbon1)
 
-        angle1 = degrees(acos((distanceNitrogenCarbon1 * distanceNitrogenCarbon1 + distanceNitrogenCounterIon * distanceNitrogenCounterIon- distanceCarbon1CounterIon * distanceCarbon1CounterIon) / (2 * distanceNitrogenCarbon1 * distanceNitrogenCounterIon)))
+        angle1 = degrees(acos((distanceNitrogenCarbon1 * distanceNitrogenCarbon1 + distanceNitrogenCounterIon * distanceNitrogenCounterIon - distanceCarbon1CounterIon * distanceCarbon1CounterIon) / (2 * distanceNitrogenCarbon1 * distanceNitrogenCounterIon)))
 
         return [angle1]
 
@@ -288,7 +287,7 @@ def angleImidazolePyridine(atomNitrogen, atomFound, listAtomLigand):
     atomC1 = retrieveAtom.serial(matrix[1], listAtomLigand)
     atomC2 = retrieveAtom.serial(matrix[2], listAtomLigand)
     
-    plan =  equationPlan(atomC1, atomNitrogen, atomC2)    
+    plan = equationPlan(atomC1, atomNitrogen, atomC2)    
     
     xN = atomNitrogen["x"]
     yN = atomNitrogen["y"]
@@ -303,13 +302,13 @@ def angleImidazolePyridine(atomNitrogen, atomFound, listAtomLigand):
 
     alpha = angleVector(atomC1, atomNitrogen, atomC2)
 
-    for x in range (-5,5) :
-        pointTest["x"] = xN + x *0.2
-        for y in range (-5,5) :
-            pointTest["y"] = yN + y* 0.2
-            for z in range (-5,5) :
-                pointTest["z"] = zN + z* 0.2
-                Diff = checkPoint(pointTest, atomNitrogen, atomC1,atomC2, plan, alpha)
+    for x in range (-5, 5) :
+        pointTest["x"] = xN + x * 0.2
+        for y in range (-5, 5) :
+            pointTest["y"] = yN + y * 0.2
+            for z in range (-5, 5) :
+                pointTest["z"] = zN + z * 0.2
+                Diff = checkPoint(pointTest, atomNitrogen, atomC1, atomC2, plan, alpha)
                 if Diff < minDiff :
                     pointRef = deepcopy(pointTest)
                     minDiff = Diff
@@ -343,7 +342,7 @@ def angle(atomNitrogen, atomFound, listAtomLigand, typeStructure):
     
 
 
-def anglePrimaryAmineCalculVol(atomN,atomC,atomTest):
+def anglePrimaryAmineCalculVol(atomN, atomC, atomTest):
     """calcul for three atoms angle for primary amine
     in: atom nitrogen, atom carbon and atom test
     out: list angle"""
@@ -353,7 +352,7 @@ def anglePrimaryAmineCalculVol(atomN,atomC,atomTest):
     distanceNitrogenCarbon1 = distanceTwoatoms(atomN, atomC)
 
     try : 
-        angle1 = degrees(acos((distanceNitrogenCarbon1 * distanceNitrogenCarbon1 + distanceNitrogenCounterIon * distanceNitrogenCounterIon- distanceCarbon1CounterIon * distanceCarbon1CounterIon) / (2 * distanceNitrogenCarbon1 * distanceNitrogenCounterIon)))
+        angle1 = degrees(acos((distanceNitrogenCarbon1 * distanceNitrogenCarbon1 + distanceNitrogenCounterIon * distanceNitrogenCounterIon - distanceCarbon1CounterIon * distanceCarbon1CounterIon) / (2 * distanceNitrogenCarbon1 * distanceNitrogenCounterIon)))
         return [angle1]
     except : return [0.00]
 
@@ -371,8 +370,8 @@ def angleSecondaryAmineCalculVol(atomNitrogen, atomC1, atomC2, atomTest):
     distanceNitrogenCarbon1 = distanceTwoatoms(atomNitrogen, atomC1)
     distanceNitrogenCarbon2 = distanceTwoatoms(atomNitrogen, atomC2)
 
-    angle1 = degrees(acos((distanceNitrogenCarbon1 * distanceNitrogenCarbon1 + distanceNitrogenTest * distanceNitrogenTest- distanceCarbon1Test * distanceCarbon1Test) / (2 * distanceNitrogenCarbon1 * distanceNitrogenTest)))
-    angle2 = degrees(acos((distanceNitrogenCarbon2 * distanceNitrogenCarbon2 + distanceNitrogenTest * distanceNitrogenTest- distanceCarbon2Test * distanceCarbon2Test) / (2 * distanceNitrogenCarbon2 * distanceNitrogenTest)))
+    angle1 = degrees(acos((distanceNitrogenCarbon1 * distanceNitrogenCarbon1 + distanceNitrogenTest * distanceNitrogenTest - distanceCarbon1Test * distanceCarbon1Test) / (2 * distanceNitrogenCarbon1 * distanceNitrogenTest)))
+    angle2 = degrees(acos((distanceNitrogenCarbon2 * distanceNitrogenCarbon2 + distanceNitrogenTest * distanceNitrogenTest - distanceCarbon2Test * distanceCarbon2Test) / (2 * distanceNitrogenCarbon2 * distanceNitrogenTest)))
 
 
     return [angle1, angle2]    
@@ -395,9 +394,9 @@ def angleTertiaryAmineCalculVol (atomNitrogen, atomTest, atomC1, atomC2, atomC3)
     distanceNitrogenCarbon3 = distanceTwoatoms(atomNitrogen, atomC3)
 
 
-    angle1 = degrees(acos((distanceNitrogenCarbon1 * distanceNitrogenCarbon1 + distanceNitrogenCounterIon * distanceNitrogenCounterIon- distanceCarbon1CounterIon * distanceCarbon1CounterIon) / (2 * distanceNitrogenCarbon1 * distanceNitrogenCounterIon)))
-    angle2 = degrees(acos((distanceNitrogenCarbon2 * distanceNitrogenCarbon2 + distanceNitrogenCounterIon * distanceNitrogenCounterIon- distanceCarbon2CounterIon * distanceCarbon2CounterIon) / (2 * distanceNitrogenCarbon2 * distanceNitrogenCounterIon)))
-    angle3 = degrees(acos((distanceNitrogenCarbon3 * distanceNitrogenCarbon3 + distanceNitrogenCounterIon * distanceNitrogenCounterIon- distanceCarbon3CounterIon * distanceCarbon3CounterIon) / (2 * distanceNitrogenCarbon3 * distanceNitrogenCounterIon)))
+    angle1 = degrees(acos((distanceNitrogenCarbon1 * distanceNitrogenCarbon1 + distanceNitrogenCounterIon * distanceNitrogenCounterIon - distanceCarbon1CounterIon * distanceCarbon1CounterIon) / (2 * distanceNitrogenCarbon1 * distanceNitrogenCounterIon)))
+    angle2 = degrees(acos((distanceNitrogenCarbon2 * distanceNitrogenCarbon2 + distanceNitrogenCounterIon * distanceNitrogenCounterIon - distanceCarbon2CounterIon * distanceCarbon2CounterIon) / (2 * distanceNitrogenCarbon2 * distanceNitrogenCounterIon)))
+    angle3 = degrees(acos((distanceNitrogenCarbon3 * distanceNitrogenCarbon3 + distanceNitrogenCounterIon * distanceNitrogenCounterIon - distanceCarbon3CounterIon * distanceCarbon3CounterIon) / (2 * distanceNitrogenCarbon3 * distanceNitrogenCounterIon)))
 
     return [angle1, angle2, angle3]
 
@@ -405,13 +404,13 @@ def angleTertiaryAmineCalculVol (atomNitrogen, atomTest, atomC1, atomC2, atomC3)
 
 def angleImidazolePyridineCalculVol(atomNitrogen, atomC1, atomC2, atomTest):
     
-    plan =  equationPlan(atomC1, atomNitrogen, atomC2)   
+    plan = equationPlan(atomC1, atomNitrogen, atomC2)   
     
     xN = atomNitrogen["x"]
     yN = atomNitrogen["y"]
     zN = atomNitrogen["z"]
 
-    minDiff =1000
+    minDiff = 1000
     pointTest = {}
     pointTest["x"] = xN
     pointTest["y"] = yN
@@ -420,17 +419,17 @@ def angleImidazolePyridineCalculVol(atomNitrogen, atomC1, atomC2, atomTest):
     pointRef = pointTest
     alpha = angleVector(atomC1, atomNitrogen, atomC2)
 
-    for x in range (-5,5) :
-        pointTest["x"] = xN + x *0.2
-        for y in range (-5,5) :
-            pointTest["y"] = yN + y* 0.2
-            for z in range (-5,5) :
-                pointTest["z"] = zN + z* 0.2
-                Diff = checkPoint(pointTest, atomNitrogen, atomC1,atomC2, plan, alpha)
+    for x in range (-5, 5) :
+        pointTest["x"] = xN + x * 0.2
+        for y in range (-5, 5) :
+            pointTest["y"] = yN + y * 0.2
+            for z in range (-5, 5) :
+                pointTest["z"] = zN + z * 0.2
+                Diff = checkPoint(pointTest, atomNitrogen, atomC1, atomC2, plan, alpha)
                 if Diff < minDiff :
                     pointRef = deepcopy(pointTest)
                     minDiff = Diff
                     
-    #print minDiff           
+    # print minDiff           
     return [angleVector(atomTest, atomNitrogen, pointRef)], pointRef
     

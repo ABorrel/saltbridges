@@ -1,15 +1,19 @@
 from os import makedirs
 
-#globals()["repInit"] = "/home/student10/stage/"
-#globals()["repInit"] = "/home/alexandre/intership/"
-globals()["repInit"] = "/home/alexandre/project/saltBridgesProject/"
+# globals()["repInit"] = "/home/student10/stage/"
+# globals()["repInit"] = "/home/alexandre/intership/"
+globals()["repInit"] = "/home/borrel/saltBridgesProject/"
 
 
 
 
-def result():
+def result(rep_add = ""):
 
-    rep = repInit + "result/"
+    if rep_add != "" : 
+        rep = repInit + "result/" + rep_add + "/"
+    else : 
+        rep = repInit + "result/"
+         
     try: makedirs(rep, mode=0777)
     except: pass
     return rep
@@ -39,29 +43,28 @@ def pdbechemFile ():
 
 def logFile () :
 
-    rep = repInit + "result/log/"
+    rep = repInit + "log/"
     try: makedirs(rep, mode=0777)
     except: pass
     return rep
 
-def aminoAcid(structure):
+def aminoAcid(structure, dir_in):
 
-    rep = resultStruct(structure)
-    rep = rep + "aminoAcid/"
+    rep = dir_in + "/" + structure + "/aminoAcid/"
     try: makedirs(rep, mode=0777)
     except: pass
     return rep
 
-def resultDistance():
+def resultDistance(rep_int):
 
-    rep = repInit + "result/result_distance/"
+    rep = rep_int + "result_distance/"
     try: makedirs(rep, mode=0777)
     except: pass
     return rep
 
-def resultStruct(structure):
+def resultStruct(structure, dir_out):
 
-    rep = repInit + "result/" + structure +"/"
+    rep = dir_out + structure + "/"
     try: makedirs(rep, mode=0777)
     except: pass
     return rep
@@ -69,7 +72,7 @@ def resultStruct(structure):
 
 
 def scriptR():
-    rep =  "./../../"
+    rep = "./"
     return rep
 
 def resultAminoAcidGlobal():
@@ -94,9 +97,9 @@ def globalProportionType() :
     return rep
 
 
-def resultAngle(type):
+def resultAngle(struct_type, dir_out):
 
-    rep = repInit + "result/angle/"
+    rep = dir_out + "angle/" + struct_type
     try: makedirs(rep, mode=0777)
     except: pass
     
@@ -131,5 +134,5 @@ def resultSerineProtease ():
 
 def datasetSerineProteaseType (rep):
 
-    rep = repInit + "dataset_SerineProtease/"+rep + "/"
+    rep = repInit + "dataset_SerineProtease/" + rep + "/"
     return rep    

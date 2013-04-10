@@ -29,7 +29,7 @@ def lineCoords (line):
     return atom
 
 def lineConnectMatrix(line):
-    """Retrive connect matrix by atom
+    """Retrieve connect matrix by atom
     in: line
     out: list of connect"""
 

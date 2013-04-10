@@ -15,21 +15,22 @@ def openPdbFile(namePDB):
 
     rep = repertory.openPdbFile()
     filin = open(rep + namePDB + ".pdb")
-    linesFile = filin.readlines()
+    list_lines = filin.readlines()
     filin.close()
 
-    nbLines = len(linesFile)
-    for i in range(0, nbLines):
-        if search("^ENDMDL", linesFile[i]):
+    int_nblines = len(list_lines)
+    for i in range(0, int_nblines):
+        # retrieve only first model
+        if search("^ENDMDL", list_lines[i]):
             lineEnd = i
-        if search("^CONECT", linesFile[i]):
+        if search("^CONECT", list_lines[i]):
             lineStartConect = i
             break
 
     if "lineStartConect" in locals() and "lineEnd" in locals():
-        return linesFile[0: lineEnd] + linesFile[lineStartConect:nbLines]
+        return list_lines[0: lineEnd] + list_lines[lineStartConect:int_nblines] # concatene lists 
     else:
-        return linesFile
+        return list_lines
 
 
 
@@ -64,26 +65,26 @@ def resultFilterPDBLigand (nameFile):
 
 
 
-def ligandInPDB(namePDB, nameLigands):
-    """load ligand in structure in PDB file on single ligand by pdb
+def ligandInPDB(PDB_ID, ligand_ID):
+    """load list_atom_ligand in structure in PDB file on single list_atom_ligand by pdb and remove H
     out : atom in ligands
-    out: list of atoms that ligand"""
+    out: list of atoms that list_atom_ligand"""
 
-    linesPDB = openPdbFile(namePDB)
-    ligand = []
+    linesPDB = openPdbFile(PDB_ID)
+    list_atom_ligand = []
     for line in linesPDB:
         if search ("^HETATM", line):
             atom = parsing.lineCoords(line)
-            if atom["resName"] == nameLigands and atom["element"] != "H":
-                ligand.append(atom)
-    checkOnlyOneLigand(ligand)
-    connectMatrix = connectMatrixInPDB(namePDB)
+            if atom["resName"] == ligand_ID and atom["element"] != "H":
+                list_atom_ligand.append(atom)
+    checkOnlyOneLigand(list_atom_ligand)
+    connectMatrix = connectMatrixInPDB(PDB_ID)
 
-    if connectAtom(connectMatrix, ligand) == "False":
+    if connectAtom(connectMatrix, list_atom_ligand) == "False":
         print "Construt Matrix"
-        calcul.buildConnectMatrix(ligand, namePDB)
+        calcul.buildConnectMatrix(list_atom_ligand, PDB_ID)
 
-    return ligand
+    return list_atom_ligand
 
 
 def checkOnlyOneLigand(groupAtom):
@@ -122,7 +123,7 @@ def ligandInPDBConnectMatrixLigand(pdbName, nameLigands):
                 if not atom["serial"] in listSerial : 
                     ligand.append(atom)
                     listSerial.append(atom["serial"])
-    checkOnlyOneLigand(ligand)####retrieve only first ligand
+    checkOnlyOneLigand(ligand)  ####retrieve only first ligand
     calcul.buildConnectMatrix(ligand, pdbName)
 
     return ligand
@@ -217,7 +218,7 @@ def resolution (pdbfile):
     return 1000.0
 
 
-#def typeData(file):
+# def typeData(file):
 #
 #    fileLines = openPdbFile(file)
 #    type = "NONE"
@@ -248,6 +249,6 @@ def globalPDB(PDB, ligand):
     connectMatrix = connectMatrixInPDB(PDB)
     print connectMatrix
     connectAtom(connectMatrix, out)
-        #calcul.buildConnectMatrix(ligand, PDB)
+        # calcul.buildConnectMatrix(ligand, PDB)
 
     return out

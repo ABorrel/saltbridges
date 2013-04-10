@@ -1,9 +1,7 @@
 from re import search
-from re import sub
 from urllib import urlretrieve
 
 import loadFile
-import formatCharacter
 import parsing
 
 
@@ -75,20 +73,20 @@ def compareSeqofPDB(listPDB, listSeq, lengthListPDB, i, j):
         if listSeq[i] < listSeq[j]["resolution"]:
             del listPDB[j]
             del listSeq[j]
-            j = j-1
-            lengthListPDB = lengthListPDB-1
+            j = j - 1
+            lengthListPDB = lengthListPDB - 1
         else:
             del listPDB[i]
             del listSeq[i]
             i = i - 1
-            lengthListPDB = lengthListPDB-1
+            lengthListPDB = lengthListPDB - 1
 
         return listPDB, listSeq, lengthListPDB, i, j
 
     elif incluedSequence(listSeq[i], listSeq[j]) == 1:
         del listPDB[j]
         del listSeq[j]
-        j = j -1
+        j = j - 1
         lengthListPDB = lengthListPDB - 1
 
         return listPDB, listSeq, lengthListPDB, i, j
@@ -96,7 +94,7 @@ def compareSeqofPDB(listPDB, listSeq, lengthListPDB, i, j):
     elif incluedSequence(listSeq[j], listSeq[i]) == 1:
         del listPDB[i]
         del listSeq[i]
-        i = i -1
+        i = i - 1
         lengthListPDB = lengthListPDB - 1
 
         return listPDB, listSeq, lengthListPDB, i, j
@@ -151,7 +149,7 @@ def checkPDB(listPDB, nameLigand):
         i = 0
         while i < lengthListPDB:
             if ligandHooked(nameLigand, listPDB[i]) == 1:
-                lengthListPDB = lengthListPDB -1
+                lengthListPDB = lengthListPDB - 1
                 del listPDB[i]
                 continue
 

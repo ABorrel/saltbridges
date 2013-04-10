@@ -27,7 +27,7 @@ def amine():
 
 def countAngle () :
 
-    classification = ["Carom", "Ndonnor", "Nbasic", "amphiprotic", "OxAcid", "OxAccept", "H2O","others"]
+    classification = ["Carom", "Ndonnor", "Nbasic", "amphiprotic", "OxAcid", "OxAccept", "H2O", "others"]
     count = {}
     for element in listStructure () : 
         count[element] = {}
@@ -195,7 +195,7 @@ def countAtLeastOneGlobalStruct(distanceMax):
     
         for atLeastOne in listAtLeastOneStudy() : 
             count[distance]["atLeastOne"][atLeastOne] = {}
-            count[distance]["atLeastOne"][atLeastOne][atLeastOne]  = 0
+            count[distance]["atLeastOne"][atLeastOne][atLeastOne] = 0
             count[distance]["atLeastOne"][atLeastOne]["others"] = 0
  
     return count   
@@ -232,7 +232,10 @@ def countResidueGlobal():
 
 
 def resolutionFilter():
-
+    """
+    Result of resolution filter
+    """
+    
     struct = {}
     struct["2.00"] = {}
     struct["2.50"] = {}
@@ -257,44 +260,45 @@ def countAngleType(count):
     
     listAngle = range(0, 190, 10)
     countAngle = {}
-    for type in count["2.0"]["angleVector"].keys():
-        countAngle[type] = {}
+    print count["2.0"].keys()
+    for type_strucutre in count["2.0"]["angle"].keys():
+        countAngle[type_strucutre] = {}
         for distance in count.keys():       
-            countAngle[type][str(distance)] = {}
+            countAngle[type_strucutre][str(distance)] = {}
             angleTemp = 0
             for keyAngle in listAngle : 
-                countAngle[type][str(distance)][str(keyAngle)] = {}
+                countAngle[type_strucutre][str(distance)][str(keyAngle)] = {}
             
-                for classe in  count[distance]["angleVector"][type].keys():    
-                    countAngle[type][str(distance)][str(keyAngle)][classe] = 0
-                    nbAngles = len(count[distance]["angleVector"][type][classe]["angles"])
+                for classe in  count[distance]["angle"][type_strucutre].keys():    
+                    countAngle[type_strucutre][str(distance)][str(keyAngle)][classe] = 0
+                    nbAngles = len(count[distance]["angle"][type_strucutre][classe]["angles"])
                     for i in range(0, nbAngles) : 
-                        
-                        for angleVector in count[str(distance)]["angleVector"][type][classe]["angles"][i] :
+                    # restrint angle position
+                        for angleVector in count[str(distance)]["angle"][type_strucutre][classe]["angles"][i] :
                             if angleVector <= keyAngle :
                                 if angleVector >= angleTemp :
-                                    countAngle[type][str(distance)][str(keyAngle)][classe] = countAngle[type][str(distance)][str(keyAngle)][classe] + 1
+                                    countAngle[type_strucutre][str(distance)][str(keyAngle)][classe] = countAngle[type_strucutre][str(distance)][str(keyAngle)][classe] + 1
                 angleTemp = keyAngle
 
     
-    for type in countAngle.keys():
-        for keyAngle in countAngle[type]["2.0"].keys() : 
-            for classe in countAngle[type]["2.0"][keyAngle].keys() : 
-                try : countAngle[type]["2.5"][str(keyAngle)][classe] = countAngle[type]["2.5"][str(keyAngle)][classe] - countAngle[type]["2.0"][str(keyAngle)][classe]
+    for type_strucutre in countAngle.keys():
+        for keyAngle in countAngle[type_strucutre]["2.0"].keys() : 
+            for classe in countAngle[type_strucutre]["2.0"][keyAngle].keys() : 
+                try : countAngle[type_strucutre]["2.5"][str(keyAngle)][classe] = countAngle[type_strucutre]["2.5"][str(keyAngle)][classe] - countAngle[type_strucutre]["2.0"][str(keyAngle)][classe]
                 except : pass
-                try : countAngle[type]["3.0"][str(keyAngle)][classe] = countAngle[type]["3.0"][str(keyAngle)][classe] - countAngle[type]["2.5"][str(keyAngle)][classe] - countAngle[type]["2.0"][str(keyAngle)][classe]
+                try : countAngle[type_strucutre]["3.0"][str(keyAngle)][classe] = countAngle[type_strucutre]["3.0"][str(keyAngle)][classe] - countAngle[type_strucutre]["2.5"][str(keyAngle)][classe] - countAngle[type_strucutre]["2.0"][str(keyAngle)][classe]
                 except : pass
-                try : countAngle[type]["3.5"][str(keyAngle)][classe] = countAngle[type]["3.5"][str(keyAngle)][classe] - countAngle[type]["3.0"][str(keyAngle)][classe] - countAngle[type]["2.5"][str(keyAngle)][classe] - countAngle[type]["2.0"][str(keyAngle)][classe]
+                try : countAngle[type_strucutre]["3.5"][str(keyAngle)][classe] = countAngle[type_strucutre]["3.5"][str(keyAngle)][classe] - countAngle[type_strucutre]["3.0"][str(keyAngle)][classe] - countAngle[type_strucutre]["2.5"][str(keyAngle)][classe] - countAngle[type_strucutre]["2.0"][str(keyAngle)][classe]
                 except : pass
-                try : countAngle[type]["4.0"][str(keyAngle)][classe] = countAngle[type]["4.0"][str(keyAngle)][classe] - countAngle[type]["3.5"][str(keyAngle)][classe] - countAngle[type]["3.0"][str(keyAngle)][classe] - countAngle[type]["2.5"][str(keyAngle)][classe] - countAngle[type]["2.0"][str(keyAngle)][classe]
+                try : countAngle[type_strucutre]["4.0"][str(keyAngle)][classe] = countAngle[type_strucutre]["4.0"][str(keyAngle)][classe] - countAngle[type_strucutre]["3.5"][str(keyAngle)][classe] - countAngle[type_strucutre]["3.0"][str(keyAngle)][classe] - countAngle[type_strucutre]["2.5"][str(keyAngle)][classe] - countAngle[type_strucutre]["2.0"][str(keyAngle)][classe]
                 except : pass
-                try : countAngle[type]["4.5"][str(keyAngle)][classe] = countAngle[type]["4.5"][str(keyAngle)][classe] - countAngle[type]["4.0"][str(keyAngle)][classe] - countAngle[type]["3.5"][str(keyAngle)][classe] - countAngle[type]["3.0"][str(keyAngle)][classe] - countAngle[type]["2.5"][str(keyAngle)][classe] - countAngle[type]["2.0"][str(keyAngle)][classe]
+                try : countAngle[type_strucutre]["4.5"][str(keyAngle)][classe] = countAngle[type_strucutre]["4.5"][str(keyAngle)][classe] - countAngle[type_strucutre]["4.0"][str(keyAngle)][classe] - countAngle[type_strucutre]["3.5"][str(keyAngle)][classe] - countAngle[type_strucutre]["3.0"][str(keyAngle)][classe] - countAngle[type_strucutre]["2.5"][str(keyAngle)][classe] - countAngle[type_strucutre]["2.0"][str(keyAngle)][classe]
                 except : pass
-                try : countAngle[type]["5.0"][str(keyAngle)][classe] = countAngle[type]["5.0"][str(keyAngle)][classe] - countAngle[type]["4.5"][str(keyAngle)][classe] - countAngle[type]["4.0"][str(keyAngle)][classe] - countAngle[type]["3.5"][str(keyAngle)][classe] - countAngle[type]["3.0"][str(keyAngle)][classe] - countAngle[type]["2.5"][str(keyAngle)][classe] - countAngle[type]["2.0"][str(keyAngle)][classe]
+                try : countAngle[type_strucutre]["5.0"][str(keyAngle)][classe] = countAngle[type_strucutre]["5.0"][str(keyAngle)][classe] - countAngle[type_strucutre]["4.5"][str(keyAngle)][classe] - countAngle[type_strucutre]["4.0"][str(keyAngle)][classe] - countAngle[type_strucutre]["3.5"][str(keyAngle)][classe] - countAngle[type_strucutre]["3.0"][str(keyAngle)][classe] - countAngle[type_strucutre]["2.5"][str(keyAngle)][classe] - countAngle[type_strucutre]["2.0"][str(keyAngle)][classe]
                 except : pass
-                try : countAngle[type]["5.5"][str(keyAngle)][classe] = countAngle[type]["5.5"][str(keyAngle)][classe] - countAngle[type]["5.0"][str(keyAngle)][classe] - countAngle[type]["4.5"][str(keyAngle)][classe] - countAngle[type]["4.0"][str(keyAngle)][classe] - countAngle[type]["3.5"][str(keyAngle)][classe] - countAngle[type]["3.0"][str(keyAngle)][classe] - countAngle[type]["2.5"][str(keyAngle)][classe] - countAngle[type]["2.0"][str(keyAngle)][classe]
+                try : countAngle[type_strucutre]["5.5"][str(keyAngle)][classe] = countAngle[type_strucutre]["5.5"][str(keyAngle)][classe] - countAngle[type_strucutre]["5.0"][str(keyAngle)][classe] - countAngle[type_strucutre]["4.5"][str(keyAngle)][classe] - countAngle[type_strucutre]["4.0"][str(keyAngle)][classe] - countAngle[type_strucutre]["3.5"][str(keyAngle)][classe] - countAngle[type_strucutre]["3.0"][str(keyAngle)][classe] - countAngle[type_strucutre]["2.5"][str(keyAngle)][classe] - countAngle[type_strucutre]["2.0"][str(keyAngle)][classe]
                 except : pass
-                try : countAngle[type]["6.0"][str(keyAngle)][classe] = countAngle[type]["6.0"][str(keyAngle)][classe] - countAngle[type]["5.5"][str(keyAngle)][classe] - countAngle[type]["5.0"][str(keyAngle)][classe] - countAngle[type]["4.5"][str(keyAngle)][classe] - countAngle[type]["4.0"][str(keyAngle)][classe] - countAngle[type]["3.5"][str(keyAngle)][classe] - countAngle[type]["3.0"][str(keyAngle)][classe] - countAngle[type]["2.5"][str(keyAngle)][classe] - countAngle[type]["2.0"][str(keyAngle)][classe]
+                try : countAngle[type_strucutre]["6.0"][str(keyAngle)][classe] = countAngle[type_strucutre]["6.0"][str(keyAngle)][classe] - countAngle[type_strucutre]["5.5"][str(keyAngle)][classe] - countAngle[type_strucutre]["5.0"][str(keyAngle)][classe] - countAngle[type_strucutre]["4.5"][str(keyAngle)][classe] - countAngle[type_strucutre]["4.0"][str(keyAngle)][classe] - countAngle[type_strucutre]["3.5"][str(keyAngle)][classe] - countAngle[type_strucutre]["3.0"][str(keyAngle)][classe] - countAngle[type_strucutre]["2.5"][str(keyAngle)][classe] - countAngle[type_strucutre]["2.0"][str(keyAngle)][classe]
                 except : pass
                 
                 
@@ -308,17 +312,17 @@ def countAngleType(count):
 
 def listDistance (distanceMax):
     
-    list = []
+    list_out = []
     distance = 2.0
     while distance <= distanceMax : 
         strDistance = str("%.1f" % distance)
-        list.append(strDistance)
+        list_out.append(strDistance)
         distance = distance + 0.5
-    return list
+    return list_out
 
 
 def listStructure ():
-    return ["Primary", "Secondary", "Tertiary", "Diamine", "Guanidium","Imidazole","Pyridine"]
+    return ["Primary", "Secondary", "Tertiary", "Diamine", "Guanidium", "Imidazole", "Pyridine"]
     
 
 def listAtLeastOneStudy(): 
@@ -331,6 +335,9 @@ def listGlobalStudy():
     return ['residue', 'proportionAtom', 'angleVector', 'ligand', 'ResidueAllAtom', 'distanceOx', 'byAA', 'H2O', 'atom', 'proportionType']
     
 def selectionAngle():
+    """
+    Impose angle in different structure
+    """
     angleStruct = {}
     
     angleStruct["Primary"] = {}

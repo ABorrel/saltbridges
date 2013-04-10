@@ -6,12 +6,12 @@
 grapheCN = function(file, base){
 	data = read.table(file)
 
-	
-	brk = seq(0,10,0.01)
+	#print (data) 	
+
+	brk = seq(0,max(data[,1]),0.01)
 
 	png(filename=paste(file,".png",sep = ""))
-
-	hist(data[,1], xlab ="Length of bond C,N (Å)", ylab = "Number of occurences", breaks=brk, xlim=c(1,2), main=paste("Distribution of lengths for C,N bonds","\n", base," dataset",sep = ""),las=1, freq=T)
+	hist(data[,1], xlab ="Length of bond C,N (Å)", ylab = "Number of occurences", xlim=c(1,2), breaks = brk, main=paste("Distribution of lengths for C,N bonds","\n", base," dataset",sep = ""),las=1, freq=T)
 	dev.off()
 
 }
@@ -43,6 +43,10 @@ args <- commandArgs(TRUE)
 file = args[1]
 type = args[2]
 base = args[3]
+
+
+print (file)
+print (type)
 
 if (type == "CN"){
 	grapheCN(file, base)

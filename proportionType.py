@@ -9,7 +9,7 @@ def globalNeighbors (listAtom, count):
     for atom in listAtom:
         nbNeighbor = numberNeigthbor(atom["neighbors"])
         for neighbor in atom["neighbors"]:
-            #print count
+            # print count
             count["allNumberNeighbors"][neighbor["classification"]] = count["allNumberNeighbors"][neighbor["classification"]] + 1
             if not nbNeighbor in count.keys():
                 count[nbNeighbor] = structure.countClassificationAtoms()

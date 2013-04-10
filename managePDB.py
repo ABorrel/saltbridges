@@ -5,33 +5,30 @@ from os import makedirs
 from os.path import isfile
 from urllib import urlretrieve
 
-import repertory
 import loadFile
 
 
-def formatFilePDB():
+def formatFilePDB(dir_PDB):
     """Manage global PDB database
     manage PDB database, decompress the file and move and rename file with .pdb extension"""
-
-    rep = repertory.openPdbFile()
-    listRepertory = listdir(rep)
+    listRepertory = listdir(dir_PDB)
     
     for subRepertory in listRepertory :
-        filesPDB = listdir(rep + subRepertory)   
+        filesPDB = listdir(dir_PDB + subRepertory)   
         for file in filesPDB :
-            pathFile = rep + subRepertory +'/'+ file
+            pathFile = dir_PDB + subRepertory + '/' + file
             cmdDecompress = "gunzip " + pathFile
-            system(cmdDecompress)####run decompress
+            system(cmdDecompress)  ####run decompress
             pathFile = pathFile[0:-3]
             namePDBFile = pathFile[-8:-4] + '.pdb'
             pathFileOut = pathFile[0:-14] + namePDBFile
             cmdMove = "mv " + pathFile + ' ' + pathFileOut
-            system(cmdMove)####run move file
+            system(cmdMove)  ####run move file
     
     for repertoryPDB in listRepertory:
-        repertoryPDB = rep + repertoryPDB
+        repertoryPDB = dir_PDB + repertoryPDB
         cmdRemove = "rm -r " + repertoryPDB
-        system(cmdRemove)####run remove repertory
+        system(cmdRemove)  ####run remove repertory
 
 
 
@@ -44,13 +41,12 @@ def appendExtention(rep):
         cmd = "mv " + rep + file + " " + rep + file + ".pdb"
         system(cmd)
 
-def retrievePDBFile(fileDataset):
+def retrievePDBFile(fileDataset, dir_PDB):
     ligandWithPDB = loadFile.resultFilterPDBLigand(fileDataset)
-    repPDBFile = repertory.openPdbFile()
     
     for ligandPDB in ligandWithPDB :
         for pdbName in ligandPDB["PDB"] :
-            pdbFilePath = repPDBFile + pdbName + ".pdb"
+            pdbFilePath = dir_PDB + pdbName + ".pdb"
             if not isfile(pdbFilePath) :
                 adressePDB = "http://www.pdb.org/pdb/files/" + pdbName + ".pdb"
                 try:

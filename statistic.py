@@ -8,18 +8,19 @@ import runScriptR
 import searchPDB
 import structure
 import writeFile
-import repertory
 import tool
 
 
 
 
-def parseDataSet(dataset):
+def parseDataSet(path_file_dataset):
     """Statistic of dataset, repetition ligand in PDB file or in PDB
     out : file with count of repetition in file or files"""
 
-    start, logFile = log.initAction("Parsing dataset, ligand representation " + str(dataset))
-    dataSetGlobal = loadFile.resultFilterPDBLigand(dataset)
+    # log 
+    start, logFile = log.initAction("Parsing dataset, ligand representation " + str(path_file_dataset))
+    
+    dataSetGlobal = loadFile.resultFilterPDBLigand(path_file_dataset)
     print dataSetGlobal, "data"
 
     countAmine = structure.countGroupDataset()
@@ -27,7 +28,7 @@ def parseDataSet(dataset):
     listPDB = []
     for element in dataSetGlobal:
         count = structure.countInstanceDataSet()
-        #print element["name"]
+        # print element["name"]
         logFile.write(element["name"] + "\n")
         count["name"] = element["name"]
         count["Number PDB"] = len(element["PDB"])
@@ -46,27 +47,27 @@ def parseDataSet(dataset):
         
         for struct in list_struct:
             if struct == "Guanidium" :
-                flag_guanidium = flag_guanidium +1 
+                flag_guanidium = flag_guanidium + 1 
                 
             elif struct == "Diamine" :
-                flag_diamine = flag_diamine +1 
+                flag_diamine = flag_diamine + 1 
                 
             elif struct == "Pyridine" :
-                flag_pyridine = flag_pyridine +1 
+                flag_pyridine = flag_pyridine + 1 
                 
             elif struct == "Imidazole" :
-                flag_imidazole = flag_imidazole +1 
+                flag_imidazole = flag_imidazole + 1 
             else :
                 countAmine[struct] = countAmine[struct] + count["Number PDB"]
             
-        countAmine["Imidazole"] = countAmine["Imidazole"] + int(flag_imidazole/2)*count["Number PDB"]
-        countAmine["Pyridine"] = countAmine["Pyridine"] + int(flag_pyridine/2)*count["Number PDB"]
-        countAmine["Diamine"] = countAmine["Diamine"] + int(flag_diamine/2)*count["Number PDB"] 
-        countAmine["Guanidium"] = countAmine["Guanidium"] + (int(flag_guanidium/2)*count["Number PDB"])
+        countAmine["Imidazole"] = countAmine["Imidazole"] + int(flag_imidazole / 2) * count["Number PDB"]
+        countAmine["Pyridine"] = countAmine["Pyridine"] + int(flag_pyridine / 2) * count["Number PDB"]
+        countAmine["Diamine"] = countAmine["Diamine"] + int(flag_diamine / 2) * count["Number PDB"] 
+        countAmine["Guanidium"] = countAmine["Guanidium"] + (int(flag_guanidium / 2) * count["Number PDB"])
         listCount.append(count)
         
     numberPDB = len(listPDB)
-    writeFile.parsingDataSet(listCount, countAmine, numberPDB, dataset)
+    writeFile.parsingDataSet(listCount, countAmine, numberPDB, path_file_dataset)
     log.endAction("Parsing dataset, ligand representation", start, logFile)
 
 
@@ -251,33 +252,46 @@ def countAtLeastOneListStudy (amine, count, ListType, globalIndex):
                 count[keyName][keyName] = count[keyName][keyName] + 1
 
 
-def neighborsAmine(distanceMax, datasetFile, pdbOption, angleOption):
-
-    start, logFile = log.initAction("search neighbors " + str(datasetFile))
-    listLigandsInPDB = loadFile.resultFilterPDBLigand(datasetFile)
-    nbLigand = len(listLigandsInPDB)
+def neighborsAmine(distanceMax, path_dataset_file, one_ligandby_complexe, angleOption, dir_result):
+    """
+    Search close environment of different amines
+    arg: -> distance max 
+         -> file with dataset
+    """
     
-    ###Count Structure
-    countStruct = structure.countGlobalAmine(distanceMax) #global structure count
+    start, logFile = log.initAction("search neighbors " + str(path_dataset_file))
+    list_ligands_in_PDB = loadFile.resultFilterPDBLigand(path_dataset_file)
+    nbLigand = len(list_ligands_in_PDB)
+    #print list_ligands_in_PDB
+    
+    # ##Count Structure
+    countStruct = structure.countGlobalAmine(distanceMax)  # global structure count
     countAtLeastOneGlobal = structure.countAtLeastOneGlobalStruct(distanceMax)
     
-    ###Write summary file
+    # ##Write summary file
     filesAmine = writeFile.openFileAmine()
-    filesWithoutAtLeastOne = writeFile.openFilesWithoutSummary(distanceMax)
+    filesWithoutAtLeastOne = writeFile.openFilesWithoutSummary(distanceMax, dir_result)
     
-    i = 0
+    # pass for check different value
+    i = 1274
+    nbLigand = 1275
+    
+    # inialization
+    #i = 0
+    
     while i < nbLigand :
-        print "Ligand: " + str(listLigandsInPDB[i]["name"]) + " " + str(i)
-        logFile.write("Ligand: " + str(listLigandsInPDB[i]["name"]) + " " + str(i) + "\n")
-        nbPDB = len(listLigandsInPDB[i]["PDB"])
-        if pdbOption == 1 : 
-            nbPDB = 1
+        print "Ligand: " + str(list_ligands_in_PDB[i]["name"]) + " " + str(i) + " " + str(nbLigand)
+        logFile.write("Ligand: " + str(list_ligands_in_PDB[i]["name"]) + " " + str(i) + "\n")
+        nbPDB = len(list_ligands_in_PDB[i]["PDB"])
+        if one_ligandby_complexe == 1 : 
+            nbPDB = 1 # take first complexe without selection
             
         j = 0
         while j < nbPDB : 
-            ligandPDB = loadFile.ligandInPDB(listLigandsInPDB[i]["PDB"][j], listLigandsInPDB[i]["name"])
-            globalAtom = searchPDB.globalNeighbors(distanceMax, ligandPDB, listLigandsInPDB[i]["PDB"][j])
-            amine = searchPDB.interestGroup(distanceMax, ligandPDB, listLigandsInPDB[i]["PDB"][j], angleOption)
+            list_atom_ligand = loadFile.ligandInPDB(list_ligands_in_PDB[i]["PDB"][j], list_ligands_in_PDB[i]["name"])
+            #print list_atom_ligand
+            globalAtom = searchPDB.globalNeighbors(distanceMax, list_atom_ligand, list_ligands_in_PDB[i]["PDB"][j])
+            amine = searchPDB.interestGroup(distanceMax, list_atom_ligand, list_ligands_in_PDB[i]["PDB"][j], angleOption)
 
             distanceAnalysisOxygen(amine, countStruct[str(distanceMax)]["distanceOx"])
             atom(amine, countStruct[str(distanceMax)]["atom"])
@@ -323,12 +337,12 @@ def neighborsAmine(distanceMax, datasetFile, pdbOption, angleOption):
 
     writeFile.closeFileAmine(filesAmine)
     writeFile.closeFilesWithoutSummary(filesWithoutAtLeastOne)
-    writeFile.countGlobalAmine(distanceMax, countStruct)
-    writeFile.resultAtLeastOneGlobal(countAtLeastOneGlobal, distanceMax)
+    writeFile.countGlobalAmine(distanceMax, countStruct, dir_result)
+    writeFile.resultAtLeastOneGlobal(countAtLeastOneGlobal, distanceMax, dir_result)
 
 
 
-    log.endAction("Statistical analysis neighbors " + str(datasetFile), start, logFile)
+    log.endAction("Statistical analysis neighbors " + str(path_dataset_file), start, logFile)
 
 
 
@@ -398,6 +412,6 @@ def angle(amine, countAngle):
             i = 0
             while i < nbNeighbor:
                 countAngle[type][nitrogen["neighbors"][i]["classification"]]["distance"].append(nitrogen["neighbors"][i]["distance"])
-                #for angle in nitrogen["neighbors"][i]["angle"] : 
+                # for angle in nitrogen["neighbors"][i]["angle"] : 
                 countAngle[type][nitrogen["neighbors"][i]["classification"]]["angles"].append(nitrogen["neighbors"][i]["angle"])
                 i = i + 1

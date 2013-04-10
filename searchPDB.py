@@ -5,7 +5,6 @@ import calcul
 import loadFile
 import log
 import parsing
-import repertory
 import retrieveAtom
 import structure
 import tool
@@ -44,14 +43,13 @@ def interestStructure (listAtomLigand):
     return structureFound
 
 
-def ligands():
+def ligands(rep_database, path_dir):
     '''search ligands in PDB database
     out : list of ligands with PDB files associated'''
 
     start, fileLog = log.initAction("Search ligands in PDB")
 
-    repIn = repertory.openPdbFile()
-    listPDB = listdir(repIn)
+    listPDB = listdir(rep_database)
     listPDBLigand = []
 
     for PDBFile in listPDB:
@@ -69,8 +67,9 @@ def ligands():
 
         listPDBLigand.append(ligandInPDB)
 
-    writeFile.resultLigandInPDB(listPDBLigand)
+    path_file = writeFile.resultLigandInPDB(listPDBLigand, path_dir)
     log.endAction("Search ligands in PDB", start, fileLog)
+    return path_file
 
 
 
@@ -302,7 +301,7 @@ def riboseFromADPRiboseAtom4 (serial, listAtomLigand, serialInit, serialPrevious
     
 ##########Search Imidazole###############
 
-def imidazole(listAtomConnectNitrogen, listAtomLigand):
+def imidazole(listAtomConnectNitrogen,list_atom_ligand):
     """search imidazole global
     in: list atom connected of nitrogen, list atom ligand
     out: boolean"""
@@ -310,14 +309,14 @@ def imidazole(listAtomConnectNitrogen, listAtomLigand):
     amine = toolSubstructure.matrixElement(listAtomConnectNitrogen)
     
     if amine == ["N", "C", "C"]:
-        groupAtomC1, conect_C1 = retrieveAtom.atomConnect(listAtomLigand, int (listAtomConnectNitrogen[0]["connect"][1]))
-        groupAtomC2, conect_C2 = retrieveAtom.atomConnect(listAtomLigand, int (listAtomConnectNitrogen[0]["connect"][2]))
+        groupAtomC1, conect_C1 = retrieveAtom.atomConnect(list_atom_ligand, int (listAtomConnectNitrogen[0]["connect"][1]))
+        groupAtomC2, conect_C2 = retrieveAtom.atomConnect(list_atom_ligand, int (listAtomConnectNitrogen[0]["connect"][2]))
         if conect_C1 == ["C", "C", "N", "N"] or conect_C1 == ["C", "N", "N", "C"] or conect_C1 == ["C", "N", "C", "N"] or conect_C1 == ["C", "N", "N"]:
-            if imidazoleATOM3(groupAtomC1, listAtomConnectNitrogen[0]["serial"], listAtomLigand) == 1:
+            if imidazoleATOM3(groupAtomC1, listAtomConnectNitrogen[0]["serial"], list_atom_ligand) == 1:
                 return 1
 
         if conect_C2 == ["C", "C", "N", "N"] or conect_C2 == ["C", "N", "N", "C"] or conect_C2 == ["C", "N", "C", "N"] or conect_C2 == ["C", "N", "N"]:
-            if imidazoleATOM3(groupAtomC2, listAtomConnectNitrogen[0]["serial"], listAtomLigand) == 1:
+            if imidazoleATOM3(groupAtomC2, listAtomConnectNitrogen[0]["serial"], list_atom_ligand) == 1:
                 return 1
 
     return 0
@@ -358,9 +357,9 @@ def imidazoleATOM4(listAtomNitrogen, serialAtomInit, listAtomLigand):
             else:
                 groupAtomC3, conect_C3 = retrieveAtom.atomConnect(listAtomLigand, atom["serial"])
 
-    if  imidazoleATOM5( conect_C3, serialAtomInit, listAtomLigand) == 1:
+    if  imidazoleATOM5(conect_C3, serialAtomInit, listAtomLigand) == 1:
         return 1
-    if imidazoleATOM5( conect_C4, serialAtomInit, listAtomLigand) == 1:
+    if imidazoleATOM5(conect_C4, serialAtomInit, listAtomLigand) == 1:
         return 1
 
     return 0
@@ -405,62 +404,65 @@ def imidazoleATOM5(connectMatrixElement, serialAtomInit, listAtomLigand):
 ######################################################################################################################
 
 
-def interestGroup (distanceMax, listAtomLigand, namePDB, angleOption):
+def interestGroup (distanceMax, list_atom_ligand, namePDB, angleOption):
     """Search different amine
     in : ligands in namePDB
     out : major nitrogen in the group of different structures"""
     
+    
     amine = structure.amine()
-    listSerialNitrogen = listNitrogen(listAtomLigand)
+    listSerialNitrogen = listNitrogen(list_atom_ligand)
     atomImidazole = []
     atomGuanidium = []
     atomDiamine = []
     for serialNitrogen in listSerialNitrogen:
-        listAtomConnectNitrogen, conect = retrieveAtom.atomConnect(listAtomLigand, serialNitrogen)
-        if imidazole(listAtomLigand, listAtomConnectNitrogen[0]) == 1:
-            atom = buildAtom(distanceMax, listAtomConnectNitrogen[0], namePDB, "Imidazole", listAtomLigand)
+        listAtomConnectNitrogen, conect = retrieveAtom.atomConnect(list_atom_ligand, serialNitrogen)
+        #print listAtomConnectNitrogen
+        if imidazole(listAtomConnectNitrogen, list_atom_ligand) == 1:
+            #print "INNNN"
+            atom = buildAtom(distanceMax, listAtomConnectNitrogen[0], namePDB, "Imidazole", list_atom_ligand)
             if angleOption == 1 : 
                 checkAngleInSearchNeighbor(atom, "Imidazole")
             if len(atom["neighbors"]) != 0 : 
                 atomImidazole.append(atom)
-        elif guanidium(listAtomConnectNitrogen, listAtomLigand) == 1:
-            atom = buildAtom(distanceMax, listAtomConnectNitrogen[0], namePDB, "Guanidium", listAtomLigand)
+        elif guanidium(listAtomConnectNitrogen, list_atom_ligand) == 1:
+            atom = buildAtom(distanceMax, listAtomConnectNitrogen[0], namePDB, "Guanidium", list_atom_ligand)
             if angleOption == 1 : 
                 checkAngleInSearchNeighbor(atom, "Guanidium")
             if len(atom["neighbors"]) != 0 : 
                 atomGuanidium.append(atom)
-        elif guanidiumNitrogenCentral(listAtomConnectNitrogen, listAtomLigand) == 1:
-            atom = buildAtom(distanceMax, listAtomConnectNitrogen[0], namePDB, "Guanidium", listAtomLigand)
+        elif guanidiumNitrogenCentral(listAtomConnectNitrogen, list_atom_ligand) == 1:
+            atom = buildAtom(distanceMax, listAtomConnectNitrogen[0], namePDB, "Guanidium", list_atom_ligand)
             if angleOption == 1 : 
                 checkAngleInSearchNeighbor(atom, "Guanidium")
             if len(atom["neighbors"]) != 0 : 
                 atomGuanidium.append(atom)
-        elif diAmine(listAtomConnectNitrogen, listAtomLigand) == 1:
-            atom = buildAtom(distanceMax, listAtomConnectNitrogen[0], namePDB, "Diamine", listAtomLigand)
+        elif diAmine(listAtomConnectNitrogen, list_atom_ligand) == 1:
+            atom = buildAtom(distanceMax, listAtomConnectNitrogen[0], namePDB, "Diamine", list_atom_ligand)
             if angleOption == 1 : 
                 checkAngleInSearchNeighbor(atom, "Diamine")
             if len(atom["neighbors"]) != 0 : 
                 atomDiamine.append(atom)
-        elif pyridine(listAtomConnectNitrogen, listAtomLigand) == 1:
-            atom = buildAtom(distanceMax, listAtomConnectNitrogen[0], namePDB, "Pyridine", listAtomLigand)
+        elif pyridine(listAtomConnectNitrogen, list_atom_ligand) == 1:
+            atom = buildAtom(distanceMax, listAtomConnectNitrogen[0], namePDB, "Pyridine", list_atom_ligand)
             if angleOption == 1 :
                 checkAngleInSearchNeighbor(atom, "Pyridine")
             if len(atom["neighbors"]) != 0 : 
                 amine["Pyridine"].append(atom)
-        elif cn(listAtomConnectNitrogen, listAtomLigand) == 1:
-            atom = buildAtom(distanceMax, listAtomConnectNitrogen[0], namePDB, "Primary", listAtomLigand)
+        elif cn(listAtomConnectNitrogen, list_atom_ligand) == 1:
+            atom = buildAtom(distanceMax, listAtomConnectNitrogen[0], namePDB, "Primary", list_atom_ligand)
             if angleOption == 1 :
                 checkAngleInSearchNeighbor(atom, "Primary")
             if len(atom["neighbors"]) != 0 : 
                 amine["Primary"].append(atom)
-        elif cnc(listAtomConnectNitrogen, listAtomLigand) == 1:
-            atom = buildAtom(distanceMax, listAtomConnectNitrogen[0], namePDB, "Secondary", listAtomLigand)
+        elif cnc(listAtomConnectNitrogen, list_atom_ligand) == 1:
+            atom = buildAtom(distanceMax, listAtomConnectNitrogen[0], namePDB, "Secondary", list_atom_ligand)
             if angleOption == 1 :
                 checkAngleInSearchNeighbor(atom, "Secondary")
             if len(atom["neighbors"]) != 0 : 
                 amine["Secondary"].append(atom)
-        elif cncc(listAtomConnectNitrogen, listAtomLigand) == 1:
-            atom = buildAtom(distanceMax, listAtomConnectNitrogen[0], namePDB, "Tertiary", listAtomLigand)
+        elif cncc(listAtomConnectNitrogen, list_atom_ligand) == 1:
+            atom = buildAtom(distanceMax, listAtomConnectNitrogen[0], namePDB, "Tertiary", list_atom_ligand)
             if angleOption == 1 :
                 checkAngleInSearchNeighbor(atom, "Tertiary")
             if len(atom["neighbors"]) != 0 : 
@@ -468,17 +470,17 @@ def interestGroup (distanceMax, listAtomLigand, namePDB, angleOption):
     
     
     if len(atomGuanidium) > 0 : 
-        regroupAtomNeighborGuanidium(atomGuanidium, amine["Guanidium"], listAtomLigand)
+        regroupAtomNeighborGuanidium(atomGuanidium, amine["Guanidium"], list_atom_ligand)
     if len(atomImidazole) > 0 : 
-        regroupAtomNeighbor(atomImidazole, amine["Imidazole"], listAtomLigand)
+        regroupAtomNeighbor(atomImidazole, amine["Imidazole"], list_atom_ligand)
     if len(atomDiamine) > 0 : 
-        regroupAtomNeighbor(atomDiamine, amine["Diamine"], listAtomLigand)
+        regroupAtomNeighbor(atomDiamine, amine["Diamine"], list_atom_ligand)
     
     return amine
 
 #######regroup neighbors case of imidazole, guanidium and diamine###########
 
-def regroupAtomNeighborGuanidium(listAtomRegroup, amine, listAtomLigand): ##A revoir tres tres lourds en temps 
+def regroupAtomNeighborGuanidium(listAtomRegroup, amine, listAtomLigand):  # #A revoir tres tres lourds en temps 
     """Regroup neighbors for 3 nitrogen atoms guanidium
     in: list atom finds in search neighbors, count structure amine, list atom of ligand in pdb
     out: modification amine structure"""
@@ -695,7 +697,7 @@ def listNitrogen(groupAtom):
 
 
 def checkAngleInSearchNeighbor(atomRetrieve, typeStructStudy):
-    """Check for every neighbors of atom retrieve the angleVector
+    """Check for every neighbors of atom retrieve the angle
     in: atomRetrieve
     out: atomRetrieve modified"""
     
@@ -704,8 +706,8 @@ def checkAngleInSearchNeighbor(atomRetrieve, typeStructStudy):
         
     i = 0
     while i < nbNeighbors :
-        
-        for angleVector in atomRetrieve["neighbors"][i]["angleVector"] : 
+       # print atomRetrieve["neighbors"]
+        for angleVector in atomRetrieve["neighbors"][i]["angle"] : 
             if angleVector < conditionAngle[typeStructStudy]["INF"] :
                 del atomRetrieve["neighbors"][i]
                 nbNeighbors = nbNeighbors - 1
@@ -715,7 +717,7 @@ def checkAngleInSearchNeighbor(atomRetrieve, typeStructStudy):
                 nbNeighbors = nbNeighbors - 1
                 break
             
-        i = i +1
+        i = i + 1
                 
     
 
@@ -723,11 +725,11 @@ def checkAngleInSearchNeighbor(atomRetrieve, typeStructStudy):
 
 ##################################Serine Protease #############################################
 
-#def cycle(atomInitial, firstPosition, atomLigand, nbTest, listRetrieve, serialTest):
+# def cycle(atomInitial, firstPosition, atomLigand, nbTest, listRetrieve, serialTest):
 #
 #    #print nbTest
 #    if atomInitial == 0 or len(atomInitial["connect"]) < 3 or atomInitial["serial"] == serialTest : 
-##        print "OUT1"
+# #        print "OUT1"
 #        del listRetrieve
 #        return 0, []
 #    else : 
@@ -739,7 +741,7 @@ def checkAngleInSearchNeighbor(atomRetrieve, typeStructStudy):
 #            appendAtomConnect(retrieveAtom.serial(firstPosition, atomLigand), listRetrieve, atomLigand)
 #            return 1 , listRetrieve
 #        else : 
-##            print "OUT2"
+# #            print "OUT2"
 #            del listRetrieve
 #            return 0 , []
 #    else : 
@@ -762,11 +764,11 @@ def checkAngleInSearchNeighbor(atomRetrieve, typeStructStudy):
 #
 #
 #
-#def cycle2(atomInitial, firstPosition, atomLigand, nbTest, strSerialList, serialTest):
+# def cycle2(atomInitial, firstPosition, atomLigand, nbTest, strSerialList, serialTest):
 #
 #    #print nbTest
 #    if atomInitial == 0 or len(atomInitial["connect"]) < 3 or atomInitial["serial"] == serialTest : 
-##        print "OUT1"
+# #        print "OUT1"
 #        return 0, ""
 #    else : 
 #        strSerialList = strSerialList + "_" + str(atomInitial["serial"])
@@ -775,7 +777,7 @@ def checkAngleInSearchNeighbor(atomRetrieve, typeStructStudy):
 #        if firstPosition in atomInitial["connect"] [1:] and firstPosition != serialTest:
 #            return 1 , strSerialList
 #        else : 
-##            print "OUT2"
+# #            print "OUT2"
 #            return 0 , ""
 #    else : 
 #        #print "in"
@@ -807,7 +809,7 @@ def appendAtomConnect(atom, listRetrive, atomLigand):
                 listRetrive.append(atom)
 
 
-#def checkCycle (atom, firstPosition, lastPosition, n, atomLigand):
+# def checkCycle (atom, firstPosition, lastPosition, n, atomLigand):
 #    
 #    if firstPosition in atom["connect"][:1] : 
 #        return n

@@ -2,25 +2,26 @@ import tool
 from copy import deepcopy
 
 
-def serial(serial, listAtom) :
+def serial(serial, list_atom) :
     """For a atom id search atom dictionnary
     in: serial atom and list atoms
     out: type of atom"""
 
-    for Atom in listAtom :
-        if Atom["serial"] == serial :
-            return Atom
+    #print list_atom
+    for atom in list_atom :
+        if atom["serial"] == serial :
+            return atom
 
     return 0
 
 
 
-def atomConnect (listAtomLigand, serialOfAtom):
+def atomConnect (list_atom_ligand, serial_atom):
     """For a serial atom found the connect atoms
     in: list atom ligand, serial atom
     out: list atoms connect and connect matrix element"""
 
-    atomN = serial(serialOfAtom, listAtomLigand)
+    atomN = serial(serial_atom, list_atom_ligand)
     conect = []
     listAtom = []
 
@@ -30,12 +31,12 @@ def atomConnect (listAtomLigand, serialOfAtom):
     matrixConect = atomN["connect"]
 
     for elementMatrixConect in matrixConect:
-        atom = (serial(int(elementMatrixConect), listAtomLigand))
+        atom = (serial(int(elementMatrixConect), list_atom_ligand))
         if atom != 0:
             listAtom.append(atom)
             conect.append(atom["element"])
         else :
-            conect.append("out")########################################### case out ligand
+            conect.append("out")  ########################################### case out ligand
             
     tool.dellH(conect)
     return listAtom, conect
