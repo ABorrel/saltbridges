@@ -8,7 +8,7 @@ import log
 from tool import checkFileEmpty as empty
 
 
-def histStat(distance, type, file, typeStudyStruct, logFile):
+def histStat(distance, type_studie, file, type_struct, logFile):
     """Plot count statistic
     in: distance for legend plot, type histogram (coplar or length), file with data, type of study, logFile
     out: CMD in terminal -> plot """
@@ -16,29 +16,27 @@ def histStat(distance, type, file, typeStudyStruct, logFile):
     if empty(file) == 1 : 
         return
     rep = repertory.scriptR()
-    cmd = rep + "barplotQuantity.R " + file + " " + str("%.2f" % distance) + " " + type + " " + typeStudyStruct
+    cmd = rep + "barplotQuantity.R " + file + " " + str("%.2f" % distance) + " " + type_studie + " " + type_struct
+    print cmd
     logFile.write(cmd + "\n")
     system(cmd)
 
 
-def histAA(distance, aminoAcid, file, logFile, dir_out):
+def histAA(distance, aminoAcid, path_file, logFile):
     """Plot file count amino acid proportion
     in: distance for legend plot, type histogram (coplar or length), file with data, type of study, logFile
     out: CMD in terminal -> plot """
 
-    if empty(file) == 1 : 
+    if empty(path_file) == 1 : 
         return
     rep = repertory.scriptR()
-    fileGlobal = dir_out + "Global" + aminoAcid
-    cmd = rep + "barplotQuantityAA.R " + file + " " + str("%.2f" % distance) + " " + aminoAcid + " " + str("%.2f" % distance)
-    cmdGlobal = rep + "barplotQuantityAA.R " + fileGlobal + " " + str("%.2f" % distance) + " " + aminoAcid + " " + str("%.2f" % distance)
+    cmd = rep + "barplotQuantityAA.R " + path_file + " " + str("%.2f" % distance) + " " + aminoAcid + " " + str("%.2f" % distance)
+    #print cmd
     logFile.write(cmd + "\n")
-    logFile.write(cmdGlobal + "\n")
     system(cmd)
-    system(cmdGlobal)
 
 
-def plotDistanceOx(logFile, rep_out):
+def plotDistanceOx(rep_out, logFile):
     """Plot list distance
     in: distance for legend plot, type histogram (coplar or length), file with data, type of study, logFile
     out: CMD in terminal -> plot """
@@ -52,7 +50,7 @@ def plotDistanceOx(logFile, rep_out):
     system(cmd)
 
 
-def globalStat(distanceAtoms, distanceResidues, dir_out):
+def globalStat(distanceAtoms, distanceResidues, dir_in):
     """MAIN draw plot
     in: distance Atom study, distance Residues study"""
 
@@ -62,42 +60,43 @@ def globalStat(distanceAtoms, distanceResidues, dir_out):
     listAminoAcid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS"]
 
 
-    for element in listStruct:
-        repStruct = dir_out + element + "/"
-        for type in listType:
-            file = repStruct + "stat" + type + element
-            if type == "atom":
-                histStat(distanceAtoms, type, file, logFile)
-            elif type == "Residues":
+    for type_struct in listStruct:
+        repStruct = repertory.typeSubStructure(dir_in, type_struct)
+        for type_studies in listType:
+            path_file = repStruct + "stat" + type_studies + type_struct
+            if type_studies == "Atoms":
+                histStat(distanceAtoms, type_studies, path_file, type_struct, logFile)
+            elif type_studies == "Residues":
                 distance = 2.00
                 while distance <= distanceResidues:
-                    fileTrace = file + str("%.2f" % distance)
-                    histStat(distance, type, fileTrace, element, logFile)
-                    histProportion(distance, logFile)
-                    histProportionTypeNeighbors(distance, logFile)
+                    fileTrace = path_file + str("%.2f" % distance)
+                    histStat(distance, type_studies, fileTrace, type_struct, logFile)
+                    histProportion(distance, dir_in, logFile)
+                    histProportionTypeNeighbors(distance, dir_in, logFile)
 
                     distance = distance + 0.5
 
             else:
-                histStat(distanceResidues, type, file, element, logFile)
+                histStat(distanceResidues, type_studies, path_file, type_struct, logFile)
+            for aminoAcid in listAminoAcid:
+                path_file_aa = dir_in + type_struct + "/aminoAcid/" + type_struct + aminoAcid
+                histAA(distanceResidues, aminoAcid, path_file_aa, logFile)
 
         for aminoAcid in listAminoAcid:
-            repAA = repertory.aminoAcid(element, dir_out)
-            path_file = repAA + element + aminoAcid
+            path_file = dir_in + "AminoAcidGlobal/Global" + aminoAcid
             histAA(distanceResidues, aminoAcid, path_file, logFile)
 
-    plotDistanceOx(logFile)
-    histGlobalProportion(logFile)
-    histGlobalResidue(logFile)
-    histProportionType(distanceResidues, logFile)
-    histAtleastOne(distanceResidues, logFile)  ###################################3
-    plotAngle(distanceResidues, logFile)
-    plotAngle(distanceResidues, logFile)
+    plotDistanceOx(repertory.resultDistance(dir_in), logFile)
+    ################################################## histGlobalProportion(dir_in, logFile)
+    histGlobalResidue(dir_in, logFile)
+    histProportionType(distanceResidues, dir_in + "globalProportionType/", logFile)
+    histAtleastOne(distanceResidues, dir_in, logFile)  ###################################3
+    plotAngle(distanceResidues, dir_in, logFile)
     
     log.endAction("Run R Scripts", timeStart, logFile)
 
 
-def histProportionType(distanceMax, logFile, dir_out):
+def histProportionType(distanceMax, dir_out, logFile):
     """Draw proportion type graphe
     in: Distance Max study, log file
     out: excecute CMD -> draw plot"""
@@ -108,31 +107,32 @@ def histProportionType(distanceMax, logFile, dir_out):
     
     
     cmd = repScript + "barplotPercentClasse.R " + str(len(listDistance)) + " " + dir_out
+    print cmd
     logFile.write(cmd + "\n")
     system (cmd)
 
     
-def histProportionTypeNeighbors(distance, logFile, dir_out):
+def histProportionTypeNeighbors(distance, dir_out, logFile):
     """Draw proportion type neighbor
-    in: Distance Max study, log file
+    in: Distance Max study, log file_data
     out: excecute CMD -> draw plot"""
     
     listStruct = structure.listStructure()
     listStruct.append("GlobalAmine")
     listStruct.append("Global")
     for type in listStruct : 
-        file = dir_out + "proportionType" + type + str("%.2f" % distance)
-        if empty(file) == 1 : 
+        file_data = dir_out + "/globalProportionType/" + "proportionType" + type + str("%.2f" % distance)
+        if empty(file_data) == 1 : 
             continue
-        cmd = repertory.scriptR() + "barplotTypeNumberOfneighbors.R " + dir_out + "proportionType" + type + str("%.2f" % distance) + " " + type + " " + str("%.2f" % distance)
+        cmd = repertory.scriptR() + "barplotTypeNumberOfneighbors.R " + file_data + " " + type + " " + str("%.2f" % distance)
         
         logFile.write(cmd + "\n")
         system(cmd)
     
     
-def histProportion (distance, logFile, dir_out):
+def histProportion (distance, dir_in, logFile):
     """Draw proportion type neighbor
-    in: Distance Max study, log file
+    in: Distance Max study, log path_file
     out: excecute CMD -> draw plot"""
     
     repScript = repertory.scriptR()
@@ -142,16 +142,17 @@ def histProportion (distance, logFile, dir_out):
 
 
     for type in listType:
-        file = dir_out + "proportionAtom" + type + str("%.2f" % distance)
-        if empty(file) == 1 : 
+        path_file = dir_in + "/globalProportionAtom/"+ "proportionAtom" + type + str("%.2f" % distance)
+        if empty(path_file) == 1 : 
             continue
-        cmd = repScript + "barplotQuantityGlobalAnalysis.R " + type + " " + file + " " + str(distance)
+        cmd = repScript + "barplotQuantityGlobalAnalysis.R " + type + " " + path_file + " " + str(distance)
+        print cmd
         system(cmd)
 
         logFile.write(cmd + "\n")
 
 
-def histGlobalProportion(logFile, dir_out):
+def histGlobalProportion(dir_out, logFile):
     """Proportion for each atom
     in: log file
     out: execute -> CMD
@@ -161,12 +162,12 @@ def histGlobalProportion(logFile, dir_out):
     file = dir_out + "GlobalproportionCounterIonGlobal"
     if empty(file) == 1 : 
         return
-    cmd = repScript + "barplotProportionGlobal.R " + file
+    cmd = repScript + "barplotProportionGlobalRef.R " + file
     logFile.write(cmd + "\n")
     system (cmd)
 
 
-def histGlobalResidue(logFile, dir_out):
+def histGlobalResidue(dir_out, logFile):
     """Draw barplot proportion residue
     in: log file
     out: execute CMD"""
@@ -185,6 +186,8 @@ def histGlobalResidue(logFile, dir_out):
     cmd2 = repertory.scriptR() + "barplotResidueDistance.R " + dir_out + "globalResidueAllAtoms" + " all"
     logFile.write(cmd2 + "\n")
     system(cmd2)
+    print cmd
+    print cmd2
 
 
 def histDistance(nameFile, type_distance, base, dir_out):
@@ -201,7 +204,7 @@ def histDistance(nameFile, type_distance, base, dir_out):
     system(cmd)
 
 
-def histAtleastOne(distanceMax, logFile, dir_out):
+def histAtleastOne(distanceMax, dir_out, logFile):
     """Draw at least one plot
     in: distance max, log file
     out: Excecute CMD -> draw all at least one plot
@@ -218,7 +221,7 @@ def histAtleastOne(distanceMax, logFile, dir_out):
             system(cmd)
 
 
-def plotAngle(distanceMax, logFile, dir_out):
+def plotAngle(distanceMax, dir_out, logFile):
     """Excecute commande for draw angle plot
     in: distance MAX and log file
     out: Execute CMD -> draw plot
@@ -236,6 +239,8 @@ def plotAngle(distanceMax, logFile, dir_out):
             cmd = repertory.scriptR() + "angle_" + str(struct) + ".R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct)
             cmdBarplot = repertory.scriptR() + "angle_barplot.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct) + " " + str(distanceMax)
         
+#         print cmd
+#         print cmdBarplot
         logFile.write(cmd + "\n")
         logFile.write(cmdBarplot + "\n")
         system(cmd)

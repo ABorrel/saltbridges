@@ -9,7 +9,7 @@ import searchPDB
 import structure
 import writeFile
 import tool
-
+from os import path 
 
 
 
@@ -18,7 +18,8 @@ def parseDataSet(path_file_dataset):
     out : file with count of repetition in file or files"""
 
     # log 
-    start, logFile = log.initAction("Parsing dataset, ligand representation " + str(path_file_dataset))
+    print path_file_dataset, "pqth"
+    start, logFile = log.initAction("Parsing dataset, ligand representation " + str(path.splitext(path.basename(path_file_dataset))[0]))
     
     dataSetGlobal = loadFile.resultFilterPDBLigand(path_file_dataset)
     print dataSetGlobal, "data"
@@ -259,7 +260,7 @@ def neighborsAmine(distanceMax, path_dataset_file, one_ligandby_complexe, angleO
          -> file with dataset
     """
     
-    start, logFile = log.initAction("search neighbors " + str(path_dataset_file))
+    start, logFile = log.initAction("search neighbors in " +path.basename(path_dataset_file))
     list_ligands_in_PDB = loadFile.resultFilterPDBLigand(path_dataset_file)
     nbLigand = len(list_ligands_in_PDB)
     #print list_ligands_in_PDB
@@ -269,16 +270,15 @@ def neighborsAmine(distanceMax, path_dataset_file, one_ligandby_complexe, angleO
     countAtLeastOneGlobal = structure.countAtLeastOneGlobalStruct(distanceMax)
     
     # ##Write summary file
-    filesAmine = writeFile.openFileAmine()
+    filesAmine = writeFile.openFileAmine(dir_result)
     filesWithoutAtLeastOne = writeFile.openFilesWithoutSummary(distanceMax, dir_result)
     
     # pass for check different value
-    i = 1274
-    nbLigand = 1275
+    #i = 1274
+    #nbLigand = 1275
     
     # inialization
-    #i = 0
-    
+    i = 0
     while i < nbLigand :
         print "Ligand: " + str(list_ligands_in_PDB[i]["name"]) + " " + str(i) + " " + str(nbLigand)
         logFile.write("Ligand: " + str(list_ligands_in_PDB[i]["name"]) + " " + str(i) + "\n")

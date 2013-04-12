@@ -1,9 +1,8 @@
-from os import system
-from re import search
-from os import listdir
-from os import makedirs
+from os import system, listdir, makedirs
+from re import search, compile, findall
 from os.path import isfile
 from urllib import urlretrieve
+from shutil import copy
 
 import loadFile
 
@@ -61,6 +60,39 @@ def retrievePDBFile(fileDataset, dir_PDB):
                     print "Impossible retrieve PDB file"
 
   
+
+def retrievePDB (path_folder_database, path_file_withPDBid):
+    
+    filin_PDB = open (path_file_withPDBid, "r")
+    file_read = filin_PDB.read()
+    filin_PDB.close ()
+    
+    path_new_folder_database = path_file_withPDBid.split (".")[0] + "/"
+    
+    try: makedirs(path_folder_database, mode=0777)
+    except: pass
+    
+    regex = compile ("[0-9A-Za-z]{4}")
+    list_pdb = regex.findall (file_read)
+    list_pdb = list(set(list_pdb)) 
+    
+    for PDB_ID in list_pdb : 
+        path_file_PDB = path_folder_database + PDB_ID.lower() + ".pdb"
+        path_new = path_new_folder_database + PDB_ID.lower() + ".pdb"
+        print path_file_PDB, path_new
+        try : copy(path_file_PDB, path_new)
+        except : pass
+        
+        
+        
+        
+    
+
+
+
+
+
+
   
 
     

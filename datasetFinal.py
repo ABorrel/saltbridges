@@ -69,7 +69,7 @@ def construction(name_folder_dataset):
 
 
 def controlLenCNBond (listAtomLigand, listDistance):
-    """For each CN bond in list atom ligand, retrive distance between C and N
+    """For each CN bond in list atom ligand, retrieve distance between C and N
     in: list atom ligand, list distance retrieve
     out: append in list ligand the distance"""
 

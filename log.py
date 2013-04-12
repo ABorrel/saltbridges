@@ -3,6 +3,8 @@ import formatCharacter
 import repertory
 
 
+
+
 def initAction(actionName):
     """Initialisation of log file
     in: action
@@ -12,6 +14,7 @@ def initAction(actionName):
     dateStartFileName = formatCharacter.date(dateStart)
     print dateStart, ": ", actionName
     begin = time.clock()
+    #print repertory.logFile() + dateStartFileName + actionName.replace (" ", ""), "CCCCCC" 
     fileLog = open(repertory.logFile() + dateStartFileName + actionName.replace (" ", ""), "w")
     fileLog.write(actionName + "\n")
     fileLog.write(dateStart + "\n")

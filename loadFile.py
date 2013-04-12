@@ -34,13 +34,12 @@ def openPdbFile(namePDB):
 
 
 
-def resultFilterPDBLigand (nameFile):
+def resultFilterPDBLigand (path_file):
     """load result file with ligand and PDB ID associated
     in: name file result
     out: list of ligand"""
 
-    file_dataset = repertory.result() + nameFile
-    file_open = open(file_dataset, "r")
+    file_open = open(path_file, "r")
     lines = file_open.readlines()
     file_open.close()
     len_file = len(lines)

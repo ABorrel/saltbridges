@@ -18,9 +18,9 @@ def result(rep_add = ""):
     except: pass
     return rep
 
-def withoutAtLeastOneSummary():
+def withoutAtLeastOneSummary(dir_in):
 
-    rep = result() + "withoutAtLeastOne/"
+    rep = dir_in + "withoutAtLeastOne/"
     try: makedirs(rep, mode=0777)
     except: pass
     return rep
@@ -82,16 +82,16 @@ def resultAminoAcidGlobal():
     except: pass
     return rep
 
-def globalProportionAtom() :
+def globalProportionAtom(dir_in) :
 
-    rep = repInit + "result/globalProportionAtom/"
+    rep = dir_in + "globalProportionAtom/"
     try: makedirs(rep, mode=0777)
     except: pass
     return rep
 
-def globalProportionType() :
+def globalProportionType(dir_in) :
 
-    rep = repInit + "result/globalProportionType/"
+    rep = dir_in + "globalProportionType/"
     try: makedirs(rep, mode=0777)
     except: pass
     return rep
@@ -99,11 +99,7 @@ def globalProportionType() :
 
 def resultAngle(struct_type, dir_out):
 
-    rep = dir_out + "angle/" + struct_type
-    try: makedirs(rep, mode=0777)
-    except: pass
-    
-    rep = rep + type + "/"
+    rep = dir_out + "angle/" + struct_type + "/"
     try: makedirs(rep, mode=0777)
     except: pass
     return rep
@@ -136,3 +132,18 @@ def datasetSerineProteaseType (rep):
 
     rep = repInit + "dataset_SerineProtease/" + rep + "/"
     return rep    
+
+
+def typeSubStructure (directory_in, element) : 
+    
+    
+    if directory_in[-1] == "/" : 
+        directory_in = directory_in[0:-1]
+    else :
+        pass
+    dir_out = directory_in + "/" + element + "/"
+    try: makedirs(dir_out, mode=0777)
+    except: pass
+    return dir_out
+
+

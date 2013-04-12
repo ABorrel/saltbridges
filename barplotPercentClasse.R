@@ -88,7 +88,6 @@ for (distance in listDistance){
 		#print (paste(type, countDistance))
 		data = rbind(data,openFile(pathData, type,countDistance))
 	}
-	print (data)
 	data = frequencyMatrix (data)
 	#print (data)
 	plotGlobal(data,distance, listType, pathData)

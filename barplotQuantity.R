@@ -62,7 +62,7 @@ if (type == "Residues"){
 	dev.off()
 
 }else{
-
+	print (file)
 	data = read.table(file)
 	data=data[order(data[,2],decreasing = T),]
 
