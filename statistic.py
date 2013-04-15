@@ -277,8 +277,22 @@ def neighborsAmine(distanceMax, path_dataset_file, one_ligandby_complexe, angleO
     #i = 1274
     #nbLigand = 1275
     
-    # inialization
-    i = 0
+
+    
+#     i = 0
+#     while i < nbLigand : 
+#         if list_ligands_in_PDB[i]["name"] == "IMD" : 
+#             
+#             print i
+#             i = nbLigand
+#         else :
+#             i = i + 1
+#         
+# 
+#     return 
+
+    # inialization    
+    i = 139
     while i < nbLigand :
         print "Ligand: " + str(list_ligands_in_PDB[i]["name"]) + " " + str(i) + " " + str(nbLigand)
         logFile.write("Ligand: " + str(list_ligands_in_PDB[i]["name"]) + " " + str(i) + "\n")
@@ -288,6 +302,7 @@ def neighborsAmine(distanceMax, path_dataset_file, one_ligandby_complexe, angleO
             
         j = 0
         while j < nbPDB : 
+            print "PDB", list_ligands_in_PDB[i]["PDB"][j], j
             list_atom_ligand = loadFile.ligandInPDB(list_ligands_in_PDB[i]["PDB"][j], list_ligands_in_PDB[i]["name"])
             #print list_atom_ligand
             globalAtom = searchPDB.globalNeighbors(distanceMax, list_atom_ligand, list_ligands_in_PDB[i]["PDB"][j])

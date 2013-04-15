@@ -20,9 +20,9 @@ def main (path_folder_database, name_folder_result, max_distance = 5.0, option_o
     name_database = path_folder_database.split("/")[-2]
     
     # run one database
-    path_dir_result_global = repertory.result (name_folder_result)
-    searchPDB.ligands(path_folder_database, path_dir_result_global)
-    list_path_file_dataset = datasetFinal.construction(name_folder_result)
+#     path_dir_result_global = repertory.result (name_folder_result)
+#     searchPDB.ligands(path_folder_database, path_dir_result_global)
+#     list_path_file_dataset = datasetFinal.construction(name_folder_result)
     
 
     
@@ -30,12 +30,13 @@ def main (path_folder_database, name_folder_result, max_distance = 5.0, option_o
     #   Parsing dataset   #
     ########################
     
-    for path_dataSet in list_path_file_dataset : 
-        statistic.parseDataSet(path_dataSet)
+#     for path_dataSet in list_path_file_dataset : 
+#         statistic.parseDataSet(path_dataSet)
     
     ####################
     # result directory #
     ####################
+    list_path_file_dataset = ["/home/borrel/saltBridgesProject/result/PDB50/dataset_3.00"]
     
     for path_file_dataset in list_path_file_dataset : 
     
@@ -60,7 +61,7 @@ def main (path_folder_database, name_folder_result, max_distance = 5.0, option_o
         statistic.neighborsAmine(max_distance, path_file_dataset, option_on_complexes_by_ligand, option_angle, path_dir_result)
         
         # draw graph
-        runScriptR.globalStat(distanceAtoms, distanceResidues,path_dir_result)
+#         runScriptR.globalStat(distanceAtoms, distanceResidues,path_dir_result)
 
 
 
@@ -91,7 +92,7 @@ def main (path_folder_database, name_folder_result, max_distance = 5.0, option_o
 path_folder_database = "/home/borrel/saltBridgesProject/PDB50/"
 name_folder_result = "PDB50"
 max_distance = 5.0
-option_on_complexes_by_ligand = 1
+option_on_complexes_by_ligand = 0
 option_angle = 1
 distanceAtoms= 3.5
 distanceResidues= 5.0
@@ -118,7 +119,7 @@ main (path_folder_database, name_folder_result, max_distance = max_distance, opt
 """
 
 ##############################
-#       Help fonctions       # -> found IMZ
+#       Help fonctions       # -> found IMD
 ##############################
 
 import loadFile

@@ -106,6 +106,9 @@ def buildConnectMatrix(listAtomLigand, namePDB):
 
 def equationPlan (A, B, C):
     
+    print A['x'], B['x'], C['x']
+    print A['y'], B['y'], C['y']
+    print A['z'], B['z'], C['z']
     a = (B['y'] - A['y']) * (C['z'] - A['z']) - (B ['z'] - A['z']) * (C['y'] - A['y'])
     b = -((B['x'] - A['x']) * (C['z'] - A['z']) - (B ['z'] - A['z']) * (C ['x'] - A['x']))
     c = (B ['x'] - A['x']) * (C['y'] - A['y']) - (B['y'] - A['y']) * (C['x'] - A['x'])
@@ -287,6 +290,16 @@ def angleImidazolePyridine(atomNitrogen, atomFound, listAtomLigand):
     atomC1 = retrieveAtom.serial(matrix[1], listAtomLigand)
     atomC2 = retrieveAtom.serial(matrix[2], listAtomLigand)
     
+    if len (matrix) == 4 : 
+        if atomC1 == 0 : 
+            atomC1 = retrieveAtom.serial(matrix[-1], listAtomLigand)
+        if atomC2 == 0 : 
+            atomC2 = retrieveAtom.serial(matrix[-1], listAtomLigand)
+            
+#     print "c1", atomC1
+#     print "c2", atomC2
+#     print "c3", atomNitrogen
+
     plan = equationPlan(atomC1, atomNitrogen, atomC2)    
     
     xN = atomNitrogen["x"]
