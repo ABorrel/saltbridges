@@ -55,7 +55,7 @@ for (distance in listDistance){
 
 #distance = c("<2Å", "<2.5Å", "<3Å", "<3.5Å", "<4Å", "<4.5Å")
 nameGroup = c("Primary", "Secondary", "Tertiary", "Imidazole", "All atoms")
-color = c("red","blue", "yellow", "green", "black")
+color = c("red","blue", "yellow", "green", "gray")
 
 data = modifMatrixProportion(file)
 global = modifMatrixProportion(fileGlobal)

@@ -76,3 +76,20 @@ def resolution(namePDB):
                 resolution = 1000.0
             return resolution
     return 1000.0
+
+
+
+def countH2O (path_file_PDB) : 
+    
+    count_H20 = 0
+    filin = open (path_file_PDB, "r")
+    list_lines = filin.readlines()
+    filin.close ()
+    
+    for line_PDB in list_lines : 
+        if search("^HETATM", line_PDB) : 
+            atom_parsed = lineCoords(line_PDB)
+            if atom_parsed["resName"] == "HOH" : 
+                count_H20 = count_H20 + 1
+    return count_H20
+    

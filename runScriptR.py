@@ -1,5 +1,4 @@
-from os import system
-from os import listdir
+from os import system, listdir
 from re import search
 
 import repertory
@@ -232,12 +231,14 @@ def plotAngle(distanceMax, dir_out, logFile):
         if struct == "Imidazole" or struct == "Pyridine": 
             cmd = repertory.scriptR() + "angle_Secondary" + ".R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct)
             cmdBarplot = repertory.scriptR() + "angle_barplot.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct) + " " + str(distanceMax)
-        elif struct == "Diamine" : 
-            cmd = repertory.scriptR() + "angle_Primary" + ".R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct)
+        elif struct == "Diamine" or struct == "AcidCarboxylic" or struct ==  "Guanidium": 
+            cmd = repertory.scriptR() + "angle_Primary.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct)
             cmdBarplot = repertory.scriptR() + "angle_barplot.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct) + " " + str(distanceMax)
         else : 
             cmd = repertory.scriptR() + "angle_" + str(struct) + ".R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct)
             cmdBarplot = repertory.scriptR() + "angle_barplot.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct) + " " + str(distanceMax)
+            
+        cmd_density = repertory.scriptR() + "angle_density.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct)
         
 #         print cmd
 #         print cmdBarplot
@@ -245,4 +246,20 @@ def plotAngle(distanceMax, dir_out, logFile):
         logFile.write(cmdBarplot + "\n")
         system(cmd)
         system(cmdBarplot)
+        system(cmd_density)
         
+
+def waterPlotResolution (path_filin, verbose = 1) : 
+    
+    cmd = repertory.scriptR() + "plotWater.R " + path_filin
+    
+    if verbose == 1 : 
+        print cmd
+        
+    system (cmd)
+    
+        
+        
+    
+    
+

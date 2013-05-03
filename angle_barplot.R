@@ -37,7 +37,7 @@ for (distance in listDistance){
 	}
 	file = paste(fileGlobal, "_",distance, sep = "")
 
-	data = read.csv(file, sep = "\t",header = F)
+	data = read.table(file, sep = "\t",header = F)
 	data = data[order(data[,1],decreasing = F),]
 	nameX = data[,1]
 	data = data[,-1]

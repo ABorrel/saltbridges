@@ -1,5 +1,5 @@
-from re import search
-from re import sub
+from re import search, sub
+from os import path
 
 import calcul
 import formatCharacter
@@ -38,6 +38,11 @@ def resultFilterPDBLigand (path_file):
     """load result file with ligand and PDB ID associated
     in: name file result
     out: list of ligand"""
+
+    print path.getsize(path_file)
+    # list empty
+    if path.getsize(path_file) == 0 : 
+        return []
 
     file_open = open(path_file, "r")
     lines = file_open.readlines()

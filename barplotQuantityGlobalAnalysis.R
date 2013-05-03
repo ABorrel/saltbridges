@@ -24,6 +24,12 @@ if(flag == 0){
 	nameGraphe = paste ("Surronding of Nref", "\n",type," amines (",distance, " Å)", sep = "")
 }
 
+if(type == "AcidCarboxylic"){
+	nameGraphe = paste ("Surronding of all Oref","\n", "AcidCarboxylic (",distance, " Å)", sep = "")
+	flag = 1
+}
+
+
 color = c("#B8B8B8", "#FF3300", "#66CCFF", "#FFFF66", "#CC99CC","#CCFF99")
 
 

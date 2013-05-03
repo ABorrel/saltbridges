@@ -237,11 +237,12 @@ def resolutionFilter():
     """
     
     struct = {}
+    struct["1.50"] = {}
     struct["2.00"] = {}
     struct["2.50"] = {}
     struct["3.00"] = {}
     struct["OUT"] = {}
-    struct["NMR"] = {}
+    struct["NMR"] = {} # remove
 
     return struct
 
@@ -322,7 +323,7 @@ def listDistance (distanceMax):
 
 
 def listStructure ():
-    return ["Primary", "Secondary", "Tertiary", "Diamine", "Guanidium", "Imidazole", "Pyridine"]
+    return ["Primary", "Secondary", "Tertiary", "Diamine", "Guanidium", "Imidazole", "Pyridine", "AcidCarboxylic"]
     
 
 def listAtLeastOneStudy(): 
@@ -353,8 +354,8 @@ def selectionAngle():
     angleStruct["Tertiary"]["SUP"] = 150
     
     angleStruct["Imidazole"] = {}
-    angleStruct["Imidazole"]["INF"] = 90
-    angleStruct["Imidazole"]["SUP"] = 150
+    angleStruct["Imidazole"]["INF"] = 0
+    angleStruct["Imidazole"]["SUP"] = 30
     
     angleStruct["Guanidium"] = {}
     angleStruct["Guanidium"]["INF"] = 90

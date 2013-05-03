@@ -2,11 +2,11 @@ from re import search
 from re import sub
 import parsing
 import calcul
-import repertory
 import writePDBfile
+from os import path
 
 
-def primaryAmine(filePDB, inferiorLimit, superiorLimit, study):
+def primaryAmine(path_filePDB, inferiorLimit, superiorLimit, study):
     """calculation of volume around nitrogen of primary amine
     in: filePDB with only primary amine, extreme value of angleVector, structure study
     out: file format filePDB with water"""
@@ -16,8 +16,7 @@ def primaryAmine(filePDB, inferiorLimit, superiorLimit, study):
     superiorLimit = float(superiorLimit)
     inferiorLimit = float(inferiorLimit)
     
-    rep = repertory.result()
-    filin = open (rep + filePDB, "r")
+    filin = open (path_filePDB, "r")
     linePDB = filin.readlines()
     
     for line in linePDB :
@@ -29,7 +28,7 @@ def primaryAmine(filePDB, inferiorLimit, superiorLimit, study):
             elif atom["element"] == "C" : 
                 atomC = atom
 
-    fileWrite = rep + nameFileOut
+    fileWrite = path.dirname(path_filePDB) + "/" + nameFileOut
     fileWrite = open(fileWrite, "w")
     
     
@@ -77,7 +76,7 @@ def primaryAmine(filePDB, inferiorLimit, superiorLimit, study):
     print count, study
     
     
-def secondaryAmine(filePDB, inferiorLimit, superiorLimit, study):
+def secondaryAmine(path_filePDB, inferiorLimit, superiorLimit, study):
     """calculation of volume arround nitrogen of secondary amine
     in: filePDB with only secondary amine and extreme value of angleVector, structure study
     out: file format filePDB with water"""
@@ -86,8 +85,7 @@ def secondaryAmine(filePDB, inferiorLimit, superiorLimit, study):
     superiorLimit = float(superiorLimit)
     inferiorLimit = float(inferiorLimit)
 
-    rep = repertory.result()
-    filin = open (rep + filePDB, "r")
+    filin = open (path_filePDB, "r")
     linePDB = filin.readlines()
     
     listAtom = []
@@ -108,7 +106,7 @@ def secondaryAmine(filePDB, inferiorLimit, superiorLimit, study):
                 else : 
                     atomC1 = atom
 
-    fileWrite = rep + nameFileOut
+    fileWrite = path.dirname(path_filePDB) + "/" + nameFileOut
     fileWrite = open(fileWrite, "w")
     
     
@@ -160,7 +158,7 @@ def secondaryAmine(filePDB, inferiorLimit, superiorLimit, study):
     print count , study
     
     
-def tertiaryAmine(filePDB, inferiorLimit, superiorLimit, study):
+def tertiaryAmine(path_filePDB, inferiorLimit, superiorLimit, study):
     """calculation of volume around nitrogen of amine
     in: filePDB with only secondary amine and extreme value of angleVector
     out: file format filePDB with water"""   
@@ -169,8 +167,7 @@ def tertiaryAmine(filePDB, inferiorLimit, superiorLimit, study):
     superiorLimit = float(superiorLimit)
     inferiorLimit = float(inferiorLimit)   
     
-    rep = repertory.result()
-    filin = open (rep + filePDB, "r")
+    filin = open (path_filePDB, "r")
     linePDB = filin.readlines()
     count = 0
     for line in linePDB :
@@ -188,7 +185,7 @@ def tertiaryAmine(filePDB, inferiorLimit, superiorLimit, study):
                 else : 
                     atomC1 = atom
 
-    fileWrite = rep + nameFileOut
+    fileWrite = path.dirname(path_filePDB) + "/" + nameFileOut
     fileWrite = open(fileWrite, "w")
     
     atomN["x"] = atomN["x"] + 10
@@ -242,7 +239,7 @@ def tertiaryAmine(filePDB, inferiorLimit, superiorLimit, study):
     fileWrite.close()
     print count, study
 
-def guanidium(filePDB, inferiorLimit, superiorLimit, infSecondary, supSecondary, study, dir_out):
+def guanidium(path_filePDB, inferiorLimit, superiorLimit, infSecondary, supSecondary, study):
     """calculation of volume around nitrogen of primary amine
     in: filePDB with only primary amine, extreme value of angleVector, structure study
     out: file format filePDB with water"""
@@ -252,7 +249,7 @@ def guanidium(filePDB, inferiorLimit, superiorLimit, infSecondary, supSecondary,
     superiorLimit = float(superiorLimit)
     inferiorLimit = float(inferiorLimit)
     
-    filin = open (dir_out + filePDB, "r")
+    filin = open (path_filePDB, "r")
     linePDB = filin.readlines()
     
     listAtom = []
@@ -282,7 +279,7 @@ def guanidium(filePDB, inferiorLimit, superiorLimit, infSecondary, supSecondary,
             else : 
                 atomC1 = atom
                     
-    fileWrite = dir_out + nameFileOut
+    fileWrite = path.dirname(path_filePDB) + "/" + nameFileOut
     fileWrite = open(fileWrite, "w")
     
     
@@ -348,7 +345,7 @@ def guanidium(filePDB, inferiorLimit, superiorLimit, infSecondary, supSecondary,
                     # print angles
                     if angles[0] > infSecondary :
                         if angles[0] < supSecondary : 
-                            print "write"
+#                             print "write"
                             serial = serial + 1
                             atomTest["serial"] = serial
                             writePDBfile.coordinateStructure(atomTest, "HETATM", fileWrite)
@@ -359,7 +356,7 @@ def guanidium(filePDB, inferiorLimit, superiorLimit, infSecondary, supSecondary,
     fileWrite.close()
     
     
-def pyridine(filePDB, inferiorLimit, superiorLimit, study, dir_out):
+def pyridine(path_filePDB, inferiorLimit, superiorLimit, study):
     """calculation of volume arround nitrogen of secondary amine
     in: filePDB with only secondary amine and extreme value of angleVector, structure study
     out: file format filePDB with water"""
@@ -368,13 +365,13 @@ def pyridine(filePDB, inferiorLimit, superiorLimit, study, dir_out):
     superiorLimit = float(superiorLimit)
     inferiorLimit = float(inferiorLimit)
 
-    filin = open (dir_out + filePDB, "r")
+    filin = open (path_filePDB, "r")
     linePDB = filin.readlines()
     
     listAtom = []
     for line in linePDB :
         line = sub("\n", "", line)
-        if search("^ATOM", line) : 
+        if search("^HETATM", line) : 
             atom = parsing.lineCoords(line)
             listAtom.append(atom)
             
@@ -386,7 +383,7 @@ def pyridine(filePDB, inferiorLimit, superiorLimit, study, dir_out):
         elif  atom["name"] == "C06" :   
             atomC1 = atom
 
-    fileWrite = dir_out + nameFileOut
+    fileWrite = path.dirname(path_filePDB) + "/" + nameFileOut
     fileWrite = open(fileWrite, "w")
     
     for atom in listAtom : 
@@ -430,7 +427,7 @@ def pyridine(filePDB, inferiorLimit, superiorLimit, study, dir_out):
     
 
 
-def diamine(filePDB, inferiorLimit, superiorLimit, study, dir_out):
+def diamine(path_filePDB, inferiorLimit, superiorLimit, study):
     """calculation of volume around nitrogen of primary amine
     in: filePDB with only primary amine, extreme value of angleVector, structure study
     out: file format filePDB with water"""
@@ -440,7 +437,7 @@ def diamine(filePDB, inferiorLimit, superiorLimit, study, dir_out):
     superiorLimit = float(superiorLimit)
     inferiorLimit = float(inferiorLimit)
     
-    filin = open (dir_out + filePDB, "r")
+    filin = open (path_filePDB, "r")
     linePDB = filin.readlines()
     listAtom = []
     
@@ -458,7 +455,7 @@ def diamine(filePDB, inferiorLimit, superiorLimit, study, dir_out):
             elif atom["name"] == "C01" : 
                 atomC = atom
 
-    fileWrite = dir_out + nameFileOut
+    fileWrite = path.dirname(path_filePDB) + "/" + nameFileOut
     fileWrite = open(fileWrite, "w")
     
     for atom in listAtom : 
@@ -510,7 +507,7 @@ def diamine(filePDB, inferiorLimit, superiorLimit, study, dir_out):
     fileWrite.close()
 
 
-def imidazole(filePDB, inferiorLimit, superiorLimit, study, dir_out):
+def imidazole(path_filePDB, inferiorLimit, superiorLimit, study):
     """calculation of volume arround nitrogen of secondary amine
     in: filePDB with only secondary amine and extreme value of angleVector, structure study
     out: file format filePDB with water"""
@@ -519,13 +516,13 @@ def imidazole(filePDB, inferiorLimit, superiorLimit, study, dir_out):
     superiorLimit = float(superiorLimit)
     inferiorLimit = float(inferiorLimit)
 
-    filin = open (dir_out + filePDB, "r")
+    filin = open (path_filePDB, "r")
     linePDB = filin.readlines()
     
     listAtom = []
     for line in linePDB :
         line = sub("\n", "", line)
-        if search("^ATOM", line) : 
+        if search("^HETATM", line) : 
             atom = parsing.lineCoords(line)
             listAtom.append(atom)
             
@@ -541,7 +538,7 @@ def imidazole(filePDB, inferiorLimit, superiorLimit, study, dir_out):
         elif  atom["name"] == "C5" :   
             atomC5 = atom    
 
-    fileWrite = dir_out + nameFileOut
+    fileWrite = path.dirname(path_filePDB) + "/" + nameFileOut
     fileWrite = open(fileWrite, "w")
     
     for atom in listAtom : 

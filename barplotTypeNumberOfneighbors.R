@@ -20,6 +20,12 @@ if(type == "Imidazole"){
 	flag = 1
 }
 
+if(type == "AcidCarboxylic"){
+	nameGraphe = paste ("Surronding of all Oref","\n", "AcidCarboxylic (",distance, " Å)", sep = "")
+	flag = 1
+}
+
+
 if(flag == 0){
 	nameGraphe = paste ("Surronding of Nref", "\n",type," amines (",distance, " Å)", sep = "")
 }

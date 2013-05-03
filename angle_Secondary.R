@@ -97,7 +97,7 @@ temp = c(temp, data[,3])
 
 calibrate = cbind(calibrate,temp) 
 
-png(filename = paste(file , "_typeAtom.png" , sep = ""), width=800, height = 1200)
+png(filename = paste(file , "_typeAtom.png" , sep = ""), width=4000, height = 2000)
 par(mfrow=c(2,4))
 
 
@@ -138,7 +138,7 @@ try(points(listOUT[,2]~listOUT[,1], col = "grey", type = "p"))
 
 
 
-color = c("red","orange","yellow","cyan","blue","green","purple","grey")
+color = c("red","orange","yellow","cyan","blue","green","grey","purple")
 nameGroup = c( "O (COOH)", "O (Tyr, SER, THR), S (CYS)","O (H2O)", "O (main chain) Side chain ASN, GLN", "N (HIS, LYS, ARG) and Nxt", "N (main chain) ASN, GLN", "Others", "C (side chain TYR, PHE, TRP)")
 legend( 1.5 , 85, legend=nameGroup, bty="n", fill=color)
 

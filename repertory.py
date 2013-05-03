@@ -1,10 +1,11 @@
-from os import makedirs
+from os import makedirs, listdir
+from re import search
 
 # globals()["repInit"] = "/home/student10/stage/"
 # globals()["repInit"] = "/home/alexandre/intership/"
 globals()["repInit"] = "/home/borrel/saltBridgesProject/"
 
-
+repInit = "/home/borrel/saltBridgesProject/"
 
 
 def result(rep_add = ""):
@@ -25,6 +26,10 @@ def withoutAtLeastOneSummary(dir_in):
     except: pass
     return rep
 
+
+def pathDitrectoryPDB ():
+    
+    return repInit + "PDB/"
 
 
 def openPdbFile ():
@@ -110,6 +115,21 @@ def parsingDataset():
     try: makedirs(rep, mode=0777)
     except: pass
     return rep
+
+
+
+def retriveDataSetFile (directory_in) :
+    """
+    search in directory file with dataset
+    return : list of files
+    """
+    list_out = []
+    list_files = listdir(directory_in)
+    for filin in list_files : 
+        if search("dataset", filin) and not search (".stat", filin) : 
+            list_out.append (directory_in + filin)
+    
+    return list_out
 
 
 #############################Serine Protease###################3

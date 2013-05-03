@@ -8,60 +8,101 @@ import volumeFonction
 import managePDB
 import repertory
 import os
+import runOtherSoft
+from time import sleep
+import waterAnalysis
 
 
 
 
-def main (path_folder_database, name_folder_result, max_distance = 5.0, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=3.5,distanceResidues= 5.0):
+def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=3.5,distanceResidues= 5.0):
     
     
     #format input
-    max_distance = float (max_distance)
-    name_database = path_folder_database.split("/")[-2]
-    
-    # run one database
-#     path_dir_result_global = repertory.result (name_folder_result)
-#     searchPDB.ligands(path_folder_database, path_dir_result_global)
-#     list_path_file_dataset = datasetFinal.construction(name_folder_result)
-    
-
-    
-    ########################
-    #   Parsing dataset   #
-    ########################
-    
-#     for path_dataSet in list_path_file_dataset : 
-#         statistic.parseDataSet(path_dataSet)
-    
-    ####################
-    # result directory #
-    ####################
-    list_path_file_dataset = ["/home/borrel/saltBridgesProject/result/PDB50/dataset_3.00"]
-    
+#     max_distance = float (max_distance)
+#     
+#     # Retrieve list of PDB
+#     list_pdb = managePDB.retriveListPDB(name_database)
+#     
+#     # run one database
+#     path_dir_result_global = repertory.result (name_database)
+# #     searchPDB.ligands(list_pdb, path_dir_result_global)
+    list_path_file_dataset = datasetFinal.construction(name_database)
+#     
+# 
+#     
+#     ########################
+#     #   Parsing dataset   #
+#     ########################
+#     
+    for path_dataSet in list_path_file_dataset : 
+        statistic.parseDataSet(path_dataSet)
+#     
+#     ####################
+#     # result directory #
+#     ####################
+#     
+# #     list_path_file_dataset = ["/home/borrel/saltBridgesProject/result/PDB20/dataset_3.00"]
+#     
     for path_file_dataset in list_path_file_dataset : 
-    
+      
         name_folder =  path_file_dataset.split("_")[-1]
         if option_angle == 1 : 
             name_folder = name_folder + "_angle"
         else : 
             name_folder = name_folder + "_noangle"
-            
+              
         if option_on_complexes_by_ligand == 1 : 
             name_folder = name_folder + "_onecomplexe"
         else : 
             name_folder = name_folder + "_morecomplexe"
-        
+          
         path_dir_result = repertory.result (name_database + "/" + name_folder)
-        
-        
+          
+          
         print "########"
         print path_dir_result
         print "#########"
         # stat -> build structure
         statistic.neighborsAmine(max_distance, path_file_dataset, option_on_complexes_by_ligand, option_angle, path_dir_result)
-        
+         
         # draw graph
-#         runScriptR.globalStat(distanceAtoms, distanceResidues,path_dir_result)
+        runScriptR.globalStat(distanceAtoms, distanceResidues,path_dir_result)
+
+
+
+def waterGlobal (name_database, limit_acc = 20.0):
+    """
+    Number of water molecules in PDB
+    arg: -> Path folder database
+         -> name folder result
+         -> limit acc
+    return: NONE
+    """
+    
+    path_dir_result_global = repertory.result (name_database)
+    
+    # retrieve list PDB file
+    list_PDBID = managePDB.retriveListPDB(name_database)
+    print len (list_PDBID)
+    
+    # calcul acc with NACESS
+    for PDB_ID in list_PDBID :
+        path_file_PDB = repertory.pathDitrectoryPDB () + PDB_ID + ".pdb"
+        runOtherSoft.runNACESS(path_file_PDB)
+    
+    sleep(10)
+    try :
+        os.system("mv *.asa " +  repertory.pathDitrectoryPDB ())
+        os.system("mv *.rsa " +  repertory.pathDitrectoryPDB ())
+        os.system("rm *.log")
+    except : 
+        pass
+    
+    path_file_result = waterAnalysis.resolutionWater(list_PDBID, path_dir_result_global, limit_acc)
+
+    runScriptR.waterPlotResolution (path_file_result)
+    
 
 
 
@@ -79,42 +120,61 @@ def main (path_folder_database, name_folder_result, max_distance = 5.0, option_o
 # extract file and uncompress
 #managePDB.formatFilePDB()
 
-# managePDB.retrievePDB( "/home/borrel/saltBridgesProject/PDB/", "/home/borrel/saltBridgesProject/PDB20.dat")
-# managePDB.retrievePDB( "/home/borrel/saltBridgesProject/PDB/", "/home/borrel/saltBridgesProject/PDB50.dat")
-
-
 
 #####################################
 #   Dataset building PDB file       #
 #####################################
 #Parameters
 # path_folder_database = "/home/borrel/saltBridgesProject/PDB20/"
-path_folder_database = "/home/borrel/saltBridgesProject/PDB50/"
-name_folder_result = "PDB50"
+# path_folder_database = "/home/borrel/saltBridgesProject/PDB50/"
+# name_folder_result = "PDB50"
 max_distance = 5.0
-option_on_complexes_by_ligand = 0
-option_angle = 1
+# option_on_complexes_by_ligand = 0
+# option_angle = 1
 distanceAtoms= 3.5
 distanceResidues= 5.0
 
 
-
-main (path_folder_database, name_folder_result, max_distance = max_distance, option_on_complexes_by_ligand = option_on_complexes_by_ligand, option_angle = option_angle, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
-
+#RUN all
+#PDB 50
+# main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
+# main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
+# main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
+# main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
+# # 
+# #PDB 20
+# main ( "PDB20", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
+# main ( "PDB20", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
+# main ("PDB20", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
+# main ( "PDB20", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
+# 
+# # PDB
+# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
+# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
+# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
+# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 
 
 ##############################
 #       Volume function      #
 ##############################
 
-# volumeFonction.primaryAmine("Primary.pdb", 90, 150, "primary")
-# volumeFonction.secondaryAmine("Secondary.pdb", 90, 150, "secondary")
-# volumeFonction.tertiaryAmine("Tertiary.pdb", 90, 150, "tertiary")
-# volumeFonction.imidazole("IMD.pdb", 1, 30, "imidazole")
-# volumeFonction.guanidium("Guanidium.pdb", 90, 150,1,30, "guanidium")
-# volumeFonction.pyridine("Pyridine.pdb", 1, 30, "pyridine")
-# volumeFonction.diamine("Diamine.pdb", 90, 150, "diamine")
+# volumeFonction.primaryAmine("/home/borrel/saltBridgesProject/result/Primary.pdb", 90, 150, "primary")
+# volumeFonction.secondaryAmine("/home/borrel/saltBridgesProject/result/Secondary.pdb", 90, 150, "secondary")
+# volumeFonction.tertiaryAmine("/home/borrel/saltBridgesProject/result/Tertiary.pdb", 90, 150, "tertiary")
+# volumeFonction.imidazole("/home/borrel/saltBridgesProject/result/Imidazole.pdb", 1, 30, "imidazole")
+# volumeFonction.guanidium("/home/borrel/saltBridgesProject/result/Guanidium.pdb", 90, 150,1,30, "guanidium")
+# volumeFonction.pyridine("/home/borrel/saltBridgesProject/result/Pyridine.pdb", 1, 30, "pyridine")
+# volumeFonction.diamine("/home/borrel/saltBridgesProject/result/Diamine.pdb", 90, 150, "diamine")
 
+
+############################
+#     Water analysis       #
+############################
+
+# waterGlobal ("PDB20", limit_acc = 20.0)
+# waterGlobal ("PDB50", limit_acc = 20.0)
+# waterGlobal ("PDB", limit_acc = 20.0)
 
 """
 

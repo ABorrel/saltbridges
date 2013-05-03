@@ -106,9 +106,9 @@ def buildConnectMatrix(listAtomLigand, namePDB):
 
 def equationPlan (A, B, C):
     
-    print A['x'], B['x'], C['x']
-    print A['y'], B['y'], C['y']
-    print A['z'], B['z'], C['z']
+#     print A['x'], B['x'], C['x']
+#     print A['y'], B['y'], C['y']
+#     print A['z'], B['z'], C['z']
     a = (B['y'] - A['y']) * (C['z'] - A['z']) - (B ['z'] - A['z']) * (C['y'] - A['y'])
     b = -((B['x'] - A['x']) * (C['z'] - A['z']) - (B ['z'] - A['z']) * (C ['x'] - A['x']))
     c = (B ['x'] - A['x']) * (C['y'] - A['y']) - (B['y'] - A['y']) * (C['x'] - A['x'])
@@ -331,25 +331,28 @@ def angleImidazolePyridine(atomNitrogen, atomFound, listAtomLigand):
 
 
 
-def angle(atomNitrogen, atomFound, listAtomLigand, typeStructure):
+def angle(central_atom, atomFound, listAtomLigand, typeStructure):
     """calcul angle for each structure study
     in: atom nitrogen, list atoms ligand, structure study
     out: list of angles"""
     
     if typeStructure == "Primary" :
-        return anglePrimaryAmine(atomNitrogen, atomFound, listAtomLigand)
+        return anglePrimaryAmine(central_atom, atomFound, listAtomLigand)
     elif typeStructure == "Secondary" :
-        return angleSecondaryAmine(atomNitrogen, atomFound, listAtomLigand)
+        return angleSecondaryAmine(central_atom, atomFound, listAtomLigand)
     elif typeStructure == "Tertiary" :
-        return angleTertiaryAmine(atomNitrogen, atomFound, listAtomLigand)
+        return angleTertiaryAmine(central_atom, atomFound, listAtomLigand)
     elif typeStructure == "Imidazole" :
-        return angleImidazolePyridine(atomNitrogen, atomFound, listAtomLigand)
+        return angleImidazolePyridine(central_atom, atomFound, listAtomLigand)
     elif typeStructure == "Diamine" :
-        return anglePrimaryAmine(atomNitrogen, atomFound, listAtomLigand)
+        return anglePrimaryAmine(central_atom, atomFound, listAtomLigand)
     elif typeStructure == "Pyridine" :
-        return angleSecondaryAmine(atomNitrogen, atomFound, listAtomLigand)
+        return angleSecondaryAmine(central_atom, atomFound, listAtomLigand)
     elif typeStructure == "Guanidium" :
-        return anglePrimaryAmine(atomNitrogen, atomFound, listAtomLigand)
+        return anglePrimaryAmine(central_atom, atomFound, listAtomLigand)
+    elif typeStructure == "AcidCarboxylic" :
+        return anglePrimaryAmine(central_atom, atomFound, listAtomLigand)
+    
     else :
         return []
     

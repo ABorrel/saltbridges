@@ -40,3 +40,15 @@ def date(date):
     date = sub(" ", "_", date)
 
     return date + "_"
+
+def lowerList(list_of_string):
+    
+    list_out = []
+    for element in list_of_string : 
+        list_out.append (element.lower ())
+    
+    return list_out
+    
+    
+    
+

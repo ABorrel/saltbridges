@@ -11,6 +11,7 @@ import toolSubstructure
 import runScriptR
 import parsing
 
+
 def construction(name_folder_dataset):
     """
     Dataset construction
@@ -19,8 +20,16 @@ def construction(name_folder_dataset):
           - dataset file -> ligand with associated PDB
     """
 
-    start, logFile = log.initAction("Dataset construction")
+    
     rep_dataset = repertory.result(name_folder_dataset)
+    # check dataSet exist !!!!!!
+    list_file_dataset = repertory.retriveDataSetFile (rep_dataset)
+    if len(list_file_dataset) != 0 : 
+        return list_file_dataset
+
+
+    start, logFile = log.initAction("Dataset construction")
+    
     ligandInPDB = loadFile.resultLigandPDB(rep_dataset + "resultLigandInPDB")
     resultFilterPDB = structure.resolutionFilter()
  
@@ -38,13 +47,13 @@ def construction(name_folder_dataset):
         listAtomLigand = loadFile.ligandInPDBConnectMatrixLigand(PDBFile, nameLigand)
         controlLenCNBond(listAtomLigand, listDistanceCN)  # only one PDB by ligands
         controlCoplanarTertiaryAmine(listAtomLigand, listDistanceCoplanar)  # only one PDB by ligands
-        listStruct = searchPDB.interestStructure(listAtomLigand)
+        listStruct = searchPDB.interestStructure(listAtomLigand) # search interest structure
          
         if listStruct == []:
             i = i + 1
             continue
         else:
-            checkPDBfile.checkPDB(ligandInPDB[nameLigand], nameLigand)  # ##seq check + ligand hooked
+            checkPDBfile.checkPDB(ligandInPDB[nameLigand], nameLigand)  # seq check + ligand hooked
  
         if ligandInPDB[nameLigand] == []:
             i = i + 1
@@ -92,7 +101,7 @@ def controlCoplanarTertiaryAmine(listAtomLigand, listDistanceCoplanar) :
     in: list atom in ligand, list distance coplar retrieve
     out: append distance in list distance coplanar"""
     
-    listSerialNitrogen = searchPDB.listNitrogen(listAtomLigand)
+    listSerialNitrogen = searchPDB.listAtomType(listAtomLigand, "N")
     for serialNitrogen in listSerialNitrogen:
         listAtomConnectNitrogen, conect = retrieveAtom.atomConnect(listAtomLigand, serialNitrogen)
         
@@ -151,4 +160,11 @@ def appendStruct(filePDB, nameLigand, structDataset):
             except:
                 structDataset["2.00"][nameLigand] = []
                 structDataset["2.00"][nameLigand].append(filePDB)
+        
+        if resolution <= 1.50:
+            try:
+                structDataset["1.50"][nameLigand].append(filePDB)
+            except:
+                structDataset["1.50"][nameLigand] = []
+                structDataset["1.50"][nameLigand].append(filePDB)
                 

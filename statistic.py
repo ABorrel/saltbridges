@@ -18,7 +18,7 @@ def parseDataSet(path_file_dataset):
     out : file with count of repetition in file or files"""
 
     # log 
-    print path_file_dataset, "pqth"
+    print path_file_dataset, "path"
     start, logFile = log.initAction("Parsing dataset, ligand representation " + str(path.splitext(path.basename(path_file_dataset))[0]))
     
     dataSetGlobal = loadFile.resultFilterPDBLigand(path_file_dataset)
@@ -45,6 +45,7 @@ def parseDataSet(path_file_dataset):
         flag_diamine = 0
         flag_imidazole = 0
         flag_pyridine = 0
+        flag_acidcarboxylic = 0
         
         for struct in list_struct:
             if struct == "Guanidium" :
@@ -55,9 +56,11 @@ def parseDataSet(path_file_dataset):
                 
             elif struct == "Pyridine" :
                 flag_pyridine = flag_pyridine + 1 
-                
             elif struct == "Imidazole" :
                 flag_imidazole = flag_imidazole + 1 
+            elif struct == "AcidCarboxylic" :
+                flag_acidcarboxylic = flag_acidcarboxylic + 1     
+                
             else :
                 countAmine[struct] = countAmine[struct] + count["Number PDB"]
             
@@ -65,6 +68,7 @@ def parseDataSet(path_file_dataset):
         countAmine["Pyridine"] = countAmine["Pyridine"] + int(flag_pyridine / 2) * count["Number PDB"]
         countAmine["Diamine"] = countAmine["Diamine"] + int(flag_diamine / 2) * count["Number PDB"] 
         countAmine["Guanidium"] = countAmine["Guanidium"] + (int(flag_guanidium / 2) * count["Number PDB"])
+        countAmine["AcidCarboxylic"] = countAmine["AcidCarboxylic"] + (int(flag_acidcarboxylic / 2) * count["Number PDB"])
         listCount.append(count)
         
     numberPDB = len(listPDB)
@@ -277,7 +281,6 @@ def neighborsAmine(distanceMax, path_dataset_file, one_ligandby_complexe, angleO
     #i = 1274
     #nbLigand = 1275
     
-
     
 #     i = 0
 #     while i < nbLigand : 
@@ -292,7 +295,7 @@ def neighborsAmine(distanceMax, path_dataset_file, one_ligandby_complexe, angleO
 #     return 
 
     # inialization    
-    i = 139
+    i = 0
     while i < nbLigand :
         print "Ligand: " + str(list_ligands_in_PDB[i]["name"]) + " " + str(i) + " " + str(nbLigand)
         logFile.write("Ligand: " + str(list_ligands_in_PDB[i]["name"]) + " " + str(i) + "\n")
@@ -302,10 +305,12 @@ def neighborsAmine(distanceMax, path_dataset_file, one_ligandby_complexe, angleO
             
         j = 0
         while j < nbPDB : 
-            print "PDB", list_ligands_in_PDB[i]["PDB"][j], j
+#             print "PDB", list_ligands_in_PDB[i]["PDB"][j], j
             list_atom_ligand = loadFile.ligandInPDB(list_ligands_in_PDB[i]["PDB"][j], list_ligands_in_PDB[i]["name"])
             #print list_atom_ligand
             globalAtom = searchPDB.globalNeighbors(distanceMax, list_atom_ligand, list_ligands_in_PDB[i]["PDB"][j])
+            
+            # search neighbor 
             amine = searchPDB.interestGroup(distanceMax, list_atom_ligand, list_ligands_in_PDB[i]["PDB"][j], angleOption)
 
             distanceAnalysisOxygen(amine, countStruct[str(distanceMax)]["distanceOx"])
@@ -345,6 +350,7 @@ def neighborsAmine(distanceMax, path_dataset_file, one_ligandby_complexe, angleO
                 
                 globalAtomResidue(globalAtom, countStruct[str(distance)]["ResidueAllAtom"])
                 angle(amine, countStruct[str(distance)]["angle"])
+#                 print countStruct
                 distance = distance - 0.5
                 
             j = j + 1
@@ -354,8 +360,6 @@ def neighborsAmine(distanceMax, path_dataset_file, one_ligandby_complexe, angleO
     writeFile.closeFilesWithoutSummary(filesWithoutAtLeastOne)
     writeFile.countGlobalAmine(distanceMax, countStruct, dir_result)
     writeFile.resultAtLeastOneGlobal(countAtLeastOneGlobal, distanceMax, dir_result)
-
-
 
     log.endAction("Statistical analysis neighbors " + str(path_dataset_file), start, logFile)
 

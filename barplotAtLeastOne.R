@@ -67,8 +67,8 @@ for (distance in listDistance){
 	listName = c(listName,distance)
 }
 
-nameGroup = c("Primary", "Secondary", "Tertiary", "Diamine", "Guanidium","Imidazole","Pyridine","All atoms")
-color = c("red","orange","yellow","cyan","blue","green","purple","grey")
+nameGroup = c("Primary", "Secondary", "Tertiary", "Diamine", "Guanidium","Imidazole","Pyridine", "AcidCarboxylic", "All atoms")
+color = c("red","orange","yellow","cyan","blue","green","purple", "black", "grey")
 
 data = modifMatrixProportion(file)
 global = modifMatrixProportion(fileGlobal)

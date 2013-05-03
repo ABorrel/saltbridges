@@ -5,7 +5,8 @@ from urllib import urlretrieve
 from shutil import copy
 
 import loadFile
-
+import repertory
+import formatCharacter
 
 def formatFilePDB(dir_PDB):
     """Manage global PDB database
@@ -85,7 +86,34 @@ def retrievePDB (path_folder_database, path_file_withPDBid):
         
         
         
+
+
+def retriveListPDB (name_database):
+    
+    if name_database == "PDB20" or name_database == "PDB50" : 
+        path_file_database = repertory.repInit + name_database + ".dat"
+        file_database = open (path_file_database, "r")
+        file_read = file_database.read()
+        file_database.close ()
         
+        regex = compile ("[0-9A-Za-z]{4}")
+        list_pdb = regex.findall (file_read)
+        list_pdb = list(set(list_pdb))
+        
+        return formatCharacter.lowerList(list_pdb)
+    elif name_database == "PDB" : 
+        directory_PDB = repertory.repInit + "PDB/"
+        list_files = listdir(directory_PDB)
+        
+        list_pdb = []
+        for file_PDB in list_files : 
+            if file_PDB[-4:] == ".pdb" : 
+                list_pdb.append (file_PDB[-8:-4])
+        
+        return formatCharacter.lowerList(list_pdb)
+    
+    
+           
     
 
 

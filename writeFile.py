@@ -108,7 +108,7 @@ def parsingDataSet(listCount, countAmine, numberPDB, path_file_dataset):
     filout.write("Number Guanidium: " + str(countAmine["Guanidium"]) + "\n")
     filout.write("Number Diamine: " + str(countAmine["Diamine"]) + "\n")
     filout.write("Number Pyridine: " + str(countAmine["Pyridine"]) + "\n")
-    
+    filout.write("Number Acid Carboxylic: " + str(countAmine["AcidCarboxylic"]) + "\n")
     
     filout.close()
 

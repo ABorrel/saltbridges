@@ -75,7 +75,7 @@ for(i in 0:nbDistance){
 }
 ################################
 
-listType = c("Primary", "Secondary", "Tertiary", "Diamine", "Guanidium","Imidazole","Pyridine", "Global")
+listType = c("Primary", "Secondary", "Tertiary", "Diamine", "Guanidium","Imidazole","Pyridine", "AcidCarboxylic", "Global")
 
 
 countDistance = 0
