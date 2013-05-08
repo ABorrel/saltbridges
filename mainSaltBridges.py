@@ -35,14 +35,14 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #     #   Parsing dataset   #
 #     ########################
 #     
-    for path_dataSet in list_path_file_dataset : 
-        statistic.parseDataSet(path_dataSet)
+#     for path_dataSet in list_path_file_dataset : 
+#         statistic.parseDataSet(path_dataSet)
 #     
 #     ####################
 #     # result directory #
 #     ####################
 #     
-# #     list_path_file_dataset = ["/home/borrel/saltBridgesProject/result/PDB20/dataset_3.00"]
+#     list_path_file_dataset = ["/home/borrel/saltBridgesProject/result/PDB/dataset_3.00"]
 #     
     for path_file_dataset in list_path_file_dataset : 
       
@@ -67,7 +67,7 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
         statistic.neighborsAmine(max_distance, path_file_dataset, option_on_complexes_by_ligand, option_angle, path_dir_result)
          
         # draw graph
-        runScriptR.globalStat(distanceAtoms, distanceResidues,path_dir_result)
+#         runScriptR.globalStat(distanceAtoms, distanceResidues,path_dir_result)
 
 
 
@@ -105,7 +105,12 @@ def waterGlobal (name_database, limit_acc = 20.0):
     
 
 
+def waterFamily (name_database):
 
+    # water with summary file
+    path_files_water = waterAnalysis.resolutionByStructure (name_database)
+    for path_file in path_files_water : 
+        runScriptR.waterType (path_file)
 
 
 ##############################
@@ -128,11 +133,11 @@ def waterGlobal (name_database, limit_acc = 20.0):
 # path_folder_database = "/home/borrel/saltBridgesProject/PDB20/"
 # path_folder_database = "/home/borrel/saltBridgesProject/PDB50/"
 # name_folder_result = "PDB50"
-max_distance = 5.0
+max_distance = 4.0
 # option_on_complexes_by_ligand = 0
 # option_angle = 1
-distanceAtoms= 3.5
-distanceResidues= 5.0
+distanceAtoms= 4.0
+distanceResidues= 4.0
 
 
 #RUN all
@@ -140,8 +145,8 @@ distanceResidues= 5.0
 # main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
-# main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
-# # 
+main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 0, distanceAtoms=distanceAtoms, distanceResidues= distanceResidues)
+# 
 # #PDB 20
 # main ( "PDB20", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB20", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
@@ -175,9 +180,10 @@ distanceResidues= 5.0
 # waterGlobal ("PDB20", limit_acc = 20.0)
 # waterGlobal ("PDB50", limit_acc = 20.0)
 # waterGlobal ("PDB", limit_acc = 20.0)
+# waterFamily("PDB")
+# waterFamily("PDB50")
 
 """
-
 ##############################
 #       Help fonctions       # -> found IMD
 ##############################
@@ -215,7 +221,3 @@ for dataset in listDataSet :
             tool.moveResult(datasetRep)
 
 """
-
-
-
-

@@ -23,6 +23,7 @@ def construction(name_folder_dataset):
     
     rep_dataset = repertory.result(name_folder_dataset)
     # check dataSet exist !!!!!!
+    # short cut
     list_file_dataset = repertory.retriveDataSetFile (rep_dataset)
     if len(list_file_dataset) != 0 : 
         return list_file_dataset

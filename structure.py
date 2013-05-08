@@ -1,3 +1,129 @@
+# classif MILLETTI
+# dico_atom_C = {"R":["CB", "CD", "CG"], "M":["CB"], "F":["CB"], "L:":["CB","CD1", "CD2", "CG"], "W":["CB"], "D":["CB"], "K":["CB", "CE"], "H":["CB"], "V":["CB", "CG1", "CG2"], "Q":["CB", "CG", "CD"], "A":["CB"], "E":["CB"], "P":["CB", "CD", "CG"], "C":["CB"], "Y":["CB"], "N":["CB"], "I":["CB", "CD1", "CG1", "CG2"]}
+# dico_atom_Car = {"F":["CD1", "CD2", "CE1", "CE2", "CG", "CZ"], "W":["CD1", "CD2", "CE2", "CE3", "CG", "CH2", "CZ2", "CZ3"], "H":["CD2", "CE1"], "Y":["CD1", "CD2", "CE1", "CE2", "CG", "CZ"]}
+# dico_atom_Carg = {"S":["CB"], "T":["CB"]}
+# dico_atom_N = {"A":["N"], "C":["N"],"D":["N"],"E":["N"],"F":["N"],"G":["N"],"H":["N"],"I":["N"],"K":["N"],"L":["N"],"M":["N"],"N":["N", "ND2"],"P":["N"],"Q":["N", "NE2"],"R":["N"],"S":["N"],"T":["N"],"V":["N"],"W":["N"],"Y":["N"]}
+# dico_atom_ND1 = {"H":["ND1"]}
+# dico_atom_NE2 = {"H":["NE2"]}
+# dico_atom_Nlys = {"K":["NZ"]}
+# dico_atom_Ntrp = {"W":["NE1"]}
+# dico_atom_O = {"A":["O"], "C":["O"],"D":["O"],"E":["O"],"F":["O"],"G":["O"],"H":["O"],"I":["O"],"K":["O"],"L":["O"],"M":["O"],"N":["O"],"P":["O"],"Q":["O"],"R":["O"],"S":["O"],"T":["O"],"V":["O"],"W":["O"],"Y":["O"]}
+# dico_atom_Ocoo = {"E":["CG"]}
+# dico_atom_Ooh = {"S":["CB"], "T":["CB"]}
+# dico_atom_Otyr = {"Y":["OH"]}
+# dico_atom_S = {"C":["SG"]}
+# dico_atom_Ccoo = {"D":["CB"], "E":["CG"]}
+# dico_atom_Cgln = {"Q":["CG"], "N":["CB"]}
+# dico_atom_Hyd = {"R":["CZ"], "M":["SD"], "F":["CG", "CZ"], "L":["CG"], "W":["CE3", "CG", "CZ2"], "H":["CG"], "V":["CB"], "P":["CG"], "C":["SG"], "Y":["CG", "CZ"]}
+
+
+def classificationATOM (atom, out_list = 0):
+    """Classification atoms 
+    in: atom
+    out: classification (string)"""
+    
+    list_classif = ["OxAcid", "ODonAcc", "Sulfur", "Nhis", "Nbasic", "Carom", "OxPep", "Ndonnor","OxAccept" , "H2O", "CPep", "others"]
+    if out_list : 
+        return list_classif
+    
+    
+    listAminoAcid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS"]
+    # Oxygen acid
+    if atom["resName"] == "GLU" or atom["resName"] == "ASP":
+        if atom["name"] == "OE1" or atom["name"] == "OE2" or atom["name"] == "OD1" or atom["name"] == "OD2":
+            return "OxAcid"
+
+    # Oxygen Donnor/acceptor
+    if atom["resName"] == "TYR":
+        if atom["name"] == "OH":
+            return "ODonAcc"
+
+    if atom["resName"] == "THR":
+        if atom["name"] == "OG1":
+            return "ODonAcc"
+
+
+    if atom["resName"] == "SER":
+        if atom["name"] == "OG":
+            return "ODonAcc"
+
+
+    # Sulfure
+    if atom["resName"] == "CYS":
+        if atom["name"] == "SG":
+            return "Sulfur"
+
+
+    # Nitrogen histidine
+    if atom["resName"] == "HIS" : 
+        if atom["name"] == "NE2" or atom["name"] == "ND1" : 
+            return "Nhis"
+        
+    # Nitrogen basic        
+    if atom["resName"] == "LYS" : 
+        if atom["name"] == "NZ" : 
+            return "Nbasic"
+        
+    if atom["resName"] == "ARG" : 
+        if atom["name"] != "NH1" or  atom["name"] != "NH2" or atom["name"] != "NHE": 
+            return "Nbasic"
+        
+#     if atom["resName"] in listAminoAcid :  ?????
+#         if atom["name"] == "NXT" : 
+#             return "Nbasic"
+
+    # Nitrogen donnor
+    if atom["resName"] == "ASN" : 
+        if atom["name"] == "ND2" : 
+            return "Ndonnor"
+        
+    if atom["resName"] == "GLN" : 
+        if atom["name"] == "NE2" : 
+            return "Ndonnor"
+            
+    if atom["resName"] in listAminoAcid : 
+        if atom["name"] == "N" : 
+            return "Ndonnor"
+    
+    # Caromatic
+    if atom["resName"] == "PHE" or atom["resName"] == "TYR": 
+        if atom["name"] != "CA" : 
+            if atom["name"] != "C" :
+                return "Carom"
+            
+    if atom["resName"] == "TRP" : 
+        if atom["name"] != "CA" : 
+            if atom["name"] != "CB" : 
+                return "Carom"
+    
+    # O peptitique
+    if atom["resName"] in listAminoAcid :
+        if atom["name"] == "O" :
+            return "OxPep" 
+    
+    # O acid carboxylic
+    if atom["resName"] == "ASN" or atom["resName"] == "GLN":
+        if atom["name"] == "OD1" or atom["name"] == "OE1" :
+            return "OxAccept"
+        
+    # water
+    if atom["resName"] == "HOH":
+        if atom["name"] == "O" : 
+            return "H2O" 
+    
+    # C peptidique
+    if atom["resName"] in listAminoAcid :
+        if atom["name"] == "C" :
+            return "CPep"     
+    
+    
+    return "others"
+
+
+
+
+    
+
 def ligandPDB():
     struct = {}
     struct["name"] = ""
@@ -27,7 +153,7 @@ def amine():
 
 def countAngle () :
 
-    classification = ["Carom", "Ndonnor", "Nbasic", "amphiprotic", "OxAcid", "OxAccept", "H2O", "others"]
+    classification = classificationATOM("", out_list=1)
     count = {}
     for element in listStructure () : 
         count[element] = {}
@@ -159,14 +285,9 @@ def countElements():
 def countClassificationAtoms():
 
     count = {}
-    count["OxAcid"] = 0
-    count["amphiprotic"] = 0
-    count["Nbasic"] = 0
-    count["Ndonnor"] = 0
-    count["OxAccept"] = 0
-    count["Carom"] = 0
-    count["H2O"] = 0
-    count["others"] = 0
+    l_classe = classificationATOM("", out_list = 1)
+    for classe in l_classe : 
+        count[classe] = 0
     
     return count
 
@@ -193,7 +314,7 @@ def countAtLeastOneGlobalStruct(distanceMax):
         count[distance] = {}
         count[distance]["atLeastOne"] = {}
     
-        for atLeastOne in listAtLeastOneStudy() : 
+        for atLeastOne in  classificationATOM("", out_list=1) : 
             count[distance]["atLeastOne"][atLeastOne] = {}
             count[distance]["atLeastOne"][atLeastOne][atLeastOne] = 0
             count[distance]["atLeastOne"][atLeastOne]["others"] = 0
@@ -205,7 +326,7 @@ def countAtLeastOneGlobalStruct(distanceMax):
 def countAtLeastOne():
 
     listStudy = listStructure()
-    listAtLeastOne = listAtLeastOneStudy()
+    listAtLeastOne = classificationATOM("", out_list=1)
     count = {}
 
     for atLeastOne in listAtLeastOne : 
@@ -326,11 +447,11 @@ def listStructure ():
     return ["Primary", "Secondary", "Tertiary", "Diamine", "Guanidium", "Imidazole", "Pyridine", "AcidCarboxylic"]
     
 
-def listAtLeastOneStudy(): 
-    return ["counterIon", "Carom", "amphiprotic", "H2O"]
+# def listAtLeastOneStudy(): 
+#     return ["counterIon", "Carom", "amphiprotic", "H2O"]
 
-def listTypeStudy ():
-    return ["OxAcid", "amphiprotic", "Nbasic", "Ndonnor", "Carom"]
+# def listTypeStudy ():
+#     return ["OxAcid", "amphiprotic", "Nbasic", "Ndonnor", "Carom"]
 
 def listGlobalStudy():
     return ['residue', 'proportionAtom', 'angleVector', 'ligand', 'ResidueAllAtom', 'distanceOx', 'byAA', 'H2O', 'atom', 'proportionType']

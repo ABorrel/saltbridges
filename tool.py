@@ -8,8 +8,25 @@ from os import listdir
 from os import path
 from re import search
 
-#########file management#########
 
+
+def transfomAA (aa_in):
+    list_aa = {"ILE":"I", "LEU":"L", "LYS":"K", "PHE":"F", "TYR":"Y", "VAL":"V", "SER":"S", "MET":"M", "ARG":"R", "TRP":"W" , "PRO":"P", "GLY":"G", "GLU":"E", "ASN":"N", "HIS":"H", "ALA":"A", "ASP":"D", "GLN":"Q", "THR":"T", "CYS":"C" }
+
+    if len (aa_in) == 3 : 
+        return list_aa[aa_in]
+    elif len (aa_in) == 1 : 
+        for aa in list_aa.keys ():
+            if list_aa[aa] == aa_in : 
+                return aa
+    
+    return "ERROR"
+        
+    
+
+
+
+#########file management#########
 
 def manageligandsliste(lines, position):
     """reads lines and parse names
@@ -103,144 +120,155 @@ def atomInList(listAtom, atom):
     return 0
 
 
-
-def atLeastOneClassification(atom):
-    """Classification for at least one sudies
-    in: structure atoms
-    out: classification (string)"""
-    
-    if atom["resName"] == "GLU" or atom["resName"] == "ASP":
-        if atom["name"] == "OE1" or atom["name"] == "OE2" or atom["name"] == "OD1" or atom["name"] == "OD2":
-            return "counterIon"
-        
-        # Amphiprotic
-    if atom["resName"] == "TYR":
-        if atom["name"] == "OH":
-            return "amphiprotic"
-
-    if atom["resName"] == "CYS":
-        if atom["name"] == "SG":
-            return "amphiprotic"
-
-
-    if atom["resName"] == "THR":
-        if atom["name"] == "OG1":
-            return "amphiprotic"
-
-
-    if atom["resName"] == "SER":
-        if atom["name"] == "OG":
-            return "amphiprotic"
-
-    
-    if atom["resName"] == "PHE" or atom["resName"] == "TYR": 
-        if atom["name"] != "CA" : 
-            if atom["name"] != "C" :
-                return "Carom"
-            
-    if atom["resName"] == "TRP" : 
-        if atom["name"] != "CA" : 
-            if atom["name"] != "CB" : 
-                if atom["name"] != "CG" :
-                    return "Carom"
-    
-    
-    if atom["resName"] == "HOH":
-        if atom["name"] == "O" : 
-            return "H2O"  
-    
-    return "others"
-
-
-def classification (atom):
-    """Classification atoms 
-    in: atom
-    out: classification (string)"""
-    
-    listAminoAcid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS"]
-    # Oxygen acid
-    if atom["resName"] == "GLU" or atom["resName"] == "ASP":
-        if atom["name"] == "OE1" or atom["name"] == "OE2" or atom["name"] == "OD1" or atom["name"] == "OD2":
-            return "OxAcid"
-
-    # Oxygen Amphiprotique
-    if atom["resName"] == "TYR":
-        if atom["name"] == "OH":
-            return "amphiprotic"
-
-    if atom["resName"] == "CYS":
-        if atom["name"] == "SG":
-            return "amphiprotic"
-
-
-    if atom["resName"] == "THR":
-        if atom["name"] == "OG1":
-            return "amphiprotic"
-
-
-    if atom["resName"] == "SER":
-        if atom["name"] == "OG":
-            return "amphiprotic"
-    
-    # Nitrogen basic
-    if atom["resName"] == "HIS" : 
-        if atom["name"] == "NE2" or atom["name"] == "ND1" : 
-            return "Nbasic"
-        
-    if atom["resName"] == "LYS" : 
-        if atom["name"] == "NZ" : 
-            return "Nbasic"
-        
-    if atom["resName"] == "ARG" : 
-        if atom["name"] != "NH1" or  atom["name"] != "NH2" or atom["name"] != "NHE": 
-            return "Nbasic"
-        
-    if atom["resName"] in listAminoAcid : 
-        if atom["name"] == "NXT" : 
-            return "Nbasic"
-
-    # Nitrogen donnor
-    if atom["resName"] == "ASN" : 
-        if atom["name"] == "ND2" : 
-            return "Ndonnor"
-        
-    if atom["resName"] == "GLN" : 
-        if atom["name"] == "NE2" : 
-            return "Ndonnor"
-            
-    if atom["resName"] in listAminoAcid : 
-        if atom["name"] == "N" : 
-            return "Ndonnor"
-    
-    # Caromatic
-    if atom["resName"] == "PHE" or atom["resName"] == "TYR": 
-        if atom["name"] != "CA" : 
-            if atom["name"] != "C" :
-                return "Carom"
-            
-    if atom["resName"] == "TRP" : 
-        if atom["name"] != "CA" : 
-            if atom["name"] != "CB" : 
-                if atom["name"] != "CG" :
-                    return "Carom"
-    
-    if atom["resName"] in listAminoAcid :
-        if atom["name"] == "O" :
-            return "OxAccept" 
-    
-    
-    if atom["resName"] == "ASN" or atom["resName"] == "GLN":
-        if atom["name"] == "OD1" or atom["name"] == "OE1" :
-            return "OxAccept"
-        
-        
-    if atom["resName"] == "HOH":
-        if atom["name"] == "O" : 
-            return "H2O" 
-    
-    
-    return "others"
-    
+# -> move in structure
+# def atLeastOneClassification(atom):
+#     """Classification for at least one sudies
+#     in: structure atoms
+#     out: classification (string)"""
+#     
+#     if atom["resName"] == "GLU" or atom["resName"] == "ASP":
+#         if atom["name"] == "OE1" or atom["name"] == "OE2" or atom["name"] == "OD1" or atom["name"] == "OD2":
+#             return "counterIon"
+#         
+#         # Amphiprotic
+#     if atom["resName"] == "TYR":
+#         if atom["name"] == "OH":
+#             return "amphiprotic"
+# 
+#     if atom["resName"] == "CYS":
+#         if atom["name"] == "SG":
+#             return "amphiprotic"
+# 
+# 
+#     if atom["resName"] == "THR":
+#         if atom["name"] == "OG1":
+#             return "amphiprotic"
+# 
+# 
+#     if atom["resName"] == "SER":
+#         if atom["name"] == "OG":
+#             return "amphiprotic"
+# 
+#     
+#     if atom["resName"] == "PHE" or atom["resName"] == "TYR": 
+#         if atom["name"] != "CA" : 
+#             if atom["name"] != "C" :
+#                 return "Carom"
+#             
+#     if atom["resName"] == "TRP" : 
+#         if atom["name"] != "CA" : 
+#             if atom["name"] != "CB" : 
+#                 if atom["name"] != "CG" :
+#                     return "Carom"
+#     
+#     
+#     if atom["resName"] == "HOH":
+#         if atom["name"] == "O" : 
+#             return "H2O"  
+#     
+#     return "others"
+# 
+# 
+# def classification (atom): # Milletti 2010
+#     """Classification atoms 
+#     in: atom
+#     out: classification (string)"""
+#     
+#     listAminoAcid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS"]
+#     # Oxygen acid
+#     if atom["resName"] == "GLU" or atom["resName"] == "ASP":
+#         if atom["name"] == "OE1" or atom["name"] == "OE2" or atom["name"] == "OD1" or atom["name"] == "OD2":
+#             return "OxAcid"
+# 
+#     # Oxygen Donnor/acceptor
+#     if atom["resName"] == "TYR":
+#         if atom["name"] == "OH":
+#             return "Donnor/acceptor"
+# 
+#     if atom["resName"] == "THR":
+#         if atom["name"] == "OG1":
+#             return "Donnor/acceptor"
+# 
+# 
+#     if atom["resName"] == "SER":
+#         if atom["name"] == "OG":
+#             return "Donnor/acceptor"
+# 
+# 
+#     # Sulfure
+#     if atom["resName"] == "CYS":
+#         if atom["name"] == "SG":
+#             return "Sulfur"
+# 
+# 
+#     if atom["resName"] == "THR":
+#         if atom["name"] == "OG1":
+#             return "amphiprotic"
+# 
+# 
+#     if atom["resName"] == "SER":
+#         if atom["name"] == "OG":
+#             return "amphiprotic"
+#     
+#     # Nitrogen basic
+#     if atom["resName"] == "HIS" : 
+#         if atom["name"] == "NE2" or atom["name"] == "ND1" : 
+#             return "Nbasic"
+#         
+#     if atom["resName"] == "LYS" : 
+#         if atom["name"] == "NZ" : 
+#             return "Nbasic"
+#         
+#     if atom["resName"] == "ARG" : 
+#         if atom["name"] != "NH1" or  atom["name"] != "NH2" or atom["name"] != "NHE": 
+#             return "Nbasic"
+#         
+#     if atom["resName"] in listAminoAcid : 
+#         if atom["name"] == "NXT" : 
+#             return "Nbasic"
+# 
+#     # Nitrogen donnor
+#     if atom["resName"] == "ASN" : 
+#         if atom["name"] == "ND2" : 
+#             return "Ndonnor"
+#         
+#     if atom["resName"] == "GLN" : 
+#         if atom["name"] == "NE2" : 
+#             return "Ndonnor"
+#             
+#     if atom["resName"] in listAminoAcid : 
+#         if atom["name"] == "N" : 
+#             return "Ndonnor"
+#     
+#     # Caromatic
+#     if atom["resName"] == "PHE" or atom["resName"] == "TYR": 
+#         if atom["name"] != "CA" : 
+#             if atom["name"] != "C" :
+#                 return "Carom"
+#             
+#     if atom["resName"] == "TRP" : 
+#         if atom["name"] != "CA" : 
+#             if atom["name"] != "CB" : 
+#                 if atom["name"] != "CG" :
+#                     return "Carom"
+#     
+#     if atom["resName"] in listAminoAcid :
+#         if atom["name"] == "O" :
+#             return "OxAccept" 
+#     
+#     
+#     if atom["resName"] == "ASN" or atom["resName"] == "GLN":
+#         if atom["name"] == "OD1" or atom["name"] == "OE1" :
+#             return "OxAccept"
+#         
+#         
+#     if atom["resName"] == "HOH":
+#         if atom["name"] == "O" : 
+#             return "H2O" 
+#     
+#     
+#     return "others"
+#     
      
     
 
@@ -330,5 +358,35 @@ def checkFileEmpty(pathFile):
     
 
 
-
+def loadSummary (path_summary) : 
+    
+    l_out = []
+    
+    filin = open (path_summary, "r")
+    l_lines = filin.readlines ()
+    filin.close ()
+    
+    
+    for l in l_lines : 
+        d_line = {}
+        l_s = l.split ("\t")
+        d_line["PDB"] = l_s[0]
+        d_line["serial"] = l_s[1].split ("-")[0]
+        d_line["resName"] = l_s[1].split ("-")[1]
+        d_line["neighbors"] = []
+        for neigbor in l_s[-1].split ("//")[:-1] : 
+            d_n = {}
+            element_n = neigbor.split(" ")
+            d_n["serial"] = element_n[0]
+            d_n["name"] = element_n[1]
+            d_n["resName"] = element_n[2]
+            d_n["distance"] = element_n[3]
+            d_n["angle"] = []
+            for angle in element_n [4:] :
+                d_n["angle"].append (angle)
+            d_line["neighbors"].append (d_n)
+        l_out.append (d_line)
+    return l_out        
+    
+    
     

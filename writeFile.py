@@ -259,7 +259,7 @@ def resultProportion (distance, count, directory_result):
         
 def resultProportionType (distance, count, directory_result):
 
-    listClasse = ["OxAcid", "amphiprotic", "OxAccept", "Carom", "H2O", "Ndonnor", "Nbasic", "others"]
+    listClasse = structure.classificationATOM("", out_list= 1)
     for type in count.keys():
         dir_in = repertory.globalProportionType(directory_result)
         filout = open (dir_in + "proportionType" + type + str("%.2f" % distance), "w")
@@ -280,7 +280,7 @@ def resultProportionType (distance, count, directory_result):
 def resultProportionGlobalType(count, distanceGlobal,directory_result) : 
     
     listDistance = structure.listDistance(distanceGlobal)
-    listClasse = ["OxAcid", "amphiprotic", "H2O", "OxAccept", "Nbasic", "Ndonnor", "Carom", "others"]
+    listClasse = structure.classificationATOM("", out_list=1)
     listStruct = structure.listStructure()
     listStruct.append("Global") 
     
@@ -359,6 +359,10 @@ def resultAtLeastOne(count, distanceMax, directory_out):
     listStructureStudy = structure.listStructure()
     listStudyAtLeastOne = count[str(distanceMax)]["atLeastOne"].keys()
     
+    print listStudyAtLeastOne
+    print count
+    
+    
     for StudyAtleastOne in listStudyAtLeastOne : 
         filout = open(directory_out + "atLeastOne_" + StudyAtleastOne, "w")
         line_write = ""
@@ -395,11 +399,19 @@ def resultAngle(count, distanceMax, dir_in):
 
 def countAngle (count, directory_in):
     
-    listClasse = ["OxAcid", "amphiprotic", "H2O", "OxAccept", "Nbasic", "Ndonnor", "Carom", "others"]
+    listClasse = structure.classificationATOM("", out_list = 1)
     for type_substruct in count.keys() : 
         for distance in count[type_substruct].keys() : 
             dir_in = repertory.resultAngle(type_substruct, directory_in)
             filout = open(dir_in + "angle_" + type_substruct + "_" + distance, "w")
+            
+            ### HEADER ###
+            filout.write (str(listClasse[0]))
+            for classe in listClasse[1:] : 
+                filout.write ("\t" + classe)
+            filout.write("\n")
+            ##############
+            
             for angle in count[type_substruct][distance].keys() : 
                 filout.write(str(angle))
                 for classe in listClasse : 

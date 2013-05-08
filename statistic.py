@@ -267,7 +267,7 @@ def neighborsAmine(distanceMax, path_dataset_file, one_ligandby_complexe, angleO
     start, logFile = log.initAction("search neighbors in " +path.basename(path_dataset_file))
     list_ligands_in_PDB = loadFile.resultFilterPDBLigand(path_dataset_file)
     nbLigand = len(list_ligands_in_PDB)
-    #print list_ligands_in_PDB
+    print tool.retrievePositionList (list_ligands_in_PDB, "2NC")
     
     # ##Count Structure
     countStruct = structure.countGlobalAmine(distanceMax)  # global structure count
@@ -277,25 +277,10 @@ def neighborsAmine(distanceMax, path_dataset_file, one_ligandby_complexe, angleO
     filesAmine = writeFile.openFileAmine(dir_result)
     filesWithoutAtLeastOne = writeFile.openFilesWithoutSummary(distanceMax, dir_result)
     
-    # pass for check different value
-    #i = 1274
-    #nbLigand = 1275
-    
-    
-#     i = 0
-#     while i < nbLigand : 
-#         if list_ligands_in_PDB[i]["name"] == "IMD" : 
-#             
-#             print i
-#             i = nbLigand
-#         else :
-#             i = i + 1
-#         
-# 
-#     return 
 
     # inialization    
-    i = 0
+    i = 200
+    nbLigand = 220
     while i < nbLigand :
         print "Ligand: " + str(list_ligands_in_PDB[i]["name"]) + " " + str(i) + " " + str(nbLigand)
         logFile.write("Ligand: " + str(list_ligands_in_PDB[i]["name"]) + " " + str(i) + "\n")
@@ -333,20 +318,20 @@ def neighborsAmine(distanceMax, path_dataset_file, one_ligandby_complexe, angleO
                 proportionType.globalNeighbors(globalAtom, countStruct[str(distance)]["proportionType"]["Global"])
                 residue(amine, countStruct[str(distance)]["residue"])
                 
-                
-                countAtLeastOne(amine, countStruct[str(distance)]["atLeastOne"], "counterIon", 0)
+                # cumul at least one
+                countAtLeastOne(amine, countStruct[str(distance)]["atLeastOne"], "OxAcid", 0)
                 countAtLeastOne(amine, countStruct[str(distance)]["atLeastOne"], "H2O", 0)
-                countAtLeastOne(amine, countStruct[str(distance)]["atLeastOne"], "amphiprotic", 0)
+                countAtLeastOne(amine, countStruct[str(distance)]["atLeastOne"], "ODonAcc", 0)
                 countAtLeastOne(amine, countStruct[str(distance)]["atLeastOne"], "Carom", 0)
-                countAtLeastOneListStudy(amine, countStruct[str(distance)]["atLeastOne"], ["counterIon", "amphiprotic"], 0)
-                countAtLeastOneListStudy(amine, countStruct[str(distance)]["atLeastOne"], ["counterIon", "amphiprotic", "H2O"], 0)
+                countAtLeastOneListStudy(amine, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc"], 0)
+                countAtLeastOneListStudy(amine, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc", "H2O"], 0)
                 
-                countAtLeastOne(globalAtom, countAtLeastOneGlobal[str(distance)]["atLeastOne"], "counterIon", 1)
+                countAtLeastOne(globalAtom, countAtLeastOneGlobal[str(distance)]["atLeastOne"], "OxAcid", 1)
                 countAtLeastOne(globalAtom, countAtLeastOneGlobal[str(distance)]["atLeastOne"], "H2O", 1)
-                countAtLeastOne(globalAtom, countAtLeastOneGlobal[str(distance)]["atLeastOne"], "amphiprotic", 1)
+                countAtLeastOne(globalAtom, countAtLeastOneGlobal[str(distance)]["atLeastOne"], "ODonAcc", 1)
                 countAtLeastOne(globalAtom, countAtLeastOneGlobal[str(distance)]["atLeastOne"], "Carom", 1)
-                countAtLeastOneListStudy(globalAtom, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["counterIon", "amphiprotic"], 1)
-                countAtLeastOneListStudy(globalAtom, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["counterIon", "amphiprotic", "H2O"], 1)
+                countAtLeastOneListStudy(globalAtom, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc"], 1)
+                countAtLeastOneListStudy(globalAtom, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc", "H2O"], 1)
                 
                 globalAtomResidue(globalAtom, countStruct[str(distance)]["ResidueAllAtom"])
                 angle(amine, countStruct[str(distance)]["angle"])

@@ -462,8 +462,8 @@ def interestGroup (distanceMax, list_atom_ligand, namePDB, angleOption):
             atom_neighbors = buildAtom(distanceMax, listAtomConnectNitrogen[0], namePDB, "Guanidium", list_atom_ligand)
             if angleOption == 1 : 
                 checkAngleInSearchNeighbor(atom_neighbors, "Guanidium")
-            if len(atom_neighbors["neighbors"]) != 0 : 
-                list_atomGuanidium.append(atom_neighbors)
+            #if len(atom_neighbors["neighbors"]) != 0 : 
+            #    list_atomGuanidium.append(atom_neighbors)
         elif diAmine(listAtomConnectNitrogen, list_atom_ligand) == 1:
             atom_neighbors = buildAtom(distanceMax, listAtomConnectNitrogen[0], namePDB, "Diamine", list_atom_ligand)
             if angleOption == 1 : 
@@ -527,7 +527,7 @@ def interestGroup (distanceMax, list_atom_ligand, namePDB, angleOption):
 
 
 
-def regroupAtomNeighborGuanidium(listAtomRegroup, amine, listAtomLigand):  # #A revoir tres tres lourds en temps 
+def regroupAtomNeighborGuanidium(listAtomRegroup, amine, listAtomLigand):  # #A revoir tres tres lourds en temps -> BUG
     """Regroup neighbors for 3 nitrogen atoms guanidium
     in: list atom finds in search neighbors, count structure amine, list atom of ligand in pdb
     out: modification amine structure"""
@@ -669,8 +669,8 @@ def neighbors(rayon, central_atom, pdb, typeStructure, ligandPDB):
                         if tool.atomInList(listAtom, atom) == 0:
                             atom["distance"] = distance
                             atom["angle"] = calcul.angle(central_atom, atom, ligandPDB, typeStructure)
-                            atom["classification"] = tool.classification(atom)
-                            atom["classificationAtLeastOne"] = tool.atLeastOneClassification(atom)
+                            atom["classification"] = structure.classificationATOM(atom)
+                            atom["classificationAtLeastOne"] = structure.classificationATOM(atom)
                             listAtom.append(atom)
 
     return listAtom
@@ -692,8 +692,8 @@ def neighborsGlobal(rayon, atomFind, pdb):
                     if atomFind["resSeq"] != atom["resSeq"]: # different ligand
                         if tool.atomInList(listAtom, atom) == 0:
                             atom["distance"] = distance
-                            atom["classification"] = tool.classification(atom)
-                            atom["classificationAtLeastOne"] = tool.atLeastOneClassification(atom)
+                            atom["classification"] = structure.classificationATOM(atom)
+                            atom["classificationAtLeastOne"] = structure.classificationATOM(atom)
                             listAtom.append(atom)
 
     return listAtom

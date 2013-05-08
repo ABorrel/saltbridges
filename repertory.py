@@ -1,4 +1,4 @@
-from os import makedirs, listdir
+from os import makedirs, listdir, path
 from re import search
 
 # globals()["repInit"] = "/home/student10/stage/"
@@ -126,10 +126,32 @@ def retriveDataSetFile (directory_in) :
     list_out = []
     list_files = listdir(directory_in)
     for filin in list_files : 
-        if search("dataset", filin) and not search (".stat", filin) : 
+        if search("dataset", filin) and not search (".stat", filin) and not search ("RMN", filin) and not search ("NMR", filin) and not search ("OUT", filin): 
             list_out.append (directory_in + filin)
     
     return list_out
+
+
+def retrieveSummaryFile (strut, name_dataset) : 
+    
+    l_out = []
+    path_dir = result(name_dataset)
+    
+    l_file_folder  = listdir(path_dir)
+    
+    for file_folder in l_file_folder : 
+        if search("^[1-9]", file_folder) or search("OUT", file_folder) :
+            path_retrieve = path_dir + file_folder + "/" + strut + "/" + "summary" + strut
+            
+            if path.isfile(path_retrieve) : 
+#                 print path_retrieve, "OUUTTTT"
+                l_out.append (path_retrieve)
+                
+    return l_out
+
+
+
+
 
 
 #############################Serine Protease###################3

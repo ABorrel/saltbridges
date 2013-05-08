@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-
+source ("tool.R")
 
 args <- commandArgs(TRUE)
 fileGlobal = args[1]
@@ -22,9 +22,6 @@ nbGrapheLine = as.integer((nbDistance+1)/2)
 png (paste(fileGlobal,"_distance.png", sep = ""),width=1000, height = nbGrapheLine * 300)
 par(mfrow=c(nbGrapheLine,2))
 
-color = c("red","orange","yellow","cyan","blue","green","purple","grey")
-nameGroup = c( "O (COOH)", "O (Tyr, SER, THR), S (CYS)","O (H2O)", "O (main chain) Side chain ASN, GLN", "N (HIS, LYS, ARG) and Nxt", "N (main chain) ASN, GLN", "C (side chain TYR, PHE, TRP)", "Others")
-
 
 i=0
 distanceTemp = 0
@@ -37,7 +34,11 @@ for (distance in listDistance){
 	}
 	file = paste(fileGlobal, "_",distance, sep = "")
 
-	data = read.table(file, sep = "\t",header = F)
+	data = read.table(file, sep = "\t",header = T)
+	nameGroup = colnames(data)
+	data = data[,-1]
+	color = defColor (nameGroup)
+
 	data = data[order(data[,1],decreasing = F),]
 	nameX = data[,1]
 	data = data[,-1]

@@ -30,7 +30,7 @@ def histAA(distance, aminoAcid, path_file, logFile):
         return
     rep = repertory.scriptR()
     cmd = rep + "barplotQuantityAA.R " + path_file + " " + str("%.2f" % distance) + " " + aminoAcid + " " + str("%.2f" % distance)
-    #print cmd
+    print cmd
     logFile.write(cmd + "\n")
     system(cmd)
 
@@ -45,6 +45,7 @@ def plotDistanceOx(rep_out, logFile):
     if empty(file) == 1 : 
         return
     cmd = repScript + "plotDistanceOx.R " + file
+    print cmd
     logFile.write(cmd + "\n")
     system(cmd)
 
@@ -125,6 +126,7 @@ def histProportionTypeNeighbors(distance, dir_out, logFile):
             continue
         cmd = repertory.scriptR() + "barplotTypeNumberOfneighbors.R " + file_data + " " + type + " " + str("%.2f" % distance)
         
+        print cmd
         logFile.write(cmd + "\n")
         system(cmd)
     
@@ -163,6 +165,7 @@ def histGlobalProportion(dir_out, logFile):
         return
     cmd = repScript + "barplotProportionGlobalRef.R " + file
     logFile.write(cmd + "\n")
+    print cmd
     system (cmd)
 
 
@@ -194,7 +197,6 @@ def histDistance(nameFile, type_distance, base, dir_out):
     in: nameFile data, option for execute R script
     out: execute R script -> draw histogram distance"""
 
-
     file_distance = str(dir_out + nameFile)
     if empty(file_distance) == 1 : 
         return
@@ -217,6 +219,7 @@ def histAtleastOne(distanceMax, dir_out, logFile):
             fileGobal = "atLeastOneGlobal" + file[10:]
             cmd = repertory.scriptR() + "barplotAtLeastOne.R " + dir_out + file + " " + dir_out + fileGobal + " " + str(distanceMax) + " " + type.upper()[0] + type[1:]
             logFile.write(cmd + "\n")
+            print cmd
             system(cmd)
 
 
@@ -238,12 +241,15 @@ def plotAngle(distanceMax, dir_out, logFile):
             cmd = repertory.scriptR() + "angle_" + str(struct) + ".R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct)
             cmdBarplot = repertory.scriptR() + "angle_barplot.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct) + " " + str(distanceMax)
             
-        cmd_density = repertory.scriptR() + "angle_density.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct)
+        cmd_density = repertory.scriptR() + "angle_density.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct) + "&" 
         
 #         print cmd
 #         print cmdBarplot
         logFile.write(cmd + "\n")
         logFile.write(cmdBarplot + "\n")
+        print cmd
+        print cmd_density
+        print cmdBarplot
         system(cmd)
         system(cmdBarplot)
         system(cmd_density)
@@ -252,14 +258,17 @@ def plotAngle(distanceMax, dir_out, logFile):
 def waterPlotResolution (path_filin, verbose = 1) : 
     
     cmd = repertory.scriptR() + "plotWater.R " + path_filin
-    
     if verbose == 1 : 
         print cmd
-        
     system (cmd)
     
         
         
+def waterType (path_file, verbose = 1) : 
     
+    cmd =    repertory.scriptR() + "plotWaterQuantity.R " + path_file
+    if verbose == 1 : 
+        print cmd
+    system (cmd)    
     
 
