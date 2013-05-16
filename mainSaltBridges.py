@@ -28,6 +28,8 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #     path_dir_result_global = repertory.result (name_database)
 # #     searchPDB.ligands(list_pdb, path_dir_result_global)
     list_path_file_dataset = datasetFinal.construction(name_database)
+    print list_path_file_dataset
+#     list_path_file_dataset = [list_path_file_dataset[0]]
 #     
 # 
 #     
@@ -42,8 +44,9 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #     # result directory #
 #     ####################
 #     
-#     list_path_file_dataset = ["/home/borrel/saltBridgesProject/result/PDB/dataset_3.00"]
-#     
+#
+    # run for every dataset -> with diffrent resolution
+    
     for path_file_dataset in list_path_file_dataset : 
       
         name_folder =  path_file_dataset.split("_")[-1]
@@ -64,10 +67,14 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
         print path_dir_result
         print "#########"
         # stat -> build structure
-        statistic.neighborsAmine(max_distance, path_file_dataset, option_on_complexes_by_ligand, option_angle, path_dir_result)
+        
+        atom_interest_close, global_atom_close = searchPDB.globalSearch(max_distance, path_file_dataset, option_on_complexes_by_ligand, option_angle, path_dir_result)
+        print atom_interest_close
+        
+        statistic.globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, path_dir_result)
          
         # draw graph
-#         runScriptR.globalStat(distanceAtoms, distanceResidues,path_dir_result)
+        runScriptR.globalStat(distanceAtoms, distanceResidues,path_dir_result)
 
 
 
@@ -142,10 +149,10 @@ distanceResidues= 4.0
 
 #RUN all
 #PDB 50
-# main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
+main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
-main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 0, distanceAtoms=distanceAtoms, distanceResidues= distanceResidues)
+# main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 0, distanceAtoms=distanceAtoms, distanceResidues= distanceResidues)
 # 
 # #PDB 20
 # main ( "PDB20", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)

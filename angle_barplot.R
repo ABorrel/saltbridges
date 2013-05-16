@@ -32,17 +32,17 @@ for (distance in listDistance){
 	if (lengthChar == 1){
 		distance = paste(distance,".0",sep = "")
 	}
-	file = paste(fileGlobal, "_",distance, sep = "")
 
+	file = paste(fileGlobal, "_",distance, sep = "")
+	
+	# Read table
 	data = read.table(file, sep = "\t",header = T)
 	nameGroup = colnames(data)
-	data = data[,-1]
+	name_angle = rownames(data)
 	color = defColor (nameGroup)
 
-	data = data[order(data[,1],decreasing = F),]
-	nameX = data[,1]
-	data = data[,-1]
-	barplot(t(data), ylab= "Number of occurences", col = color, xlab = "Angles (degres)", names.arg = nameX,space = 0.5, main = paste(distanceTemp," < d < ",distance,sep = ""))
+	data = data[order (as.double(name_angle)),] # order with angle values
+	barplot(t(data), ylab= "Number of occurences", col = color, xlab = "Angles (degres)", names.arg = rownames (data),space = 0.5, main = paste(distanceTemp," < d < ",distance,sep = ""))
 	if (i == 3){
 		yLegend = 0
 		for(i in seq(1,dim(data)[1])){
@@ -50,15 +50,12 @@ for (distance in listDistance){
 			if (sumLine > yLegend){
 				yLegend = sumLine
 			}
-
 		}
 		legend( 2 , yLegend , legend=nameGroup, bty="n", fill=color)
-
 	}
 	distanceTemp = distance
 
 }
 
 dev.off()
-
 warnings()

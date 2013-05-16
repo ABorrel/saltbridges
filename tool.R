@@ -3,7 +3,7 @@
 defColor = function (l_name){
 	out = c()
 	for (element in l_name){
-		print (element)
+		#print (element)
 		if (element == "OxAcid"){
 			out = append (out, "red")
 		}
@@ -48,3 +48,23 @@ defColor = function (l_name){
 	return (out)
 }
 
+
+
+deviationAngle = function(matrixAngle){
+	nbLine = dim(matrixAngle)[1]
+	nb_col = dim(matrixAngle)[2]
+	matrix_out = NULL
+	for(i in seq(1,nbLine)){
+		dev_angle = 0
+		for (j in seq(1, nb_col-1)){
+			#print (j)
+			dev_angle = dev_angle + abs(120-matrixAngle[i,j])
+			#print (dev_angle)
+		}
+		#print (matrixAngle[i,nb_col])
+		line_table = c(matrixAngle[i,1],dev_angle,as.character(matrixAngle[i,nb_col]))
+		matrix_out = rbind (matrix_out, line_table)
+		}
+	return (as.matrix(matrix_out))
+
+}

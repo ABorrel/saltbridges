@@ -178,39 +178,40 @@ def atomByAa(amine, count):
                             count["global"][neighbor["resName"]][neighbor["name"]]["4.5"] = count["global"][neighbor["resName"]][neighbor["name"]]["4.5"] + 1
 
 
-def countAtLeastOne (amine, count, type, globalIndex):
-   
+def countAtLeastOne (struct_neighbor, count, substruct, globalIndex):
     
     if globalIndex == 0 :
-        count = count[type]
-        for typeAmine in amine.keys():
-            for nitrogen in amine[typeAmine]:
+        count = count[substruct]
+        for typeAmine in struct_neighbor.keys():
+            for nitrogen in struct_neighbor[typeAmine]:
                 flag = 0
                 for neighbor in nitrogen["neighbors"]:
-                    if neighbor["classificationAtLeastOne"] == type:
+                    classif_neighbor = structure.classificationATOM(neighbor)
+                    if classif_neighbor == substruct:
                         flag = 1
                         break
                 if flag == 0: 
                     count[typeAmine]["others"] = count[typeAmine]["others"] + 1
                 else:
-                    count[typeAmine][type] = count[typeAmine][type] + 1
+                    count[typeAmine][substruct] = count[typeAmine][substruct] + 1
                     
     else : 
-        count = count[type]
-        for atom in amine :
+        count = count[substruct]
+        for atom in struct_neighbor :
             flag = 0
             for neighbor in atom["neighbors"]:
-                if neighbor["classificationAtLeastOne"] == type :
+                classif_neighbor = structure.classificationATOM(neighbor)
+                if classif_neighbor == substruct :
                     flag = 1
                     break
             if flag == 0:
                 count["others"] = count["others"] + 1
             else:
-                count[type] = count[type] + 1
+                count[substruct] = count[substruct] + 1
                 
                 
                 
-def countAtLeastOneListStudy (amine, count, ListType, globalIndex):
+def countAtLeastOneListStudy (struct_neighbor, count, ListType, globalIndex):
    
     keyName = ListType[0]
     for i in range(1, len(ListType)) : 
@@ -226,11 +227,12 @@ def countAtLeastOneListStudy (amine, count, ListType, globalIndex):
                 count[keyName][typeAmine][keyName] = 0
                 count[keyName][typeAmine]["others"] = 0
         else : 
-            for typeAmine in amine.keys():
-                for nitrogen in amine[typeAmine]:
+            for typeAmine in struct_neighbor.keys():
+                for nitrogen in struct_neighbor[typeAmine]:
                     flag = 0
                     for neighbor in nitrogen["neighbors"]:
-                        if neighbor["classificationAtLeastOne"] in ListType:
+                        classif_neighbor = structure.classificationATOM(neighbor)
+                        if classif_neighbor in ListType:
                             flag = 1
                             break
                     if flag == 0: 
@@ -245,10 +247,11 @@ def countAtLeastOneListStudy (amine, count, ListType, globalIndex):
             count[keyName][keyName] = 0
             count[keyName]["others"] = 0
         
-        for atom in amine :
+        for atom in struct_neighbor :
             flag = 0
             for neighbor in atom["neighbors"]:
-                if neighbor["classificationAtLeastOne"] in ListType :
+                classif_neighbor = structure.classificationATOM(neighbor)
+                if classif_neighbor in ListType :
                     flag = 1
                     break
             if flag == 0:
@@ -257,110 +260,86 @@ def countAtLeastOneListStudy (amine, count, ListType, globalIndex):
                 count[keyName][keyName] = count[keyName][keyName] + 1
 
 
-def neighborsAmine(distanceMax, path_dataset_file, one_ligandby_complexe, angleOption, dir_result):
+def globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, path_dir_result):
     """
     Search close environment of different amines
     arg: -> distance max 
          -> file with dataset
     """
     
-    start, logFile = log.initAction("search neighbors in " +path.basename(path_dataset_file))
-    list_ligands_in_PDB = loadFile.resultFilterPDBLigand(path_dataset_file)
-    nbLigand = len(list_ligands_in_PDB)
-    print tool.retrievePositionList (list_ligands_in_PDB, "2NC")
+#     start, logFile = log.initAction("satistic")
+
     
     # ##Count Structure
-    countStruct = structure.countGlobalAmine(distanceMax)  # global structure count
-    countAtLeastOneGlobal = structure.countAtLeastOneGlobalStruct(distanceMax)
+    countStruct = structure.countGlobalAmine(max_distance)  # global structure count
+    print countStruct
+    countAtLeastOneGlobal = structure.countAtLeastOneGlobalStruct(max_distance)
     
-    # ##Write summary file
-    filesAmine = writeFile.openFileAmine(dir_result)
-    filesWithoutAtLeastOne = writeFile.openFilesWithoutSummary(distanceMax, dir_result)
+    
+    
+    
+    distanceAnalysisOxygen(atom_interest_close, countStruct[str(max_distance)]["distanceOx"])
+    atom(atom_interest_close, countStruct[str(max_distance)]["atom"])
+    ligand(atom_interest_close, countStruct[str(max_distance)]["ligand"])
+    atomByAa(atom_interest_close, countStruct[str(max_distance)]["byAA"])
     
 
-    # inialization    
-    i = 200
-    nbLigand = 220
-    while i < nbLigand :
-        print "Ligand: " + str(list_ligands_in_PDB[i]["name"]) + " " + str(i) + " " + str(nbLigand)
-        logFile.write("Ligand: " + str(list_ligands_in_PDB[i]["name"]) + " " + str(i) + "\n")
-        nbPDB = len(list_ligands_in_PDB[i]["PDB"])
-        if one_ligandby_complexe == 1 : 
-            nbPDB = 1 # take first complexe without selection
-            
-        j = 0
-        while j < nbPDB : 
-#             print "PDB", list_ligands_in_PDB[i]["PDB"][j], j
-            list_atom_ligand = loadFile.ligandInPDB(list_ligands_in_PDB[i]["PDB"][j], list_ligands_in_PDB[i]["name"])
-            #print list_atom_ligand
-            globalAtom = searchPDB.globalNeighbors(distanceMax, list_atom_ligand, list_ligands_in_PDB[i]["PDB"][j])
-            
-            # search neighbor 
-            amine = searchPDB.interestGroup(distanceMax, list_atom_ligand, list_ligands_in_PDB[i]["PDB"][j], angleOption)
+    distance = max_distance
 
-            distanceAnalysisOxygen(amine, countStruct[str(distanceMax)]["distanceOx"])
-            atom(amine, countStruct[str(distanceMax)]["atom"])
-            ligand(amine, countStruct[str(distanceMax)]["ligand"])
-            atomByAa(amine, countStruct[str(distanceMax)]["byAA"])
-            
-            writeFile.amine(amine, filesAmine)
-            
+    while distance >= 2:
+        print distance
+        # reduce structure with distance criterion
+        neighborDistance(distance, max_distance, atom_interest_close)
+        neighborDistanceList(distance, max_distance, global_atom_close) # analyse every distance
+        
 
-            distance = distanceMax
+        proportionAtoms.amine(atom_interest_close, countStruct[str(distance)]["proportionAtom"])
+        proportionType.amine(atom_interest_close, countStruct[str(distance)]["proportionType"])
+        proportionAtoms.globalNeighbors(global_atom_close, countStruct[str(distance)]["proportionAtom"]["Global"])
+        proportionType.globalNeighbors(global_atom_close, countStruct[str(distance)]["proportionType"]["Global"])
+        
+        residue(atom_interest_close, countStruct[str(distance)]["residue"])
+#                 
+#         # cumul at least one -> interest group
+        countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], "OxAcid", 0)
+        countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], "H2O", 0)
+        countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], "ODonAcc", 0)
+        countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], "Carom", 0)
+        countAtLeastOneListStudy(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc"], 0)
+        countAtLeastOneListStudy(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc", "H2O"], 0)
+#        -> every atom         
+        countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], "OxAcid", 1)
+        countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], "H2O", 1)
+        countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], "ODonAcc", 1)
+        countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], "Carom", 1)
+        countAtLeastOneListStudy(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc"], 1)
+        countAtLeastOneListStudy(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc", "H2O"], 1)
+#                 
+        globalAtomResidue(global_atom_close, countStruct[str(distance)]["ResidueAllAtom"])
+        angle(atom_interest_close, countStruct[str(distance)]["angle"])
+        
+        
+        distance = distance - 0.5
+#                 
+# 
+    writeFile.countGlobalAmine(max_distance, countStruct, path_dir_result)
+    writeFile.resultAtLeastOneGlobal(countAtLeastOneGlobal, max_distance, path_dir_result)
 
-            while distance >= 2:
-                writeFile.withoutAtLeastOneSummary(amine, filesWithoutAtLeastOne, distance)
-                neighborDistance(distance, distanceMax, amine)
-                neighborDistanceList(distance, distanceMax, globalAtom)
-                proportionAtoms.amine(amine, countStruct[str(distance)]["proportionAtom"])
-                proportionType.amine(amine, countStruct[str(distance)]["proportionType"])
-                proportionAtoms.globalNeighbors(globalAtom, countStruct[str(distance)]["proportionAtom"]["Global"])
-                proportionType.globalNeighbors(globalAtom, countStruct[str(distance)]["proportionType"]["Global"])
-                residue(amine, countStruct[str(distance)]["residue"])
-                
-                # cumul at least one
-                countAtLeastOne(amine, countStruct[str(distance)]["atLeastOne"], "OxAcid", 0)
-                countAtLeastOne(amine, countStruct[str(distance)]["atLeastOne"], "H2O", 0)
-                countAtLeastOne(amine, countStruct[str(distance)]["atLeastOne"], "ODonAcc", 0)
-                countAtLeastOne(amine, countStruct[str(distance)]["atLeastOne"], "Carom", 0)
-                countAtLeastOneListStudy(amine, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc"], 0)
-                countAtLeastOneListStudy(amine, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc", "H2O"], 0)
-                
-                countAtLeastOne(globalAtom, countAtLeastOneGlobal[str(distance)]["atLeastOne"], "OxAcid", 1)
-                countAtLeastOne(globalAtom, countAtLeastOneGlobal[str(distance)]["atLeastOne"], "H2O", 1)
-                countAtLeastOne(globalAtom, countAtLeastOneGlobal[str(distance)]["atLeastOne"], "ODonAcc", 1)
-                countAtLeastOne(globalAtom, countAtLeastOneGlobal[str(distance)]["atLeastOne"], "Carom", 1)
-                countAtLeastOneListStudy(globalAtom, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc"], 1)
-                countAtLeastOneListStudy(globalAtom, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc", "H2O"], 1)
-                
-                globalAtomResidue(globalAtom, countStruct[str(distance)]["ResidueAllAtom"])
-                angle(amine, countStruct[str(distance)]["angle"])
-#                 print countStruct
-                distance = distance - 0.5
-                
-            j = j + 1
-        i = i + 1
-
-    writeFile.closeFileAmine(filesAmine)
-    writeFile.closeFilesWithoutSummary(filesWithoutAtLeastOne)
-    writeFile.countGlobalAmine(distanceMax, countStruct, dir_result)
-    writeFile.resultAtLeastOneGlobal(countAtLeastOneGlobal, distanceMax, dir_result)
-
-    log.endAction("Statistical analysis neighbors " + str(path_dataset_file), start, logFile)
+#     log.endAction("Statistical analysis neighbors ", start, logFile)
 
 
 
-def neighborDistance(distance, distanceGlobal, amine):
+def neighborDistance(distance, distanceGlobal, struct_neighbor):
 
     if distance == distanceGlobal:
         return
     else:
-        for type in amine.keys():
-            for azote in amine[type]:
+        for substruct in struct_neighbor.keys():
+            for azote in struct_neighbor[substruct]:
                 nbNeighbor = len(azote["neighbors"])
                 i = 0
                 while i < nbNeighbor:
-                    if azote["neighbors"][i]["distance"] >= distance:
+                    if float(azote["neighbors"][i]["distance"]) >= float(distance):
                         del azote["neighbors"][i]
                         nbNeighbor = nbNeighbor - 1
                     else:
@@ -377,7 +356,7 @@ def neighborDistanceList(distance, distanceGlobal, listAtom):
             nbNeighbor = len(atom["neighbors"])
             i = 0
             while i < nbNeighbor:
-                if atom["neighbors"][i]["distance"] >= distance:
+                if float(atom["neighbors"][i]["distance"]) >= float(distance):
                     del atom["neighbors"][i]
                     nbNeighbor = nbNeighbor - 1
                 else:
@@ -408,14 +387,15 @@ def globalAtomResidue (listAtom, count):
                         listCheck[neighbor["resName"]]["side"] = 1
 
 
-def angle(amine, countAngle):
+def angle(struct_neighbor, countAngle):
 
-    for type in amine.keys():
-        for nitrogen in amine[type]:
+    for substructure in struct_neighbor.keys():
+        for nitrogen in struct_neighbor[substructure]:
             nbNeighbor = len(nitrogen["neighbors"])
             i = 0
             while i < nbNeighbor:
-                countAngle[type][nitrogen["neighbors"][i]["classification"]]["distance"].append(nitrogen["neighbors"][i]["distance"])
+                classif_neighbor = structure.classificationATOM(nitrogen["neighbors"][i])
+                countAngle[substructure][classif_neighbor]["distance"].append(nitrogen["neighbors"][i]["distance"])
                 # for angle in nitrogen["neighbors"][i]["angle"] : 
-                countAngle[type][nitrogen["neighbors"][i]["classification"]]["angles"].append(nitrogen["neighbors"][i]["angle"])
+                countAngle[substructure][classif_neighbor]["angles"].append(nitrogen["neighbors"][i]["angle"])
                 i = i + 1

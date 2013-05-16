@@ -141,14 +141,14 @@ def countInstanceDataSet():
     return count
 
 
-def amine():
+def neighborStruct():
 
-    listAmine = {}
+    d_neighbor = {}
     
     for element in listStructure(): 
-        listAmine[element] = []
+        d_neighbor[element] = []
 
-    return listAmine
+    return d_neighbor
 
 
 def countAngle () :

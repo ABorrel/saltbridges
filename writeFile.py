@@ -127,29 +127,37 @@ def resultDistanceOx(count, directory_in):
 
 
 
-def amine(listAmine, files):
+def neighborStruct(struct_neighbor, struct_global_neighbor, files):
 
-    for typeStructure in listAmine.keys():
-        for nitrogen in listAmine[typeStructure]:
-            lineWrite = str(nitrogen["PDB"]) + "\t" + str(nitrogen["serial"]) + "-" + str(nitrogen["resName"]) + "\t"
-            for neighbor in nitrogen["neighbors"]:
-                lineWrite = lineWrite + str(neighbor["serial"]) + " " + str(neighbor["name"]) + " " + str(neighbor["resName"]) + " " + str("%.2f" % neighbor["distance"])
+    # global -> append structure
+    struct_neighbor["global"] = struct_global_neighbor
+    for type_search in struct_neighbor.keys():
+        if struct_neighbor[type_search] == [] : 
+            continue
+        for atom_central in struct_neighbor[type_search]:
+            
+            print atom_central.keys (), "check"
+                
+            lineWrite = str(atom_central["PDB"]) + "\t" + str(atom_central["serial"]) + "-" + str(atom_central["resName"]) + "\t"
+            for neighbor in atom_central["neighbors"]:
+                lineWrite = lineWrite + str(neighbor["serial"]) + " " + str(neighbor["resSeq"]) + " " + str(neighbor["element"]) + " " + str(neighbor["name"]) + " " + str(neighbor["resName"]) + " " + str("%.2f" % neighbor["distance"])
                 for angle in neighbor["angle"]:
                     lineWrite = lineWrite + " " + str("%.2f" % angle)
                 lineWrite = lineWrite + "//"
             lineWrite = lineWrite + "\n"
-            files[typeStructure].write(lineWrite)
+            files[type_search].write(lineWrite)
+    del struct_neighbor["global"] 
 
 
-def openFileAmine(directory_out):
+def openFileSummary(directory_out):
 
     listS = structure.listStructure()
+    listS.append("global")
 
     dictFile = {}
 
     for element in listS:
-        init_path = repertory.typeSubStructure (directory_out, element)
-        filout = open(init_path + "summary" + element, "w")
+        filout = open(directory_out + "neighbor_" + element + ".sum", "w")
         dictFile[element] = filout
 
     return dictFile
@@ -263,19 +271,19 @@ def resultProportionType (distance, count, directory_result):
     for type in count.keys():
         dir_in = repertory.globalProportionType(directory_result)
         filout = open (dir_in + "proportionType" + type + str("%.2f" % distance), "w")
-
+        filout.write ("\t".join(listClasse) + "\n")
         for nbNeighbor in count[type].keys():
             if not nbNeighbor == "allNumberNeighbors" : 
                 filout.write(str(nbNeighbor))
+                
                 for classe in listClasse : 
                     filout.write("\t" + str(count[type][nbNeighbor][classe]))
                 filout.write("\n")
                 
         if count[type].keys() == [] : 
             filout.write(str(0) + "\t" + str(0) + "\t" + str(0) + "\t" + str(0) + "\t" + str(0) + "\t" + str(0) + "\n")
-
+        
         filout.close()
-
 
 def resultProportionGlobalType(count, distanceGlobal,directory_result) : 
     
@@ -287,10 +295,11 @@ def resultProportionGlobalType(count, distanceGlobal,directory_result) :
     for type_substructure in listStruct :
         dir_in = repertory.globalProportionType(directory_result) 
         filout = open (dir_in + "proportionType" + type_substructure , "w")
-        
+        filout.write("\t".join(listClasse) + "\n")
         for distance in listDistance :
+            filout.write(str(distance))
             for classe in listClasse : 
-                filout.write(str(count[distance]["proportionType"][type_substructure]["allNumberNeighbors"][classe]) + "\t")
+                filout.write("\t" + str(count[distance]["proportionType"][type_substructure]["allNumberNeighbors"][classe]))
             filout.write("\n")
             
         filout.close()

@@ -103,10 +103,8 @@ def histProportionType(distanceMax, dir_out, logFile):
     
     
     repScript = repertory.scriptR()
-    listDistance = structure.listDistance(distanceMax)
     
-    
-    cmd = repScript + "barplotPercentClasse.R " + str(len(listDistance)) + " " + dir_out
+    cmd = repScript + "barplotPercentClasse.R " + dir_out
     print cmd
     logFile.write(cmd + "\n")
     system (cmd)
@@ -121,7 +119,7 @@ def histProportionTypeNeighbors(distance, dir_out, logFile):
     listStruct.append("GlobalAmine")
     listStruct.append("Global")
     for type in listStruct : 
-        file_data = dir_out + "/globalProportionType/" + "proportionType" + type + str("%.2f" % distance)
+        file_data = dir_out + "globalProportionType/" + "proportionType" + type + str("%.2f" % distance)
         if empty(file_data) == 1 : 
             continue
         cmd = repertory.scriptR() + "barplotTypeNumberOfneighbors.R " + file_data + " " + type + " " + str("%.2f" % distance)
@@ -143,7 +141,7 @@ def histProportion (distance, dir_in, logFile):
 
 
     for type in listType:
-        path_file = dir_in + "/globalProportionAtom/"+ "proportionAtom" + type + str("%.2f" % distance)
+        path_file = dir_in + "globalProportionAtom/"+ "proportionAtom" + type + str("%.2f" % distance)
         if empty(path_file) == 1 : 
             continue
         cmd = repScript + "barplotQuantityGlobalAnalysis.R " + type + " " + path_file + " " + str(distance)
@@ -231,30 +229,35 @@ def plotAngle(distanceMax, dir_out, logFile):
     
     listStruct = structure.listStructure()
     for struct in listStruct : 
-        if struct == "Imidazole" or struct == "Pyridine": 
-            cmd = repertory.scriptR() + "angle_Secondary" + ".R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct)
-            cmdBarplot = repertory.scriptR() + "angle_barplot.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct) + " " + str(distanceMax)
-        elif struct == "Diamine" or struct == "AcidCarboxylic" or struct ==  "Guanidium": 
-            cmd = repertory.scriptR() + "angle_Primary.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct)
-            cmdBarplot = repertory.scriptR() + "angle_barplot.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct) + " " + str(distanceMax)
-        else : 
-            cmd = repertory.scriptR() + "angle_" + str(struct) + ".R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct)
-            cmdBarplot = repertory.scriptR() + "angle_barplot.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct) + " " + str(distanceMax)
-            
-        cmd_density = repertory.scriptR() + "angle_density.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct) + "&" 
         
-#         print cmd
-#         print cmdBarplot
-        logFile.write(cmd + "\n")
+        if struct == "Imidazole" or struct == "Pyridine" or struct == "Secondary" : 
+            cmd_3d = repertory.scriptR() + "angle3D_Secondary" + ".R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct)
+        elif struct == "Tertiary" : 
+            cmd_3d = repertory.scriptR() + "angle3D_Tertiary" + ".R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct)    
+
+        # every structure  
+        cmd_density = repertory.scriptR() + "angle_density.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct) + "&" 
+        cmd_distribution = repertory.scriptR() + "angle_distribution.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct) + "&"
+        cmdBarplot = repertory.scriptR() + "angle_barplot.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct) + " " + str(distanceMax)
+        
         logFile.write(cmdBarplot + "\n")
-        print cmd
-        print cmd_density
-        print cmdBarplot
-        system(cmd)
+        logFile.write(cmd_density + "\n")
+        logFile.write(cmd_distribution + "\n")
+        
         system(cmdBarplot)
         system(cmd_density)
+        system(cmd_distribution)
         
+        print cmd_density
+        print cmdBarplot
+        print cmd_distribution
+        
+        if "cmd_3d" in locals() : 
+            logFile.write(cmd_3d + "\n")
+            system(cmd_3d)
+            print cmd_3d
 
+        
 def waterPlotResolution (path_filin, verbose = 1) : 
     
     cmd = repertory.scriptR() + "plotWater.R " + path_filin

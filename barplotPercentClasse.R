@@ -1,13 +1,12 @@
 #!/usr/bin/env Rscript
 
+source("tool.R")
 
 openFile = function(path, type, line){
 	
 	file = paste(path,"proportionType", type, sep = "")
 	#print (file)
-	data = read.csv(file , sep = "\t", header = FALSE)
-	nbCol = dim(data)[2]
-	data = data[,-nbCol]
+	data = read.csv(file , sep = "\t", header = TRUE)
 	#print (data[line,])
 	
 	return (data[line,])
@@ -37,16 +36,18 @@ frequencyMatrix = function (data){
 plotGlobal = function (data, distance, listType, path){
 
 	#print (data)
-	color = c("red","orange","yellow","cyan","blue","green","purple","grey")
+	color = defColor(colnames(data))
 
 	legendHisto = listType
 
 
 
 	png(filename=paste(path,"porportionAllType",distance,".png",sep = ""),width=as.integer(600))
-	barplot(t(data), ylim = c(0,1),main=paste("Space arround type structure\n",distance), ylab="Frequencies", xlab = "Type Structure", col=color, space=0.6, cex.axis=0.8, las=1, names.arg=listType, cex=0.6, axes = TRUE)
+	#par(mar = c(6,6,6,10))	
+	par(xpd=T, mar=par()$mar+c(0,0,0,10)) 
+	barplot(t(data), ylim = c(0,1),main=paste("Space arround type structure\n",distance), ylab="Frequencies", xlab = "", col=color, space=0.6, cex.axis=1, las=2, names.arg=listType, cex=1, axes = TRUE)
 
-	legend(1,0.9,legend=c("O (COOH)", "O (Tyr, SER, THR), S (CYS)","O (H2O)", "O (main chain) Side chain ASN, GLN", "N (HIS, LYS, ARG) and Nxt", "N (main chain) ASN, GLN", "Others", "C (side chain TYR, PHE, TRP)"), cex=0.8, fill=color)
+	legend("right",legend=colnames(data), fill=color,inset=c(-0.2,0))
 
 	dev.off()
 
@@ -58,35 +59,26 @@ plotGlobal = function (data, distance, listType, path){
 #######################
 
 args <- commandArgs(TRUE)
-nbDistance = args[1]
-pathData = args[2]
-
+pathData = args[1]
 
 
 ####Retrieve list distance####
 
-
-
-listDistance = c()
-for(i in 0:nbDistance){
-	deb = 2 + 0.5*i
-	listDistance = c(listDistance,paste("D<",deb, sep = ""))
-
-}
-################################
-
 listType = c("Primary", "Secondary", "Tertiary", "Diamine", "Guanidium","Imidazole","Pyridine", "AcidCarboxylic", "Global")
 
 
-countDistance = 0
 
-
-for (distance in listDistance){
+list_distance = rownames(read.table(paste(pathData, "proportionType", listType[1], sep = "")))
+i_line_distance = 0
+print (list_distance)
+for (distance in list_distance){
+	print (distance)
 	data = NULL
-	countDistance =  countDistance + 1
+	i_line_distance =  i_line_distance + 1
 	for (type in listType){
-		#print (paste(type, countDistance))
-		data = rbind(data,openFile(pathData, type,countDistance))
+		#print (paste(type, i_line_distance))
+		data = rbind(data,openFile(pathData, type,i_line_distance))
+		#print (data)
 	}
 	data = frequencyMatrix (data)
 	#print (data)

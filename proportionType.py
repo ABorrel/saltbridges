@@ -10,12 +10,13 @@ def globalNeighbors (listAtom, count):
         nbNeighbor = numberNeigthbor(atom["neighbors"])
         for neighbor in atom["neighbors"]:
             # print count
-            count["allNumberNeighbors"][neighbor["classification"]] = count["allNumberNeighbors"][neighbor["classification"]] + 1
+            neighbor_classif = structure.classificationATOM(neighbor)
+            count["allNumberNeighbors"][neighbor_classif] = count["allNumberNeighbors"][neighbor_classif] + 1
             if not nbNeighbor in count.keys():
                 count[nbNeighbor] = structure.countClassificationAtoms()
 
-            if neighbor["classification"] in count[nbNeighbor].keys():
-                count[nbNeighbor][neighbor["classification"]] = count[nbNeighbor][neighbor["classification"]] + 1
+            if neighbor_classif in count[nbNeighbor].keys():
+                count[nbNeighbor][neighbor_classif] = count[nbNeighbor][neighbor_classif] + 1
 
             else:
                 count[nbNeighbor]["others"] = count[nbNeighbor]["others"] + 1
@@ -33,7 +34,8 @@ def amine(listAmine, count):
             nbNeighbor = numberNeigthbor(nitrogen["neighbors"])
             
             for neighbor in nitrogen["neighbors"]:
-                count[type]["allNumberNeighbors"][neighbor["classification"]] = count[type]["allNumberNeighbors"][neighbor["classification"]] + 1
+                neighbor_classif = structure.classificationATOM(neighbor)
+                count[type]["allNumberNeighbors"][neighbor_classif] = count[type]["allNumberNeighbors"][neighbor_classif] + 1
                 
                 if not nbNeighbor in count[type].keys():
                     count[type][nbNeighbor] = structure.countClassificationAtoms()
@@ -41,9 +43,9 @@ def amine(listAmine, count):
                     count["GlobalAmine"][nbNeighbor] = structure.countClassificationAtoms()
 
 
-                if neighbor["classification"] in count[type][nbNeighbor].keys():
-                    count[type][nbNeighbor][neighbor["classification"]] = count[type][nbNeighbor][neighbor["classification"]] + 1
-                    count["GlobalAmine"][nbNeighbor][neighbor["classification"]] = count["GlobalAmine"][nbNeighbor][neighbor["classification"]] + 1
+                if neighbor_classif in count[type][nbNeighbor].keys():
+                    count[type][nbNeighbor][neighbor_classif] = count[type][nbNeighbor][neighbor_classif] + 1
+                    count["GlobalAmine"][nbNeighbor][neighbor_classif] = count["GlobalAmine"][nbNeighbor][neighbor_classif] + 1
 
                 else:
                     count[type][nbNeighbor]["others"] = count[type][nbNeighbor]["others"] + 1

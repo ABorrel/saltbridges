@@ -358,35 +358,5 @@ def checkFileEmpty(pathFile):
     
 
 
-def loadSummary (path_summary) : 
-    
-    l_out = []
-    
-    filin = open (path_summary, "r")
-    l_lines = filin.readlines ()
-    filin.close ()
-    
-    
-    for l in l_lines : 
-        d_line = {}
-        l_s = l.split ("\t")
-        d_line["PDB"] = l_s[0]
-        d_line["serial"] = l_s[1].split ("-")[0]
-        d_line["resName"] = l_s[1].split ("-")[1]
-        d_line["neighbors"] = []
-        for neigbor in l_s[-1].split ("//")[:-1] : 
-            d_n = {}
-            element_n = neigbor.split(" ")
-            d_n["serial"] = element_n[0]
-            d_n["name"] = element_n[1]
-            d_n["resName"] = element_n[2]
-            d_n["distance"] = element_n[3]
-            d_n["angle"] = []
-            for angle in element_n [4:] :
-                d_n["angle"].append (angle)
-            d_line["neighbors"].append (d_n)
-        l_out.append (d_line)
-    return l_out        
-    
     
     
