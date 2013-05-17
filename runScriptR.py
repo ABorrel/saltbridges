@@ -73,7 +73,7 @@ def globalStat(distanceAtoms, distanceResidues, dir_in):
                     histStat(distance, type_studies, fileTrace, type_struct, logFile)
                     histProportion(distance, dir_in, logFile)
                     histProportionTypeNeighbors(distance, dir_in, logFile)
- 
+  
                     distance = distance + 0.5
  
             else:
@@ -81,7 +81,7 @@ def globalStat(distanceAtoms, distanceResidues, dir_in):
             for aminoAcid in listAminoAcid:
                 path_file_aa = dir_in + type_struct + "/aminoAcid/" + type_struct + aminoAcid
                 histAA(distanceResidues, aminoAcid, path_file_aa, logFile)
- 
+#  
         for aminoAcid in listAminoAcid:
             path_file = dir_in + "AminoAcidGlobal/Global" + aminoAcid
             histAA(distanceResidues, aminoAcid, path_file, logFile)
@@ -90,7 +90,8 @@ def globalStat(distanceAtoms, distanceResidues, dir_in):
     ################################################## histGlobalProportion(dir_in, logFile)
     histGlobalResidue(dir_in, logFile)
     histProportionType(distanceResidues, dir_in + "globalProportionType/", logFile)
-    histAtleastOne(dir_in, logFile)  ###################################3
+    histAtleastOne(dir_in, logFile)  
+    histNeigbor (dir_in, logFile)
     plotAngle(distanceResidues, dir_in, logFile)
     
     log.endAction("Run R Scripts", timeStart, logFile)
@@ -273,4 +274,15 @@ def waterType (path_file, verbose = 1) :
         print cmd
     system (cmd)    
     
-
+    
+def histNeigbor (dir_in, logFile) : 
+    
+    l_study = structure.listStructure()
+    l_study.append("global")
+    
+    for substruct in l_study : 
+        cmd = repertory.scriptR() + "barplotNeighbor.R " + dir_in + "neigbhor/" + "neighbor_" + substruct + " " + dir_in + "neigbhor/" + "distance_" + substruct + " " + substruct
+        print cmd 
+        system (cmd)
+    
+    

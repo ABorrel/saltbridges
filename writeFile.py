@@ -1,6 +1,7 @@
 import structure
 import repertory
 from os import makedirs
+import tool
 
 
 
@@ -178,6 +179,7 @@ def countGlobalCount(distanceGlobal, countGlobalAmine, dir_out):
     resultAtom(countGlobalAmine[str(distanceGlobal)]["atom"], dir_out)
     resultByAA(countGlobalAmine[str(distanceGlobal)]["byAA"], dir_out)
     resultAngle(countGlobalAmine, distanceGlobal, dir_out)
+    resultNeighbor (countGlobalAmine[str(distanceGlobal)]["threeAnalysis"], dir_out)
 
     for distance in countGlobalAmine.keys():
         resultResidue(float(distance), countGlobalAmine[str(distance)]["residue"], dir_out)
@@ -487,3 +489,45 @@ def closeFilesWithoutSummary (filesWithoutSummary):
             filesWithoutSummary[distance][study].close()
 
            
+
+def resultNeighbor (countStruct, dir_out) : 
+    
+    # distance list
+    listClasse = structure.classificationATOM("", out_list= 1)
+    
+    # directory result
+    dir_out = dir_out + "neigbhor/"
+    try : 
+        makedirs(dir_out, mode=0777)
+    except : 
+        pass
+
+    for sub_struct in countStruct.keys() : 
+        filout_neighbor = open (dir_out + "neighbor_" + sub_struct, "w")
+        filout_distance = open (dir_out + "distance_" + sub_struct, "w")
+        filout_neighbor.write ("\t".join(listClasse) + "\n")
+        for nb_neighbor in countStruct[sub_struct].keys() : 
+            filout_neighbor.write(str(nb_neighbor))
+            filout_distance.write(str(nb_neighbor))
+            sum_neigbor = tool.sumDict(countStruct[sub_struct][nb_neighbor])
+            for class_atom in listClasse : 
+                filout_neighbor.write("\t" + str(countStruct[sub_struct][nb_neighbor][class_atom] / sum_neigbor)) 
+            filout_neighbor.write("\n")
+            
+            filout_distance.write("\t" + "\t".join(countStruct[sub_struct][nb_neighbor]["distance"]) + "\n")
+    
+    filout_distance.close ()
+    filout_neighbor.close ()
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+

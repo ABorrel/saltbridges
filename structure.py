@@ -240,10 +240,30 @@ def countType():
     count["byAA"] = countbyAminoAcid()
     count["distanceOx"] = countOx()
     count["atLeastOne"] = {}
+    count["threeAnalysis"] = countThreeNeigbors ()
     count["proportionAtom"] = countProportionAtom()
     count["proportionType"] = countProportionType()
     count["ResidueAllAtom"] = countResidueGlobal()
     return count
+
+
+def countThreeNeigbors (nb_n = 3) : 
+    
+    d_out = {}
+    l_subs = listStructure()
+    l_subs.append("global")
+    
+    for sub_struct in l_subs : 
+        d_out[sub_struct] = {}
+        for i in range(1,nb_n +1) : 
+            d_out[sub_struct][i] = {} 
+            d_out[sub_struct][i]["distance"] = []
+        l_classe = classificationATOM("", out_list = 1)
+        for classe in l_classe : 
+            for i in range(1,nb_n +1) : 
+                d_out[sub_struct][i][classe] = 0.0
+    return d_out
+
 
 
 def countProportionAtom ():

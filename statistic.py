@@ -10,7 +10,7 @@ import structure
 import writeFile
 import tool
 from os import path 
-
+from copy import deepcopy
 
 
 def parseDataSet(path_file_dataset):
@@ -241,6 +241,9 @@ def globalRunStatistic(atom_interest_close, global_atom_close, max_distance, opt
     ligand(atom_interest_close, countStruct[str(max_distance)]["ligand"])
     atomByAa(atom_interest_close, countStruct[str(max_distance)]["byAA"])
     
+    threeNeighbors (atom_interest_close, countStruct[str(max_distance)]["threeAnalysis"])
+    threeNeighbors (global_atom_close, countStruct[str(max_distance)]["threeAnalysis"])
+
 
     distance = max_distance
 
@@ -358,3 +361,54 @@ def angle(struct_neighbor, countAngle):
                 # for angle in nitrogen["neighbors"][i]["angle"] : 
                 countAngle[substructure][classif_neighbor]["angles"].append(nitrogen["neighbors"][i]["angle"])
                 i = i + 1
+
+
+def threeNeighbors (struct_neighbor, countStruct, nb_neighbor = 3) : 
+
+    if type (struct_neighbor) is list : 
+        sub_struct = "global"
+        neig_temp = deepcopy(struct_neighbor)
+        for atom_central in neig_temp : 
+            l_neighbor = atom_central["neighbors"]
+            if len(l_neighbor) < 3 : # remove if number of neigbor < 3 
+                continue
+            for i in range(1,nb_neighbor+1) : 
+                classif_first, distance = searchMoreClose (l_neighbor)
+                    
+                if classif_first == None : 
+                    continue
+                countStruct[sub_struct][i]["distance"].append(str(distance))
+                countStruct[sub_struct][i][classif_first] = countStruct[sub_struct][i][classif_first] + 1
+                
+    else :
+        for sub_struct in struct_neighbor.keys() : 
+            neig_temp = deepcopy(struct_neighbor[sub_struct])
+            for atom_central in neig_temp : 
+                l_neighbor = atom_central["neighbors"]
+                if len(l_neighbor) < 3 : 
+                    continue
+                for i in range(1,nb_neighbor+1) : 
+                    classif_first, distance = searchMoreClose (l_neighbor)
+                    
+                    if classif_first == None : 
+                        continue
+                    countStruct[sub_struct][i]["distance"].append(str(distance))
+                    countStruct[sub_struct][i][classif_first] = countStruct[sub_struct][i][classif_first] + 1
+        
+    
+def searchMoreClose (l_neighbors) : 
+    
+    d = 10
+    i_out = 0
+    nb_neigbor = len (l_neighbors)
+    i = 0
+    while i < nb_neigbor : 
+        if l_neighbors[i]["distance"] < d : 
+            classe_out = structure.classificationATOM(l_neighbors[i])
+            d = l_neighbors[i]["distance"]
+            i_out = i
+        i = i + 1 
+        
+    del l_neighbors[i_out]
+    return classe_out, d
+

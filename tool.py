@@ -357,6 +357,15 @@ def checkFileEmpty(pathFile):
         return 0
     
 
-
+def sumDict(dict_count) : 
+    out = 0.0001
+    for key in dict_count.keys() :
+        if  type (dict_count[key]) is int or type (dict_count[key]) is float :  
+            out = out + dict_count[key]
+    return out
+    
+    
+    
+    
     
     
