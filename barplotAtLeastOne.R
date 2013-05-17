@@ -2,44 +2,8 @@
 
 
 
-modifMatrixProportion = function(file){
+source ("tool.R")
 
-	data = read.table(file, header = FALSE, sep = "\t")
-	
-	nbLine = dim(data)[1]
-	nbCol = dim(data)[2]
-	data = data[,-nbCol]
-	nbCol = nbCol -1	
-	
-	
-	for (col in seq(1,nbCol,2)){
-		for (line in seq(1,nbLine)){
-		data[line,col] = data[line,col] /(data[line,col]+data[line,col+1]) 
-		}
-	
-	}
-
-	for (i in seq(2,nbCol/2 +1)){
-		data = data[,-i]
-	}
-
-	return (data)
-}
-
-
-formatTypeStudy = function(nameStudy){
-
-	if(nameStudy == "CounterIon"){
-		return ("counter ion")
-	}
-	if(nameStudy == "Carom"){
-		return ("carbon aromatic")
-	}
-	else {
-		return (nameStudy)
-	}
-
-}
 
 
 ###########################################
@@ -49,43 +13,20 @@ formatTypeStudy = function(nameStudy){
 
 args <- commandArgs(TRUE)
 file = args[1]
-fileGlobal = args[2]
-distanceMax = as.numeric(args[3])
-typeStudy = formatTypeStudy(args[4])
+typeStudy = args[2]
 
-
-listDistance = NULL
-
-for (i in seq(2.00,distanceMax,0.5)){
-	listDistance = c(listDistance,i)
-}
-
-listName = c()
-for (distance in listDistance){
-	print (distance)
-	distance = paste("<",distance,"Å", sep = "")
-	listName = c(listName,distance)
-}
-
-nameGroup = c("Primary", "Secondary", "Tertiary", "Diamine", "Guanidium","Imidazole","Pyridine", "AcidCarboxylic", "All atoms")
-color = c("red","orange","yellow","cyan","blue","green","purple", "black", "grey")
-
-data = modifMatrixProportion(file)
-global = modifMatrixProportion(fileGlobal)
-data = rbind(data,global)
-data = cbind(data,nameGroup)
-
-#data = data[order(data[,4],decreasing = T),]
+data = read.table (file, sep = "\t", header = TRUE)
+data = data[,-dim(data)[2]]
 print (data)
-nbCol = dim(data)[2]
-data = data[,-nbCol]
 
-large = 800
+nameGroup = rownames (data)
+colorGrp = defColorSubstruct(nameGroup)
 
-png(filename=paste(file,".png",sep = ""),width=as.integer(large))
+print (nameGroup)
+print (colorGrp)
 
-barplot(as.matrix(data), main=paste("Percentage of aminergic","\n"," Nitrogen atoms (Nref) at least one ",typeStudy,"\n","at selected distances", sep = ""), ylab= "% of nitrogen atoms", beside=TRUE, col=color, xlab = paste(typeStudy," to nitrogen (Nref) distances (Å)", sep = ""), names.arg = listName, ylim = c(0,1))
-
-legend( 2 , 0.9 , legend=nameGroup, bty="n", fill=color)
+png(filename=paste(file,".png",sep = ""),width=800)
+barplot(as.matrix(data), beside=TRUE, ylim = c(0,1), col = colorGrp, main=paste("Percentage of reference with at least one ",typeStudy,"\nat selected distances", sep = ""))#, ylab= "% of references atoms", beside=TRUE, col=colorGrp, xlab = paste(typeStudy," to reference distances (Å)", sep = ""), names.arg = nameGroup, ylim = c(0,1))
+legend( 2 , 1 , legend=nameGroup, bty="n", fill=colorGrp)
 
 dev.off()

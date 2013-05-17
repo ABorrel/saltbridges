@@ -178,86 +178,48 @@ def atomByAa(amine, count):
                             count["global"][neighbor["resName"]][neighbor["name"]]["4.5"] = count["global"][neighbor["resName"]][neighbor["name"]]["4.5"] + 1
 
 
-def countAtLeastOne (struct_neighbor, count, substruct, globalIndex):
+def countAtLeastOne (struct_neighbor, struct_count, l_classifSearch):
     
-    if globalIndex == 0 :
-        count = count[substruct]
-        for typeAmine in struct_neighbor.keys():
-            for nitrogen in struct_neighbor[typeAmine]:
-                flag = 0
-                for neighbor in nitrogen["neighbors"]:
-                    classif_neighbor = structure.classificationATOM(neighbor)
-                    if classif_neighbor == substruct:
-                        flag = 1
-                        break
-                if flag == 0: 
-                    count[typeAmine]["others"] = count[typeAmine]["others"] + 1
-                else:
-                    count[typeAmine][substruct] = count[typeAmine][substruct] + 1
-                    
-    else : 
-        count = count[substruct]
-        for atom in struct_neighbor :
-            flag = 0
-            for neighbor in atom["neighbors"]:
-                classif_neighbor = structure.classificationATOM(neighbor)
-                if classif_neighbor == substruct :
-                    flag = 1
-                    break
-            if flag == 0:
-                count["others"] = count["others"] + 1
-            else:
-                count[substruct] = count[substruct] + 1
-                
-                
-                
-def countAtLeastOneListStudy (struct_neighbor, count, ListType, globalIndex):
-   
-    keyName = ListType[0]
-    for i in range(1, len(ListType)) : 
-        keyName = keyName + "_" + str(ListType[i])
+    
+    # check key structure count
+    k_struct_count = "_".join(l_classifSearch)
+    if not k_struct_count in struct_count.keys () : 
+        struct_count[k_struct_count] = {}
 
-    if globalIndex == 0 :
-        listKey = count.keys()
-        if not keyName in listKey : 
-            count [keyName] = {}
-            listStructureStudy = structure.listStructure()
-            for typeAmine in listStructureStudy:
-                count[keyName][typeAmine] = {}
-                count[keyName][typeAmine][keyName] = 0
-                count[keyName][typeAmine]["others"] = 0
-        else : 
-            for typeAmine in struct_neighbor.keys():
-                for nitrogen in struct_neighbor[typeAmine]:
-                    flag = 0
-                    for neighbor in nitrogen["neighbors"]:
-                        classif_neighbor = structure.classificationATOM(neighbor)
-                        if classif_neighbor in ListType:
-                            flag = 1
-                            break
-                    if flag == 0: 
-                        count[keyName][typeAmine]["others"] = count[keyName][typeAmine]["others"] + 1
-                    else:
-                        count[keyName][typeAmine][keyName] = count[keyName][typeAmine][keyName] + 1
-
+        # in struct
+        struct_count = struct_count[k_struct_count]
     else :
-        listKey = count.keys()
-        if not keyName in listKey : 
-            count[keyName] = {}
-            count[keyName][keyName] = 0
-            count[keyName]["others"] = 0
-        
-        for atom in struct_neighbor :
-            flag = 0
-            for neighbor in atom["neighbors"]:
-                classif_neighbor = structure.classificationATOM(neighbor)
-                if classif_neighbor in ListType :
-                    flag = 1
-                    break
-            if flag == 0:
-                count[keyName]["others"] = count[keyName]["others"] + 1
-            else:
-                count[keyName][keyName] = count[keyName][keyName] + 1
+        struct_count = struct_count[k_struct_count]
+    
+    
+    if type (struct_neighbor) is list : 
+        struct_count["other"] = 0.0001 # -> proportion calcul
+        struct_count[k_struct_count] = 0.0 # -> proportion calcul
+        implementAtLeastOne(struct_neighbor, struct_count, k_struct_count,l_classifSearch)
+    else :        
+        for type_subsearch in struct_neighbor.keys():
+            struct_count[type_subsearch] = {}
+            struct_count[type_subsearch]["other"] = 0.0001 # -> proportion calcul
+            struct_count[type_subsearch][k_struct_count] = 0.0 # -> proportion calcul
+            implementAtLeastOne(struct_neighbor[type_subsearch], struct_count[type_subsearch], k_struct_count, l_classifSearch,)
+
+
+def implementAtLeastOne (l_central_atom, struct_count_in, key_atleastOne_type, l_type_atLeastOne):
+    
+    for atom_central in l_central_atom:
+        struct_count_in["other"] = struct_count_in["other"] + 1
+        for neighbor in atom_central["neighbors"]:
+            classif_neighbor = structure.classificationATOM(neighbor)
+            if classif_neighbor in l_type_atLeastOne:
+                struct_count_in[key_atleastOne_type] = struct_count_in[key_atleastOne_type] + 1
+                struct_count_in["other"] = struct_count_in["other"] - 1
+                break # found at least one
+
+                    
+    
+                   
+                
+                
 
 
 def globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, path_dir_result):
@@ -272,11 +234,7 @@ def globalRunStatistic(atom_interest_close, global_atom_close, max_distance, opt
     
     # ##Count Structure
     countStruct = structure.countGlobalAmine(max_distance)  # global structure count
-    print countStruct
     countAtLeastOneGlobal = structure.countAtLeastOneGlobalStruct(max_distance)
-    
-    
-    
     
     distanceAnalysisOxygen(atom_interest_close, countStruct[str(max_distance)]["distanceOx"])
     atom(atom_interest_close, countStruct[str(max_distance)]["atom"])
@@ -301,29 +259,30 @@ def globalRunStatistic(atom_interest_close, global_atom_close, max_distance, opt
         residue(atom_interest_close, countStruct[str(distance)]["residue"])
 #                 
 #         # cumul at least one -> interest group
-        countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], "OxAcid", 0)
-        countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], "H2O", 0)
-        countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], "ODonAcc", 0)
-        countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], "Carom", 0)
-        countAtLeastOneListStudy(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc"], 0)
-        countAtLeastOneListStudy(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc", "H2O"], 0)
+        countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid"])
+        countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["H2O"])
+        countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["ODonAcc"])
+        countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["Carom"])
+        countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc"])
+        countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc", "H2O"])
 #        -> every atom         
-        countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], "OxAcid", 1)
-        countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], "H2O", 1)
-        countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], "ODonAcc", 1)
-        countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], "Carom", 1)
-        countAtLeastOneListStudy(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc"], 1)
-        countAtLeastOneListStudy(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc", "H2O"], 1)
+        countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid"])
+        countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["H2O"])
+        countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["ODonAcc"])
+        countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["Carom"])
+        countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc"])
+        countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc", "H2O"])
 #                 
         globalAtomResidue(global_atom_close, countStruct[str(distance)]["ResidueAllAtom"])
         angle(atom_interest_close, countStruct[str(distance)]["angle"])
         
         
+        
         distance = distance - 0.5
 #                 
 # 
-    writeFile.countGlobalAmine(max_distance, countStruct, path_dir_result)
-    writeFile.resultAtLeastOneGlobal(countAtLeastOneGlobal, max_distance, path_dir_result)
+    writeFile.countGlobalCount(max_distance, countStruct, path_dir_result)
+    writeFile.resultAtLeastOne(countAtLeastOneGlobal, countStruct, max_distance, path_dir_result)
 
 #     log.endAction("Statistical analysis neighbors ", start, logFile)
 

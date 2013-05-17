@@ -239,7 +239,7 @@ def countType():
     count["residue"] = countResidue()
     count["byAA"] = countbyAminoAcid()
     count["distanceOx"] = countOx()
-    count["atLeastOne"] = countAtLeastOne()
+    count["atLeastOne"] = {}
     count["proportionAtom"] = countProportionAtom()
     count["proportionType"] = countProportionType()
     count["ResidueAllAtom"] = countResidueGlobal()
@@ -314,29 +314,19 @@ def countAtLeastOneGlobalStruct(distanceMax):
         count[distance] = {}
         count[distance]["atLeastOne"] = {}
     
-        for atLeastOne in  classificationATOM("", out_list=1) : 
-            count[distance]["atLeastOne"][atLeastOne] = {}
-            count[distance]["atLeastOne"][atLeastOne][atLeastOne] = 0
-            count[distance]["atLeastOne"][atLeastOne]["others"] = 0
- 
     return count   
     
     
     
-def countAtLeastOne():
-
-    listStudy = listStructure()
-    listAtLeastOne = classificationATOM("", out_list=1)
-    count = {}
-
-    for atLeastOne in listAtLeastOne : 
-        count[atLeastOne] = {}
-        for studyStruct in listStudy : 
-            count[atLeastOne][studyStruct] = {}
-            count[atLeastOne][studyStruct][atLeastOne] = 0
-            count[atLeastOne][studyStruct]["others"] = 0
-        
-    return count
+# def countAtLeastOne():
+# 
+#     listStudy = listStructure()
+#     struct_count = {}
+# 
+#     for studyStruct in listStudy : 
+#         struct_count[studyStruct] = {}
+#         
+#     return struct_count
 
 
 

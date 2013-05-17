@@ -58,8 +58,8 @@ def globalStat(distanceAtoms, distanceResidues, dir_in):
     listStruct = structure.listStructure()
     listType = ["Ligands", "Residues", "Atoms"]
     listAminoAcid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS"]
-
-
+ 
+ 
     for type_struct in listStruct:
         repStruct = repertory.typeSubStructure(dir_in, type_struct)
         for type_studies in listType:
@@ -73,24 +73,24 @@ def globalStat(distanceAtoms, distanceResidues, dir_in):
                     histStat(distance, type_studies, fileTrace, type_struct, logFile)
                     histProportion(distance, dir_in, logFile)
                     histProportionTypeNeighbors(distance, dir_in, logFile)
-
+ 
                     distance = distance + 0.5
-
+ 
             else:
                 histStat(distanceResidues, type_studies, path_file, type_struct, logFile)
             for aminoAcid in listAminoAcid:
                 path_file_aa = dir_in + type_struct + "/aminoAcid/" + type_struct + aminoAcid
                 histAA(distanceResidues, aminoAcid, path_file_aa, logFile)
-
+ 
         for aminoAcid in listAminoAcid:
             path_file = dir_in + "AminoAcidGlobal/Global" + aminoAcid
             histAA(distanceResidues, aminoAcid, path_file, logFile)
-
+ 
     plotDistanceOx(repertory.resultDistance(dir_in), logFile)
     ################################################## histGlobalProportion(dir_in, logFile)
     histGlobalResidue(dir_in, logFile)
     histProportionType(distanceResidues, dir_in + "globalProportionType/", logFile)
-    histAtleastOne(distanceResidues, dir_in, logFile)  ###################################3
+    histAtleastOne(dir_in, logFile)  ###################################3
     plotAngle(distanceResidues, dir_in, logFile)
     
     log.endAction("Run R Scripts", timeStart, logFile)
@@ -203,19 +203,18 @@ def histDistance(nameFile, type_distance, base, dir_out):
     system(cmd)
 
 
-def histAtleastOne(distanceMax, dir_out, logFile):
+def histAtleastOne(dir_out, logFile):
     """Draw at least one plot
     in: distance max, log file
     out: Excecute CMD -> draw all at least one plot
     """
-    repResult = dir_out
-    listFile = listdir(repResult)
+    repResult = dir_out + "AtLeastOne/"
+    l_file = listdir(repResult)
     
-    for file in listFile:
-        if search("^atLeastOne_", file) :
-            type = file.split("One_")[1]
-            fileGobal = "atLeastOneGlobal" + file[10:]
-            cmd = repertory.scriptR() + "barplotAtLeastOne.R " + dir_out + file + " " + dir_out + fileGobal + " " + str(distanceMax) + " " + type.upper()[0] + type[1:]
+    for name_file in l_file:
+        if search(".dat", name_file) :
+            type_atleastne = name_file.split(".")[0]
+            cmd = repertory.scriptR() + "barplotAtLeastOne.R " + repResult + name_file + " " + type_atleastne
             logFile.write(cmd + "\n")
             print cmd
             system(cmd)

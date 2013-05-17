@@ -69,8 +69,7 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
         # stat -> build structure
         
         atom_interest_close, global_atom_close = searchPDB.globalSearch(max_distance, path_file_dataset, option_on_complexes_by_ligand, option_angle, path_dir_result)
-        print atom_interest_close
-        
+         
         statistic.globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, path_dir_result)
          
         # draw graph

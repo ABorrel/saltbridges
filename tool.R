@@ -68,3 +68,42 @@ deviationAngle = function(matrixAngle){
 	return (as.matrix(matrix_out))
 
 }
+
+
+
+defColorSubstruct = function (l_name){
+
+	out = c()
+	for (element in l_name){
+		#print (element)
+		if (element == "Primary"){
+			out = append (out, "red")
+		}
+		else if (element == "Secondary"){
+			out = append (out, "orange")
+		}
+		else if (element == "Tertiary"){
+			out = append (out, "yellow")
+		}
+		else if (element =="Diamine"){
+			out = append (out, "cyan")
+		}
+		else if (element == "Guanidium"){
+			out = append (out, "blue")
+		}
+		else if (element == "Imidazole"){
+			out = append (out, "green")
+		}
+		else if (element == "Pyridine"){
+			out = append (out, "purple")
+		}
+		else if (element == "AcidCarboxylic"){
+			out = append (out, "black")
+		}
+		else {
+			out = append (out, "grey")
+		}
+	}
+	names(out) = l_name
+	return (out)
+}

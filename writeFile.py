@@ -1,5 +1,6 @@
 import structure
 import repertory
+from os import makedirs
 
 
 
@@ -170,7 +171,7 @@ def closeFileAmine(dictFile):
         dictFile[key].close()
 
 
-def countGlobalAmine(distanceGlobal, countGlobalAmine, dir_out):
+def countGlobalCount(distanceGlobal, countGlobalAmine, dir_out):
 
     resultDistanceOx(countGlobalAmine[str(distanceGlobal)]["distanceOx"], dir_out)
     resultLigand(countGlobalAmine[str(distanceGlobal)]["ligand"], dir_out)
@@ -184,7 +185,6 @@ def countGlobalAmine(distanceGlobal, countGlobalAmine, dir_out):
         resultProportionType(float(distance), countGlobalAmine[str(distance)]["proportionType"], dir_out)
 
         
-    resultAtLeastOne(countGlobalAmine, distanceGlobal, dir_out)
     resultProportionGlobalType(countGlobalAmine, distanceGlobal, dir_out)
     resultGlobalResidue(countGlobalAmine, distanceGlobal, dir_out)
     resultResidueDistance(countGlobalAmine, distanceGlobal, dir_out)
@@ -329,20 +329,20 @@ def resultResidueDistance(countGlobalAmine, distanceMax, directory_out):
 
 
 
-def resultAtLeastOneGlobal(countGlobal, distanceMax, directory_out):
-
-    listDistance = structure.listDistance(distanceMax)
-    listStudyAtLeastOne = countGlobal[str(distanceMax)]["atLeastOne"].keys()
-    
-    for StudyAtleastOne in listStudyAtLeastOne : 
-        filout = open(directory_out + "atLeastOneGlobal_" + StudyAtleastOne, "w")
-        line = ""
-        for distance in listDistance :  
-            line = line + str(countGlobal[distance]["atLeastOne"][StudyAtleastOne][StudyAtleastOne]) + "\t" + str(countGlobal[distance]["atLeastOne"][StudyAtleastOne]["others"]) + "\t"
-        line = line + "\n" 
-        
-        filout.write(line)
-        filout.close()
+# def resultAtLeastOneGlobal(countGlobal, distanceMax, directory_out):
+# 
+#     listDistance = structure.listDistance(distanceMax)
+#     listStudyAtLeastOne = countGlobal[str(distanceMax)]["atLeastOne"].keys()
+#     
+#     for StudyAtleastOne in listStudyAtLeastOne : 
+#         filout = open(directory_out + "atLeastOneGlobal_" + StudyAtleastOne, "w")
+#         line = ""
+#         for distance in listDistance :  
+#             line = line + str(countGlobal[distance]["atLeastOne"][StudyAtleastOne][StudyAtleastOne]) + "\t" + str(countGlobal[distance]["atLeastOne"][StudyAtleastOne]["others"]) + "\t"
+#         line = line + "\n" 
+#         
+#         filout.write(line)
+#         filout.close()
 
 
 def resultGlobalResidue(count, distanceMax, directory_out):
@@ -362,25 +362,44 @@ def resultGlobalResidue(count, distanceMax, directory_out):
         filout.write(line)
 
 
-def resultAtLeastOne(count, distanceMax, directory_out):
+def resultAtLeastOne(count_global, count_substructure, max_distance, directory_out):
 
-    listDist = structure.listDistance(distanceMax)
-    listStructureStudy = structure.listStructure()
-    listStudyAtLeastOne = count[str(distanceMax)]["atLeastOne"].keys()
+    # distance list
+    listDistance = structure.listDistance(max_distance)
+    l_study =  structure.listStructure()
+    l_study.append("global")
+#     print l_study
     
-    print listStudyAtLeastOne
-    print count
+    # directory result
+    dir_out = directory_out + "AtLeastOne/"
+    try : 
+        makedirs(dir_out, mode=0777)
+    except : 
+        pass
     
-    
-    for StudyAtleastOne in listStudyAtLeastOne : 
-        filout = open(directory_out + "atLeastOne_" + StudyAtleastOne, "w")
-        line_write = ""
-        for structureStudy in listStructureStudy :
-            for distance in listDist :  
-                line_write = line_write + str(count[distance]["atLeastOne"][StudyAtleastOne][structureStudy][StudyAtleastOne]) + "\t" + str(count[distance]["atLeastOne"][StudyAtleastOne][structureStudy]["others"]) + "\t"
-            line_write = line_write + "\n" 
+    # type at least one
+#     print count_substructure[listDistance[0]]["atLeastOne"].keys()
+    for type_atleastone in count_substructure[listDistance[0]]["atLeastOne"].keys() : 
+        filout = open (dir_out + type_atleastone + ".dat", "w")
         
-        filout.write(line_write)
+        # header
+        for distance in listDistance : 
+            filout.write(str(distance) + "\t")
+        
+        # rownames
+        filout.write("\n")
+        
+        for type_study in l_study : 
+            filout.write (str(type_study) + "\t")
+        
+            # data
+            for distance in listDistance :
+                # print type_study
+                if type_study == "global" : 
+                    filout.write (str(count_global[distance]["atLeastOne"][type_atleastone][type_atleastone] / (count_global[distance]["atLeastOne"][type_atleastone][type_atleastone] +count_global[distance]["atLeastOne"][type_atleastone]["other"]) ) + "\t")
+                else : 
+                    filout.write (str(count_substructure[distance]["atLeastOne"][type_atleastone][type_study][type_atleastone] / (count_substructure[distance]["atLeastOne"][type_atleastone][type_study][type_atleastone] +count_substructure[distance]["atLeastOne"][type_atleastone][type_study]["other"]) ) + "\t")
+            filout.write("\n")
         filout.close()
 
 
