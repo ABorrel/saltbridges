@@ -239,7 +239,7 @@ def resolution (pdbfile):
 #    return type
 
 
-def globalPDB(PDB, ligand):
+def globalPDB(PDB, ligand = ""):
     """Retrieve every lines coordinates in PDB file
     in: name PDB
     out: list with line PDB  """
@@ -252,9 +252,8 @@ def globalPDB(PDB, ligand):
             out.append(atom)
 
     connectMatrix = connectMatrixInPDB(PDB)
-    print connectMatrix
     connectAtom(connectMatrix, out)
-        # calcul.buildConnectMatrix(ligand, PDB)
+        # calcul.buildConnectMatrix(ligand, PDB) # why ????
 
     return out
 
@@ -308,6 +307,10 @@ def loadSummary (path_summary) :
             d_n["name"] = element_n[3]
             d_n["resName"] = element_n[4]
             d_n["distance"] = float(element_n[5])
+            d_n["x"] = float(element_n[6])
+            d_n["y"] = float(element_n[7])
+            d_n["z"] = float(element_n[8])
+            
             d_n["angle"] = []
             for angle in element_n [6:] :
                 d_n["angle"].append (float(angle))

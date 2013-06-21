@@ -10,23 +10,34 @@ def lineCoords (line):
     out: dictionnary atom"""
 
     atom = {}
-    atom["serial"] = formatCharacter.formatInt(line[6:11])
-    atom["name"] = formatCharacter.suppSpace(line[12:16])
+    try :atom["serial"] = int(line[6:11].replace (" ", ""))
+    except :line[6:11].replace (" ", "")
+    atom["name"] = line[12:16].replace (" ", "")
     atom["char"] = line[16]
-    atom["resName"] = formatCharacter.suppSpace(line[17:20])
+    atom["resName"] = line[17:20].replace (" ", "")
     atom["chainID"] = str(line[21])
-    atom["resSeq"] = formatCharacter.formatInt(line[22:26])
+    atom["resSeq"] = int (line[22:26].replace (" ", ""))
     atom["iCode"] = str(line[26])
-    atom["x"] = formatCharacter.formatFloat (line[30:38])
-    atom["y"] = formatCharacter.formatFloat (line[38:46])
-    atom["z"] = formatCharacter.formatFloat (line[46:54])
-    atom["element"] = formatCharacter.suppSpace(line[76:78])
-    atom["charge"] = formatCharacter.suppSpace(line[78:80])
-    atom["occupancy"] = formatCharacter.suppSpace(line[54:60])
-    atom["tempFactor"] = formatCharacter.suppSpace(line[60:66])
+    atom["x"] = float (line[30:38].replace (" ", ""))
+    atom["y"] = float (line[38:46].replace (" ", ""))
+    atom["z"] = float (line[46:54].replace (" ", ""))
+    atom["element"] = line[76:78].replace (" ", "")
+    # pqr without element
+    if atom["element"] == "" :
+        if type (atom["name"][0]) is int :
+            atom["element"] = atom["name"][1]
+        else :
+            atom["element"] = atom["name"][0] 
+    
+    atom["charge"] = line[78:80].replace (" ", "")
+    atom["occupancy"] = line[54:60].replace (" ", "")
+    atom["tempFactor"] = line[60:66].replace (" ", "")
     
     atom["connect"] = []
     return atom
+
+
+
 
 def lineConnectMatrix(line):
     """Retrieve connect matrix by atom
@@ -93,3 +104,37 @@ def countH2O (path_file_PDB) :
                 count_H20 = count_H20 + 1
     return count_H20
     
+
+
+def loadCoordSectionPDB (path_PDB_file, section = "", debug = 1):
+    """
+    Retrieve every atom in cordiante section. If it is NMR complex
+    retrieve only first model
+    
+    """
+    
+    list_atom = []
+    filin = open (path_PDB_file, "r")
+    list_line_PDB = filin.readlines()
+    filin.close ()
+    
+    for line_PDB in list_line_PDB :
+        #End model
+        if search ("^ENDMDL", line_PDB) : 
+            break
+        
+        if section == "" : 
+            if search ("^ATOM", line_PDB) or search ("^HETATM", line_PDB) : 
+                list_atom.append (lineCoords(line_PDB))
+        else : 
+            if search ("^" + section, line_PDB)  : 
+                list_atom.append (lineCoords(line_PDB))
+                
+#    if debug : 
+#        print "TEST"            
+#        print len (list_atom)
+#    
+    return list_atom
+    
+
+

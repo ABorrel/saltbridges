@@ -7,7 +7,9 @@ from os import system
 from os import listdir
 from os import path
 from re import search
+from copy import deepcopy
 
+import statistic
 
 
 def transfomAA (aa_in):
@@ -120,168 +122,14 @@ def atomInList(listAtom, atom):
     return 0
 
 
-# -> move in structure
-# def atLeastOneClassification(atom):
-#     """Classification for at least one sudies
-#     in: structure atoms
-#     out: classification (string)"""
-#     
-#     if atom["resName"] == "GLU" or atom["resName"] == "ASP":
-#         if atom["name"] == "OE1" or atom["name"] == "OE2" or atom["name"] == "OD1" or atom["name"] == "OD2":
-#             return "counterIon"
-#         
-#         # Amphiprotic
-#     if atom["resName"] == "TYR":
-#         if atom["name"] == "OH":
-#             return "amphiprotic"
-# 
-#     if atom["resName"] == "CYS":
-#         if atom["name"] == "SG":
-#             return "amphiprotic"
-# 
-# 
-#     if atom["resName"] == "THR":
-#         if atom["name"] == "OG1":
-#             return "amphiprotic"
-# 
-# 
-#     if atom["resName"] == "SER":
-#         if atom["name"] == "OG":
-#             return "amphiprotic"
-# 
-#     
-#     if atom["resName"] == "PHE" or atom["resName"] == "TYR": 
-#         if atom["name"] != "CA" : 
-#             if atom["name"] != "C" :
-#                 return "Carom"
-#             
-#     if atom["resName"] == "TRP" : 
-#         if atom["name"] != "CA" : 
-#             if atom["name"] != "CB" : 
-#                 if atom["name"] != "CG" :
-#                     return "Carom"
-#     
-#     
-#     if atom["resName"] == "HOH":
-#         if atom["name"] == "O" : 
-#             return "H2O"  
-#     
-#     return "others"
-# 
-# 
-# def classification (atom): # Milletti 2010
-#     """Classification atoms 
-#     in: atom
-#     out: classification (string)"""
-#     
-#     listAminoAcid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS"]
-#     # Oxygen acid
-#     if atom["resName"] == "GLU" or atom["resName"] == "ASP":
-#         if atom["name"] == "OE1" or atom["name"] == "OE2" or atom["name"] == "OD1" or atom["name"] == "OD2":
-#             return "OxAcid"
-# 
-#     # Oxygen Donnor/acceptor
-#     if atom["resName"] == "TYR":
-#         if atom["name"] == "OH":
-#             return "Donnor/acceptor"
-# 
-#     if atom["resName"] == "THR":
-#         if atom["name"] == "OG1":
-#             return "Donnor/acceptor"
-# 
-# 
-#     if atom["resName"] == "SER":
-#         if atom["name"] == "OG":
-#             return "Donnor/acceptor"
-# 
-# 
-#     # Sulfure
-#     if atom["resName"] == "CYS":
-#         if atom["name"] == "SG":
-#             return "Sulfur"
-# 
-# 
-#     if atom["resName"] == "THR":
-#         if atom["name"] == "OG1":
-#             return "amphiprotic"
-# 
-# 
-#     if atom["resName"] == "SER":
-#         if atom["name"] == "OG":
-#             return "amphiprotic"
-#     
-#     # Nitrogen basic
-#     if atom["resName"] == "HIS" : 
-#         if atom["name"] == "NE2" or atom["name"] == "ND1" : 
-#             return "Nbasic"
-#         
-#     if atom["resName"] == "LYS" : 
-#         if atom["name"] == "NZ" : 
-#             return "Nbasic"
-#         
-#     if atom["resName"] == "ARG" : 
-#         if atom["name"] != "NH1" or  atom["name"] != "NH2" or atom["name"] != "NHE": 
-#             return "Nbasic"
-#         
-#     if atom["resName"] in listAminoAcid : 
-#         if atom["name"] == "NXT" : 
-#             return "Nbasic"
-# 
-#     # Nitrogen donnor
-#     if atom["resName"] == "ASN" : 
-#         if atom["name"] == "ND2" : 
-#             return "Ndonnor"
-#         
-#     if atom["resName"] == "GLN" : 
-#         if atom["name"] == "NE2" : 
-#             return "Ndonnor"
-#             
-#     if atom["resName"] in listAminoAcid : 
-#         if atom["name"] == "N" : 
-#             return "Ndonnor"
-#     
-#     # Caromatic
-#     if atom["resName"] == "PHE" or atom["resName"] == "TYR": 
-#         if atom["name"] != "CA" : 
-#             if atom["name"] != "C" :
-#                 return "Carom"
-#             
-#     if atom["resName"] == "TRP" : 
-#         if atom["name"] != "CA" : 
-#             if atom["name"] != "CB" : 
-#                 if atom["name"] != "CG" :
-#                     return "Carom"
-#     
-#     if atom["resName"] in listAminoAcid :
-#         if atom["name"] == "O" :
-#             return "OxAccept" 
-#     
-#     
-#     if atom["resName"] == "ASN" or atom["resName"] == "GLN":
-#         if atom["name"] == "OD1" or atom["name"] == "OE1" :
-#             return "OxAccept"
-#         
-#         
-#     if atom["resName"] == "HOH":
-#         if atom["name"] == "O" : 
-#             return "H2O" 
-#     
-#     
-#     return "others"
-#     
-     
+def checkListResult(l):
     
-
-##################Serine Protease###########################
-
-def checkListResult(list):
-    
-    if len(list) == 0 or len(list) == 1 : 
+    if len(l) == 0 or len(l) == 1 : 
         return
     
     listGlobal = []
     
-    for listSubStructure in list : 
+    for listSubStructure in l : 
         listSerial = []
         for atom in listSubStructure : 
             listSerial.append(atom["serial"])
@@ -300,7 +148,7 @@ def checkListResult(list):
             if listGlobal[i] == listGlobal[j]:
 
                 del listGlobal[j]
-                del list[j]
+                del l[j]
                 nbList = nbList - 1
             else : 
                 j = j + 1
@@ -367,5 +215,90 @@ def sumDict(dict_count) :
     
     
     
+# remove in neigbor structure compound with iron close
+def removeNeighborIron (atom_interest_close):
     
+    if type (atom_interest_close) is list : 
+        nb_central_atom = len (atom_interest_close )
+        i = 0
+        while i < nb_central_atom : 
+            l_neighbors = atom_interest_close[i]["neighbors"]
+            if closeIron (l_neighbors) == 1 : 
+                del atom_interest_close[i]
+                nb_central_atom = nb_central_atom - 1
+                continue
+            else : 
+                i = i + 1 
+                
+    else :
+        for sub_struct in atom_interest_close.keys() : 
+            nb_central_atom = len (atom_interest_close[sub_struct] )
+            i = 0
+            while i < nb_central_atom : 
+                l_neighbors = atom_interest_close[sub_struct][i]["neighbors"]
+                if closeIron (l_neighbors) == 1 : 
+                    del atom_interest_close[sub_struct][i]
+                    nb_central_atom = nb_central_atom - 1
+                    continue
+                else : 
+                    i = i + 1
+                    
+    
+    
+def closeIron (l_neighbors) : 
+    # peut etre changer pour linstant je suprime si pas dans la liste des aa
+    l_ions = ["ZN", "FE2", "ZN", "CU", "SO4", "CA","NI", "LU", "TB", "NA"]
+    listAminoAcid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS", "HOH"]
+    d = 10
+    nb_neigbor = len (l_neighbors)
+    if nb_neigbor == 0 : 
+        return 0
+    i = 0
+    while i < nb_neigbor : 
+        if l_neighbors[i]["distance"] < d : 
+            res_out = l_neighbors[i]["resName"]
+            d = l_neighbors[i]["distance"]
+        i = i + 1 
+    
+    if not res_out in listAminoAcid :
+        return 1
+    else : 
+        return 0
+    
+    
+
+
+def colorAtomType (l_superimpose) : 
+    
+    for atom in l_superimpose : 
+        c_atom = structure.classificationATOM(atom)
+        if c_atom == "OxAcid" : 
+            atom ["tempFactor"] = 100 - 8.33
+        elif c_atom == "ODonAcc" : 
+            atom ["tempFactor"] = 100 - (2* 8.33)
+        elif c_atom ==  "OxAccept": 
+            atom ["tempFactor"] = 100 - (3* 8.33) 
+        elif c_atom == "OxPep"  : 
+            atom ["tempFactor"] = 100 - (4* 8.33)  
+        elif c_atom == "Sulfur"  : 
+            atom ["tempFactor"] = 100 - (5* 8.33)
+        elif c_atom == "Carom"  : 
+            atom ["tempFactor"] = 100 - (6* 8.33)
+        elif c_atom == "Carom"  : 
+            atom ["tempFactor"] = 100 - (7* 8.33)  
+        elif c_atom == "Ndonnor"  : 
+            atom ["tempFactor"] = 100 - (8* 8.33)
+        elif c_atom == "Nhis"  : 
+            atom ["tempFactor"] = 100 - (9* 8.33)
+        elif c_atom == "Nbasic"  : 
+            atom ["tempFactor"] = 100 - (9* 8.33)   
+        elif c_atom == "CPep"  : 
+            atom ["tempFactor"] = 100 - (10* 8.33) 
+        elif c_atom == "others"  : 
+            atom ["tempFactor"] = 100 - (11* 8.33) 
+        elif c_atom == "H2O"  : 
+            atom ["tempFactor"] = 100 - (12* 8.33)    
+
+    
+       
     

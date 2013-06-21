@@ -101,6 +101,7 @@ def retriveListPDB (name_database):
         list_pdb = list(set(list_pdb))
         
         return formatCharacter.lowerList(list_pdb)
+    
     elif name_database == "PDB" : 
         directory_PDB = repertory.repInit + "PDB/"
         list_files = listdir(directory_PDB)

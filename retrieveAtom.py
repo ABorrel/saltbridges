@@ -1,15 +1,16 @@
 import tool
 from copy import deepcopy
+import calcul
 
 
-def serial(serial, list_atom) :
+def serial(at_serial, list_atom) :
     """For a atom id search atom dictionnary
-    in: serial atom and list atoms
+    in: at_serial atom and list atoms
     out: type of atom"""
 
     #print list_atom
     for atom in list_atom :
-        if atom["serial"] == serial :
+        if int(atom["serial"]) == int(at_serial) :
             return atom
 
     return 0
@@ -29,6 +30,7 @@ def atomConnect (list_atom_ligand, serial_atom):
         return listAtom, conect
 
     matrixConect = atomN["connect"]
+       
 
     for elementMatrixConect in matrixConect:
         atom = (serial(int(elementMatrixConect), list_atom_ligand))
@@ -41,7 +43,7 @@ def atomConnect (list_atom_ligand, serial_atom):
     tool.dellH(conect)
     return listAtom, conect
 
-###################serine protease################3
+###################serine protease################
 
 def cycle(serialAtomInit, listAtomLigand):
     """retrieve cycle in list of atom
@@ -83,4 +85,24 @@ def cycle(serialAtomInit, listAtomLigand):
         
     return listOUT
     
+###################################################################
+###################################################################
+
+
+def substructure (substruct, serial_at_central, l_at) : 
     
+    if substruct == "Primary" or substruct == "Secondary" or substruct == "Tertiary" : 
+        l_out = atomConnect(l_at, serial_at_central)
+        return l_out[0]
+    
+    if substruct == "Imidazole" : 
+        l_out = []
+        l_n = atomConnect(l_at, serial_at_central)
+        
+        
+    
+    
+    
+
+
+ 

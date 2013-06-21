@@ -9,8 +9,12 @@ import searchPDB
 import structure
 import writeFile
 import tool
+import repertory
+import runScriptR
+
 from os import path 
 from copy import deepcopy
+from numpy import sum
 
 
 def parseDataSet(path_file_dataset):
@@ -373,11 +377,11 @@ def threeNeighbors (struct_neighbor, countStruct, nb_neighbor = 3) :
             if len(l_neighbor) < 3 : # remove if number of neigbor < 3 
                 continue
             for i in range(1,nb_neighbor+1) : 
-                classif_first, distance = searchMoreClose (l_neighbor)
+                classif_first, atom_close = searchMoreClose (l_neighbor)
                     
                 if classif_first == None : 
                     continue
-                countStruct[sub_struct][i]["distance"].append(str(distance))
+                countStruct[sub_struct][i]["distance"].append(str(atom_close["distance"]))
                 countStruct[sub_struct][i][classif_first] = countStruct[sub_struct][i][classif_first] + 1
                 
     else :
@@ -388,27 +392,99 @@ def threeNeighbors (struct_neighbor, countStruct, nb_neighbor = 3) :
                 if len(l_neighbor) < 3 : 
                     continue
                 for i in range(1,nb_neighbor+1) : 
-                    classif_first, distance = searchMoreClose (l_neighbor)
+                    classif_first, atom_close = searchMoreClose (l_neighbor)
                     
                     if classif_first == None : 
                         continue
-                    countStruct[sub_struct][i]["distance"].append(str(distance))
+                    countStruct[sub_struct][i]["distance"].append(str(atom_close["distance"]))
                     countStruct[sub_struct][i][classif_first] = countStruct[sub_struct][i][classif_first] + 1
         
     
-def searchMoreClose (l_neighbors) : 
+def searchMoreClose (l_neighbors, option_lcopy = 0) : 
+    
+    if option_lcopy == 1 : 
+        l_neighbors_use = deepcopy(l_neighbors)
+    else : 
+        l_neighbors_use = l_neighbors
     
     d = 10
     i_out = 0
-    nb_neigbor = len (l_neighbors)
+    nb_neigbor = len (l_neighbors_use)
     i = 0
     while i < nb_neigbor : 
-        if l_neighbors[i]["distance"] < d : 
-            classe_out = structure.classificationATOM(l_neighbors[i])
-            d = l_neighbors[i]["distance"]
+        if l_neighbors_use[i]["distance"] < d : 
+            classe_out = structure.classificationATOM(l_neighbors_use[i])
+            d = l_neighbors_use[i]["distance"]
+            atom_out = deepcopy(l_neighbors_use[i])
             i_out = i
         i = i + 1 
+    
+    del l_neighbors_use[i_out]
+    return classe_out, atom_out
+
+
+def lenBondAnalysis (struct_neighbor, substruct, p_dir_result ):
+
+    p_dir_result = repertory.bondLength (p_dir_result)
+
+    l_distance = []
+    l_first = []
+    l_coplar = []
+    l_first_coplar = []
+    l_angle = []
+    
+    for at_central in struct_neighbor[substruct] : 
+        PDB_ID = at_central["PDB"]
+        serial_at_central = at_central["serial"]
+        name_ligand =  at_central["resName"] 
         
-    del l_neighbors[i_out]
-    return classe_out, d
+        # all atom ligand
+        l_at_lig = loadFile.ligandInPDB(PDB_ID, name_ligand)
+        l_at_subs = retrieveAtom.substructure (substruct, serial_at_central, l_at_lig)
+        
+        # first neighbor
+        if len (at_central["neighbors"]) == 0 : 
+            continue
+        else : 
+            classif_first, atom_close = searchMoreClose (at_central["neighbors"], option_lcopy = 1)
+            
+            if substruct == "Tertiary" : 
+                l_coplar.append (calcul.coplanar(l_at_subs[0], l_at_lig))
+                l_first_coplar.append (classif_first)
+            
+            # atom from neighbor search
+            N_ref =  l_at_subs[0]
+            
+            l_distance_temp = []
+            # distance
+            for c_atom in l_at_subs[1:] : 
+                l_distance_temp.append (calcul.distanceTwoatoms(c_atom, N_ref))
+            
+            l_angle.append(sum(atom_close["angle"]))
+            l_distance.append (sum (l_distance_temp))
+            l_first.append (classif_first)
+    
+    
+    writeFile.lenBondType (l_distance, l_first, p_dir_result + substruct + ".dat") 
+    writeFile.lenBondType (l_angle, l_first, p_dir_result + substruct + "_angle.dat") 
+    
+    if substruct == "Tertiary" : 
+        writeFile.lenBondType (l_coplar, l_first_coplar, p_dir_result + substruct + "_coplar.dat") 
+        runScriptR.barplotLenBond (p_dir_result + substruct + "_coplar.dat")
+         
+    runScriptR.barplotLenBond (p_dir_result + substruct + ".dat")
+    runScriptR.barplotLenBond (p_dir_result + substruct + "_angle.dat")        
+            
+            
+            
+        
+    
+    
+    
+    
+    
+    
+    
+
+
 

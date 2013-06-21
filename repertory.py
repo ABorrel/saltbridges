@@ -150,8 +150,19 @@ def retrieveSummaryFile (strut, name_dataset) :
     return l_out
 
 
+def imposeNeighbors (p_dir_result) : 
+    
+    rep = p_dir_result + "superimpose/"
+    try: makedirs(rep, mode=0777)
+    except: pass
+    return rep
 
 
+def bondLength (p_dir_result) : 
+    rep = p_dir_result + "bondLength/"
+    try: makedirs(rep, mode=0777)
+    except: pass
+    return rep
 
 
 #############################Serine Protease###################3

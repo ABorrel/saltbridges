@@ -16,6 +16,25 @@ def globalStruct (nameFile, listAtom):
     filout.write("END\n")
 
 
+def coordinateSection (path_filout, listAtom, recorder, header = "", connect_matrix = 0):
+    """
+    Write list atom in PDB file
+    in: list atoms, name of file out
+    out: write file
+    """
+    
+    filout = open(path_filout, "w")
+    filout.write ("HEADER " + str (header) + "\n")
+    for atom in listAtom : 
+        coordinateStructure(atom, recorder, filout)
+    
+    if connect_matrix : 
+        for atom in listAtom : 
+            connect(atom, filout)
+    filout.write("END\n")
+    
+    return path_filout
+
 
 
 def coordinateStructure(atom, recorder, fileWrite):
@@ -111,9 +130,8 @@ def formate(inVariable, nbCarac):
         return (inVariable[0:nbCarac - 1])
 
 
-def formatCoord(float):
+def formatCoord(in_float):
     """Format float in coordinate section
     in: float
     out: string formated"""
-    
-    return str("%.3f" % float)    
+    return str("%.3f" % in_float)    

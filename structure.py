@@ -501,3 +501,211 @@ def selectionAngle():
     angleStruct["Pyridine"]["SUP"] = 150
     
     return angleStruct
+
+
+
+
+def substructureCoord (type_substructure):
+    
+    if type_substructure == "Primary" : 
+        
+        atom1 = {}
+        atom1["serial"] = 1
+        atom1["name"] = "C01"
+        atom1["resName"] = "PRI"
+        atom1["x"] = 0.000
+        atom1["y"] = 0.000
+        atom1["z"] = 0.000
+        atom1["element"] = "C"
+        atom1["charge"] = "0"
+        atom1["occupancy"] = "1"
+        atom1["tempFactor"] = "0"
+        atom1["connect"] = []  
+    
+        
+        atom2 = {}
+        atom2["serial"] = 2
+        atom2["name"] = "N01"
+        atom2["resName"] = "PRI"
+        atom2["x"] = 1.118
+        atom2["y"] = 0.931
+        atom2["z"] = -0.210
+        atom2["element"] = "N"
+        atom2["charge"] = "0"
+        atom2["occupancy"] = "1"
+        atom2["tempFactor"] = "0"
+        atom2["connect"] = [] 
+        return [atom1, atom2]
+    
+    
+    elif type_substructure == "Secondary" : 
+        
+        atom1 = {}
+        atom1["serial"] = 1
+        atom1["name"] = "C01"
+        atom1["resName"] = "SEC"
+        atom1["x"] = 0.000
+        atom1["y"] = 0.000
+        atom1["z"] = 0.000
+        atom1["element"] = "C"
+        atom1["charge"] = "0"
+        atom1["occupancy"] = "1"
+        atom1["tempFactor"] = "0"
+        atom1["connect"] = []  
+        
+        atom2 = {}
+        atom2["serial"] = 2
+        atom2["name"] = "N01"
+        atom2["resName"] = "SEC"
+        atom2["x"] = 1.118
+        atom2["y"] = 0.931
+        atom2["z"] = -0.210
+        atom2["element"] = "N"
+        atom2["charge"] = "0"
+        atom2["occupancy"] = "1"
+        atom2["tempFactor"] = "0"
+        atom2["connect"] = [] 
+        
+        atom3 = {}
+        atom3["serial"] = 3
+        atom3["name"] = "C02"
+        atom3["resName"] = "SEC"
+        atom3["x"] = 1.469
+        atom3["y"] = 1.571
+        atom3["z"] = 1.066
+        atom3["element"] = "C"
+        atom3["charge"] = "0"
+        atom3["occupancy"] = "1"
+        atom3["tempFactor"] = "0"
+        atom3["connect"] = []        
+        
+        return [atom1, atom2, atom3]    
+    
+    
+    elif type_substructure == "Tertiary" : 
+        
+        
+        atom1 = {}
+        atom1["serial"] = 1
+        atom1["name"] = "C01"
+        atom1["resName"] = "TER"
+        atom1["x"] = 0.451
+        atom1["y"] = -1.374
+        atom1["z"] = -0.266
+        atom1["element"] = "C"
+        atom1["charge"] = "0"
+        atom1["occupancy"] = "1"
+        atom1["tempFactor"] = "0"
+        atom1["connect"] = []  
+        
+        atom2 = {}
+        atom2["serial"] = 2
+        atom2["name"] = "C02"
+        atom2["resName"] = "TER"
+        atom2["x"] = -0.468
+        atom2["y"] = 0.102
+        atom2["z"] = 1.390
+        atom2["element"] = "C"
+        atom2["charge"] = "0"
+        atom2["occupancy"] = "1"
+        atom2["tempFactor"] = "0"
+        atom2["connect"] = [] 
+        
+        atom3 = {}
+        atom3["serial"] = 3
+        atom3["name"] = "C03"
+        atom3["resName"] = "TER"
+        atom3["x"] = -1.099
+        atom3["y"] = 0.341
+        atom3["z"] = -0.915
+        atom3["element"] = "C"
+        atom3["charge"] = "0"
+        atom3["occupancy"] = "1"
+        atom3["tempFactor"] = "0"
+        atom3["connect"] = []        
+        
+        atom4 = {}
+        atom4["serial"] = 4
+        atom4["name"] = "N01"
+        atom4["resName"] = "TER"
+        atom4["x"] = 0.000
+        atom4["y"] = 0.000
+        atom4["z"] = 0.000
+        atom4["element"] = "N"
+        atom4["charge"] = "0"
+        atom4["occupancy"] = "1"
+        atom4["tempFactor"] = "0"
+        atom4["connect"] = [] 
+        
+        return [atom1, atom2, atom3, atom4]    
+    
+    elif type_substructure == "Imidazole" : 
+        
+        atom1 = {}
+        atom1["serial"] = 1
+        atom1["name"] = "C2"
+        atom1["resName"] = "IMD"
+        atom1["x"] = -1.152
+        atom1["y"] = -0.078
+        atom1["z"] = 0.001
+        atom1["element"] = "C"
+        atom1["charge"] = "0"
+        atom1["occupancy"] = "1"
+        atom1["tempFactor"] = "0"
+        atom1["connect"] = []  
+        
+        atom2 = {}
+        atom2["serial"] = 2
+        atom2["name"] = "N1"
+        atom2["resName"] = "IMD"
+        atom2["x"] = 0.784
+        atom2["y"] = -0.839
+        atom2["z"] = -0.002
+        atom2["element"] = "N"
+        atom2["charge"] = "0"
+        atom2["occupancy"] = "1"
+        atom2["tempFactor"] = "0"
+        atom2["connect"] = [] 
+        
+        atom3 = {}
+        atom3["serial"] = 3
+        atom3["name"] = "C4"
+        atom3["resName"] = "IMD"
+        atom3["x"] = -0.467
+        atom3["y"] = -1.227
+        atom3["z"] = -0.001
+        atom3["element"] = "C"
+        atom3["charge"] = "0"
+        atom3["occupancy"] = "1"
+        atom3["tempFactor"] = "0"
+        atom3["connect"] = []        
+        
+        atom4 = {}
+        atom4["serial"] = 4
+        atom4["name"] = "N3"
+        atom4["resName"] = "IMD"
+        atom4["x"] = -0.255
+        atom4["y"] = 1.090
+        atom4["z"] = 0.001
+        atom4["element"] = "N"
+        atom4["charge"] = "0"
+        atom4["occupancy"] = "1"
+        atom4["tempFactor"] = "0"
+        atom4["connect"] = [] 
+        
+        atom5 = {}
+        atom5["serial"] = 5
+        atom5["name"] = "C5"
+        atom5["resName"] = "IMD"
+        atom5["x"] = 1.067
+        atom5["y"] = 0.441
+        atom5["z"] = -0.001
+        atom5["element"] = "C"
+        atom5["charge"] = "0"
+        atom5["occupancy"] = "1"
+        atom5["tempFactor"] = "0"
+        atom5["connect"] = [] 
+        
+        
+        
+        

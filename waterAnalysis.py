@@ -8,7 +8,7 @@ import parsing
 import parseNACCESS
 import repertory
 import structure
-import tool
+import loadFile
 
 
 def resolutionWater (list_PDB, path_folder_result, limit_acc = 20.0):
@@ -55,7 +55,7 @@ def resolutionByStructure (name_dataset) :
         list_global = []
         for path_summary in l_file_summary : 
             print path_summary
-            list_interest_atom = tool.loadSummary (path_summary)
+            list_interest_atom = loadFile.loadSummary (path_summary)
             for interest_atom in list_interest_atom : 
                 if not interest_atom in list_global : 
                     list_global.append (interest_atom)

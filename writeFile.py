@@ -142,7 +142,7 @@ def neighborStruct(struct_neighbor, struct_global_neighbor, files):
                 
             lineWrite = str(atom_central["PDB"]) + "\t" + str(atom_central["serial"]) + "-" + str(atom_central["resName"]) + "\t"
             for neighbor in atom_central["neighbors"]:
-                lineWrite = lineWrite + str(neighbor["serial"]) + " " + str(neighbor["resSeq"]) + " " + str(neighbor["element"]) + " " + str(neighbor["name"]) + " " + str(neighbor["resName"]) + " " + str("%.2f" % neighbor["distance"])
+                lineWrite = lineWrite + str(neighbor["serial"]) + " " + str(neighbor["resSeq"]) + " " + str(neighbor["element"]) + " " + str(neighbor["name"]) + " " + str(neighbor["resName"]) + " " + str("%.2f" % neighbor["distance"]) + " " +str("%.3f" % neighbor["x"]) + " " +str("%.3f" % neighbor["y"]) + " " +str("%.3f" % neighbor["z"])  
                 for angle in neighbor["angle"]:
                     lineWrite = lineWrite + " " + str("%.2f" % angle)
                 lineWrite = lineWrite + "//"
@@ -314,20 +314,29 @@ def resultResidueDistance(countGlobalAmine, distanceMax, directory_out):
     listDistance = structure.listDistance(distanceMax)
     listAminoAcid = ["HOH", "ASP", "GLU", "THR", "SER", "ASN", "GLN", "TYR", "HIS", "LYS", "ARG", "PHE", "TRP", "ALA", "ILE", "LEU", "MET", "VAL", "CYS", "GLY", "PRO"]
 
-    for type_substructure in  countGlobalAmine["2.5"]["residue"].keys():
-        filout = open(directory_out + str(type_substructure) + "/GlobalResidue" + str(type_substructure), "w")
-        for aminoAcid in listAminoAcid:
-            line = str(aminoAcid)
-            for distance in listDistance:
-                line = line + "\t"
-                if aminoAcid == "HOH":
-                    line = line + str(countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["main"])
-                else:
-                    line = line + str(countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["side"])
 
-            line = line + "\n"
-            filout.write(line)
-        filout.close()
+    for type_substructure in  countGlobalAmine["2.5"]["residue"].keys():
+        filout_side_chain = open(directory_out + str(type_substructure) + "/GlobalResidueSide" + str(type_substructure), "w")
+        filout_global = open(directory_out + str(type_substructure) + "/GlobalResidue" + str(type_substructure), "w")
+        for aminoAcid in listAminoAcid:
+            line_side = str(aminoAcid)
+            line_global = str(aminoAcid)
+            for distance in listDistance:
+                line_side = line_side + "\t"
+                line_global = line_global + "\t"
+                if aminoAcid == "HOH":
+                    line_side = line_side + str(countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["main"])
+                    line_global = line_global + str(countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["main"])
+                else:
+                    line_side = line_side + str(countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["side"])
+                    line_global = line_global + str(countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["side"] + countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["main"])
+
+            line_side = line_side + "\n"
+            line_global = line_global + "\n"
+            filout_side_chain.write(line_side)
+            filout_global.write(line_global)
+        filout_side_chain.close()
+        filout_global.close ()
 
 
 
@@ -337,31 +346,37 @@ def resultResidueDistance(countGlobalAmine, distanceMax, directory_out):
 #     listStudyAtLeastOne = countGlobal[str(distanceMax)]["atLeastOne"].keys()
 #     
 #     for StudyAtleastOne in listStudyAtLeastOne : 
-#         filout = open(directory_out + "atLeastOneGlobal_" + StudyAtleastOne, "w")
-#         line = ""
+#         filout_side_chain = open(directory_out + "atLeastOneGlobal_" + StudyAtleastOne, "w")
+#         line_side = ""
 #         for distance in listDistance :  
-#             line = line + str(countGlobal[distance]["atLeastOne"][StudyAtleastOne][StudyAtleastOne]) + "\t" + str(countGlobal[distance]["atLeastOne"][StudyAtleastOne]["others"]) + "\t"
-#         line = line + "\n" 
+#             line_side = line_side + str(countGlobal[distance]["atLeastOne"][StudyAtleastOne][StudyAtleastOne]) + "\t" + str(countGlobal[distance]["atLeastOne"][StudyAtleastOne]["others"]) + "\t"
+#         line_side = line_side + "\n" 
 #         
-#         filout.write(line)
-#         filout.close()
+#         filout_side_chain.write(line_side)
+#         filout_side_chain.close()
 
 
 def resultGlobalResidue(count, distanceMax, directory_out):
 
     listDistance = structure.listDistance(distanceMax)
     listAminoAcid = ["HOH", "ASP", "GLU", "THR", "SER", "ASN", "GLN", "TYR", "HIS", "LYS", "ARG", "PHE", "TRP", "ALA", "ILE", "LEU", "MET", "VAL", "CYS", "GLY", "PRO"]
-    filout = open(directory_out + str("global") + "ResidueAllAtoms", "w")
+    filout_side = open(directory_out + "globalResidueAllAtomsSide", "w")
+    filout_all = open(directory_out + "globalResidueAllAtoms", "w")
     for aminoAcid in listAminoAcid:
-        line = str(aminoAcid)
+        line_side = str(aminoAcid)
+        line_global = str(aminoAcid)
         for distance in listDistance:
             if aminoAcid == "HOH":
-                line = line + "\t" + str(count[distance]["ResidueAllAtom"][aminoAcid]["main"])
+                line_side = line_side + "\t" + str(count[distance]["ResidueAllAtom"][aminoAcid]["main"])
+                line_global = line_global + "\t" + str(count[distance]["ResidueAllAtom"][aminoAcid]["main"])
             else:
-                line = line + "\t" + str(count[distance]["ResidueAllAtom"][aminoAcid]["side"])
+                line_side = line_side + "\t" + str(count[distance]["ResidueAllAtom"][aminoAcid]["side"])
+                line_global = line_global + "\t" + str(count[distance]["ResidueAllAtom"][aminoAcid]["side"] + count[distance]["ResidueAllAtom"][aminoAcid]["main"])
 
-        line = line + "\n"
-        filout.write(line)
+        line_side = line_side + "\n"
+        line_global = line_global + "\n"
+        filout_side.write(line_side)
+        filout_all.write(line_global)
 
 
 def resultAtLeastOne(count_global, count_substructure, max_distance, directory_out):
@@ -519,6 +534,25 @@ def resultNeighbor (countStruct, dir_out) :
     filout_distance.close ()
     filout_neighbor.close ()
         
+        
+
+def lenBondType (l_distance, l_first, path_filout) : 
+    
+    filout = open (path_filout, "w")
+    
+    nb_element = len (l_distance)
+    # control same size of list
+    if nb_element != len (l_first) : 
+        filout.close()
+        print "ERROR number neighbors -writeFile l.547"
+        return
+    else :
+        i = 0
+        while i < nb_element : 
+            filout.write (str (l_distance[i]) + "\t" + str (l_first[i]) + "\n")
+            i = i + 1
+        
+    filout.close ()
         
         
         

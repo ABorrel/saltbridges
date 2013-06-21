@@ -35,7 +35,7 @@ def distanceTwoatoms(atom1, atom2):  ##############to review
         return 100
 
 
-def coplanar (atom, listAtom):
+def coplanar (atom, l_atom_ligand):
     """Calculate the orthogonal distance between nitrogen atom of tertiary amine and plan with 3 carbons connect
     in : - atom of nitrogen -> dictionnary
          - all atom of ligand -> list of atom dictionnary
@@ -47,13 +47,13 @@ def coplanar (atom, listAtom):
         return
 
     else:
-        point = [float(retrieveAtom.serial(matrix[0], listAtom)["x"]), float(retrieveAtom.serial(matrix[0], listAtom)["y"]), float(retrieveAtom.serial(matrix[0], listAtom)["z"])]
+        point = [float(retrieveAtom.serial(matrix[0], l_atom_ligand)["x"]), float(retrieveAtom.serial(matrix[0], l_atom_ligand)["y"]), float(retrieveAtom.serial(matrix[0], l_atom_ligand)["z"])]
 
         d = symbols("d")
         
-        atom1 = retrieveAtom.serial(matrix[1], listAtom)
-        atom2 = retrieveAtom.serial(matrix[2], listAtom)
-        atom3 = retrieveAtom.serial(matrix[3], listAtom)
+        atom1 = retrieveAtom.serial(matrix[1], l_atom_ligand)
+        atom2 = retrieveAtom.serial(matrix[2], l_atom_ligand)
+        atom3 = retrieveAtom.serial(matrix[3], l_atom_ligand)
         
         
         point1 = [float(atom1["x"]), float(atom1["y"]), float(atom1["z"])]
