@@ -269,14 +269,16 @@ def loadCloseStruct (path_dir_result) :
     l_files = listdir(path_dir_result)
     for name_file in l_files : 
         if search(".sum", name_file) : 
-            flag = 1
+            if path.getsize(path_dir_result + name_file) != 0 : 
+                flag = flag + 1
             sub_struct = name_file.split ("_")[-1].split (".")[0]
             if sub_struct == "global" : 
                 struct_global_neighbor = loadSummary(path_dir_result + name_file)
             else : 
                 struct_neighbor[sub_struct] = loadSummary(path_dir_result + name_file)
     
-    if flag == 0 : 
+
+    if flag < 2 : 
         return None, None
     return struct_neighbor, struct_global_neighbor 
             

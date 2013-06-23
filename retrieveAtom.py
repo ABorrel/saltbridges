@@ -1,6 +1,6 @@
 import tool
 from copy import deepcopy
-import calcul
+import searchPDB
 
 
 def serial(at_serial, list_atom) :
@@ -97,10 +97,30 @@ def substructure (substruct, serial_at_central, l_at) :
     
     if substruct == "Imidazole" : 
         l_out = []
-        l_n = atomConnect(l_at, serial_at_central)
+        out_imd = searchPDB.imidazole(atomConnect(l_at, serial_at_central)[0], l_at)
+        if out_imd[0] == 0 : 
+            print "ERROR"
+            return []
+        l_serial = out_imd[1]
         
+        for serial_at in l_serial : 
+#             print serial_at
+            l_out.append (serial(serial_at, l_at))
         
+        return l_out
     
+    if substruct == "Guanidium" : 
+        l_out = []
+        out_gua = searchPDB.guanidium(atomConnect(l_at, serial_at_central)[0], l_at)
+        if out_gua[0] == 0 : 
+            print "ERROR"
+            return []
+        l_serial = out_gua[1]
+        
+        for serial_at in l_serial : 
+#             print serial_at
+            l_out.append (serial(serial_at, l_at))
+        return l_out
     
     
 

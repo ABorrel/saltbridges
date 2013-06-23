@@ -706,6 +706,81 @@ def substructureCoord (type_substructure):
         atom5["tempFactor"] = "0"
         atom5["connect"] = [] 
         
+        return [atom1, atom2, atom3, atom4, atom5] 
+        
+        
+    elif type_substructure == "Guanidium" : 
+
+        atom1 = {}
+        atom1["serial"] = 1
+        atom1["name"] = "N01"
+        atom1["resName"] = "GUA"
+        atom1["x"] = -1.801
+        atom1["y"] = 0.216
+        atom1["z"] = 1.495
+        atom1["element"] = "N"
+        atom1["charge"] = "0"
+        atom1["occupancy"] = "1"
+        atom1["tempFactor"] = "0"
+        atom1["connect"] = []  
+        
+        atom2 = {}
+        atom2["serial"] = 2
+        atom2["name"] = "C09"
+        atom2["resName"] = "GUA"
+        atom2["x"] = -1.948
+        atom2["y"] = 0.949
+        atom2["z"] = 0.398
+        atom2["element"] = "C"
+        atom2["charge"] = "0"
+        atom2["occupancy"] = "1"
+        atom2["tempFactor"] = "0"
+        atom2["connect"] = [] 
+        
+        atom3 = {}
+        atom3["serial"] = 3
+        atom3["name"] = "N02"
+        atom3["resName"] = "GUA"
+        atom3["x"] = -0.870
+        atom3["y"] = 1.546
+        atom3["z"] = -0.403
+        atom3["element"] = "N"
+        atom3["charge"] = "0"
+        atom3["occupancy"] = "1"
+        atom3["tempFactor"] = "0"
+        atom3["connect"] = []        
+        
+        atom4 = {}
+        atom4["serial"] = 4
+        atom4["name"] = "N03"
+        atom4["resName"] = "GUA"
+        atom4["x"] = -3.251
+        atom4["y"] = 1.042
+        atom4["z"] = 0.159
+        atom4["element"] = "N"
+        atom4["charge"] = "0"
+        atom4["occupancy"] = "1"
+        atom4["tempFactor"] = "0"
+        atom4["connect"] = [] 
+        
+        atom5 = {}
+        atom5["serial"] = 5
+        atom5["name"] = "C13"
+        atom5["resName"] = "GUA"
+        atom5["x"] = -2.668
+        atom5["y"] = -0.378
+        atom5["z"] = 2.306
+        atom5["element"] = "C"
+        atom5["charge"] = "0"
+        atom5["occupancy"] = "1"
+        atom5["tempFactor"] = "0"
+        atom5["connect"] = [] 
+        
+        return [atom1, atom2, atom3, atom4, atom5] 
         
         
         
+ 
+ 
+ 
+

@@ -46,7 +46,7 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #     
 #
     # run for every dataset -> with diffrent resolution
-#     list_path_file_dataset = [list_path_file_dataset[-1]]
+    list_path_file_dataset = [list_path_file_dataset[-1]]
     
     for path_file_dataset in list_path_file_dataset : 
       
@@ -76,16 +76,16 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
         tool.removeNeighborIron (global_atom_close)
         
         # superimpose neighbors
-#         superimpose.globalNeighbor (atom_interest_close, "Primary", path_dir_result)
-#         superimpose.globalNeighbor (atom_interest_close, "Secondary", path_dir_result)
-#         superimpose.globalNeighbor (atom_interest_close, "Tertiary", path_dir_result)
+        superimpose.globalNeighbor (atom_interest_close, "Primary", path_dir_result)
+        superimpose.globalNeighbor (atom_interest_close, "Secondary", path_dir_result)
+        superimpose.globalNeighbor (atom_interest_close, "Tertiary", path_dir_result)
         superimpose.globalNeighbor (atom_interest_close, "Imidazole", path_dir_result)
         
         # analyse length bond not use
-        statistic.lenBondAnalysis(atom_interest_close, "Primary",path_dir_result)
-        statistic.lenBondAnalysis(atom_interest_close, "Secondary",path_dir_result)
-        statistic.lenBondAnalysis(atom_interest_close, "Tertiary",path_dir_result)
-        
+#         statistic.lenBondAnalysis(atom_interest_close, "Primary",path_dir_result)
+#         statistic.lenBondAnalysis(atom_interest_close, "Secondary",path_dir_result)
+#         statistic.lenBondAnalysis(atom_interest_close, "Tertiary",path_dir_result)
+#         
         # statistic
 #         statistic.globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, path_dir_result)
          
@@ -170,13 +170,13 @@ main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, o
 # main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 0, distanceAtoms=distanceAtoms, distanceResidues= distanceResidues)
 # 
 # #PDB 20
-main ( "PDB20", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
+# main ( "PDB20", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB20", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ("PDB20", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB20", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # 
 # # PDB
-main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
+# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
