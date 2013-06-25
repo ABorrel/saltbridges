@@ -26,9 +26,9 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #     list_pdb = managePDB.retriveListPDB(name_database)
      
     # run one database
-    path_dir_result_global = repertory.result (name_database)
+#     path_dir_result_global = repertory.result (name_database)
 #     searchPDB.ligands(list_pdb, path_dir_result_global)
-    list_path_file_dataset = datasetFinal.construction(name_database)
+#     list_path_file_dataset = datasetFinal.construction(name_database)
 #     print list_path_file_dataset
 #     list_path_file_dataset = [list_path_file_dataset[0]]
 #     
@@ -46,7 +46,11 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #     
 #
     # run for every dataset -> with diffrent resolution
-    list_path_file_dataset = [list_path_file_dataset[-1]]
+    # short cut
+#     list_path_file_dataset = [list_path_file_dataset[-1]]
+    list_path_file_dataset = ["/home/borrel/saltBridgesProject/result/PDB50/dataset_3.00"]
+
+    
     
     for path_file_dataset in list_path_file_dataset : 
       
@@ -75,12 +79,15 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
         tool.removeNeighborIron (atom_interest_close)
         tool.removeNeighborIron (global_atom_close)
         
-        # superimpose neighbors
-        superimpose.globalNeighbor (atom_interest_close, "Primary", path_dir_result)
-        superimpose.globalNeighbor (atom_interest_close, "Secondary", path_dir_result)
-        superimpose.globalNeighbor (atom_interest_close, "Tertiary", path_dir_result)
-        superimpose.globalNeighbor (atom_interest_close, "Imidazole", path_dir_result)
+        print atom_interest_close["Primary"]
         
+        # superimpose neighbors
+#         superimpose.globalNeighbor (atom_interest_close, "Primary", path_dir_result)
+#         superimpose.globalNeighbor (atom_interest_close, "Secondary", path_dir_result)
+#         superimpose.globalNeighbor (atom_interest_close, "Tertiary", path_dir_result)
+#         superimpose.globalNeighbor (atom_interest_close, "Imidazole", path_dir_result)
+#         superimpose.globalNeighbor (atom_interest_close, "Guanidium", path_dir_result)
+#         
         # analyse length bond not use
 #         statistic.lenBondAnalysis(atom_interest_close, "Primary",path_dir_result)
 #         statistic.lenBondAnalysis(atom_interest_close, "Secondary",path_dir_result)

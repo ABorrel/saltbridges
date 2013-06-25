@@ -20,29 +20,30 @@ def interestStructure (listAtomLigand):
     in : list atom ligand
     out : list of substructures found (list string)"""
 
-    list_serial_N = listAtomType (listAtomLigand, "N")
-    list_serial_C = listAtomType (listAtomLigand, "C")
+    l_serial_N = listAtomType (listAtomLigand, "N")
+    l_serial_C = listAtomType (listAtomLigand, "C")
     
     structureFound = []
 
-    for serial_nitrogen in list_serial_N:
+    for serial_nitrogen in l_serial_N:
         listAtomConnectNitrogen, connect = retrieveAtom.atomConnect(listAtomLigand, serial_nitrogen)
-        if imidazole(listAtomConnectNitrogen, listAtomLigand) == 1:
+        if imidazole(listAtomConnectNitrogen, listAtomLigand)[0] == 1:
             structureFound.append("Imidazole")
+        elif guanidium(listAtomConnectNitrogen, listAtomLigand)[0] == 1 : 
+            structureFound.append("Guanidium")    
+        elif diAmine(listAtomConnectNitrogen, listAtomLigand) == 1 : 
+            structureFound.append("Diamine")     
+        elif pyridine(listAtomConnectNitrogen, listAtomLigand) == 1 : 
+            structureFound.append("Pyridine")    
         elif cn (listAtomConnectNitrogen, listAtomLigand) == 1:
             structureFound.append("Primary")
         elif cnc(listAtomConnectNitrogen, listAtomLigand) == 1:
             structureFound.append("Secondary")
         elif cncc(listAtomConnectNitrogen, listAtomLigand) == 1:
             structureFound.append("Tertiary")
-        elif guanidium(listAtomConnectNitrogen, listAtomLigand) == 1 : 
-            structureFound.append("Guanidium")
-        elif pyridine(listAtomConnectNitrogen, listAtomLigand) == 1 : 
-            structureFound.append("Pyridine")
-        elif diAmine(listAtomConnectNitrogen, listAtomLigand) == 1 : 
-            structureFound.append("Diamine") 
+       
 
-    for serial_carbon in list_serial_C:
+    for serial_carbon in l_serial_C:
         listAtomConnectCarbon, connect = retrieveAtom.atomConnect(listAtomLigand, serial_carbon)
         if acidCarboxylic(listAtomConnectCarbon, listAtomLigand) == 1:
             structureFound.append("AcidCarboxylic")
@@ -159,9 +160,10 @@ def guanidium(l_at_connect_N, listAtomLigand):
                 else :
                     return [0, []]
                 
-            # check number primary amine
-            if findNH >= 2  : 
+            # check number primary amine -> case GAI not take, change ?
+            if findNH == 2  : 
                 return [1, [l_at_connect_c[0]["serial"], groupAtomN1[0]["serial"], groupAtomN2[0]["serial"], groupAtomN3[0]["serial"], serial_out]]
+                    
             
         else :
             return [0, []]
@@ -179,7 +181,7 @@ def guanidium(l_at_connect_N, listAtomLigand):
             else : 
                 serial_c = l_group_at[0]["serial"]
 
-        if findNH >= 2 : 
+        if findNH >= 2 and "serial_c" in locals() : 
             return [1,[ serial_c, l_c_central[0]["serial"], l_c_central[1]["serial"], l_c_central[2]["serial"], l_c_central[3]["serial"]]]
         else : 
             return [0, []]

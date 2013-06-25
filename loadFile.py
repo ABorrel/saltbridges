@@ -314,7 +314,7 @@ def loadSummary (path_summary) :
             d_n["z"] = float(element_n[8])
             
             d_n["angle"] = []
-            for angle in element_n [6:] :
+            for angle in element_n [9:] :
                 d_n["angle"].append (float(angle))
             d_line["neighbors"].append (d_n)
         l_out.append (d_line)
