@@ -21,7 +21,7 @@ def interestStructure (listAtomLigand):
     out : list of substructures found (list string)"""
 
     l_serial_N = listAtomType (listAtomLigand, "N")
-    l_serial_C = listAtomType (listAtomLigand, "C")
+    l_serial_O = listAtomType (listAtomLigand, "O")
     
     structureFound = []
 
@@ -43,11 +43,11 @@ def interestStructure (listAtomLigand):
             structureFound.append("Tertiary")
        
 
-    for serial_carbon in l_serial_C:
+    for serial_carbon in l_serial_O:
         listAtomConnectCarbon, connect = retrieveAtom.atomConnect(listAtomLigand, serial_carbon)
         if acidCarboxylic(listAtomConnectCarbon, listAtomLigand) == 1:
             structureFound.append("AcidCarboxylic")
-
+            
     return structureFound
 
 
@@ -562,8 +562,6 @@ def interestGroup (max_distance, list_atom_ligand, name_PDB, struct_neighbor):
             implementNeighborStruct (max_distance, listAtomConnectNitrogen, name_PDB, list_atom_ligand, "Imidazole", d_imd_temp)
         elif guanidium(listAtomConnectNitrogen, list_atom_ligand)[0] == 1:
             implementNeighborStruct (max_distance, listAtomConnectNitrogen, name_PDB, list_atom_ligand, "Guanidium", d_gua_temp)
-#         elif guanidiumNitrogenCentral(listAtomConnectNitrogen, list_atom_ligand) == 1:
-#             implementNeighborStruct (max_distance, listAtomConnectNitrogen, name_PDB, list_atom_ligand, "Guanidium", d_gua_temp )
         elif diAmine(listAtomConnectNitrogen, list_atom_ligand) == 1:
             implementNeighborStruct (max_distance, listAtomConnectNitrogen, name_PDB, list_atom_ligand, "Diamine", d_dia_temp)
         elif pyridine(listAtomConnectNitrogen, list_atom_ligand) == 1:
@@ -626,6 +624,9 @@ def regroupAtomNeighborGuanidium(listAtomRegroup, amine, listAtomLigand):  # #A 
     outAtom["PDB"] = atom1["PDB"]
     outAtom["resName"] = atom1["resName"]
     outAtom["serial"] = atom1["serial"]
+    outAtom["x"] = atom1["x"]
+    outAtom["y"] = atom1["y"]
+    outAtom["z"] = atom1["z"]
     outAtom["neighbors"] = deepcopy(atom1["neighbors"]) 
     
     listAtomConnectN, connectMatrixN = retrieveAtom.atomConnect(listAtomLigand, atom1["serial"])
@@ -695,6 +696,10 @@ def regroupNeighbor(serial1, serial2, listAtom):
     outAtom["PDB"] = atom1["PDB"]
     outAtom["resName"] = atom1["resName"]
     outAtom["serial"] = atom1["serial"]
+    outAtom["x"] = atom1["x"]
+    outAtom["y"] = atom1["y"]
+    outAtom["z"] = atom1["z"]
+    
     outAtom["neighbors"] = deepcopy(atom1["neighbors"])
     
     for neighbor in atom2["neighbors"] : 
@@ -707,16 +712,20 @@ def regroupNeighbor(serial1, serial2, listAtom):
 ######################################################################################
 
 
-def buildAtom(rayon, serialAtomNitrogen, namePDB, typeStudy, listAtomLigand):
+def buildAtom(rayon, at_central, namePDB, typeStudy, listAtomLigand):
     """Build count structure for amine structure
     in: distance, serial atom nitrogen, type study, list atom ligand
     out: count strucutre"""
     
     atom = {}
     atom["PDB"] = namePDB
-    atom["resName"] = serialAtomNitrogen["resName"]
-    atom["serial"] = serialAtomNitrogen["serial"]
-    atom["neighbors"] = neighbors(rayon, serialAtomNitrogen, namePDB, typeStudy, listAtomLigand)
+    atom["resName"] = at_central["resName"]
+    atom["serial"] = at_central["serial"]
+    atom["x"] = at_central["x"]
+    atom["y"] = at_central["y"]
+    atom["z"] = at_central["z"]
+    
+    atom["neighbors"] = neighbors(rayon, at_central, namePDB, typeStudy, listAtomLigand)
 
     return atom
 

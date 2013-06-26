@@ -28,9 +28,8 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
     # run one database
 #     path_dir_result_global = repertory.result (name_database)
 #     searchPDB.ligands(list_pdb, path_dir_result_global)
-#     list_path_file_dataset = datasetFinal.construction(name_database)
+    list_path_file_dataset = datasetFinal.construction(name_database)
 #     print list_path_file_dataset
-#     list_path_file_dataset = [list_path_file_dataset[0]]
 #     
 #
 #     ########################
@@ -47,8 +46,8 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #
     # run for every dataset -> with diffrent resolution
     # short cut
-#     list_path_file_dataset = [list_path_file_dataset[-1]]
-    list_path_file_dataset = ["/home/borrel/saltBridgesProject/result/PDB50/dataset_3.00"]
+    list_path_file_dataset = [list_path_file_dataset[-1]]
+#     print list_path_file_dataset
 
     
     
@@ -79,7 +78,6 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
         tool.removeNeighborIron (atom_interest_close)
         tool.removeNeighborIron (global_atom_close)
         
-        print atom_interest_close["Primary"]
         
         # superimpose neighbors
 #         superimpose.globalNeighbor (atom_interest_close, "Primary", path_dir_result)
@@ -94,10 +92,10 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #         statistic.lenBondAnalysis(atom_interest_close, "Tertiary",path_dir_result)
 #         
         # statistic
-#         statistic.globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, path_dir_result)
+        statistic.globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, path_dir_result)
          
         # draw graph
-#         runScriptR.globalStat(distanceAtoms, distanceResidues,path_dir_result)
+        runScriptR.globalStat(distanceAtoms, distanceResidues,path_dir_result)
         
 
 def waterGlobal (name_database, limit_acc = 20.0):

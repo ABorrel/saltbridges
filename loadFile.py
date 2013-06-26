@@ -297,8 +297,11 @@ def loadSummary (path_summary) :
         d_line = {}
         l_s = l.split ("\t")
         d_line["PDB"] = l_s[0]
-        d_line["serial"] = l_s[1].split ("-")[0]
-        d_line["resName"] = l_s[1].split ("-")[1]
+        d_line["serial"] = l_s[1].split ("/")[0]
+        d_line["resName"] = l_s[1].split ("/")[1]
+        d_line["x"] = float(l_s[1].split ("/")[2])
+        d_line["y"] = float(l_s[1].split ("/")[3])
+        d_line["z"] = float(l_s[1].split ("/")[4])
         d_line["neighbors"] = []
         for neigbor in l_s[-1].split ("//")[:-1] : 
             d_n = {}

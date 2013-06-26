@@ -138,9 +138,9 @@ def neighborStruct(struct_neighbor, struct_global_neighbor, files):
             continue
         for atom_central in struct_neighbor[type_search]:
             
-            print atom_central.keys (), "check"
+            print atom_central.keys (), type_search, "check"
                 
-            lineWrite = str(atom_central["PDB"]) + "\t" + str(atom_central["serial"]) + "-" + str(atom_central["resName"]) + "\t"
+            lineWrite = str(atom_central["PDB"]) + "\t" + str(atom_central["serial"]) + "/" + str(atom_central["resName"]) + "/" + str(atom_central["x"]) + "/" + str(atom_central["y"]) +  "/" + str(atom_central["z"]) + "\t"
             for neighbor in atom_central["neighbors"]:
                 lineWrite = lineWrite + str(neighbor["serial"]) + " " + str(neighbor["resSeq"]) + " " + str(neighbor["element"]) + " " + str(neighbor["name"]) + " " + str(neighbor["resName"]) + " " + str("%.2f" % neighbor["distance"]) + " " +str("%.3f" % neighbor["x"]) + " " +str("%.3f" % neighbor["y"]) + " " +str("%.3f" % neighbor["z"])  
                 for angle in neighbor["angle"]:
@@ -520,19 +520,32 @@ def resultNeighbor (countStruct, dir_out) :
     for sub_struct in countStruct.keys() : 
         filout_neighbor = open (dir_out + "neighbor_" + sub_struct, "w")
         filout_distance = open (dir_out + "distance_" + sub_struct, "w")
+        filout_angle = open (dir_out + "angle_neighbors" + sub_struct, "w")
         filout_neighbor.write ("\t".join(listClasse) + "\n")
-        for nb_neighbor in countStruct[sub_struct].keys() : 
+        # barplot class of neighbors
+        for nb_neighbor in range(1,4) : 
+            if nb_neighbor == "angle1_2" or nb_neighbor == "angle2_3" or nb_neighbor == "angle1_3" : 
+                continue
             filout_neighbor.write(str(nb_neighbor))
             filout_distance.write(str(nb_neighbor))
             sum_neigbor = tool.sumDict(countStruct[sub_struct][nb_neighbor])
             for class_atom in listClasse : 
                 filout_neighbor.write("\t" + str(countStruct[sub_struct][nb_neighbor][class_atom] / sum_neigbor)) 
             filout_neighbor.write("\n")
-            
             filout_distance.write("\t" + "\t".join(countStruct[sub_struct][nb_neighbor]["distance"]) + "\n")
+            filout_distance.write ("Classe\t" + "\t".join(countStruct[sub_struct][nb_neighbor]["classe"]) + "\n")
+    
+    
+        # angles between neighbors
+        nb_angle = len (countStruct[sub_struct]["angle1_2"])
+        i = 0
+        while i < nb_angle : 
+            filout_angle.write (str (countStruct[sub_struct]["angle1_2"][i]) + "\t" +str (countStruct[sub_struct]["angle1_3"][i]) + "\t" +str (countStruct[sub_struct]["angle2_3"][i])  + "\n" )
+            i = i + 1
     
     filout_distance.close ()
     filout_neighbor.close ()
+    filout_angle.close ()
         
         
 

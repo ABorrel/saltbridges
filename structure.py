@@ -255,9 +255,13 @@ def countThreeNeigbors (nb_n = 3) :
     
     for sub_struct in l_subs : 
         d_out[sub_struct] = {}
+        d_out[sub_struct]["angle1_2"]  = []
+        d_out[sub_struct]["angle1_3"]  = []
+        d_out[sub_struct]["angle2_3"]  = []
         for i in range(1,nb_n +1) : 
             d_out[sub_struct][i] = {} 
             d_out[sub_struct][i]["distance"] = []
+            d_out[sub_struct][i]["classe"] = []
         l_classe = classificationATOM("", out_list = 1)
         for classe in l_classe : 
             for i in range(1,nb_n +1) : 

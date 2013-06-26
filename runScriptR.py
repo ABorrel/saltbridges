@@ -291,9 +291,11 @@ def histNeigbor (dir_in, logFile) :
     
     for substruct in l_study : 
         cmd = repertory.scriptR() + "barplotNeighbor.R " + dir_in + "neigbhor/" + "neighbor_" + substruct + " " + dir_in + "neigbhor/" + "distance_" + substruct + " " + substruct
+        cmd_hist =  repertory.scriptR() + "histAngle.R " + dir_in + "neigbhor/" + "angle_neighbor_" + substruct
         print cmd 
+        print cmd_hist
         system (cmd)
-    
+        system (cmd_hist)
     
 
 def barplotLenBond (path_filin) : 

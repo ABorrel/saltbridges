@@ -42,22 +42,19 @@ def parseDataSet(path_file_dataset):
             if not PDB in listPDB : 
                 listPDB.append(PDB)
         
-        atomLigand = loadFile.ligandInPDB(element["PDB"][0], element["name"])
-        list_struct = searchPDB.interestStructure(atomLigand)
+        l_at_ligand = loadFile.ligandInPDB(element["PDB"][0], element["name"])
+        list_struct = searchPDB.interestStructure(l_at_ligand)
         
         flag_guanidium = 0
         flag_diamine = 0
         flag_imidazole = 0
         flag_pyridine = 0
         flag_acidcarboxylic = 0
-        
         for struct in list_struct:
             if struct == "Guanidium" :
                 flag_guanidium = flag_guanidium + 1 
-                
             elif struct == "Diamine" :
                 flag_diamine = flag_diamine + 1 
-                
             elif struct == "Pyridine" :
                 flag_pyridine = flag_pyridine + 1 
             elif struct == "Imidazole" :
@@ -66,12 +63,13 @@ def parseDataSet(path_file_dataset):
                 flag_acidcarboxylic = flag_acidcarboxylic + 1     
                 
             else :
+                # 
                 countAmine[struct] = countAmine[struct] + count["Number PDB"]
             
         countAmine["Imidazole"] = countAmine["Imidazole"] + int(flag_imidazole / 2) * count["Number PDB"]
         countAmine["Pyridine"] = countAmine["Pyridine"] + int(flag_pyridine / 2) * count["Number PDB"]
         countAmine["Diamine"] = countAmine["Diamine"] + int(flag_diamine / 2) * count["Number PDB"] 
-        countAmine["Guanidium"] = countAmine["Guanidium"] + (int(flag_guanidium / 2) * count["Number PDB"])
+        countAmine["Guanidium"] = countAmine["Guanidium"] + (int(flag_guanidium / 3) * count["Number PDB"])
         countAmine["AcidCarboxylic"] = countAmine["AcidCarboxylic"] + (int(flag_acidcarboxylic / 2) * count["Number PDB"])
         listCount.append(count)
         
@@ -374,16 +372,26 @@ def threeNeighbors (struct_neighbor, countStruct, nb_neighbor = 3) :
         neig_temp = deepcopy(struct_neighbor)
         for atom_central in neig_temp : 
             l_neighbor = atom_central["neighbors"]
-            if len(l_neighbor) < 3 : # remove if number of neigbor < 3 
+            if len(l_neighbor) < 3 : # if no neighbor continue 
                 continue
+            
+            dtemp_angle = {}
+            # count type of classes atoms
             for i in range(1,nb_neighbor+1) : 
                 classif_first, atom_close = searchMoreClose (l_neighbor)
-                    
+                dtemp_angle[i] = atom_close
                 if classif_first == None : 
                     continue
                 countStruct[sub_struct][i]["distance"].append(str(atom_close["distance"]))
+                countStruct[sub_struct][i]["classe"].append(classif_first)
                 countStruct[sub_struct][i][classif_first] = countStruct[sub_struct][i][classif_first] + 1
+            
+            # angles
+            countStruct[sub_struct]["angle1_3"].append (calcul.angleVector(dtemp_angle[1], atom_central, dtemp_angle[3]))
+            countStruct[sub_struct]["angle1_2"].append (calcul.angleVector(dtemp_angle[1], atom_central, dtemp_angle[2]))   
+            countStruct[sub_struct]["angle2_3"].append (calcul.angleVector(dtemp_angle[3], atom_central, dtemp_angle[2]))  
                 
+        
     else :
         for sub_struct in struct_neighbor.keys() : 
             neig_temp = deepcopy(struct_neighbor[sub_struct])
@@ -391,13 +399,23 @@ def threeNeighbors (struct_neighbor, countStruct, nb_neighbor = 3) :
                 l_neighbor = atom_central["neighbors"]
                 if len(l_neighbor) < 3 : 
                     continue
+                
+                dtemp_angle = {}
                 for i in range(1,nb_neighbor+1) : 
                     classif_first, atom_close = searchMoreClose (l_neighbor)
+                    dtemp_angle[i] = atom_close
                     
                     if classif_first == None : 
                         continue
                     countStruct[sub_struct][i]["distance"].append(str(atom_close["distance"]))
+                    countStruct[sub_struct][i]["classe"].append(classif_first)
                     countStruct[sub_struct][i][classif_first] = countStruct[sub_struct][i][classif_first] + 1
+        
+                # angle
+                countStruct[sub_struct]["angle1_3"].append (calcul.angleVector(dtemp_angle[1], atom_central, dtemp_angle[3]))
+                countStruct[sub_struct]["angle1_2"].append (calcul.angleVector(dtemp_angle[1], atom_central, dtemp_angle[2]))   
+                countStruct[sub_struct]["angle2_3"].append (calcul.angleVector(dtemp_angle[3], atom_central, dtemp_angle[2])) 
+        
         
     
 def searchMoreClose (l_neighbors, option_lcopy = 0) : 
@@ -406,6 +424,10 @@ def searchMoreClose (l_neighbors, option_lcopy = 0) :
         l_neighbors_use = deepcopy(l_neighbors)
     else : 
         l_neighbors_use = l_neighbors
+    
+    # no neighbor
+    if len (l_neighbors_use) == 0 : 
+        return None
     
     d = 10
     i_out = 0
