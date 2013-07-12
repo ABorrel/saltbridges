@@ -16,7 +16,6 @@ study_type = args[3]
 
 data = read.table(pathData , sep = "\t", header = TRUE)
 data_distance = read.table(pathData_distance , sep = "\t")
-print (data_distance[,1])
 
 data_distance = data_distance[,-1]
 
@@ -32,30 +31,32 @@ dev.off()
 png(filename=paste(pathData_distance ,"_type.png",sep = ""),width=as.integer(800), heigh = 1000)
 par(mfrow = c(3,1))
 
-plot(density(as.double(data_distance[1,])), xlim = c(1,5))
+plot(density(as.double(t(data_distance[1,]))), ylim = c(1,6))
 for (class in names(color)){
-	try (lines (density(as.double(data_distance[1,which(data_distance[2,] == class)])), col = color[class]))
+	print (class)
+	try (lines (density(as.double(t(data_distance[3,which(data_distance[4,] == class)]))), col = color[class]))
 }
 
-plot(density(as.double(data_distance[3,])), xlim = c(1,5))
+plot(density(as.double(t(data_distance[3,]))), ylim = c(1,6))
 for (class in names(color)){
-	try (lines (density(as.double(data_distance[3,which(data_distance[4,] == class)])), col = color[class]))
+	try (lines (density(as.double(t(data_distance[3,which(data_distance[4,] == class)]))), col = color[class]))
 }
 
-plot(density(as.double(data_distance[5,])), xlim = c(1,5))
+plot(density(as.double(t(data_distance[5,]))), ylim = c(1,6))
 for (class in names(color)){
-	try (lines (density(as.double(data_distance[5,which(data_distance[6,] == class)])), col = color[class]))
+	try (lines (density(as.double(t(data_distance[5,which(data_distance[6,] == class)]))), col = color[class]))
 }
 
 
 dev.off()
 
+
 png(filename=paste(pathData_distance ,".png",sep = ""),width=as.integer(800), heigh = 1000)
 par(mfrow = c(3,1))
 
-plot(density(as.double(data_distance[1,])), xlim = c(1,5))
-plot(density(as.double(data_distance[3,])), xlim = c(1,5))
-plot(density(as.double(data_distance[5,])), xlim = c(1,5))
+plot(density(as.double(t(data_distance[1,]))), xlim = c(1,5))
+plot(density(as.double(t(data_distance[3,]))), xlim = c(1,5))
+plot(density(as.double(t(data_distance[5,]))), xlim = c(1,5))
 
 
 dev.off()
