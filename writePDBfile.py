@@ -135,3 +135,7 @@ def formatCoord(in_float):
     in: float
     out: string formated"""
     return str("%.3f" % in_float)    
+
+
+    
+

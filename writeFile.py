@@ -506,9 +506,11 @@ def closeFilesWithoutSummary (filesWithoutSummary):
            
 
 def resultNeighbor (countStruct, dir_out) : 
-    
+    """
+    Three neighbors analysis -> write files
+    """
     # distance list
-    listClasse = structure.classificationATOM("", out_list= 1)
+    l_typeatom = structure.classificationATOM("", out_list= 1)
     
     # directory result
     dir_out = dir_out + "neigbhor/"
@@ -521,7 +523,7 @@ def resultNeighbor (countStruct, dir_out) :
         filout_neighbor = open (dir_out + "neighbor_" + sub_struct, "w")
         filout_distance = open (dir_out + "distance_" + sub_struct, "w")
         filout_angle = open (dir_out + "angle_neighbors" + sub_struct, "w")
-        filout_neighbor.write ("\t".join(listClasse) + "\n")
+        filout_neighbor.write ("\t".join(l_typeatom) + "\n")
         # barplot class of neighbors
         for nb_neighbor in range(1,4) : 
             if nb_neighbor == "angle1_2" or nb_neighbor == "angle2_3" or nb_neighbor == "angle1_3" : 
@@ -529,7 +531,7 @@ def resultNeighbor (countStruct, dir_out) :
             filout_neighbor.write(str(nb_neighbor))
             filout_distance.write(str(nb_neighbor))
             sum_neigbor = tool.sumDict(countStruct[sub_struct][nb_neighbor])
-            for class_atom in listClasse : 
+            for class_atom in l_typeatom : 
                 filout_neighbor.write("\t" + str(countStruct[sub_struct][nb_neighbor][class_atom] / sum_neigbor)) 
             filout_neighbor.write("\n")
             filout_distance.write("\t" + "\t".join(countStruct[sub_struct][nb_neighbor]["distance"]) + "\n")
@@ -546,8 +548,65 @@ def resultNeighbor (countStruct, dir_out) :
     filout_distance.close ()
     filout_neighbor.close ()
     filout_angle.close ()
-        
-        
+    
+    # write barplot file
+    barplotThreeAtomBarplot (countStruct, dir_out)   
+
+
+def barplotThreeAtomBarplot (countStruct, dir_out):
+    """
+    Barplot for distance function type atoms
+    """
+    l_typeatom = structure.classificationATOM("", out_list= 1)
+    
+    for substruct in countStruct.keys () : 
+        for nb_neighbor in countStruct[substruct].keys() :
+            if type (nb_neighbor) != type(int()) :
+                continue 
+            filout = open (dir_out + "barplot_" + substruct + "_" + str(nb_neighbor), "w")
+            
+            # header
+            filout.write ("\t".join(l_typeatom) + "\n")
+            
+            #count
+            d_cout = {}
+            min_distance = min(countStruct[substruct][nb_neighbor]["distance"])
+            max_distance = float(max(countStruct[substruct][nb_neighbor]["distance"]))
+            
+            d_temp = 2
+            l_dist = []
+            
+            while d_temp <= max_distance + 0.4 : 
+                l_dist.append (d_temp)
+                
+                d_cout[d_temp] = {}
+                for classe_atom in l_typeatom : 
+                    d_cout[d_temp][classe_atom] = 0
+                
+                # implement count struct
+                i = 0
+                len_neighbor = len (countStruct[substruct][nb_neighbor]["classe"])
+                print d_temp
+                while i < len_neighbor : 
+                    
+                    if float(countStruct[substruct][nb_neighbor]["distance"][i]) <= d_temp  and float(countStruct[substruct][nb_neighbor]["distance"][i]) > d_temp - 0.2 : 
+                        d_cout[d_temp][countStruct[substruct][nb_neighbor]["classe"][i]] = d_cout[d_temp][countStruct[substruct][nb_neighbor]["classe"][i]] + 1
+                    else : 
+                        pass
+                    
+                    i = i + 1
+                    
+                d_temp = d_temp + 0.2
+
+            
+            for dist in l_dist : 
+                filout.write (str (dist))
+                for class_atom in l_typeatom : 
+                    filout.write ("\t" + str(d_cout[dist][class_atom]))
+                filout.write ("\n")
+        filout.close ()
+    
+                
 
 def lenBondType (l_distance, l_first, path_filout) : 
     
@@ -568,7 +627,22 @@ def lenBondType (l_distance, l_first, path_filout) :
     filout.close ()
         
         
-        
+
+def coordinates3D (l_atom, p_filout, type_substruct) : 
+    
+    filout = open (p_filout, "w") 
+    
+    substruct =  structure.substructureCoord(type_substruct)
+    
+    for atom in substruct : 
+        filout.write (str(atom["x"]) + "\t" + str(atom["y"]) + "\t" + str(atom["z"]) + "\t" + "REF" + "\n")
+    
+    for atom in l_atom : 
+        if not "occupancy" in atom.keys () : 
+            filout.write (str(atom["x"]) + "\t" + str(atom["y"]) + "\t" + str(atom["z"]) + "\t" + structure.classificationATOM (atom) + "\n")
+    filout.close () 
+    
+    return  p_filout    
         
         
         

@@ -218,10 +218,84 @@ def implementAtLeastOne (l_central_atom, struct_count_in, key_atleastOne_type, l
                 break # found at least one
 
                     
+def planarityImidazole (atom_interest_close, p_dir_result) : 
     
-                   
-                
-                
+    l_imidazole_atom_central = atom_interest_close["Imidazole"]
+    
+    
+    p_dir_result = repertory.coplorIMD (p_dir_result)
+    p_filout = p_dir_result + "coplarRing.txt"
+    filout = open (p_filout, "w")
+
+    nb_imd = len (l_imidazole_atom_central)
+    i = 0
+    while i < nb_imd : 
+        PDB_ID = l_imidazole_atom_central[i]["PDB"]
+        serial_at_central = l_imidazole_atom_central[i]["serial"]
+        name_ligand =  l_imidazole_atom_central[i]["resName"]
+        
+        # load ligand
+        l_at_lig = loadFile.ligandInPDB(PDB_ID, name_ligand)
+        
+        # load structure
+        l_at_subs = retrieveAtom.substructure ("Imidazole", serial_at_central, l_at_lig)
+        
+        # coplar
+        d_coplar = calcul.coplanarPoint(l_at_subs[3], [l_at_subs[0],l_at_subs[1], l_at_subs[2]])
+        filout.write (str(d_coplar) + "\n")
+        
+        # criterion dell no IMD -> not used
+#         if d_coplar > 0.01 :
+#             del l_imidazole_atom_central[i]
+#             nb_imd = nb_imd - 1
+#         else : 
+        i = i + 1
+    
+        filout.write (str(d_coplar) + "\n")
+    filout.close ()
+    
+    
+def planarityGuanidium (atom_interest_close, p_dir_result) : 
+    
+    l_guanidium_atom_central = atom_interest_close["Guanidium"]
+    
+    
+    p_dir_result = repertory.coplorGUA (p_dir_result)
+    p_filout = p_dir_result + "coplarRing.txt"
+    filout = open (p_filout, "w")
+
+    nb_gua = len (l_guanidium_atom_central)
+    i = 0
+    while i < nb_gua : 
+        PDB_ID = l_guanidium_atom_central[i]["PDB"]
+        serial_at_central = l_guanidium_atom_central[i]["serial"]
+        name_ligand =  l_guanidium_atom_central[i]["resName"]
+        
+        # load ligand
+        l_at_lig = loadFile.ligandInPDB(PDB_ID, name_ligand)
+        
+        # load structure
+        l_at_subs = retrieveAtom.substructure ("Guanidium", serial_at_central, l_at_lig)
+#         print len (l_at_subs)
+#         print l_at_subs[0]["element"], l_at_subs[1]["element"], l_at_subs[2]["element"], l_at_subs[3]["element"], l_at_subs[4]["element"]
+        
+        # coplar
+        d_coplar = calcul.coplanarPoint(l_at_subs[0], [l_at_subs[1],l_at_subs[2], l_at_subs[3]])
+#         print d_coplar
+        filout.write (str(d_coplar) + "\n")
+        
+        # criterion dell no IMD -> not used
+        if d_coplar > 0.5 :
+            del l_guanidium_atom_central[i]
+            nb_gua = nb_gua - 1
+        else : 
+            i = i + 1
+    
+        
+        filout.write (str(d_coplar) + "\n")
+    filout.close ()   
+    
+    
 
 
 def globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, path_dir_result):
@@ -243,14 +317,14 @@ def globalRunStatistic(atom_interest_close, global_atom_close, max_distance, opt
     ligand(atom_interest_close, countStruct[str(max_distance)]["ligand"])
     atomByAa(atom_interest_close, countStruct[str(max_distance)]["byAA"])
     
-    threeNeighbors (atom_interest_close, countStruct[str(max_distance)]["threeAnalysis"])
-    threeNeighbors (global_atom_close, countStruct[str(max_distance)]["threeAnalysis"])
+    relationNeighbors (atom_interest_close, countStruct[str(max_distance)]["threeAnalysis"])
+    relationNeighbors (global_atom_close, countStruct[str(max_distance)]["threeAnalysis"])
 
 
     distance = max_distance
 
     while distance >= 2:
-        print distance
+#         print distance
         # reduce structure with distance criterion
         neighborDistance(distance, max_distance, atom_interest_close)
         neighborDistanceList(distance, max_distance, global_atom_close) # analyse every distance
@@ -365,14 +439,35 @@ def angle(struct_neighbor, countAngle):
                 i = i + 1
 
 
-def threeNeighbors (struct_neighbor, countStruct, nb_neighbor = 3) : 
+def relationNeighbors (struct_neighbor, countStruct) : 
+
+    l_substruct = structure.listStructure()
+    
+    for substruct in l_substruct : 
+        if substruct == "Primary" : 
+            searchNeighbor (struct_neighbor, countStruct, substruct, 5)
+        elif substruct == "Tertiary" : 
+            searchNeighbor (struct_neighbor, countStruct, substruct, 3)
+        elif substruct == "Imidazole" or substruct == "Secondary": 
+            searchNeighbor (struct_neighbor, countStruct, substruct, 4)
+        else : 
+            searchNeighbor (struct_neighbor, countStruct, substruct,  7)
+
+
+
+
+
+def searchNeighbor (struct_neighbor, countStruct, sub_struct, nb_neighbor):
+    """
+    Search neigbor in proximity
+    """
 
     if type (struct_neighbor) is list : 
         sub_struct = "global"
         neig_temp = deepcopy(struct_neighbor)
         for atom_central in neig_temp : 
             l_neighbor = atom_central["neighbors"]
-            if len(l_neighbor) < 3 : # if no neighbor continue 
+            if len(l_neighbor) == 0 : # no neighbor continue 
                 continue
             
             dtemp_angle = {}
@@ -387,38 +482,60 @@ def threeNeighbors (struct_neighbor, countStruct, nb_neighbor = 3) :
                 countStruct[sub_struct][i][classif_first] = countStruct[sub_struct][i][classif_first] + 1
             
             # angles
-            countStruct[sub_struct]["angle1_3"].append (calcul.angleVector(dtemp_angle[1], atom_central, dtemp_angle[3]))
-            countStruct[sub_struct]["angle1_2"].append (calcul.angleVector(dtemp_angle[1], atom_central, dtemp_angle[2]))   
-            countStruct[sub_struct]["angle2_3"].append (calcul.angleVector(dtemp_angle[3], atom_central, dtemp_angle[2]))  
+            try : 
+                countStruct[sub_struct]["angle1_3"].append (calcul.angleVector(dtemp_angle[1], atom_central, dtemp_angle[3]))
+            except : 
+                countStruct[sub_struct]["angle1_3"].append ("NA")
+                
+            try :   
+                countStruct[sub_struct]["angle1_2"].append (calcul.angleVector(dtemp_angle[1], atom_central, dtemp_angle[2]))   
+            except : 
+                countStruct[sub_struct]["angle1_2"].append ("NA") 
+                
+            try : 
+                countStruct[sub_struct]["angle2_3"].append (calcul.angleVector(dtemp_angle[3], atom_central, dtemp_angle[2]))  
+            except : 
+                countStruct[sub_struct]["angle2_3"].append ("NA")  
                 
         
     else :
-        for sub_struct in struct_neighbor.keys() : 
-            neig_temp = deepcopy(struct_neighbor[sub_struct])
-            for atom_central in neig_temp : 
-                l_neighbor = atom_central["neighbors"]
-                if len(l_neighbor) < 3 : 
-                    continue
+                    neig_temp = deepcopy(struct_neighbor[sub_struct])
+                    for atom_central in neig_temp : 
+                        l_neighbor = atom_central["neighbors"]
+                        if len(l_neighbor) == 0  : 
+                            continue
+                        
+                        dtemp_angle = {}
+                        for i in range(1,nb_neighbor+1) : 
+                            classif_first, atom_close = searchMoreClose (l_neighbor)
+                            dtemp_angle[i] = atom_close
+                            
+                            if classif_first == None : 
+                                continue
+                            countStruct[sub_struct][i]["distance"].append(str(atom_close["distance"]))
+                            countStruct[sub_struct][i]["classe"].append(classif_first)
+                            countStruct[sub_struct][i][classif_first] = countStruct[sub_struct][i][classif_first] + 1
                 
-                dtemp_angle = {}
-                for i in range(1,nb_neighbor+1) : 
-                    classif_first, atom_close = searchMoreClose (l_neighbor)
-                    dtemp_angle[i] = atom_close
-                    
-                    if classif_first == None : 
-                        continue
-                    countStruct[sub_struct][i]["distance"].append(str(atom_close["distance"]))
-                    countStruct[sub_struct][i]["classe"].append(classif_first)
-                    countStruct[sub_struct][i][classif_first] = countStruct[sub_struct][i][classif_first] + 1
-        
-                # angle
-                countStruct[sub_struct]["angle1_3"].append (calcul.angleVector(dtemp_angle[1], atom_central, dtemp_angle[3]))
-                countStruct[sub_struct]["angle1_2"].append (calcul.angleVector(dtemp_angle[1], atom_central, dtemp_angle[2]))   
-                countStruct[sub_struct]["angle2_3"].append (calcul.angleVector(dtemp_angle[3], atom_central, dtemp_angle[2])) 
-        
+                        # angle
+                        try : 
+                            countStruct[sub_struct]["angle1_3"].append (calcul.angleVector(dtemp_angle[1], atom_central, dtemp_angle[3]))
+                        except : 
+                            countStruct[sub_struct]["angle1_3"].append ("NA")
+                        try :   
+                            countStruct[sub_struct]["angle1_2"].append (calcul.angleVector(dtemp_angle[1], atom_central, dtemp_angle[2]))   
+                        except : 
+                            countStruct[sub_struct]["angle1_2"].append ("NA") 
+                        try : 
+                            countStruct[sub_struct]["angle2_3"].append (calcul.angleVector(dtemp_angle[3], atom_central, dtemp_angle[2]))  
+                        except : 
+                            countStruct[sub_struct]["angle2_3"].append ("NA")
+            
         
     
 def searchMoreClose (l_neighbors, option_lcopy = 0) : 
+    
+    if l_neighbors == [] : 
+        return None, None
     
     if option_lcopy == 1 : 
         l_neighbors_use = deepcopy(l_neighbors)
@@ -427,7 +544,7 @@ def searchMoreClose (l_neighbors, option_lcopy = 0) :
     
     # no neighbor
     if len (l_neighbors_use) == 0 : 
-        return None
+        return None, None
     
     d = 10
     i_out = 0

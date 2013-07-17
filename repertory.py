@@ -165,6 +165,21 @@ def bondLength (p_dir_result) :
     return rep
 
 
+def coplorIMD (p_dir_result) : 
+    
+    rep = p_dir_result + "coplarIMD/"
+    try: makedirs(rep, mode=0777)
+    except: pass
+    return rep
+
+
+def coplorGUA (p_dir_result) : 
+    
+    rep = p_dir_result + "coplarGUA/"
+    try: makedirs(rep, mode=0777)
+    except: pass
+    return rep
+
 #############################Serine Protease###################3
 
 

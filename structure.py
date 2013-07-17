@@ -247,13 +247,22 @@ def countType():
     return count
 
 
-def countThreeNeigbors (nb_n = 3) : 
+def countThreeNeigbors () : 
     
     d_out = {}
     l_subs = listStructure()
     l_subs.append("global")
     
     for sub_struct in l_subs : 
+        if sub_struct == "Primary" : 
+            nb_n = 5
+        elif sub_struct == "Tertiary" : 
+            nb_n = 3
+        elif sub_struct == "Imidazole" or sub_struct == "Secondary": 
+            nb_n = 4
+        else : 
+            nb_n = 7
+            
         d_out[sub_struct] = {}
         d_out[sub_struct]["angle1_2"]  = []
         d_out[sub_struct]["angle1_3"]  = []
@@ -266,6 +275,13 @@ def countThreeNeigbors (nb_n = 3) :
         for classe in l_classe : 
             for i in range(1,nb_n +1) : 
                 d_out[sub_struct][i][classe] = 0.0
+    
+#     print d_out["Primary"].keys ()
+#     print d_out["Secondary"].keys ()
+#     print d_out["Imidazole"].keys ()
+#     print d_out["Tertiary"].keys ()
+    
+    
     return d_out
 
 
@@ -649,9 +665,9 @@ def substructureCoord (type_substructure):
         atom1["serial"] = 1
         atom1["name"] = "C2"
         atom1["resName"] = "IMD"
-        atom1["x"] = -1.152
-        atom1["y"] = -0.078
-        atom1["z"] = 0.001
+        atom1["x"] = 0.121
+        atom1["y"] = -1.265
+        atom1["z"] = 0.019
         atom1["element"] = "C"
         atom1["charge"] = "0"
         atom1["occupancy"] = "1"
@@ -662,9 +678,9 @@ def substructureCoord (type_substructure):
         atom2["serial"] = 2
         atom2["name"] = "N1"
         atom2["resName"] = "IMD"
-        atom2["x"] = 0.784
-        atom2["y"] = -0.839
-        atom2["z"] = -0.002
+        atom2["x"] = 1.123
+        atom2["y"] = -0.401
+        atom2["z"] = 0.073
         atom2["element"] = "N"
         atom2["charge"] = "0"
         atom2["occupancy"] = "1"
@@ -675,9 +691,9 @@ def substructureCoord (type_substructure):
         atom3["serial"] = 3
         atom3["name"] = "C4"
         atom3["resName"] = "IMD"
-        atom3["x"] = -0.467
-        atom3["y"] = -1.227
-        atom3["z"] = -0.001
+        atom3["x"] = -0.776
+        atom3["y"] = 0.744
+        atom3["z"] = -0.057
         atom3["element"] = "C"
         atom3["charge"] = "0"
         atom3["occupancy"] = "1"
@@ -688,9 +704,9 @@ def substructureCoord (type_substructure):
         atom4["serial"] = 4
         atom4["name"] = "N3"
         atom4["resName"] = "IMD"
-        atom4["x"] = -0.255
-        atom4["y"] = 1.090
-        atom4["z"] = 0.001
+        atom4["x"] = -1.061
+        atom4["y"] = -0.592
+        atom4["z"] = -0.062
         atom4["element"] = "N"
         atom4["charge"] = "0"
         atom4["occupancy"] = "1"
@@ -701,9 +717,9 @@ def substructureCoord (type_substructure):
         atom5["serial"] = 5
         atom5["name"] = "C5"
         atom5["resName"] = "IMD"
-        atom5["x"] = 1.067
-        atom5["y"] = 0.441
-        atom5["z"] = -0.001
+        atom5["x"] = 0.569
+        atom5["y"] = 0.900
+        atom5["z"] = 0.025
         atom5["element"] = "C"
         atom5["charge"] = "0"
         atom5["occupancy"] = "1"

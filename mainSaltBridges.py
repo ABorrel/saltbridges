@@ -74,17 +74,21 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
         
         atom_interest_close, global_atom_close = searchPDB.globalSearch(max_distance, path_file_dataset, option_on_complexes_by_ligand, option_angle, path_dir_result)
         
-        # remove iron close
+        # remove iron close -> statistic before
         tool.removeNeighborIron (atom_interest_close)
         tool.removeNeighborIron (global_atom_close)
         
+        # check planarity imidazole + guanidium
+#         statistic.planarityImidazole (atom_interest_close, path_dir_result)
+#         statistic.planarityGuanidium (atom_interest_close, path_dir_result)
         
+                
         # superimpose neighbors
-#         superimpose.globalNeighbor (atom_interest_close, "Primary", path_dir_result)
-#         superimpose.globalNeighbor (atom_interest_close, "Secondary", path_dir_result)
-#         superimpose.globalNeighbor (atom_interest_close, "Tertiary", path_dir_result)
-#         superimpose.globalNeighbor (atom_interest_close, "Imidazole", path_dir_result)
-#         superimpose.globalNeighbor (atom_interest_close, "Guanidium", path_dir_result)
+        superimpose.globalNeighbor (atom_interest_close, "Primary", path_dir_result)
+        superimpose.globalNeighbor (atom_interest_close, "Secondary", path_dir_result)
+        superimpose.globalNeighbor (atom_interest_close, "Tertiary", path_dir_result)
+        superimpose.globalNeighbor (atom_interest_close, "Imidazole", path_dir_result)
+        superimpose.globalNeighbor (atom_interest_close, "Guanidium", path_dir_result)
 #         
         # analyse length bond not use
 #         statistic.lenBondAnalysis(atom_interest_close, "Primary",path_dir_result)
@@ -92,11 +96,11 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #         statistic.lenBondAnalysis(atom_interest_close, "Tertiary",path_dir_result)
 #         
         # statistic
-        statistic.globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, path_dir_result)
+#         statistic.globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, path_dir_result)
          
         # draw graph
-        runScriptR.globalStat(distanceAtoms, distanceResidues,path_dir_result)
-        
+#         runScriptR.globalStat(distanceAtoms, distanceResidues,path_dir_result)
+
 
 def waterGlobal (name_database, limit_acc = 20.0):
     """

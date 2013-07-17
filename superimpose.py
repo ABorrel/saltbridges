@@ -4,6 +4,8 @@ import retrieveAtom
 import writePDBfile
 import repertory
 import tool
+import writeFile
+import runScriptR
 
 
 from numpy import *
@@ -163,8 +165,8 @@ def globalNeighbor (atom_interest_close, substruct, p_dir_result) :
         
         
         
-        v_atom_ref = mat(array(groupAtomCoord(l_at_ref)))
-        v_atom_central = mat(array(groupAtomCoord(l_at_subs)))
+        v_atom_ref = mat(array(groupAtomCoord(l_at_ref[0:3])))
+        v_atom_central = mat(array(groupAtomCoord(l_at_subs[0:3])))
 
 
         rotation, translocation =  rigid_transform_3D(v_atom_central, v_atom_ref)
@@ -193,8 +195,10 @@ def globalNeighbor (atom_interest_close, substruct, p_dir_result) :
     tool.colorAtomType (l_superimpose)
     
     
-    
+    p_file_coord = writeFile.coordinates3D (l_superimpose, p_dir_result + substruct + "_neigbor.coord", substruct) 
     writePDBfile.coordinateSection(p_dir_result + substruct + "_neigbor.pdb", l_superimpose , "HETATM", "Superimpose neighbors " + substruct)
+    runScriptR.plot3D (p_file_coord)
+    
         
             
         

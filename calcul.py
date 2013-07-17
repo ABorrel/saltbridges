@@ -77,6 +77,42 @@ def coplanar (atom, l_atom_ligand):
         return distance
 
 
+def coplanarPoint (atom, l_atom):
+    """Calculate the orthogonal distance between nitrogen atom of tertiary amine and plan with 3 carbons connect
+    in : - atom of nitrogen -> dictionnary
+         - all atom of ligand -> list of atom dictionnary
+    out : - distance -> float"""
+
+    if len(l_atom) != 3:
+        print "Atom does not 3 bonds !!"
+        return
+
+    else:
+        point = [float(atom["x"]), float(atom["y"]), float(atom["z"])]
+
+        d = symbols("d")
+        
+        
+        point1 = [float(l_atom[0]["x"]), float(l_atom[0]["y"]), float(l_atom[0]["z"])]
+        point2 = [float(l_atom[1]["x"]), float(l_atom[1]["y"]), float(l_atom[1]["z"])]
+        point3 = [float(l_atom[2]["x"]), float(l_atom[2]["y"]), float(l_atom[2]["z"])]
+
+
+        v1 = [point3[0] - point1[0], point3[1] - point1[1], point3[2] - point1[2]]
+        v2 = [point2[0] - point1[0], point2[1] - point1[1], point2[2] - point1[2]]
+        a = v1[1] * v2[2] - v1[2] * v2[1]
+        b = v1[2] * v2[0] - v1[0] * v2[2]
+        c = v1[0] * v2[1] - v1[1] * v2[0]
+
+        d = float(solve(a * point1[0] + b * point1[1] + c * point1[2] - d, d)[0])
+
+        nominator = abs(a * point[0] + b * point[1] + c * point[2] - d)
+        denominator = (a ** 2 + b ** 2 + c ** 2) ** (1 / 2)
+
+        distance = nominator / denominator
+
+        return distance
+
 
 
 def buildConnectMatrix(listAtomLigand, namePDB):

@@ -1,4 +1,4 @@
-from os import system, listdir
+from os import system, listdir, path
 from re import search
 
 import repertory
@@ -290,10 +290,25 @@ def histNeigbor (dir_in, logFile) :
     l_study.append("global")
     
     for substruct in l_study : 
-        cmd = repertory.scriptR() + "barplotNeighbor.R " + dir_in + "neigbhor/" + "neighbor_" + substruct + " " + dir_in + "neigbhor/" + "distance_" + substruct + " " + substruct
+        cmd = repertory.scriptR() + "AnalysisNeighbor.R " + dir_in + "neigbhor/" + "neighbor_" + substruct + " " + dir_in + "neigbhor/" + "distance_" + substruct + " " + substruct
         cmd_hist =  repertory.scriptR() + "histAngle.R " + dir_in + "neigbhor/" + "angle_neighbor_" + substruct
+        
+        if substruct == "Primary" : 
+            nb = 5
+        if substruct == "Secondary" or substruct == "Imidazole" : 
+            nb = 4
+        if substruct == "Tertiary" : 
+            nb = 3
+        else : 
+            nb = 7
+        
+        cmd_barplot = repertory.scriptR() + "barplotNeighbor.R " + dir_in + "neigbhor/" + "barplot_" + substruct + " " + str (nb)
+        
         print cmd 
         print cmd_hist
+        print cmd_barplot
+        
+        system (cmd_barplot)
         system (cmd)
         system (cmd_hist)
     
@@ -305,5 +320,15 @@ def barplotLenBond (path_filin) :
     system (cmd)
     
     
+def plot3D (p_file_coord) : 
     
+    cmd = repertory.scriptR() + "scatter3D.R " + p_file_coord
+    print cmd 
+    system (cmd)
+    
+    # remove png temp 
+    system ("rm " + path.dirname(p_file_coord) + "/*.png")
+    
+    
+        
     
