@@ -36,8 +36,8 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #     #   Parsing dataset   #
 #     ########################
 #     
-#     for path_dataSet in list_path_file_dataset : 
-#         statistic.parseDataSet(path_dataSet)
+    for path_dataSet in list_path_file_dataset : 
+        statistic.parseDataSet(path_dataSet)
 #     
 #     ####################
 #     # result directory #
@@ -84,11 +84,11 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
         
                 
         # superimpose neighbors
-        superimpose.globalNeighbor (atom_interest_close, "Primary", path_dir_result)
-        superimpose.globalNeighbor (atom_interest_close, "Secondary", path_dir_result)
-        superimpose.globalNeighbor (atom_interest_close, "Tertiary", path_dir_result)
-        superimpose.globalNeighbor (atom_interest_close, "Imidazole", path_dir_result)
-        superimpose.globalNeighbor (atom_interest_close, "Guanidium", path_dir_result)
+#         superimpose.globalNeighbor (atom_interest_close, "Primary", path_dir_result)
+#         superimpose.globalNeighbor (atom_interest_close, "Secondary", path_dir_result)
+#         superimpose.globalNeighbor (atom_interest_close, "Tertiary", path_dir_result)
+#         superimpose.globalNeighbor (atom_interest_close, "Imidazole", path_dir_result)
+#         superimpose.globalNeighbor (atom_interest_close, "Guanidium", path_dir_result)
 #         
         # analyse length bond not use
 #         statistic.lenBondAnalysis(atom_interest_close, "Primary",path_dir_result)
