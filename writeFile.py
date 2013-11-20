@@ -570,7 +570,7 @@ def barplotThreeAtomBarplot (countStruct, dir_out):
             
             #count
             d_cout = {}
-            min_distance = min(countStruct[substruct][nb_neighbor]["distance"])
+#             min_distance = min(countStruct[substruct][nb_neighbor]["distance"])
             max_distance = float(max(countStruct[substruct][nb_neighbor]["distance"]))
             
             d_temp = 2

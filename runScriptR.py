@@ -329,6 +329,15 @@ def plot3D (p_file_coord) :
     # remove png temp 
     system ("rm " + path.dirname(p_file_coord) + "/*.png")
     
+
+def plotAngleVs (path_filin):    
+    
+    cmd = repertory.scriptR() + "plotAngleVS.R " + path_filin
+    
+    print cmd
+    system (cmd)
+    
+    
     
         
     

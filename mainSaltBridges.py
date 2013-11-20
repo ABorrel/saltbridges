@@ -1,6 +1,7 @@
 import searchPDB
 import datasetFinal
 import tool
+import hetCloseAnalysis
 import test
 import statistic
 import runScriptR
@@ -23,10 +24,10 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
     max_distance = float (max_distance)
      
     # Retrieve list of PDB
-#     list_pdb = managePDB.retriveListPDB(name_database)
+    list_pdb = managePDB.retriveListPDB(name_database)
      
     # run one database
-#     path_dir_result_global = repertory.result (name_database)
+    path_dir_result_global = repertory.result (name_database)
 #     searchPDB.ligands(list_pdb, path_dir_result_global)
     list_path_file_dataset = datasetFinal.construction(name_database)
 #     print list_path_file_dataset
@@ -36,8 +37,8 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #     #   Parsing dataset   #
 #     ########################
 #     
-    for path_dataSet in list_path_file_dataset : 
-        statistic.parseDataSet(path_dataSet)
+#    for path_dataSet in list_path_file_dataset : 
+#        statistic.parseDataSet(path_dataSet, 1)
 #     
 #     ####################
 #     # result directory #
@@ -46,8 +47,9 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #
     # run for every dataset -> with diffrent resolution
     # short cut
-    list_path_file_dataset = [list_path_file_dataset[-1]]
-#     print list_path_file_dataset
+    print list_path_file_dataset
+    list_path_file_dataset = [list_path_file_dataset[1]]
+    print list_path_file_dataset
 
     
     
@@ -65,41 +67,51 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
             name_folder = name_folder + "_morecomplexe"
           
         path_dir_result = repertory.result (name_database + "/" + name_folder)
+        p_dir_result_het = repertory.result (name_database + "/" + name_folder + "het")
           
           
         print "########"
         print path_dir_result
+        print p_dir_result_het
         print "#########"
         # stat -> build structure
-        
         atom_interest_close, global_atom_close = searchPDB.globalSearch(max_distance, path_file_dataset, option_on_complexes_by_ligand, option_angle, path_dir_result)
         
         # remove iron close -> statistic before
-        tool.removeNeighborIron (atom_interest_close)
-        tool.removeNeighborIron (global_atom_close)
+        atom_interest_het = hetCloseAnalysis.removeNeighborIron (atom_interest_close)
+        global_atom_het = hetCloseAnalysis.removeNeighborIron (global_atom_close)
         
         # check planarity imidazole + guanidium
-#         statistic.planarityImidazole (atom_interest_close, path_dir_result)
-#         statistic.planarityGuanidium (atom_interest_close, path_dir_result)
+        statistic.planarityImidazole (atom_interest_close, path_dir_result)
+        statistic.planarityGuanidium (atom_interest_close, path_dir_result)
         
                 
-        # superimpose neighbors
-#         superimpose.globalNeighbor (atom_interest_close, "Primary", path_dir_result)
-#         superimpose.globalNeighbor (atom_interest_close, "Secondary", path_dir_result)
-#         superimpose.globalNeighbor (atom_interest_close, "Tertiary", path_dir_result)
-#         superimpose.globalNeighbor (atom_interest_close, "Imidazole", path_dir_result)
-#         superimpose.globalNeighbor (atom_interest_close, "Guanidium", path_dir_result)
-#         
-        # analyse length bond not use
+#         superimpose neighbors -> refaire a Helsinki car MAJ de de la PDB
+        superimpose.globalNeighbor (atom_interest_close, "Primary", path_dir_result)
+        superimpose.globalNeighbor (atom_interest_close, "Secondary", path_dir_result)
+        superimpose.globalNeighbor (atom_interest_close, "Tertiary", path_dir_result)
+        superimpose.globalNeighbor (atom_interest_close, "Imidazole", path_dir_result)
+        superimpose.globalNeighbor (atom_interest_close, "Guanidium", path_dir_result)
+        
+#         superimpose neighbors -> with het first stabilization 
+#         superimpose.globalNeighbor (atom_interest_het, "Primary", p_dir_result_het)
+#         superimpose.globalNeighbor (atom_interest_het, "Secondary", p_dir_result_het)
+#         superimpose.globalNeighbor (atom_interest_het, "Tertiary", p_dir_result_het)
+#         superimpose.globalNeighbor (atom_interest_het, "Imidazole", p_dir_result_het)
+#         superimpose.globalNeighbor (atom_interest_het, "Guanidium", p_dir_result_het)     
+         
+        # analyse length bond not use !!!!
 #         statistic.lenBondAnalysis(atom_interest_close, "Primary",path_dir_result)
 #         statistic.lenBondAnalysis(atom_interest_close, "Secondary",path_dir_result)
 #         statistic.lenBondAnalysis(atom_interest_close, "Tertiary",path_dir_result)
-#         
+# #         
         # statistic
-#         statistic.globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, path_dir_result)
+        statistic.globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, path_dir_result)
+#         statistic.globalRunStatistic(atom_interest_het, global_atom_het, max_distance, option_angle, p_dir_result_het)
          
         # draw graph
-#         runScriptR.globalStat(distanceAtoms, distanceResidues,path_dir_result)
+        runScriptR.globalStat(distanceAtoms, distanceResidues, path_dir_result)
+#        runScriptR.globalStat(distanceAtoms, distanceResidues, p_dir_result_het)
 
 
 def waterGlobal (name_database, limit_acc = 20.0):
@@ -154,7 +166,7 @@ def waterFamily (name_database):
 ###########################
 
 # extract file and uncompress
-#managePDB.formatFilePDB()
+# managePDB.formatFilePDB("/home/borrel/saltBridgesProject/PDB/")
 
 
 #####################################
@@ -173,10 +185,10 @@ distanceResidues= 4.0
 
 #RUN all
 #PDB 50
-main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
+# main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
-# main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 0, distanceAtoms=distanceAtoms, distanceResidues= distanceResidues)
+main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms, distanceResidues= distanceResidues)
 # 
 # #PDB 20
 # main ( "PDB20", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)

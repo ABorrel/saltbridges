@@ -55,34 +55,34 @@ legend("right",legend=colnames(data), fill=color,inset=c(-0.2,0))
 dev.off()
 
 # density by type
-png(filename=paste(pathData_distance ,"_type.png",sep = ""),width=as.integer(800), heigh = 1000)
-par(mfrow = c(3,1))
+#png(filename=paste(pathData_distance ,"_type.png",sep = ""),width=as.integer(800), heigh = 1000)
+#par(mfrow = c(3,1))
 
-plot(density(as.double(t(d1))), ylim = c(1,6))
-for (class in names(color)){
-	try (lines (density(as.double(t(d1[which(d1_classe == class)]))), col = color[class]))
-}
+#plot(density(as.double(t(d1))), ylim = c(1,6))
+#for (class in names(color)){
+#	try (lines (density(as.double(t(d1[which(d1_classe == class)]))), col = color[class]))
+#}
 
-plot(density(as.double(t(d2))), ylim = c(1,6))
-for (class in names(color)){
-	try (lines (density(as.double(t(d2[which(d2_classe == class)]))), col = color[class]))
-}
+#plot(density(as.double(t(d2))), ylim = c(1,6))
+#for (class in names(color)){
+#	try (lines (density(as.double(t(d2[which(d2_classe == class)]))), col = color[class]))
+#}
 
-plot(density(as.double(t(d3))), ylim = c(1,6))
-for (class in names(color)){
-	try (lines (density(as.double(t(d3[which(d3_classe == class)]))), col = color[class]))
-}
+#plot(density(as.double(t(d3))), ylim = c(1,6))
+#for (class in names(color)){
+#	try (lines (density(as.double(t(d3[which(d3_classe == class)]))), col = color[class]))
+#}
 
 
-dev.off()
+#dev.off()
 
 # density distance
-png(filename=paste(pathData_distance ,".png",sep = ""),width=as.integer(800), heigh = 1000)
-par(mfrow = c(3,1))
+#png(filename=paste(pathData_distance ,".png",sep = ""),width=as.integer(800), heigh = 1000)
+#par(mfrow = c(3,1))
 
-plot(density(as.double(t(d1))), xlim = c(1,5))
-plot(density(as.double(t(d2))), xlim = c(1,5))
-plot(density(as.double(t(d3))), xlim = c(1,5))
+#plot(density(as.double(t(d1))), xlim = c(1,5))
+#plot(density(as.double(t(d2))), xlim = c(1,5))
+#plot(density(as.double(t(d3))), xlim = c(1,5))
 
 
-dev.off()
+#dev.off()

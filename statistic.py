@@ -17,7 +17,7 @@ from copy import deepcopy
 from numpy import sum
 
 
-def parseDataSet(path_file_dataset):
+def parseDataSet(path_file_dataset, one_PDB_by_ligand = 0):
     """Statistic of dataset, repetition ligand in PDB file or in PDB
     out : file with count of repetition in file or files"""
 
@@ -36,11 +36,15 @@ def parseDataSet(path_file_dataset):
         # print element["name"]
         logFile.write(element["name"] + "\n")
         count["name"] = element["name"]
-        count["Number PDB"] = len(element["PDB"])
+        if one_PDB_by_ligand == 1 : 
+            count["Number PDB"] = 1
+            listPDB.append (element["PDB"][0])
+        else : 
+            count["Number PDB"] = len(element["PDB"])
         
-        for PDB in element["PDB"] : 
-            if not PDB in listPDB : 
-                listPDB.append(PDB)
+            for PDB in element["PDB"] : 
+                if not PDB in listPDB : 
+                    listPDB.append(PDB)
         
         l_at_ligand = loadFile.ligandInPDB(element["PDB"][0], element["name"])
         list_struct = searchPDB.interestStructure(l_at_ligand)
@@ -74,6 +78,8 @@ def parseDataSet(path_file_dataset):
         listCount.append(count)
         
     numberPDB = len(listPDB)
+    if one_PDB_by_ligand == 1 : 
+        path_file_dataset = path_file_dataset + "OnePDB"
     writeFile.parsingDataSet(listCount, countAmine, numberPDB, path_file_dataset)
     log.endAction("Parsing dataset, ligand representation", start, logFile)
 

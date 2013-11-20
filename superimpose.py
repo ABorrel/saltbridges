@@ -42,10 +42,11 @@ def rigid_transform_3D(A, B):
     
     print len (A), len (B)
     
-    assert len(A) == len(B)
+    
     if len(A) != len(B) :
         print "Not same number of atoms" 
-        return None
+        return None, None
+    assert len(A) == len(B)
 
     N = A.shape[0] # total points
 
@@ -170,6 +171,8 @@ def globalNeighbor (atom_interest_close, substruct, p_dir_result) :
 
 
         rotation, translocation =  rigid_transform_3D(v_atom_central, v_atom_ref)
+        if rotation == None or translocation == None : 
+            continue
         
         v_atom_rotated = applyTranformation(rotation, translocation, v_atom_central)
         l_atom_rotated = applyTranformation(rotation, translocation, l_atom_in=l_at_subs)
@@ -197,7 +200,7 @@ def globalNeighbor (atom_interest_close, substruct, p_dir_result) :
     
     p_file_coord = writeFile.coordinates3D (l_superimpose, p_dir_result + substruct + "_neigbor.coord", substruct) 
     writePDBfile.coordinateSection(p_dir_result + substruct + "_neigbor.pdb", l_superimpose , "HETATM", "Superimpose neighbors " + substruct)
-    runScriptR.plot3D (p_file_coord)
+    #runScriptR.plot3D (p_file_coord)
     
         
             

@@ -9,17 +9,32 @@
 
 args <- commandArgs(TRUE)
 file = args[1]
-data = read.csv(file, sep = "\t", header = FALSE)
-print (data)
+
+d = read.csv(file, sep = "\t", header = FALSE)
+
+d = na.omit (d)
+
+png(filename = paste(file, "_hist.png" , sep = ""), width=800, height = 2800)
+par (mfrow = c (4,1))
+hist (d[,1], main = "angle1VS2", col = "blue")
+hist (d[,2], main = "angle1VS3", col = "blue")
+hist (d[,3], main = "angle2VS3", col = "blue")
+hist (d[,1] + d[,2] + d[,3], main = "Sum", col = "red")
+
+dev.off()
 
 
-png(filename=paste(file, ".png", sep = ""))
-par (mfrow = c(2,2))
-hist(data[,1], xlab ="Angles between neighbor 1-2", ylab = "Number of occurences", right=F, main=paste("Angles", sep = ""),las=1, freq=T, col = "#D8D8D8")
-hist(data[,2], xlab ="Angles between neighbor 1-3", ylab = "Number of occurences", right=F, main=paste("Angles", sep = ""),las=1, freq=T, col = "#D8D8D8")
-hist(data[,3], xlab ="Angles between neighbor 2-3", ylab = "Number of occurences", right=F, main=paste("Angles", sep = ""),las=1, freq=T, col = "#D8D8D8")
+png(filename = paste(file, "_cor.png" , sep = ""), width=800, height = 2800)
+par (mfrow = c (4,1))
+plot (d[,1], d[,2], main = "", pch = 19, col = "blue", xlim = c(0,180), ylim = c(0,180))
+par (new = TRUE)
+plot (d[,2], d[,3], main = "", pch = 19, col = "red", xlim = c(0,180), ylim = c(0,180))
+par (new = TRUE)
+plot (d[,1], d[,3], main = "", pch = 19, col = "green", xlim = c(0,180), ylim = c(0,180))
 
-hist(data[,3] + data[,1] + data[,2], xlab ="Sum angles", ylab = "Number of occurences", right=F, main=paste("Angles", sep = ""),las=1, freq=T, col = "#D8D8D8")
 
+plot (d[,1], d[,2], main = "angle1VS2", pch = 19)
+plot (d[,1], d[,3], main = "angle1VS3", pch = 19)
+plot (d[,2], d[,3], main = "angle2VS3", pch = 19)
 
 dev.off()
