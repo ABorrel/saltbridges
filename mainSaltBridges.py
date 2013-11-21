@@ -48,7 +48,8 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
     # run for every dataset -> with diffrent resolution
     # short cut
     print list_path_file_dataset
-    list_path_file_dataset = [list_path_file_dataset[1]]
+    list_path_file_dataset = [list_path_file_dataset[-1]]
+    list_path_file_dataset =['/home/borrel/saltBridgesProject/result/PDB50/dataset_3.00']
     print list_path_file_dataset
 
     
@@ -188,7 +189,7 @@ distanceResidues= 4.0
 # main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
-main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms, distanceResidues= distanceResidues)
+# main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms, distanceResidues= distanceResidues)
 # 
 # #PDB 20
 # main ( "PDB20", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
@@ -197,7 +198,7 @@ main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, 
 # main ( "PDB20", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # 
 # # PDB
-# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
+main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
