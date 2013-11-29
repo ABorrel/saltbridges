@@ -293,6 +293,7 @@ def histNeigbor (dir_in, logFile) :
         cmd = repertory.scriptR() + "AnalysisNeighbor.R " + dir_in + "neigbhor/" + "neighbor_" + substruct + " " + dir_in + "neigbhor/" + "distance_" + substruct + " " + substruct
         cmd_hist =  repertory.scriptR() + "histAngle.R " + dir_in + "neigbhor/" + "angle_neighbor_" + substruct
         
+        
         if substruct == "Primary" : 
             nb = 5
         if substruct == "Secondary" or substruct == "Imidazole" : 

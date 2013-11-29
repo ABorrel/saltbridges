@@ -253,15 +253,17 @@ def countThreeNeigbors () :
     l_subs = listStructure()
     l_subs.append("global")
     
+    # MAJ 29-11-2013 -> nb_neighbor considering alway 8
     for sub_struct in l_subs : 
+        
         if sub_struct == "Primary" : 
-            nb_n = 5
+            nb_n = 8
         elif sub_struct == "Tertiary" : 
-            nb_n = 3
+            nb_n = 8
         elif sub_struct == "Imidazole" or sub_struct == "Secondary": 
-            nb_n = 4
+            nb_n = 8
         else : 
-            nb_n = 7
+            nb_n = 8
             
         d_out[sub_struct] = {}
         d_out[sub_struct]["angle1_2"]  = []

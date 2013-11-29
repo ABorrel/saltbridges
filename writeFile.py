@@ -521,19 +521,24 @@ def resultNeighbor (countStruct, dir_out) :
 
     for sub_struct in countStruct.keys() : 
         filout_neighbor = open (dir_out + "neighbor_" + sub_struct, "w")
+        filout_neighbor_count = open (dir_out + "neighbor_count_" + sub_struct, "w")
         filout_distance = open (dir_out + "distance_" + sub_struct, "w")
         filout_angle = open (dir_out + "angle_neighbors" + sub_struct, "w")
         filout_neighbor.write ("\t".join(l_typeatom) + "\n")
-        # barplot class of neighbors
-        for nb_neighbor in range(1,4) : 
+        filout_neighbor_count.write ("\t".join(l_typeatom) + "\n")
+        # barplot class of neighbors -> but not dynamic nb neighbor
+        for nb_neighbor in range(1,8) : 
             if nb_neighbor == "angle1_2" or nb_neighbor == "angle2_3" or nb_neighbor == "angle1_3" : 
                 continue
             filout_neighbor.write(str(nb_neighbor))
+            filout_neighbor_count.write(str(nb_neighbor))
             filout_distance.write(str(nb_neighbor))
             sum_neigbor = tool.sumDict(countStruct[sub_struct][nb_neighbor])
             for class_atom in l_typeatom : 
                 filout_neighbor.write("\t" + str(countStruct[sub_struct][nb_neighbor][class_atom] / sum_neigbor)) 
+                filout_neighbor_count.write("\t" + str(countStruct[sub_struct][nb_neighbor][class_atom])) 
             filout_neighbor.write("\n")
+            filout_neighbor_count.write("\n")
             filout_distance.write("\t" + "\t".join(countStruct[sub_struct][nb_neighbor]["distance"]) + "\n")
             filout_distance.write ("Classe\t" + "\t".join(countStruct[sub_struct][nb_neighbor]["classe"]) + "\n")
     
@@ -547,6 +552,7 @@ def resultNeighbor (countStruct, dir_out) :
     
     filout_distance.close ()
     filout_neighbor.close ()
+    filout_neighbor_count.close ()
     filout_angle.close ()
     
     # write barplot file
@@ -561,7 +567,7 @@ def barplotThreeAtomBarplot (countStruct, dir_out):
     
     for substruct in countStruct.keys () : 
         for nb_neighbor in countStruct[substruct].keys() :
-            if type (nb_neighbor) != type(int()) :
+            if type (nb_neighbor) != type(int()) or countStruct[substruct][nb_neighbor]["distance"] == []:
                 continue 
             filout = open (dir_out + "barplot_" + substruct + "_" + str(nb_neighbor), "w")
             

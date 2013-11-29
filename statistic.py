@@ -350,6 +350,7 @@ def globalRunStatistic(atom_interest_close, global_atom_close, max_distance, opt
         countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["Carom"])
         countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc"])
         countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc", "H2O"])
+        countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["Nhis", "Nbasic"])
 #        -> every atom         
         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid"])
         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["H2O"])
@@ -357,6 +358,7 @@ def globalRunStatistic(atom_interest_close, global_atom_close, max_distance, opt
         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["Carom"])
         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc"])
         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc", "H2O"])
+        countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["Nhis", "Nbasic"])
 #                 
         globalAtomResidue(global_atom_close, countStruct[str(distance)]["ResidueAllAtom"])
         angle(atom_interest_close, countStruct[str(distance)]["angle"])
@@ -451,13 +453,13 @@ def relationNeighbors (struct_neighbor, countStruct) :
     
     for substruct in l_substruct : 
         if substruct == "Primary" : 
-            searchNeighbor (struct_neighbor, countStruct, substruct, 5)
+            searchNeighbor (struct_neighbor, countStruct, substruct, 8)
         elif substruct == "Tertiary" : 
-            searchNeighbor (struct_neighbor, countStruct, substruct, 3)
+            searchNeighbor (struct_neighbor, countStruct, substruct, 8)
         elif substruct == "Imidazole" or substruct == "Secondary": 
-            searchNeighbor (struct_neighbor, countStruct, substruct, 4)
+            searchNeighbor (struct_neighbor, countStruct, substruct, 8)
         else : 
-            searchNeighbor (struct_neighbor, countStruct, substruct,  7)
+            searchNeighbor (struct_neighbor, countStruct, substruct,  8)
 
 
 

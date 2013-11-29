@@ -28,10 +28,11 @@ mapFig = function (main_plot, data, filin){
 		data_bis = data
 	}
 
-	png(filename = paste(file, main_plot, "_density.png" , sep = ""), width=2000, height = 2000)
-	par(mar=c(6,6,6,6))
+	png(filename = paste(file, main_plot, "_density.png" , sep = ""), width=6000, height = 6000)
+	par(mar=c(30,30,30,30))
 	Lab.palette = colorRampPalette(revector(heat.colors(50)), space = "Lab")
-	smoothScatter(data_bis, colramp = Lab.palette, main = main_plot, xlim = c(1.5,5), cex.axis = 2.5, cex.main = 3, xlab = "distance", ylab = "angle", cex.lab = 3)
+	smoothScatter(data_bis, col = blues9, main = main_plot, xlim = c(1.5,4), ylim = c(40, 180), cex.lab = 10, xlab = "", ylab = "",yaxt = "n", xaxt = "n")
+	grid (5, 7, col = "black", lwd = 6, lty = 1)
 	dev.off()
 }
 
@@ -60,7 +61,7 @@ for (element in l_element){
 
 	if (dim (data)[2] == 4){
 		png(filename = paste(file , element, "angle_density.png" , sep = ""), width=4000, height = 2000)
-		par(mar=c(6,6,6,6))
+		par(mar=c(10,10,10,10))
 		Lab.palette = colorRampPalette(revector(heat.colors(50)), space = "Lab")
 		smoothScatter(data_plot[,c(2,3)], colramp = Lab.palette, main = element, cex.axis = 2.5, cex.main = 3, xlab = "angle1", ylab = "angle2", cex.lab = 3)
 		dev.off()

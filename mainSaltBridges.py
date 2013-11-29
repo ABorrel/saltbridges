@@ -24,7 +24,7 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
     max_distance = float (max_distance)
      
     # Retrieve list of PDB
-    list_pdb = managePDB.retriveListPDB(name_database)
+#     list_pdb = managePDB.retriveListPDB(name_database)
      
     # run one database
     path_dir_result_global = repertory.result (name_database)
@@ -88,11 +88,11 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
         
                 
 #         superimpose neighbors -> refaire a Helsinki car MAJ de de la PDB
-        superimpose.globalNeighbor (atom_interest_close, "Primary", path_dir_result)
-        superimpose.globalNeighbor (atom_interest_close, "Secondary", path_dir_result)
-        superimpose.globalNeighbor (atom_interest_close, "Tertiary", path_dir_result)
-        superimpose.globalNeighbor (atom_interest_close, "Imidazole", path_dir_result)
-        superimpose.globalNeighbor (atom_interest_close, "Guanidium", path_dir_result)
+#         superimpose.globalNeighbor (atom_interest_close, "Primary", path_dir_result)
+#         superimpose.globalNeighbor (atom_interest_close, "Secondary", path_dir_result)
+#         superimpose.globalNeighbor (atom_interest_close, "Tertiary", path_dir_result)
+#         superimpose.globalNeighbor (atom_interest_close, "Imidazole", path_dir_result)
+#         superimpose.globalNeighbor (atom_interest_close, "Guanidium", path_dir_result)
         
 #         superimpose neighbors -> with het first stabilization 
 #         superimpose.globalNeighbor (atom_interest_het, "Primary", p_dir_result_het)
@@ -108,11 +108,11 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 # #         
         # statistic
         statistic.globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, path_dir_result)
-#         statistic.globalRunStatistic(atom_interest_het, global_atom_het, max_distance, option_angle, p_dir_result_het)
+        statistic.globalRunStatistic(atom_interest_het, global_atom_het, max_distance, option_angle, p_dir_result_het)
          
         # draw graph
-        runScriptR.globalStat(distanceAtoms, distanceResidues, path_dir_result)
-#        runScriptR.globalStat(distanceAtoms, distanceResidues, p_dir_result_het)
+#         runScriptR.globalStat(distanceAtoms, distanceResidues, path_dir_result)
+#         runScriptR.globalStat(distanceAtoms, distanceResidues, p_dir_result_het)
 
 
 def waterGlobal (name_database, limit_acc = 20.0):
@@ -187,7 +187,7 @@ distanceResidues= 4.0
 #RUN all
 #PDB 50
 # main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
-# main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
+main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms, distanceResidues= distanceResidues)
 # 
@@ -198,7 +198,7 @@ distanceResidues= 4.0
 # main ( "PDB20", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # 
 # # PDB
-main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
+# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
