@@ -326,6 +326,9 @@ def globalRunStatistic(atom_interest_close, global_atom_close, max_distance, opt
     relationNeighbors (atom_interest_close, countStruct[str(max_distance)]["threeAnalysis"])
     relationNeighbors (global_atom_close, countStruct[str(max_distance)]["threeAnalysis"])
 
+    # number of neighbor average
+    numberNeighbor (atom_interest_close, countStruct[str(max_distance)]["numberNeighbors"])
+    numberNeighbor (global_atom_close, countStruct[str(max_distance)]["numberNeighbors"])
 
     distance = max_distance
 
@@ -372,6 +375,26 @@ def globalRunStatistic(atom_interest_close, global_atom_close, max_distance, opt
     writeFile.resultAtLeastOne(countAtLeastOneGlobal, countStruct, max_distance, path_dir_result)
 
 #     log.endAction("Statistical analysis neighbors ", start, logFile)
+
+
+
+def numberNeighbor (struct_neighbor, count) : 
+    
+    if type (struct_neighbor) is list : 
+        if not "Global" in count.keys () : 
+            count["Global"] = []
+        for atom_central in struct_neighbor : 
+            count["Global"].append (len(atom_central["neighbors"]))
+            
+    else :
+        for substruct in struct_neighbor.keys():
+            for atom_central in struct_neighbor[substruct]:
+                nbNeighbor = len(atom_central["neighbors"])
+                if not substruct in count.keys () : 
+                    count[substruct] = []
+                
+                count[substruct].append (nbNeighbor)
+
 
 
 

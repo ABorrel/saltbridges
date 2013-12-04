@@ -2,7 +2,7 @@ import structure
 import repertory
 from os import makedirs
 import tool
-
+import numpy
 
 
 def resultFilterLigandPDB(struct, dir_out):
@@ -180,6 +180,7 @@ def countGlobalCount(distanceGlobal, countGlobalAmine, dir_out):
     resultByAA(countGlobalAmine[str(distanceGlobal)]["byAA"], dir_out)
     resultAngle(countGlobalAmine, distanceGlobal, dir_out)
     resultNeighbor (countGlobalAmine[str(distanceGlobal)]["threeAnalysis"], dir_out)
+    resultNumberNeighbor (countGlobalAmine[str(distanceGlobal)]["numberNeighbors"], dir_out)
 
     for distance in countGlobalAmine.keys():
         resultResidue(float(distance), countGlobalAmine[str(distance)]["residue"], dir_out)
@@ -203,6 +204,24 @@ def resultLigand(count, directory_result):
         for ligand in count[element].keys():
             filout.write(str(ligand) + "\t" + str(count[element][ligand]) + "\n")
         filout.close()
+
+
+
+def resultNumberNeighbor (count, directory_result) : 
+    
+    # define new fold
+    try : makedirs(directory_result + "NumberNeighbor/" , mode=0777)
+    except : pass
+    
+    filout_means = open(directory_result + "NumberNeighbor/means.result", "w")
+    for substruct in count.keys () : 
+        filout_means.write (str (substruct) + " " + str (numpy.mean(count[substruct])) + " " + str (numpy.std(count[substruct])) + "\n")
+        filout = open(directory_result + "NumberNeighbor/" + substruct, "w")
+        for nb_neighbor in count[substruct] : 
+            filout.write (str (nb_neighbor) + "\n")
+        filout.close ()
+    filout_means.close ()
+
 
 
 def resultAtom(count, directory_result):

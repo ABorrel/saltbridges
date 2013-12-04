@@ -244,6 +244,7 @@ def countType():
     count["proportionAtom"] = countProportionAtom()
     count["proportionType"] = countProportionType()
     count["ResidueAllAtom"] = countResidueGlobal()
+    count ["numberNeighbors"] = {}
     return count
 
 
@@ -799,10 +800,65 @@ def substructureCoord (type_substructure):
         atom5["connect"] = [] 
         
         return [atom1, atom2, atom3, atom4, atom5] 
+    
+    elif type_substructure == "AcidCarboxylic" :
+    
+        atom1 = {}
+        atom1["serial"] = 1
+        atom1["name"] = "C01"
+        atom1["resName"] = "COO"
+        atom1["x"] = 0.000
+        atom1["y"] = 0.000
+        atom1["z"] = 0.000
+        atom1["element"] = "C"
+        atom1["charge"] = "0"
+        atom1["occupancy"] = "1"
+        atom1["tempFactor"] = "0"
+        atom1["connect"] = []  
+        
+        atom2 = {}
+        atom2["serial"] = 2
+        atom2["name"] = "C02"
+        atom2["resName"] = "COO"
+        atom2["x"] = -1.356
+        atom2["y"] = 0.460
+        atom2["z"] = 0.567
+        atom2["element"] = "C"
+        atom2["charge"] = "0"
+        atom2["occupancy"] = "1"
+        atom2["tempFactor"] = "0"
+        atom2["connect"] = [] 
+        
+        atom3 = {}
+        atom3["serial"] = 3
+        atom3["name"] = "O01"
+        atom3["resName"] = "COO"
+        atom3["x"] = -2.372
+        atom3["y"] = -0.009
+        atom3["z"] = 0.133
+        atom3["element"] = "O"
+        atom3["charge"] = "0"
+        atom3["occupancy"] = "1"
+        atom3["tempFactor"] = "0"
+        atom3["connect"] = [] 
+        
+        atom4 = {}
+        atom4["serial"] = 4
+        atom4["name"] = "O02"
+        atom4["resName"] = "COO"
+        atom4["x"] = -1.387
+        atom4["y"] = 1.300
+        atom4["z"] = 1.457
+        atom4["element"] = "O"
+        atom4["charge"] = "0"
+        atom4["occupancy"] = "1"
+        atom4["tempFactor"] = "0"
+        atom4["connect"] = [] 
+        
+       
+        return [atom1, atom2, atom3, atom4] 
         
         
         
- 
- 
  
 

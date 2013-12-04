@@ -277,21 +277,30 @@ def diAmine (l_at_connect_N, listAtomLigand):
 
 def acidCarboxylic(listAtomConnectOx, listAtomLigand) : 
     
+    l_out = []
     connect_element = toolSubstructure.matrixElement(listAtomConnectOx)
     if connect_element != ["O", "C"] : 
         return 0
     else : 
         l_atom_connect_C, connect_matrix_C = retrieveAtom.atomConnect(listAtomLigand, listAtomConnectOx[1]["serial"])
+        l_out.append (l_atom_connect_C[0]["serial"])
         if connect_matrix_C == ["C", "O", "O", "C"] or connect_matrix_C == ["C", "O", "C", "O"] or  connect_matrix_C == ["C", "C", "O", "O"] : 
             for atom_connect_C in l_atom_connect_C[1:] :
+                l_out.append (atom_connect_C ["serial"])
                 if atom_connect_C["element"] == "O" : 
                     l_atom_connect_ox, connect_matrix_ox = retrieveAtom.atomConnect(listAtomLigand, atom_connect_C["serial"])
                     if connect_matrix_ox != ["O", "C"] :
-                        return 0
+                        return [0, []]
+                    else : 
+                        if not atom_connect_C["serial"] in l_out : 
+                            l_out.append (atom_connect_C["serial"])
+                            
         else : 
-            return 0
+            return [0, []]
     
-    return 1
+    print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    print len (l_out), l_out
+    return [1,l_out]
 
 
     

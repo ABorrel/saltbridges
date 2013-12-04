@@ -83,8 +83,8 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
         global_atom_het = hetCloseAnalysis.removeNeighborIron (global_atom_close)
         
         # check planarity imidazole + guanidium
-        statistic.planarityImidazole (atom_interest_close, path_dir_result)
-        statistic.planarityGuanidium (atom_interest_close, path_dir_result)
+#         statistic.planarityImidazole (atom_interest_close, path_dir_result)
+#         statistic.planarityGuanidium (atom_interest_close, path_dir_result)
         
                 
 #         superimpose neighbors -> refaire a Helsinki car MAJ de de la PDB
@@ -93,13 +93,15 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #         superimpose.globalNeighbor (atom_interest_close, "Tertiary", path_dir_result)
 #         superimpose.globalNeighbor (atom_interest_close, "Imidazole", path_dir_result)
 #         superimpose.globalNeighbor (atom_interest_close, "Guanidium", path_dir_result)
+        superimpose.globalNeighbor (atom_interest_close, "AcidCarboxylic", path_dir_result)
         
 #         superimpose neighbors -> with het first stabilization 
 #         superimpose.globalNeighbor (atom_interest_het, "Primary", p_dir_result_het)
 #         superimpose.globalNeighbor (atom_interest_het, "Secondary", p_dir_result_het)
 #         superimpose.globalNeighbor (atom_interest_het, "Tertiary", p_dir_result_het)
 #         superimpose.globalNeighbor (atom_interest_het, "Imidazole", p_dir_result_het)
-#         superimpose.globalNeighbor (atom_interest_het, "Guanidium", p_dir_result_het)     
+#         superimpose.globalNeighbor (atom_interest_het, "Guanidium", p_dir_result_het)
+             
          
         # analyse length bond not use !!!!
 #         statistic.lenBondAnalysis(atom_interest_close, "Primary",path_dir_result)
@@ -107,8 +109,8 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #         statistic.lenBondAnalysis(atom_interest_close, "Tertiary",path_dir_result)
 # #         
         # statistic
-        statistic.globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, path_dir_result)
-        statistic.globalRunStatistic(atom_interest_het, global_atom_het, max_distance, option_angle, p_dir_result_het)
+#         statistic.globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, path_dir_result)
+#         statistic.globalRunStatistic(atom_interest_het, global_atom_het, max_distance, option_angle, p_dir_result_het)
          
         # draw graph
 #         runScriptR.globalStat(distanceAtoms, distanceResidues, path_dir_result)
