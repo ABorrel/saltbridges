@@ -74,6 +74,7 @@ def parseDataSet(path_file_dataset, one_PDB_by_ligand = 0):
         countAmine["Pyridine"] = countAmine["Pyridine"] + int(flag_pyridine / 2) * count["Number PDB"]
         countAmine["Diamine"] = countAmine["Diamine"] + int(flag_diamine / 2) * count["Number PDB"] 
         countAmine["Guanidium"] = countAmine["Guanidium"] + (int(flag_guanidium / 3) * count["Number PDB"])
+        # divise by 2 because equivalent oxygen
         countAmine["AcidCarboxylic"] = countAmine["AcidCarboxylic"] + (int(flag_acidcarboxylic / 2) * count["Number PDB"])
         listCount.append(count)
         

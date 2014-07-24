@@ -122,18 +122,21 @@ def buildConnectMatrix(listAtomLigand, namePDB):
     out : - Ligand with connect matrix"""
 
 
-    linesPDB = loadFile.openPdbFile(namePDB)
-    groupAtomPDB = []
-    for line in linesPDB:
-        if search("^ATOM", line) or search("^HETATM", line):
-            groupAtomPDB.append(parsing.lineCoords(line))
+#     linesPDB = loadFile.openPdbFile(namePDB)
+#     groupAtomPDB = []
+#     for line in linesPDB:
+#         if search("^ATOM", line) or search("^HETATM", line):
+#             groupAtomPDB.append(parsing.lineCoords(line))
 
+    # initialization of connect matrix
+    for atomLigand in listAtomLigand:
+        atomLigand["connect"] = []
 
     for atomLigand in listAtomLigand:
         atomLigand["connect"].append(atomLigand["serial"])
-        for atomPDB in groupAtomPDB:
+        for atomPDB in listAtomLigand:
             distance = distanceTwoatoms(atomLigand, atomPDB)
-            if distance < 1.7 and distance != 0:
+            if distance < 1.8 and distance != 0.1 and distance != "ERROR":
                 if not atomPDB["serial"] in atomLigand["connect"]:
                     atomLigand["connect"].append(atomPDB["serial"])
 

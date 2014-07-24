@@ -14,14 +14,19 @@ import statistic
 import loadFile
 
 
+
 #############global search######################
-def interestStructure (listAtomLigand):
+def interestStructure (listAtomLigand, debug = 0):
     """For one serial_nitrogen atom search substructure
     in : list atom ligand
     out : list of substructures found (list string)"""
 
     l_serial_N = listAtomType (listAtomLigand, "N")
     l_serial_O = listAtomType (listAtomLigand, "O")
+    
+    if debug : 
+        print l_serial_O
+        print l_serial_N
     
     structureFound = []
 
@@ -43,9 +48,9 @@ def interestStructure (listAtomLigand):
             structureFound.append("Tertiary")
        
 
-    for serial_carbon in l_serial_O:
-        listAtomConnectCarbon, connect = retrieveAtom.atomConnect(listAtomLigand, serial_carbon)
-        if acidCarboxylic(listAtomConnectCarbon, listAtomLigand) == 1:
+    for serial_oxygen in l_serial_O:
+        listAtomConnectOxygen, connect = retrieveAtom.atomConnect(listAtomLigand, serial_oxygen)
+        if acidCarboxylic(listAtomConnectOxygen, listAtomLigand)[0] >= 1:
             structureFound.append("AcidCarboxylic")
             
     return structureFound
@@ -280,7 +285,7 @@ def acidCarboxylic(listAtomConnectOx, listAtomLigand) :
     l_out = []
     connect_element = toolSubstructure.matrixElement(listAtomConnectOx)
     if connect_element != ["O", "C"] : 
-        return 0
+        return [0, []]
     else : 
         l_atom_connect_C, connect_matrix_C = retrieveAtom.atomConnect(listAtomLigand, listAtomConnectOx[1]["serial"])
         l_out.append (l_atom_connect_C[0]["serial"])
@@ -298,8 +303,6 @@ def acidCarboxylic(listAtomConnectOx, listAtomLigand) :
         else : 
             return [0, []]
     
-    print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    print len (l_out), l_out
     return [1,l_out]
 
 
@@ -1012,12 +1015,6 @@ def cycleOnlyTestCarbon(serialFirst, serialTest, serialPrevious, atomLigand, tes
                 return 1
 
     return 0
-
-
-
-
-
-
 
 
 

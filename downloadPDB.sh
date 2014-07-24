@@ -22,10 +22,10 @@ echo "Prior to first use, you must edit this script to choose a server name, por
 # You should CHANGE THE NEXT THREE LINES to suit your local setup
 ############################################################################
 
-MIRRORDIR=/home/borrel/saltBridgesProject/PDB
+MIRRORDIR=/home/borrel/PDB/
               # your top level rsync directory
-LOGFILE=/home/borrel/saltBridgesProject/PDB/log             # file for storing logs
-RSYNC=rsync                             # location of local rsync
+LOGFILE=/home/borrel/PDB/log.txt            # file for storing logs
+RSYNC=rsync                         # location of local rsync
 
 ##########################################################################################
 #

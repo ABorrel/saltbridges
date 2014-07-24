@@ -6,6 +6,7 @@ from re import search
 globals()["repInit"] = "/home/borrel/saltBridgesProject/"
 
 repInit = "/home/borrel/saltBridgesProject/"
+repPDB = "/home/borrel/PDB/"
 
 
 def result(rep_add = ""):
@@ -29,14 +30,12 @@ def withoutAtLeastOneSummary(dir_in):
 
 def pathDitrectoryPDB ():
     
-    return repInit + "PDB/"
+    return repPDB
 
 
 def openPdbFile ():
 
-    rep = repInit + "PDB/"
-    try: makedirs(rep, mode=0777)
-    except: pass
+    rep = repPDB
     return rep
 
 def pdbechemFile ():
@@ -127,7 +126,8 @@ def retriveDataSetFile (directory_in) :
     list_files = listdir(directory_in)
     for filin in list_files : 
         if search("dataset", filin) and not search (".stat", filin) and not search ("RMN", filin) and not search ("NMR", filin) and not search ("OUT", filin): 
-            list_out.append (directory_in + filin)
+            if path.getsize(directory_in + filin) > 5 : 
+                list_out.append (directory_in + filin)
     
     return list_out
 

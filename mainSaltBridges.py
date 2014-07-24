@@ -16,6 +16,10 @@ import superimpose
 
 
 
+import loadFile
+
+
+
 
 def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=3.5,distanceResidues= 5.0):
     
@@ -24,7 +28,9 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
     max_distance = float (max_distance)
      
     # Retrieve list of PDB
-#     list_pdb = managePDB.retriveListPDB(name_database)
+    list_pdb = managePDB.retriveListPDB(name_database)
+    
+    print len (list_pdb), "+++++"
      
     # run one database
     path_dir_result_global = repertory.result (name_database)
@@ -37,8 +43,8 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #     #   Parsing dataset   #
 #     ########################
 #     
-#    for path_dataSet in list_path_file_dataset : 
-#        statistic.parseDataSet(path_dataSet, 1)
+    for path_dataSet in list_path_file_dataset : 
+        statistic.parseDataSet(path_dataSet, 1)
 #     
 #     ####################
 #     # result directory #
@@ -104,17 +110,17 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
              
          
         # analyse length bond not use !!!!
-#         statistic.lenBondAnalysis(atom_interest_close, "Primary",path_dir_result)
-#         statistic.lenBondAnalysis(atom_interest_close, "Secondary",path_dir_result)
-#         statistic.lenBondAnalysis(atom_interest_close, "Tertiary",path_dir_result)
+        statistic.lenBondAnalysis(atom_interest_close, "Primary",path_dir_result)
+        statistic.lenBondAnalysis(atom_interest_close, "Secondary",path_dir_result)
+        statistic.lenBondAnalysis(atom_interest_close, "Tertiary",path_dir_result)
 # #         
         # statistic
-#         statistic.globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, path_dir_result)
-#         statistic.globalRunStatistic(atom_interest_het, global_atom_het, max_distance, option_angle, p_dir_result_het)
+        statistic.globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, path_dir_result)
+        statistic.globalRunStatistic(atom_interest_het, global_atom_het, max_distance, option_angle, p_dir_result_het)
          
         # draw graph
-#         runScriptR.globalStat(distanceAtoms, distanceResidues, path_dir_result)
-#         runScriptR.globalStat(distanceAtoms, distanceResidues, p_dir_result_het)
+        runScriptR.globalStat(distanceAtoms, distanceResidues, path_dir_result)
+        runScriptR.globalStat(distanceAtoms, distanceResidues, p_dir_result_het)
 
 
 def waterGlobal (name_database, limit_acc = 20.0):
@@ -169,7 +175,7 @@ def waterFamily (name_database):
 ###########################
 
 # extract file and uncompress
-# managePDB.formatFilePDB("/home/borrel/saltBridgesProject/PDB/")
+# managePDB.formatFilePDB("/home/borrel/PDB/")
 
 
 #####################################
@@ -188,16 +194,10 @@ distanceResidues= 4.0
 
 #RUN all
 #PDB 50
-# main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
-main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
+main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
+# main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms, distanceResidues= distanceResidues)
-# 
-# #PDB 20
-# main ( "PDB20", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
-# main ( "PDB20", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
-# main ("PDB20", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 1, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
-# main ( "PDB20", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
 # 
 # # PDB
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, distanceAtoms=distanceAtoms,distanceResidues= distanceResidues)
@@ -228,6 +228,16 @@ main ( "PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, 
 # waterGlobal ("PDB", limit_acc = 20.0)
 # waterFamily("PDB")
 # waterFamily("PDB50")
+
+
+
+
+
+
+
+listAtomLigand = loadFile.ligandInPDB("101m", "HEM")
+
+print searchPDB.interestStructure (listAtomLigand)
 
 
 

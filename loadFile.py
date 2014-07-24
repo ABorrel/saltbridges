@@ -75,6 +75,7 @@ def ligandInPDB(PDB_ID, ligand_ID):
     out : atom in ligands
     out: list of atoms that list_atom_ligand"""
 
+
     linesPDB = openPdbFile(PDB_ID)
     list_atom_ligand = []
     for line in linesPDB:
