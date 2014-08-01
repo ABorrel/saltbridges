@@ -312,6 +312,9 @@ def histNeigbor (dir_in, logFile) :
         system (cmd_barplot)
         system (cmd)
         system (cmd_hist)
+        
+    for i in range (1,8) : 
+        AFC (dir_in + "neigbhor/", str (i))
     
 
 def barplotLenBond (path_filin) : 
@@ -340,5 +343,13 @@ def plotAngleVs (path_filin):
     
     
     
-        
+def AFC (pr_neighbors, number_neighbor):
+    
+    
+    
+    cmd = repertory.scriptR() + "AFCNeighbor.R " + pr_neighbors + " " + str (number_neighbor)
+    print cmd
+    system (cmd)
+
+
     

@@ -30,11 +30,11 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
     # Retrieve list of PDB
     list_pdb = managePDB.retriveListPDB(name_database)
     
-    print len (list_pdb), "+++++"
+#     print len (list_pdb), "+++++"
      
     # run one database
     path_dir_result_global = repertory.result (name_database)
-#     searchPDB.ligands(list_pdb, path_dir_result_global)
+    searchPDB.ligands(list_pdb, path_dir_result_global)
     list_path_file_dataset = datasetFinal.construction(name_database)
 #     print list_path_file_dataset
 #     
@@ -53,8 +53,8 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #
     # run for every dataset -> with diffrent resolution
     # short cut
-    print list_path_file_dataset
-    list_path_file_dataset = [list_path_file_dataset[-1]]
+#     print list_path_file_dataset
+#     list_path_file_dataset = [list_path_file_dataset[-1]]
     list_path_file_dataset =['/home/borrel/saltBridgesProject/result/PDB50/dataset_3.00']
     print list_path_file_dataset
 
@@ -89,24 +89,24 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
         global_atom_het = hetCloseAnalysis.removeNeighborIron (global_atom_close)
         
         # check planarity imidazole + guanidium
-#         statistic.planarityImidazole (atom_interest_close, path_dir_result)
-#         statistic.planarityGuanidium (atom_interest_close, path_dir_result)
+        statistic.planarityImidazole (atom_interest_close, path_dir_result)
+        statistic.planarityGuanidium (atom_interest_close, path_dir_result)
         
                 
 #         superimpose neighbors -> refaire a Helsinki car MAJ de de la PDB
-#         superimpose.globalNeighbor (atom_interest_close, "Primary", path_dir_result)
-#         superimpose.globalNeighbor (atom_interest_close, "Secondary", path_dir_result)
-#         superimpose.globalNeighbor (atom_interest_close, "Tertiary", path_dir_result)
-#         superimpose.globalNeighbor (atom_interest_close, "Imidazole", path_dir_result)
-#         superimpose.globalNeighbor (atom_interest_close, "Guanidium", path_dir_result)
+        superimpose.globalNeighbor (atom_interest_close, "Primary", path_dir_result)
+        superimpose.globalNeighbor (atom_interest_close, "Secondary", path_dir_result)
+        superimpose.globalNeighbor (atom_interest_close, "Tertiary", path_dir_result)
+        superimpose.globalNeighbor (atom_interest_close, "Imidazole", path_dir_result)
+        superimpose.globalNeighbor (atom_interest_close, "Guanidium", path_dir_result)
         superimpose.globalNeighbor (atom_interest_close, "AcidCarboxylic", path_dir_result)
         
 #         superimpose neighbors -> with het first stabilization 
-#         superimpose.globalNeighbor (atom_interest_het, "Primary", p_dir_result_het)
-#         superimpose.globalNeighbor (atom_interest_het, "Secondary", p_dir_result_het)
-#         superimpose.globalNeighbor (atom_interest_het, "Tertiary", p_dir_result_het)
-#         superimpose.globalNeighbor (atom_interest_het, "Imidazole", p_dir_result_het)
-#         superimpose.globalNeighbor (atom_interest_het, "Guanidium", p_dir_result_het)
+        superimpose.globalNeighbor (atom_interest_het, "Primary", p_dir_result_het)
+        superimpose.globalNeighbor (atom_interest_het, "Secondary", p_dir_result_het)
+        superimpose.globalNeighbor (atom_interest_het, "Tertiary", p_dir_result_het)
+        superimpose.globalNeighbor (atom_interest_het, "Imidazole", p_dir_result_het)
+        superimpose.globalNeighbor (atom_interest_het, "Guanidium", p_dir_result_het)
              
          
         # analyse length bond not use !!!!
@@ -233,11 +233,6 @@ main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, o
 
 
 
-
-
-listAtomLigand = loadFile.ligandInPDB("101m", "HEM")
-
-print searchPDB.interestStructure (listAtomLigand)
 
 
 

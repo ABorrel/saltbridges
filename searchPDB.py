@@ -588,7 +588,7 @@ def interestGroup (max_distance, list_atom_ligand, name_PDB, struct_neighbor):
                
     for serial_oxygen in listSerialOxygen :
         listAtomConnectOx, conect = retrieveAtom.atomConnect(list_atom_ligand, serial_oxygen)
-        if acidCarboxylic(listAtomConnectOx, list_atom_ligand)== 1:
+        if acidCarboxylic(listAtomConnectOx, list_atom_ligand)[0]== 1:
             implementNeighborStruct (max_distance, listAtomConnectOx, name_PDB, list_atom_ligand, "AcidCarboxylic", d_acd_temp)
             
     # group neighbor

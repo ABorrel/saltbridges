@@ -13,8 +13,7 @@ def initAction(actionName):
     dateStart = time.strftime('%X %x')
     dateStartFileName = formatCharacter.date(dateStart)
     print dateStart, ": ", actionName
-    begin = time.clock()
-    #print repertory.logFile() + dateStartFileName + actionName.replace (" ", ""), "CCCCCC" 
+    begin = time.time()
     fileLog = open(repertory.logFile() + dateStartFileName + actionName.replace (" ", ""), "w")
     fileLog.write(actionName + "\n")
     fileLog.write(dateStart + "\n")
@@ -28,7 +27,7 @@ def endAction(actionName, startTime, logFile):
     out: close file"""
     
     dateEnd = time.strftime('%X %x')
-    end = time.clock()
+    end = time.time()
     timeExecution = end - startTime
     hour = int(timeExecution / 3600)
     timeRest = timeExecution - (hour * 3600)

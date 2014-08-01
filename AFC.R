@@ -25,6 +25,7 @@ factorAFC = function (xplot, yplot, xplotdata, yplotdata ){
 
 AFC = function (d, path_file){
 
+	#print (d)
 	r = CA (d, graph = FALSE)
 
 	svg (file = paste (path_file, "_AFC.svg", sep = ""), 15, 15)

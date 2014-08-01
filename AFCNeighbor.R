@@ -16,7 +16,7 @@ pathDir = args[1]
 nb_neighbor = as.integer(args[2])
 
 
-listType = c("Primary", "Secondary", "Tertiary", "Guanidium", "Imidazole", "AcidCarboxylic", "Global")
+listType = c("Primary", "Secondary", "Tertiary", "Guanidium", "Imidazole", "AcidCarboxylic", "global")
 
 for (n in seq (7)){
 	d_count = NULL
