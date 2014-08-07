@@ -61,10 +61,18 @@ def aminoAcid(structure, dir_in):
 
 def resultDistance(rep_int):
 
-    rep = rep_int + "result_distance/"
+    rep = rep_int + "distanceType/"
     try: makedirs(rep, mode=0777)
     except: pass
     return rep
+
+def lengthBond (rep_int):
+
+    rep = rep_int + "lengthBond/"
+    try: makedirs(rep, mode=0777)
+    except: pass
+    return rep
+
 
 def resultStruct(structure, dir_out):
 
@@ -108,9 +116,9 @@ def resultAngle(struct_type, dir_out):
     except: pass
     return rep
 
-def parsingDataset():
+def parsingDataset(pr_int):
     
-    rep = repInit + "result/parsingDataset/"
+    rep = pr_int + "parsingDataset/"
     try: makedirs(rep, mode=0777)
     except: pass
     return rep

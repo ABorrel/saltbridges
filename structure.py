@@ -17,7 +17,7 @@
 # dico_atom_Hyd = {"R":["CZ"], "M":["SD"], "F":["CG", "CZ"], "L":["CG"], "W":["CE3", "CG", "CZ2"], "H":["CG"], "V":["CB"], "P":["CG"], "C":["SG"], "Y":["CG", "CZ"]}
 
 
-def classificationATOM (atom, out_list = 0):
+def classificationATOM (atom="", out_list = 0):
     """Classification atoms 
     in: atom
     out: classification (string)"""
@@ -859,6 +859,41 @@ def substructureCoord (type_substructure):
         return [atom1, atom2, atom3, atom4] 
         
         
+def DFile2K (pr_result):
+    
+    d_file_open = {}
+    l_interest = listStructure ()
+    l_type_neighbor = classificationATOM (out_list = 1)
+    
+    for interest in l_interest : 
+        d_file_open[interest] = {}
+        for type_neighbor in l_type_neighbor : 
+            d_file_open[interest][type_neighbor] = open (pr_result + str(interest) + "_" + str (type_neighbor), "w")
+    
+    return d_file_open
+
+
+
+def closeDFile2K (d_in) :
+     
+    l_path = []
+    for k1 in d_in.keys () : 
+        for k2 in d_in[k1].keys() :
+            l_path.append (d_in[k1][k2].name) 
+            d_in[k1][k2].close ()
+    
+    return l_path
+    
+    
+
         
+        
+        
+        
+        
+        
+    
+    
+           
  
 

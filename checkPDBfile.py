@@ -123,79 +123,38 @@ def incluedSequence(seq1, seq2):
         return 0
 
 
-def checkPDB(listPDB, nameLigand):
+def checkPDB(listPDB, nameLigand, limit_RX, limit_RFree):
     """Check if the PDB file is similar and preserve file with the best resolution
     remove file contain only DNA, RNA structure
     in : list of PDB files
     out : list of PDB files"""
 
-    listSeq = []
-    lengthListPDB = len(listPDB)
+    nb_PDB = len(listPDB)
 
-    if lengthListPDB == 1:
-        if ligandHooked(nameLigand, listPDB[0]) == 1:
-            del listPDB[0]
-            return
-        
-        PDBType = parsing.methods(listPDB[0])
-        if PDBType == "dna" or PDBType == "rna" or PDBType == "dna-rna":
-            print "out dna"
-            del listPDB[0]
-            return
-        else:
-            return
-    else:
-        
-        i = 0
-        while i < lengthListPDB:
-            if ligandHooked(nameLigand, listPDB[i]) == 1:
-                lengthListPDB = lengthListPDB - 1
-                del listPDB[i]
-                continue
-
-            PDBType = parsing.methods(listPDB[i])
-
-            if PDBType == "dna" or PDBType == "rna" or PDBType == "dna-rna":
-                del listPDB[i]
-                lengthListPDB = lengthListPDB - 1
-                print "out dna", lengthListPDB
-            else:
-                Sequence = {}
-                Sequence["name"] = listPDB[i]
-                Sequence["seq"] = retrieveFirstSeq(listPDB[i])
-                Sequence["resolution"] = parsing.resolution(listPDB[i])
-                listSeq.append(Sequence)
-                i = i + 1
     i = 0
-    while i < lengthListPDB:
-        j = i + 1
-        while j < lengthListPDB:
-            tempi = i
-            listPDB, listSeq, lengthListPDB, i, j = compareSeqofPDB(listPDB, listSeq, lengthListPDB, i, j)
-            j = j + 1
-            if tempi != i:
-                break
-        i = i + 1
+    while i < nb_PDB:
+        print i
+        header_PDB = parsing.header(listPDB[i])
+        l_quality = parsing.resolution(listPDB[i])
+        print l_quality
+        if l_quality[0] > limit_RX or l_quality[1] > limit_RFree : 
+            del listPDB[i]
+            nb_PDB = nb_PDB - 1
+        elif search ("dna", header_PDB) or search ("rna", header_PDB):
+            del listPDB[i]
+            nb_PDB = nb_PDB - 1
+            print "out dna", nb_PDB
+        else :
+            l_atom_complex = loadFile.globalPDB(listPDB[i])
+            # only first ligand included in PDB
+            l_atom_ligand = parsing.retrieveLigand (l_atom_complex, nameLigand)[0] 
+            if parsing.checkLigandHooked (l_atom_complex, l_atom_ligand) == 1:
+                nb_PDB = nb_PDB - 1
+                del listPDB[i]
+            else : 
+                i = i + 1
 
     return
 
 
 
-
-def ligandHooked(nameLigand, filePDB):
-    """Check if ligand is hook in protein
-    in : ligand -> list of atom (dictionnary)
-    out : 0 -> no hook  1 -> hook"""
-
-    ligand = loadFile.ligandInPDBConnectMatrixLigand(filePDB, nameLigand)
-
-    listSerial = []
-    for atom in ligand:
-        listSerial.append(atom["serial"])
-
-    for atom in ligand:
-        for connect in atom["connect"]:
-            if not connect in listSerial:
-                print "Ligand Hooked", filePDB
-                return 1
-    return 0

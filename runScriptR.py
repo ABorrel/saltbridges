@@ -34,22 +34,21 @@ def histAA(distance, aminoAcid, path_file, logFile):
     system(cmd)
 
 
-def plotDistanceOx(rep_out, logFile):
+def plotDistanceOx(p_filin, logFile, debug = 1):
     """Plot list distance
     in: distance for legend plot, type histogram (coplar or length), file with data, type of study, logFile
     out: CMD in terminal -> plot """
 
     repScript = repertory.scriptR()
-    file = rep_out + "resultDistanceOx"
-    if tool.checkFileEmpty(file) == 1 : 
+    if tool.checkFileEmpty(p_filin) == 1 : 
         return
-    cmd = repScript + "plotDistanceOx.R " + file
-    print cmd
+    cmd = repScript + "plotDistanceOx.R " + p_filin
+    if debug : print cmd
     logFile.write(cmd + "\n")
     system(cmd)
 
 
-def globalStat(distanceAtoms, distanceResidues, dir_in):
+def globalStat(d_max, dir_in):
     """MAIN draw plot
     in: distance Atom study, distance Residues study"""
 
@@ -64,10 +63,10 @@ def globalStat(distanceAtoms, distanceResidues, dir_in):
         for type_studies in listType:
             path_file = repStruct + "stat" + type_studies + type_struct
             if type_studies == "Atoms":
-                histStat(distanceAtoms, type_studies, path_file, type_struct, logFile)
+                histStat(d_max, type_studies, path_file, type_struct, logFile)
             elif type_studies == "Residues":
                 distance = 2.00
-                while distance <= distanceResidues:
+                while distance <= d_max:
                     fileTrace = path_file + str("%.2f" % distance)
                     histStat(distance, type_studies, fileTrace, type_struct, logFile)
                     histProportion(distance, dir_in, logFile)
@@ -76,22 +75,22 @@ def globalStat(distanceAtoms, distanceResidues, dir_in):
                     distance = distance + 0.5
  
             else:
-                histStat(distanceResidues, type_studies, path_file, type_struct, logFile)
+                histStat(d_max, type_studies, path_file, type_struct, logFile)
             for aminoAcid in listAminoAcid:
                 path_file_aa = dir_in + type_struct + "/aminoAcid/" + type_struct + aminoAcid
-                histAA(distanceResidues, aminoAcid, path_file_aa, logFile)
+                histAA(d_max, aminoAcid, path_file_aa, logFile)
 #  
         for aminoAcid in listAminoAcid:
             path_file = dir_in + "AminoAcidGlobal/Global" + aminoAcid
-            histAA(distanceResidues, aminoAcid, path_file, logFile)
+            histAA(d_max, aminoAcid, path_file, logFile)
  
     plotDistanceOx(repertory.resultDistance(dir_in), logFile)
     ################################################## histGlobalProportion(dir_in, logFile)
     histGlobalResidue(dir_in, logFile)
-    histProportionType(distanceResidues, dir_in + "globalProportionType/", logFile)
+    histProportionType(d_max, dir_in + "globalProportionType/", logFile)
     histAtleastOne(dir_in, logFile)  
     histNeigbor (dir_in, logFile)
-    plotAngle(distanceResidues, dir_in, logFile)
+    plotAngle(d_max, dir_in, logFile)
     
     log.endAction("Run R Scripts", timeStart, logFile)
 
@@ -200,15 +199,14 @@ def histGlobalResidue(dir_out, logFile):
     print cmd_all
 
 
-def histDistance(nameFile, type_distance, base, dir_out):
+def histDistance(p_filin, type_distance):
     """Draw CN length histogram and coplar histogram
     in: nameFile data, option for execute R script
     out: execute R script -> draw histogram distance"""
 
-    file_distance = str(dir_out + nameFile)
-    if tool.checkFileEmpty(file_distance) == 1 : 
+    if tool.checkFileEmpty(p_filin) == 1 : 
         return
-    cmd = repertory.scriptR() + "distance.R " + str(dir_out + nameFile) + " " + str(type_distance) + " " + str(base)
+    cmd = repertory.scriptR() + "distance.R " + str(p_filin) + " " + str(type_distance) 
     print cmd
     system(cmd)
 
@@ -344,8 +342,6 @@ def plotAngleVs (path_filin):
     
     
 def AFC (pr_neighbors, number_neighbor):
-    
-    
     
     cmd = repertory.scriptR() + "AFCNeighbor.R " + pr_neighbors + " " + str (number_neighbor)
     print cmd

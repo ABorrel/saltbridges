@@ -32,7 +32,7 @@ AFC = function (d, path_file){
 	par(mar=c(8,8,8,8))
 
 	# descriptors
-	plot (r$row$coord[,1], r$row$coord[,2], type = "n", xlab = paste("DIM 1 : ", round(r$eig[1,2],1), "%", sep = ""), ylab = paste("DIM 2 : ", round(r$eig[2,2],1), "%", sep = ""), cex.lab = 2.4, ylim = c(min(r$row$coord[,2]) - 0.1, max(r$row$coord[,2])))
+	plot (r$row$coord[,1], r$row$coord[,2], type = "n", xlab = paste("DIM 1 : ", round(r$eig[1,2],1), "%", sep = ""), ylab = paste("DIM 2 : ", round(r$eig[2,2],1), "%", sep = ""), cex.lab = 2.4, ylim = c(-max(r$row$coord[,2]), max(r$row$coord[,2])), xlim = c(-max(r$row$coord[,1]), max(r$row$coord[,1])))
 	col_des = defColor(names(r$col$coord[,1]))
 
 	factor = factorAFC (r$col$coord[,1], r$col$coord[,2], r$row$coord[,1], r$row$coord[,2] )

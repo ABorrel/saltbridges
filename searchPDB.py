@@ -1,4 +1,4 @@
-from os import listdir, path
+from os import listdir, path 
 from re import search
 from copy import deepcopy
 import calcul
@@ -12,6 +12,7 @@ import toolSubstructure
 import writeFile
 import statistic
 import loadFile
+import managePDB
 
 
 
@@ -56,10 +57,18 @@ def interestStructure (listAtomLigand, debug = 0):
     return structureFound
 
 
-def ligands(listPDB, path_dir):
+def ligands(name_database, pr_init):
     '''search ligands in PDB database
     out : list of ligands with PDB files associated'''
-
+    
+    
+    # control file exist
+    if path.exists(pr_init + "resultLigandInPDB") and path.getsize(pr_init + "resultLigandInPDB") != 0: 
+        return pr_init + "resultLigandInPDB"
+    
+    # import list PBD from file .dat
+    listPDB = managePDB.retriveListPDB(name_database)
+    
     start, fileLog = log.initAction("Search ligands in PDB")
 
     listPDBLigand = []
@@ -80,7 +89,7 @@ def ligands(listPDB, path_dir):
 
         listPDBLigand.append(ligandInPDB)
 
-    path_file = writeFile.resultLigandInPDB(listPDBLigand, path_dir)
+    path_file = writeFile.resultLigandInPDB(listPDBLigand, pr_init)
     log.endAction("Search ligands in PDB", start, fileLog)
     return path_file
 
@@ -485,10 +494,10 @@ def imidazoleATOM5(l_at_c4, l_atom_check, listAtomLigand):
 ######################################################################################################################
 
 
-def globalSearch (max_distance, path_file_dataset, option_on_complexes_by_ligand, option_angle, path_dir_result):
+def globalSearch (max_distance, path_file_dataset,  path_dir_result, option_one_PDB = 0):
     
     
-    # load structure in summary
+    # load structure in summary ---> if use need place option one PDB by ligand
     struct_neighbor, struct_global_neighbo = loadFile.loadCloseStruct (path_dir_result)
     if struct_neighbor != None : 
         return struct_neighbor, struct_global_neighbo
@@ -506,7 +515,6 @@ def globalSearch (max_distance, path_file_dataset, option_on_complexes_by_ligand
     
     # ##Write summary file
     files_summary = writeFile.openFileSummary(path_dir_result)# sumary result
-#     filesWithoutAtLeastOne = writeFile.openFilesWithoutSummary(max_distance, path_dir_result)
     
     # inialization    
     i = 0
@@ -515,8 +523,6 @@ def globalSearch (max_distance, path_file_dataset, option_on_complexes_by_ligand
         nbPDB = len(list_ligands_in_PDB[i]["PDB"])
         
         # take only one PDB by ligand
-        if option_on_complexes_by_ligand == 1 : 
-            nbPDB = 1 # take first complexe without selection
             
         j = 0
         while j < nbPDB : 
@@ -529,22 +535,15 @@ def globalSearch (max_distance, path_file_dataset, option_on_complexes_by_ligand
             
             # search neighbor for interest 
             interestGroup(max_distance, list_atom_ligand, name_PDB, struct_neighbor)
-
-#             statistic.distanceAnalysisOxygen(amine, countStruct[str(max_distance)]["distanceOx"])
-#             statistic.atom(amine, countStruct[str(max_distance)]["atom"])
-#             statistic.ligand(amine, countStruct[str(max_distance)]["ligand"])
-#             statistic.atomByAa(amine, countStruct[str(max_distance)]["byAA"])
+            
             j = j + 1
         i = i + 1
             
     
     writeFile.neighborStruct(struct_neighbor, struct_global_neighbor, files_summary)
-
     writeFile.closeFileAmine(files_summary)
-#     writeFile.closeFilesWithoutSummary(filesWithoutAtLeastOne)
-#     writeFile.countGlobalAmine(max_distance, countStruct, path_dir_result)
     
-    #log.endAction("Statistical analysis neighbors " + str(path_dataset_file), start, logFile)
+    
     return struct_neighbor, struct_global_neighbor
             
 

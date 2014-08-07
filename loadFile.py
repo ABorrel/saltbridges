@@ -205,40 +205,6 @@ def resultLigandPDB(nameFile):
 
 
 
-def resolution (pdbfile):
-    """Retrieve by PDB file the resolution if X-ray structure
-    in : pdb file
-    out : resolution -> format float, return 1000.00 if do not have resolution in file"""
-
-    fileLines = openPdbFile(pdbfile)
-
-    for line in fileLines:
-        if search("^REMARK   2 RESOLUTION", line):
-            line = sub('[ ]{2,}', ' ', line)
-
-            try: resolution = formatCharacter.formatFloat(line.split(" ")[3])
-            except: resolution = 1000.0
-
-            return resolution
-
-    return 1000.0
-
-
-# def typeData(file):
-#
-#    fileLines = openPdbFile(file)
-#    type = "NONE"
-#
-#    for line in fileLines:
-#        if search("^EXPDTA", line):
-#            line = sub('[ ]{2,}', ' ', line)
-#            try:
-#                type = line.split(" ")[1]
-#            except:
-#                pass
-#
-#    return type
-
 
 def globalPDB(PDB, ligand = ""):
     """Retrieve every lines coordinates in PDB file

@@ -58,26 +58,15 @@ def resultLigandInPDB(structResult, directory_out):
 
 
 
-def resultCoplanar(struct, name, directory_out):
+def listFloat (l_value, p_filin):
     
-    filout = open(directory_out + name, "w")
-
-    for element in struct:
-        filout.write("%.2f\n" % element)
-    filout.close()
-
-
-
-def resultLengthCNBond(structResult, file, directory_out):
-
-    filout = open(directory_out + file, "w")
-
-    for element in structResult:
-        filout.write("%.2f\n" % element)
-
-    filout.close()
-
-
+    filout = open (p_filin, "w")
+    for v in l_value : 
+        filout.write("%.3f\n" % v)
+    filout.close ()
+    return p_filin
+    
+    
 
 def parsingDataSet(listCount, countAmine, numberPDB, path_file_dataset):
 
@@ -116,9 +105,9 @@ def parsingDataSet(listCount, countAmine, numberPDB, path_file_dataset):
 
 
 
-def resultDistanceOx(count, directory_in):
+def resultDistance(count, pr_result):
 
-    dir_result = repertory.resultDistance(directory_in)
+    dir_result = repertory.resultDistance(pr_result)
     filout = open(dir_result + "resultDistanceOx", "w")
 
     for element in count.keys():
@@ -126,6 +115,9 @@ def resultDistanceOx(count, directory_in):
             filout.write(str("%.2f\t" % distance) + element + "\n")
 
     filout.close()
+    
+    
+    return dir_result + "resultDistanceOx" 
 
 
 
@@ -172,37 +164,37 @@ def closeFileAmine(dictFile):
         dictFile[key].close()
 
 
-def countGlobalCount(distanceGlobal, countGlobalAmine, dir_out):
+def countGlobalCount(dist_max, stCount, dir_out):
 
-    resultDistanceOx(countGlobalAmine[str(distanceGlobal)]["distanceOx"], dir_out)
-    resultLigand(countGlobalAmine[str(distanceGlobal)]["ligand"], dir_out)
-    resultAtom(countGlobalAmine[str(distanceGlobal)]["atom"], dir_out)
-    resultByAA(countGlobalAmine[str(distanceGlobal)]["byAA"], dir_out)
-    resultAngle(countGlobalAmine, distanceGlobal, dir_out)
-    resultNeighbor (countGlobalAmine[str(distanceGlobal)]["threeAnalysis"], dir_out)
-    resultNumberNeighbor (countGlobalAmine[str(distanceGlobal)]["numberNeighbors"], dir_out)
+#     resultDistanceOx(stCount[str(dist_max)]["distanceOx"], dir_out)
+    resultLigand(stCount[str(dist_max)]["ligand"], dir_out)
+    resultAtom(stCount[str(dist_max)]["atom"], dir_out)
+    resultByAA(stCount[str(dist_max)]["byAA"], dir_out)
+    resultAngle(stCount, dist_max, dir_out)
+    resultNeighbor (stCount[str(dist_max)]["threeAnalysis"], dir_out)
+    resultNumberNeighbor (stCount[str(dist_max)]["numberNeighbors"], dir_out)
 
-    for distance in countGlobalAmine.keys():
-        resultResidue(float(distance), countGlobalAmine[str(distance)]["residue"], dir_out)
-        resultProportion(float(distance), countGlobalAmine[str(distance)]["proportionAtom"], dir_out)
-        resultProportionType(float(distance), countGlobalAmine[str(distance)]["proportionType"], dir_out)
+    for distance in stCount.keys():
+        resultResidue(float(distance), stCount[str(distance)]["residue"], dir_out)
+        resultProportion(float(distance), stCount[str(distance)]["proportionAtom"], dir_out)
+        resultProportionType(float(distance), stCount[str(distance)]["proportionType"], dir_out)
 
         
-    resultProportionGlobalType(countGlobalAmine, distanceGlobal, dir_out)
-    resultGlobalResidue(countGlobalAmine, distanceGlobal, dir_out)
-    resultResidueDistance(countGlobalAmine, distanceGlobal, dir_out)
+    resultProportionGlobalType(stCount, dist_max, dir_out)
+    resultGlobalResidue(stCount, dist_max, dir_out)
+    resultResidueDistance(stCount, dist_max, dir_out)
     
 
-def resultLigand(count, directory_result):
+def resultLigand(stCountLigand, pr_result):
 
     listStructure = structure.listStructure()
 
-    for element in listStructure:
-        directory_in = repertory.typeSubStructure(directory_result, element)
-        filout = open(directory_in + "statLigands" + element, "w")
+    for interestGroup in listStructure:
+        directory_in = repertory.typeSubStructure(pr_result, interestGroup)
+        filout = open(directory_in + "statLigands" + interestGroup, "w")
         
-        for ligand in count[element].keys():
-            filout.write(str(ligand) + "\t" + str(count[element][ligand]) + "\n")
+        for ligand in stCountLigand[interestGroup].keys():
+            filout.write(str(ligand) + "\t" + str(stCountLigand[interestGroup][ligand]) + "\n")
         filout.close()
 
 

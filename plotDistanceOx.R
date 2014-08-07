@@ -16,7 +16,23 @@ par (mar = c(30,30,30,30))
 #hist(data[,1], xlab ="Oxygen (COO-) of nitrogen (Nref) distances (Å)", ylab = "Number of occurences", breaks=brk, xlim=c(0,5), right=F, main="Distribution of distance amine counter-Ion",las=1, freq=T)
 
 hist(data[,1], ylab ="", xlab = "", breaks=brk, xlim=c(0,5),  right=F, main="" , freq=T, col = "#009DE0", cex = 20, cex.lab = 20, cex.axis = 10)#, yaxt = "n", xaxt = "n" )
-grid (5, 5, col = "black", lwd = 6, lty = 1)
+
+max_count = max (hist(data[,1], plot = FALSE)$count)
+#vertical
+#segments (0,0,0,max_count,lwd = 6)
+segments (1,0,1,max_count,lwd = 6)
+segments (2,0,2,max_count,lwd = 6)
+segments (3,0,3,max_count,lwd = 6)
+segments (4,0,4,max_count,lwd = 6)
+segments (5,0,5,max_count,lwd = 6)
+
+#horizontal
+for (i in seq (0,max_count,100)){
+	segments (0,i,5,i,lwd = 6)
+}
+
+
+
 dev.off()
 
 #png(filename=paste(file,"density.png",sep = ""), 6000, 6000)
