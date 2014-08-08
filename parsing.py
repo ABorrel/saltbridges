@@ -253,7 +253,7 @@ def checkLigandHooked (PDB_parsed, list_atom_ligand_parsed):
     for atom_ligan in list_atom_ligand_parsed : 
         for atom_pdb in PDB_parsed : 
             if not atom_pdb["resName"] == atom_ligan["resName"] : 
-                if (calcul.distanceTwoatoms(atom_pdb, atom_ligan)) < 1.8 : 
+                if (calcul.distanceTwoatoms(atom_pdb, atom_ligan)) < 1.9 : 
                     return 1
     return 0
 

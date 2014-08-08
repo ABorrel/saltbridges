@@ -10,7 +10,6 @@ import structure
 import writeFile
 import tool
 import repertory
-import runScriptR
 
 from os import path 
 from copy import deepcopy
@@ -315,7 +314,7 @@ def planarityGuanidium (atom_interest_close, p_dir_result) :
     
 
 
-def globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, pr_result):
+def globalRunStatistic(struct_atom_close, global_atom_close, max_distance, option_angle, pr_result):
     """
     Search close environment of different amines
     arg: -> distance max 
@@ -330,9 +329,10 @@ def globalRunStatistic(atom_interest_close, global_atom_close, max_distance, opt
 #     countAtLeastOneGlobal = structure.countAtLeastOneGlobalStruct(max_distance)
     
     # distribution distance interest group and type atoms -> distance type
-    distanceAnalysis(atom_interest_close, repertory.resultDistance(pr_result), logFile)
+#     distanceAnalysis(struct_atom_close, repertory.resultDistance(pr_result), logFile)
     
     # angle -> directory angles
+    angle(struct_atom_close, pr_result, max_distance, logFile)
     
     
     
@@ -346,16 +346,15 @@ def globalRunStatistic(atom_interest_close, global_atom_close, max_distance, opt
     
     
     
-    
-#     atom(atom_interest_close, countStruct[str(max_distance)]["atom"])
-#     ligand(atom_interest_close, countStruct[str(max_distance)]["ligand"])
-#     atomByAa(atom_interest_close, countStruct[str(max_distance)]["byAA"])
+#     atom(struct_atom_close, countStruct[str(max_distance)]["atom"])
+#     ligand(struct_atom_close, countStruct[str(max_distance)]["ligand"])
+#     atomByAa(struct_atom_close, countStruct[str(max_distance)]["byAA"])
 #     
-#     relationNeighbors (atom_interest_close, countStruct[str(max_distance)]["threeAnalysis"])
+#     relationNeighbors (struct_atom_close, countStruct[str(max_distance)]["threeAnalysis"])
 #     relationNeighbors (global_atom_close, countStruct[str(max_distance)]["threeAnalysis"])
 # 
 #     # number of neighbor average
-#     numberNeighbor (atom_interest_close, countStruct[str(max_distance)]["numberNeighbors"])
+#     numberNeighbor (struct_atom_close, countStruct[str(max_distance)]["numberNeighbors"])
 #     numberNeighbor (global_atom_close, countStruct[str(max_distance)]["numberNeighbors"])
 # 
 #     distance = max_distance
@@ -363,25 +362,25 @@ def globalRunStatistic(atom_interest_close, global_atom_close, max_distance, opt
 #     while distance >= 2:
 # #         print distance
 #         # reduce structure with distance criterion
-#         neighborDistance(distance, max_distance, atom_interest_close)
+#         neighborDistance(distance, max_distance, struct_atom_close)
 #         neighborDistanceList(distance, max_distance, global_atom_close) # analyse every distance
 #         
 # 
-#         proportionAtoms.amine(atom_interest_close, countStruct[str(distance)]["proportionAtom"])
-#         proportionType.amine(atom_interest_close, countStruct[str(distance)]["proportionType"])
+#         proportionAtoms.amine(struct_atom_close, countStruct[str(distance)]["proportionAtom"])
+#         proportionType.amine(struct_atom_close, countStruct[str(distance)]["proportionType"])
 #         proportionAtoms.globalNeighbors(global_atom_close, countStruct[str(distance)]["proportionAtom"]["Global"])
 #         proportionType.globalNeighbors(global_atom_close, countStruct[str(distance)]["proportionType"]["Global"])
 #         
-#         residue(atom_interest_close, countStruct[str(distance)]["residue"])
+#         residue(struct_atom_close, countStruct[str(distance)]["residue"])
 # #                 
 # #         # cumul at least one -> interest group
-#         countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid"])
-#         countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["H2O"])
-#         countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["ODonAcc"])
-#         countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["Carom"])
-#         countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc"])
-#         countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc", "H2O"])
-#         countAtLeastOne(atom_interest_close, countStruct[str(distance)]["atLeastOne"], ["Nhis", "Nbasic"])
+#         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid"])
+#         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["H2O"])
+#         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["ODonAcc"])
+#         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["Carom"])
+#         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc"])
+#         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc", "H2O"])
+#         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["Nhis", "Nbasic"])
 # #        -> every atom         
 #         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid"])
 #         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["H2O"])
@@ -392,7 +391,7 @@ def globalRunStatistic(atom_interest_close, global_atom_close, max_distance, opt
 #         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["Nhis", "Nbasic"])
 # #                 
 #         globalAtomResidue(global_atom_close, countStruct[str(distance)]["ResidueAllAtom"])
-#         angle(atom_interest_close, countStruct[str(distance)]["angle"])
+#         angle(struct_atom_close, countStruct[str(distance)]["angle"])
 #         
 #         
 #         
@@ -484,18 +483,44 @@ def globalAtomResidue (listAtom, count):
                         listCheck[neighbor["resName"]]["side"] = 1
 
 
-def angle(struct_neighbor, countAngle):
+def angle(struct_neighbor, pr_result, d_max, log_file):
+
+    d_count_global = {}
+    log_file.write ("[ANGLE] - count structure implementation\n")
 
     for substructure in struct_neighbor.keys():
-        for nitrogen in struct_neighbor[substructure]:
-            nbNeighbor = len(nitrogen["neighbors"])
+        d_count_global[substructure] = {}
+        for central_atom in struct_neighbor[substructure]:
+            nbNeighbor = len(central_atom["neighbors"])
             i = 0
             while i < nbNeighbor:
-                classif_neighbor = structure.classificationATOM(nitrogen["neighbors"][i])
-                countAngle[substructure][classif_neighbor]["distance"].append(nitrogen["neighbors"][i]["distance"])
-                # for angle in nitrogen["neighbors"][i]["angle"] : 
-                countAngle[substructure][classif_neighbor]["angles"].append(nitrogen["neighbors"][i]["angle"])
+                classif_neighbor = structure.classificationATOM(central_atom["neighbors"][i])
+                if not classif_neighbor in d_count_global[substructure].keys () : 
+                    d_count_global[substructure][classif_neighbor] = {}
+                    d_count_global[substructure][classif_neighbor]["distance"] = [central_atom["neighbors"][i]["distance"]]
+                    d_count_global[substructure][classif_neighbor]["angles"] = [central_atom["neighbors"][i]["angle"]]
+                else : 
+                    d_count_global[substructure][classif_neighbor]["distance"].append(central_atom["neighbors"][i]["distance"])
+                    d_count_global[substructure][classif_neighbor]["angles"].append(central_atom["neighbors"][i]["angle"])
                 i = i + 1
+    
+    # write global
+    l_p_angle = writeFile.resultAngle(d_count_global, pr_result)
+    
+    # count for barplot
+    d_count_angle = structure.countAngleDistance(d_count_global, d_max)
+    
+    print "aaaa"
+    print d_count_angle
+    print "ddddd"
+    
+    
+    writeFile.d_angle_type(d_count_angle, pr_result)
+    
+    # plot angle
+    runScriptR.plotAngle(l_p_angle, log_file)
+    
+    
 
 
 def relationNeighbors (struct_neighbor, countStruct) : 

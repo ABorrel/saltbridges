@@ -437,34 +437,33 @@ def resultAtLeastOne(count_global, count_substructure, max_distance, directory_o
 
 
 
-def resultAngle(count, distanceMax, dir_in):
+def resultAngle(d_count, pr_out):
     
-    for type_substruct in count[str(distanceMax)]["angle"].keys():
-        dir_angle = repertory.resultAngle(type_substruct, dir_in)
-        filoutGlobal = open(dir_angle + "angle_" + str(type_substruct), "w")
-        
-        for classe in  count[str(distanceMax)]["angle"][type_substruct].keys():
-            nbDistance = len(count[str(distanceMax)]["angle"][type_substruct][classe]["distance"])
+    l_p_file = []
+    for type_substruct in d_count.keys():
+        pr_final = repertory.resultAngle(pr_out, type_substruct)
+        p_filout = pr_final + "angle_" + str(type_substruct)
+        l_p_file.append (p_filout)
+        filoutGlobal = open(p_filout, "w")
+        for classe in  d_count[type_substruct].keys():
+            nbDistance = len(d_count[type_substruct][classe]["distance"])
             for i in range(0, nbDistance) : 
-                distanceAt = count[str(distanceMax)]["angle"][type_substruct][classe]["distance"][i]
+                distanceAt = d_count[type_substruct][classe]["distance"][i]
                 filoutGlobal.write("%.2f" % distanceAt)
-                
-                for angle in count[str(distanceMax)]["angle"][type_substruct][classe]["angles"][i] : 
+                for angle in d_count[type_substruct][classe]["angles"][i] : 
                     filoutGlobal.write("\t%.2f" % angle)
-                    
                 filoutGlobal.write("\t" + classe + "\n")
         filoutGlobal.close()
-    countType = structure.countAngleType(count)  
-    countAngle(countType, dir_in) 
-    
+    return l_p_file
+ 
 
-def countAngle (count, directory_in):
+def d_angle_type (count, directory_in):
     
     listClasse = structure.classificationATOM("", out_list = 1)
     for type_substruct in count.keys() : 
         for distance in count[type_substruct].keys() : 
-            dir_in = repertory.resultAngle(type_substruct, directory_in)
-            filout = open(dir_in + "angle_" + type_substruct + "_" + distance, "w")
+            pr_angle_type = repertory.resultAngle(directory_in, type_substruct)
+            filout = open(pr_angle_type + "angle_" + type_substruct + "_" + distance, "w")
             
             ### HEADER ###
             filout.write (str(listClasse[0]))
@@ -476,10 +475,10 @@ def countAngle (count, directory_in):
             for angle in count[type_substruct][distance].keys() : 
                 filout.write(str(angle))
                 for classe in listClasse : 
-                    filout.write("\t" + str(count[type_substruct][distance][angle][classe]))
+                    try : filout.write("\t" + str(count[type_substruct][distance][angle][classe]))
+                    except : filout.write("\t0")
                 filout.write("\n")
         filout.close()    
-           
 
 
 def openFilesWithoutSummary(distanceMax, directory_in):

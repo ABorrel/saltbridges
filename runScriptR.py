@@ -228,24 +228,23 @@ def histAtleastOne(dir_out, logFile):
             system(cmd)
 
 
-def plotAngle(distanceMax, dir_out, logFile):
+def plotAngle(l_p_filin, logFile, debug = 1):
     """Excecute commande for draw angle plot
     in: distance MAX and log file
     out: Execute CMD -> draw plot
     """
-    
-    listStruct = structure.listStructure()
-    for struct in listStruct : 
+    for p_filin in l_p_filin : 
+        substruct = p_filin.split ("_")[-1]
         
-        if struct == "Imidazole" or struct == "Pyridine" or struct == "Secondary" : 
-            cmd_3d = repertory.scriptR() + "angle3D_Secondary" + ".R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct)
-        elif struct == "Tertiary" : 
-            cmd_3d = repertory.scriptR() + "angle3D_Tertiary" + ".R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct)    
+        if substruct == "Imidazole" or substruct == "Pyridine" or substruct == "Secondary" : 
+            cmd_3d = repertory.scriptR() + "angle3D_Secondary.R " + p_filin
+        elif substruct == "Tertiary" : 
+            cmd_3d = repertory.scriptR() + "angle3D_Tertiary.R " + p_filin    
 
         # every structure  
-        cmd_density = repertory.scriptR() + "angle_density.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct) + "&" 
-        cmd_distribution = repertory.scriptR() + "angle_distribution.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct) + "&"
-        cmdBarplot = repertory.scriptR() + "angle_barplot.R " + repertory.resultAngle(struct, dir_out) + "angle_" + str(struct) + " " + str(distanceMax)
+        cmd_density = repertory.scriptR() + "angle_density.R " +  p_filin + "&" 
+        cmd_distribution = repertory.scriptR() + "angle_distribution.R " + p_filin + "&"
+        cmdBarplot = repertory.scriptR() + "angle_barplot.R " + p_filin + " 5"
         
         logFile.write(cmdBarplot + "\n")
         logFile.write(cmd_density + "\n")
@@ -255,14 +254,15 @@ def plotAngle(distanceMax, dir_out, logFile):
         system(cmd_density)
         system(cmd_distribution)
         
-        print cmd_density
-        print cmdBarplot
-        print cmd_distribution
+        if debug == 1: 
+            print cmd_density
+            print cmdBarplot
+            print cmd_distribution
         
         if "cmd_3d" in locals() : 
             logFile.write(cmd_3d + "\n")
             system(cmd_3d)
-            print cmd_3d
+            if debug ==1 : print cmd_3d
 
         
 def waterPlotResolution (path_filin, verbose = 1) : 

@@ -109,12 +109,18 @@ def globalProportionType(dir_in) :
     return rep
 
 
-def resultAngle(struct_type, dir_out):
+def resultAngle(pr_int, name_in = ""):
 
-    rep = dir_out + "angle/" + struct_type + "/"
-    try: makedirs(rep, mode=0777)
-    except: pass
-    return rep
+    if name_in == "" : 
+        pr_angle = pr_int + "Angle/"
+    else :
+        pr_angle = pr_int + "Angle/" + name_in + "/"
+        
+    if not path.isdir(pr_angle) : 
+        makedirs(pr_angle, mode=0777)
+    else : 
+        pass
+    return pr_angle
 
 def parsingDataset(pr_int):
     

@@ -114,7 +114,7 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 
 
         # statistic
-#     statistic.globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, path_dir_result)
+    statistic.globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, path_dir_result)
 #     statistic.globalRunStatistic(atom_interest_het, global_atom_het, max_distance, option_angle, p_dir_result_het)
     
     # draw plot
