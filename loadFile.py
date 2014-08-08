@@ -226,23 +226,26 @@ def globalPDB(PDB, ligand = ""):
 
 
 
-def loadCloseStruct (path_dir_result) :
+def loadCloseStruct (pr_result) :
+    
+    if not path.isdir(pr_result) : 
+        return None, None
     
     struct_neighbor = structure.neighborStruct()
     struct_global_neighbor = []
     flag = 0
     
     
-    l_files = listdir(path_dir_result)
+    l_files = listdir(pr_result)
     for name_file in l_files : 
         if search(".sum", name_file) : 
-            if path.getsize(path_dir_result + name_file) != 0 : 
+            if path.getsize(pr_result + name_file) != 0 : 
                 flag = flag + 1
             sub_struct = name_file.split ("_")[-1].split (".")[0]
             if sub_struct == "global" : 
-                struct_global_neighbor = loadSummary(path_dir_result + name_file)
+                struct_global_neighbor = loadSummary(pr_result + name_file)
             else : 
-                struct_neighbor[sub_struct] = loadSummary(path_dir_result + name_file)
+                struct_neighbor[sub_struct] = loadSummary(pr_result + name_file)
     
 
     if flag < 2 : 

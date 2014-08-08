@@ -494,18 +494,20 @@ def imidazoleATOM5(l_at_c4, l_atom_check, listAtomLigand):
 ######################################################################################################################
 
 
-def globalSearch (max_distance, path_file_dataset,  path_dir_result, option_one_PDB = 0):
+def globalSearch (max_distance, p_file_dataset,  pr_result, option_one_PDB = 0):
     
+    
+    pr_summary = pr_result + "Sum" +  p_file_dataset.split ("/")[-1][8:] + "/"
     
     # load structure in summary ---> if use need place option one PDB by ligand
-    struct_neighbor, struct_global_neighbo = loadFile.loadCloseStruct (path_dir_result)
+    struct_neighbor, struct_global_neighbo = loadFile.loadCloseStruct (pr_summary)
     if struct_neighbor != None : 
         return struct_neighbor, struct_global_neighbo
      
     
-    #start, logFile = log.initAction("search neighbors in " +path.basename(path_file_dataset))
+    #start, logFile = log.initAction("search neighbors in " +path.basename(p_file_dataset))
      
-    list_ligands_in_PDB = loadFile.resultFilterPDBLigand(path_file_dataset)
+    list_ligands_in_PDB = loadFile.resultFilterPDBLigand(p_file_dataset)
     nbLigand = len(list_ligands_in_PDB)
     
     # ##Count Structure
@@ -514,7 +516,7 @@ def globalSearch (max_distance, path_file_dataset,  path_dir_result, option_one_
 
     
     # ##Write summary file
-    files_summary = writeFile.openFileSummary(path_dir_result)# sumary result
+    files_summary = writeFile.openFileSummary(pr_summary)# sumary result
     
     # inialization    
     i = 0
@@ -541,7 +543,7 @@ def globalSearch (max_distance, path_file_dataset,  path_dir_result, option_one_
             
     
     writeFile.neighborStruct(struct_neighbor, struct_global_neighbor, files_summary)
-    writeFile.closeFileAmine(files_summary)
+    writeFile.closeFileSummary(files_summary)
     
     
     return struct_neighbor, struct_global_neighbor

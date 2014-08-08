@@ -52,36 +52,36 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #
     # run for every dataset -> with diffrent resolution
     # short cut
-#     print list_path_file_dataset
-#     list_path_file_dataset = [list_path_file_dataset[-1]]
-    path_file_dataset =list_path_file_dataset [0]
-    print path_file_dataset
+    list_path_file_dataset = ["/home/borrel/saltBridgesProject/result/PDBTest/dataset_3.00"]
+    print list_path_file_dataset
 
     
 # #     
-#     for path_file_dataset in list_path_file_dataset : 
-#        
-#         name_folder =  path_file_dataset.split("_")[-1]
-#         if option_angle == 1 : 
-#             name_folder = name_folder + "_angle"
-#         else : 
-#             name_folder = name_folder + "_noangle"
-#                
-#         if option_on_complexes_by_ligand == 1 : 
-#             name_folder = name_folder + "_onecomplexe"
-#         else : 
-#             name_folder = name_folder + "_morecomplexe"
-#            
-#         path_dir_result = repertory.result (name_database + "/" + name_folder)
-#         p_dir_result_het = repertory.result (name_database + "/" + name_folder + "het")
+    for path_file_dataset in list_path_file_dataset : 
+        
+        name_folder =  path_file_dataset.split("_")[-1]
+        if option_angle == 1 : 
+            name_folder = name_folder + "_angle"
+        else : 
+            name_folder = name_folder + "_noangle"
+                
+        if option_on_complexes_by_ligand == 1 : 
+            name_folder = name_folder + "_onecomplexe"
+        else : 
+            name_folder = name_folder + "_morecomplexe"
+            
+        path_dir_result = repertory.result (name_database + "/" + name_folder)
+        p_dir_result_het = repertory.result (name_database + "/" + name_folder + "het")
+            
            
-          
-#         print "########"
-#         print path_dir_result
-#         print p_dir_result_het
-#         print "#########"
+        print "########"
+        print path_dir_result
+        print p_dir_result_het
+        print "#########"
+        
+        
 #         # stat -> build structure, not filter is !!!
-#     atom_interest_close, global_atom_close = searchPDB.globalSearch(max_distance, path_file_dataset, path_dir_result_global)
+    atom_interest_close, global_atom_close = searchPDB.globalSearch(max_distance, path_file_dataset, path_dir_result_global)
         
         # remove iron close -> statistic before 
         # Becarful because the dictionnary change

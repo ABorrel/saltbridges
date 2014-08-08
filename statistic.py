@@ -329,10 +329,10 @@ def globalRunStatistic(atom_interest_close, global_atom_close, max_distance, opt
 #     countStruct = structure.countGlobalAmine(max_distance)  # global structure count
 #     countAtLeastOneGlobal = structure.countAtLeastOneGlobalStruct(max_distance)
     
-    # distribution distance interest group and type atoms
+    # distribution distance interest group and type atoms -> distance type
     distanceAnalysis(atom_interest_close, repertory.resultDistance(pr_result), logFile)
     
-    
+    # angle -> directory angles
     
     
     

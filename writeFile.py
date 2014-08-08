@@ -1,6 +1,6 @@
 import structure
 import repertory
-from os import makedirs
+from os import makedirs, path, mkdir
 import tool
 import numpy
 
@@ -143,22 +143,27 @@ def neighborStruct(struct_neighbor, struct_global_neighbor, files):
     del struct_neighbor["global"] 
 
 
-def openFileSummary(directory_out):
+def openFileSummary(pr_out):
 
+    # control if file exsixt
+    if not path.isdir(pr_out):
+        mkdir(pr_out)
+    
+    
     listS = structure.listStructure()
     listS.append("global")
 
     dictFile = {}
 
     for element in listS:
-        filout = open(directory_out + "neighbor_" + element + ".sum", "w")
+        filout = open(pr_out + "neighbor_" + element + ".sum", "w")
         dictFile[element] = filout
 
     return dictFile
 
 
 
-def closeFileAmine(dictFile):
+def closeFileSummary(dictFile):
 
     for key in dictFile.keys():
         dictFile[key].close()
