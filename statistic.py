@@ -112,9 +112,14 @@ def distanceAnalysis(stAtm, dir_out, logfile):
 #         StCountGroup.append(neighbor["distance"])
 
 
-def atom(stAtom, stCount):
+def atomProx(stAtom, pr_result, max_distance, logFile):
+    
+    # structure count
+    stCount = {}
+    
     
     for interestGroup in stAtom.keys(): 
+        stCount[interestGroup] = {}
         for atom_central in stAtom[interestGroup]:
             if atom_central["neighbors"] == []:
                 continue
@@ -123,53 +128,122 @@ def atom(stAtom, stCount):
                     stCount[interestGroup][neighbor["name"]] = stCount[interestGroup][neighbor["name"]] + 1 
                 else: 
                     stCount[interestGroup][neighbor["name"]] = 1
+    
+    
+    l_files_result = writeFile.resultCount(stCount, "ATM", pr_result)
+    for file_result in l_files_result : 
+        runScriptR.barplotQuantity(max_distance, "Atoms", file_result, logFile)
 
 
 
-def residue(amine, count):
+def ligandProx(stAtom, pr_result, max_distance, logFile):
+    
+    # structure count
+    stCount = {}
 
-    atomMajorChain = ["C", "O", "CA", "N", "OXT", "NXT"]
-
-    for typeAmine in amine.keys():
-        for atomAzote in amine[typeAmine]:
-            if atomAzote["neighbors"] == []:
-                continue
-            listCheck = structure.listAminoAcidCheck()
-            for neighbor in atomAzote["neighbors"]:
-                if neighbor["resName"] in count[typeAmine].keys():
-                    if neighbor["name"] in atomMajorChain:
-                        if listCheck[neighbor["resName"]]["main"] == 1:
-                            continue
-                        else:
-                            count[typeAmine][neighbor["resName"]]["main"] = count[typeAmine][neighbor["resName"]]["main"] + 1
-                            listCheck[neighbor["resName"]]["main"] = 1
-                    else:
-                        if listCheck[neighbor["resName"]]["side"] == 1:
-                            continue
-                        else:
-                            count[typeAmine][neighbor["resName"]]["side"] = count[typeAmine][neighbor["resName"]]["side"] + 1
-                            listCheck[neighbor["resName"]]["side"] = 1
-
-
-
-def ligand(stAtom, stCount):
-
-    l_amino_acid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS"]
-    listCheck = []
+    #water in residue list also, because ligand check only the ligand prox
+    l_amino_acid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS", "HOH"]
 
     for interestGroup in stAtom.keys():
+        stCount[interestGroup] = {}
         for atomCentral in stAtom[interestGroup]:
+            l_check = []
             for neighbor in atomCentral["neighbors"]:
                 if not neighbor["resName"] in l_amino_acid:
-                    if not neighbor["resSeq"] in listCheck:
+                    if not neighbor["resName"] in l_check:
                         if neighbor["resName"] in stCount[interestGroup].keys():
                             stCount[interestGroup][neighbor["resName"]] = stCount[interestGroup][neighbor["resName"]] + 1
-                            listCheck.append(neighbor["resSeq"])
+                            l_check.append(neighbor["resName"])
                         else:
                             stCount[interestGroup][neighbor["resName"]] = 1
-                            listCheck.append(neighbor["resSeq"])
+                            l_check.append(neighbor["resName"])
+                            
+    l_files_result = writeFile.resultCount(stCount, "HET", pr_result)
+    for file_result in l_files_result : 
+        runScriptR.barplotQuantity(max_distance, "Ligands", file_result, logFile)
+    
 
 
+
+def resProx(stAtom, pr_result, max_distance, logFile):
+
+    l_atom_mainchain = ["C", "O", "CA", "N", "OXT", "NXT"]
+    l_amino_acid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS", "HOH"]
+
+    # structure count
+    stCount = {}
+
+    for interestSubstruct in stAtom.keys():
+        stCount[interestSubstruct] = {}
+        for central_atom in stAtom[interestSubstruct]:
+            if central_atom["neighbors"] == []:
+                continue
+            l_check = structure.listAminoAcidCheck()
+            for neighbor in central_atom["neighbors"]:
+                if not neighbor["resName"] in l_amino_acid : 
+                    continue
+                if neighbor["resName"] in stCount[interestSubstruct].keys():
+                    print neighbor["resName"]
+                    
+                    if neighbor["name"] in l_atom_mainchain:
+                        if l_check[neighbor["resName"]]["main"] == 1:
+                            continue
+                        else:
+                            stCount[interestSubstruct][neighbor["resName"]]["main"] = stCount[interestSubstruct][neighbor["resName"]]["main"] + 1
+                            l_check[neighbor["resName"]]["main"] = 1
+                    else:
+                        if l_check[neighbor["resName"]]["side"] == 1:
+                            continue
+                        else:
+                            stCount[interestSubstruct][neighbor["resName"]]["side"] = stCount[interestSubstruct][neighbor["resName"]]["side"] + 1
+                            l_check[neighbor["resName"]]["side"] = 1
+
+
+                        
+    l_files_result = writeFile.resultCountAA(stCount, pr_result)
+    for file_result in l_files_result : 
+        runScriptR.barplotQuantity(max_distance, "Residues", file_result, logFile)
+
+
+
+
+def classifResProx(stAtom, pr_result, max_distance, logFile):
+    
+    # structure count
+    stCount = {}
+    
+    # variable
+    l_distance = structure.listDistance(max_distance)
+    l_amino_acid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS", "HOH"]
+    
+    
+    for interestGroup in stAtom.keys(): 
+        stCount[interestGroup] = {}
+        for atom_central in stAtom[interestGroup]:
+            if atom_central["neighbors"] == []:
+                continue
+            for neighbor in atom_central["neighbors"]: 
+                for distance in l_distance : 
+                    if not distance in stCount[interestGroup].keys (): 
+                        stCount[interestGroup][distance]={}
+                    if neighbor["distance"]< distance : 
+                        res = neighbor["resName"]
+                        if not res in l_amino_acid : 
+                            continue
+                        elif not res in stCount[interestGroup][distance].keys () :
+                            stCount[interestGroup][distance][res] = 1
+                        else : 
+                            stCount[interestGroup][distance][res] = stCount[interestGroup][distance][res] + 1
+    
+    
+    # write file
+    l_files_result = writeFile.resultResProx(stCount, max_distance ,pr_result)
+    for file_result in l_files_result : 
+        runScriptR.barplotResDist(file_result, logFile)
+    
+    
+    
+    
 def atomByAa(amine, count):
 
     for typeAmine in amine.keys():
@@ -323,18 +397,22 @@ def globalRunStatistic(struct_atom_close, global_atom_close, max_distance, optio
     
     start, logFile = log.initAction("RUN Statistic")
 
-    
-    # ##Count Structure
-#     countStruct = structure.countGlobalAmine(max_distance)  # global structure count
-#     countAtLeastOneGlobal = structure.countAtLeastOneGlobalStruct(max_distance)
+   # remove structure count -> write directly the file to plot 
+# # # # # # # # # # # # # # #     # ##Count Structure
+# # # # # # # # # # # # # # # # # # # # # # #     countStruct = structure.countGlobalAmine(max_distance)  # global structure count
+# # # # # # # # # # # # # # # # # # # # # # #     countAtLeastOneGlobal = structure.countAtLeastOneGlobalStruct(max_distance)
     
     # distribution distance interest group and type atoms -> distance type
 #     distanceAnalysis(struct_atom_close, repertory.resultDistance(pr_result), logFile)
     
     # angle -> directory angles
-    angle(struct_atom_close, pr_result, max_distance, logFile)
+#     angle(struct_atom_close, pr_result, max_distance, logFile)
     
-    
+    # global analysis proximity -1 atom ligand // -2 aa type // -3 atom classification
+#     ligandProx(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
+#     atomProx(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "atmProx"), max_distance, logFile)
+    resProx(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "resProx"), max_distance, logFile)
+#     classifResProx(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "classifAtmProx"))
     
     
     
@@ -510,12 +588,7 @@ def angle(struct_neighbor, pr_result, d_max, log_file):
     # count for barplot
     d_count_angle = structure.countAngleDistance(d_count_global, d_max)
     
-    print "aaaa"
-    print d_count_angle
-    print "ddddd"
-    
-    
-    writeFile.d_angle_type(d_count_angle, pr_result)
+    writeFile.dAngleType(d_count_angle, pr_result)
     
     # plot angle
     runScriptR.plotAngle(l_p_angle, log_file)

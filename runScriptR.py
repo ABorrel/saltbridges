@@ -6,29 +6,27 @@ import structure
 import log
 import tool
 
-def histStat(distance, type_studie, file, type_struct, logFile):
+def barplotQuantity(distance, type_study, p_filin, logFile, debug = 1):
     """Plot count statistic
-    in: distance for legend plot, type histogram (coplar or length), file with data, type of study, logFile
+    in: distance for legend plot, type histogram (coplar or length), p_filin with data, type of study, logFile
     out: CMD in terminal -> plot """
     
-    if tool.checkFileEmpty(file) == 1 : 
+    if tool.checkFileEmpty(p_filin) == 1 : 
         return
     rep = repertory.scriptR()
-    cmd = rep + "barplotQuantity.R " + file + " " + str("%.2f" % distance) + " " + type_studie + " " + type_struct
-    print cmd
+    cmd = rep + "barplotQuantity.R " + p_filin + " " + str("%.2f" % distance) + " " + type_study
+    if debug : print cmd
     logFile.write(cmd + "\n")
     system(cmd)
 
 
-def histAA(distance, aminoAcid, path_file, logFile):
-    """Plot file count amino acid proportion
-    in: distance for legend plot, type histogram (coplar or length), file with data, type of study, logFile
-    out: CMD in terminal -> plot """
+def barplotQuantityByAA(distance, aminoAcid, path_file, logFile):
+    """to do"""
 
     if tool.checkFileEmpty(path_file) == 1 : 
         return
     rep = repertory.scriptR()
-    cmd = rep + "barplotQuantityAA.R " + path_file + " " + str("%.2f" % distance) + " " + aminoAcid + " " + str("%.2f" % distance)
+    cmd = rep + "barplotQuantityByAA.R " + path_file + " " + str("%.2f" % distance) + " " + aminoAcid + " " + str("%.2f" % distance)
     print cmd
     logFile.write(cmd + "\n")
     system(cmd)
@@ -78,15 +76,15 @@ def globalStat(d_max, dir_in):
                 histStat(d_max, type_studies, path_file, type_struct, logFile)
             for aminoAcid in listAminoAcid:
                 path_file_aa = dir_in + type_struct + "/aminoAcid/" + type_struct + aminoAcid
-                histAA(d_max, aminoAcid, path_file_aa, logFile)
+                barplotQuantity(d_max, aminoAcid, path_file_aa, logFile)
 #  
         for aminoAcid in listAminoAcid:
             path_file = dir_in + "AminoAcidGlobal/Global" + aminoAcid
-            histAA(d_max, aminoAcid, path_file, logFile)
+            barplotQuantity(d_max, aminoAcid, path_file, logFile)
  
     plotDistanceOx(repertory.resultDistance(dir_in), logFile)
     ################################################## histGlobalProportion(dir_in, logFile)
-    histGlobalResidue(dir_in, logFile)
+    barplotResDist(dir_in, logFile)
     histProportionType(d_max, dir_in + "globalProportionType/", logFile)
     histAtleastOne(dir_in, logFile)  
     histNeigbor (dir_in, logFile)
@@ -166,38 +164,16 @@ def histGlobalProportion(dir_out, logFile):
     system (cmd)
 
 
-def histGlobalResidue(dir_out, logFile):
+def barplotResDist (p_filin, logFile):
     """Draw barplot proportion residue
     in: log file_side
     out: execute CMD"""
     
-    listStructure = structure.listStructure()
-    for element in listStructure:
-        file_side = repertory.resultStruct(element, dir_out) + "GlobalResidueSide" + element
-        file_global = repertory.resultStruct(element, dir_out) + "GlobalResidue" + element
-        if tool.checkFileEmpty (file_side) == 1 and tool.checkFileEmpty (file_global): 
-            continue
-        cmd = repertory.scriptR() + "barplotResidueDistance.R " + file_side + " " + element 
-        cmd_global = repertory.scriptR() + "barplotResidueDistance.R " + file_global + " " + element 
-        logFile.write(cmd + "\n")
-        logFile.write(cmd_global + "\n")
-        system(cmd)
-        system (cmd_global)
-    file_all_atom_side = dir_out + "globalResidueAllAtomsSide"
-    file_all_atom = dir_out + "globalResidueAllAtoms"
-    if tool.checkFileEmpty(file_all_atom_side) == 1 or tool.checkFileEmpty(file_all_atom) == 1: 
-        return
-    cmd_all_side = repertory.scriptR() + "barplotResidueDistance.R " + dir_out + "globalResidueAllAtomsSide" + " all"
-    cmd_all = repertory.scriptR() + "barplotResidueDistance.R " + dir_out + "globalResidueAllAtoms" + " all"
-    logFile.write(cmd_all_side + "\n")
-    logFile.write(cmd_all + "\n")
-    system(cmd_all_side)
-    system(cmd_all)
+    cmd = repertory.scriptR() + "barplotResidueDistance.R " + p_filin + " all"
+    logFile.write (cmd + "\n")
+    system(cmd)
     print cmd
-    print cmd_global
-    print cmd_all_side
-    print cmd_all
-
+    
 
 def histDistance(p_filin, type_distance):
     """Draw CN length histogram and coplar histogram

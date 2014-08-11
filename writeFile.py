@@ -169,38 +169,40 @@ def closeFileSummary(dictFile):
         dictFile[key].close()
 
 
-def countGlobalCount(dist_max, stCount, dir_out):
-
-#     resultDistanceOx(stCount[str(dist_max)]["distanceOx"], dir_out)
-    resultLigand(stCount[str(dist_max)]["ligand"], dir_out)
-    resultAtom(stCount[str(dist_max)]["atom"], dir_out)
-    resultByAA(stCount[str(dist_max)]["byAA"], dir_out)
-    resultAngle(stCount, dist_max, dir_out)
-    resultNeighbor (stCount[str(dist_max)]["threeAnalysis"], dir_out)
-    resultNumberNeighbor (stCount[str(dist_max)]["numberNeighbors"], dir_out)
-
-    for distance in stCount.keys():
-        resultResidue(float(distance), stCount[str(distance)]["residue"], dir_out)
-        resultProportion(float(distance), stCount[str(distance)]["proportionAtom"], dir_out)
-        resultProportionType(float(distance), stCount[str(distance)]["proportionType"], dir_out)
-
-        
-    resultProportionGlobalType(stCount, dist_max, dir_out)
-    resultGlobalResidue(stCount, dist_max, dir_out)
-    resultResidueDistance(stCount, dist_max, dir_out)
+# # # # # # # def countGlobalCount(dist_max, stCount, dir_out):
+# # # # # # # 
+# # # # # # # #     resultDistanceOx(stCount[str(dist_max)]["distanceOx"], dir_out)
+# # # # # # #     resultLigand(stCount[str(dist_max)]["ligand"], dir_out)
+# # # # # # #     resultAtom(stCount[str(dist_max)]["atom"], dir_out)
+# # # # # # #     resultByAA(stCount[str(dist_max)]["byAA"], dir_out)
+# # # # # # #     resultAngle(stCount, dist_max, dir_out)
+# # # # # # #     resultNeighbor (stCount[str(dist_max)]["threeAnalysis"], dir_out)
+# # # # # # #     resultNumberNeighbor (stCount[str(dist_max)]["numberNeighbors"], dir_out)
+# # # # # # # 
+# # # # # # #     for distance in stCount.keys():
+# # # # # # #         resultResidue(float(distance), stCount[str(distance)]["residue"], dir_out)
+# # # # # # #         resultProportion(float(distance), stCount[str(distance)]["proportionAtom"], dir_out)
+# # # # # # #         resultProportionType(float(distance), stCount[str(distance)]["proportionType"], dir_out)
+# # # # # # # 
+# # # # # # #         
+# # # # # # #     resultProportionGlobalType(stCount, dist_max, dir_out)
+# # # # # # #     resultGlobalResidue(stCount, dist_max, dir_out)
+# # # # # # #     resultResidueDistance(stCount, dist_max, dir_out)
     
 
-def resultLigand(stCountLigand, pr_result):
+def resultCount(stCountLigand, type_count, pr_result):
 
-    listStructure = structure.listStructure()
-
-    for interestGroup in listStructure:
-        directory_in = repertory.typeSubStructure(pr_result, interestGroup)
-        filout = open(directory_in + "statLigands" + interestGroup, "w")
+    l_file_result = []
+    for interestGroup in stCountLigand.keys ():
+        p_filout = pr_result + str (interestGroup) + "_" + str(type_count)
+        filout = open(p_filout, "w")
         
         for ligand in stCountLigand[interestGroup].keys():
             filout.write(str(ligand) + "\t" + str(stCountLigand[interestGroup][ligand]) + "\n")
         filout.close()
+        l_file_result.append (p_filout)
+    
+    return l_file_result
 
 
 
@@ -221,30 +223,32 @@ def resultNumberNeighbor (count, directory_result) :
 
 
 
-def resultAtom(count, directory_result):
+# # # # # # # # def resultAtom(count, directory_result):
+# # # # # # # # 
+# # # # # # # #     listStructure = structure.listStructure()
+# # # # # # # # 
+# # # # # # # #     for element in listStructure:
+# # # # # # # #         directory_in = repertory.typeSubStructure(directory_result, element)
+# # # # # # # #         filout = open(directory_in + "statAtoms" + element, "w")
+# # # # # # # #         for atom in count[element].keys():
+# # # # # # # #             filout.write(str(atom) + "\t" + str(count[element][atom]) + "\n")
+# # # # # # # # 
+# # # # # # # #         filout.close()
 
-    listStructure = structure.listStructure()
 
-    for element in listStructure:
-        directory_in = repertory.typeSubStructure(directory_result, element)
-        filout = open(directory_in + "statAtoms" + element, "w")
-        for atom in count[element].keys():
-            filout.write(str(atom) + "\t" + str(count[element][atom]) + "\n")
+def resultCountAA(stCountAA, pr_result):
 
+    l_file_result = []
+    for interestGroup in stCountAA.keys ():
+        p_filout = pr_result + str (interestGroup) + "resProx"
+        filout = open(p_filout, "w")
+        
+        for res in stCountAA[interestGroup].keys():
+            filout.write(str(res) + "\t" + str(stCountAA[interestGroup][res]["main"]) + "\t" + str(stCountAA[interestGroup][res]["side"]) + "\n")
         filout.close()
-
-
-def resultResidue(distance, count, directory_result):
-
-    listStructure = structure.listStructure()
+        l_file_result.append (p_filout)
     
-    for element in listStructure:
-        dir_in = repertory.typeSubStructure(directory_result, element)
-        filout = open(dir_in + "statResidues" + element + str("%.2f" % distance), "w")
-        for residue in count[element].keys():
-            filout.write(str(residue) + "\t" + str(count[element][residue]["main"]) + "\t" + str(count[element][residue]["side"]) + "\n")
-
-        filout.close()
+    return l_file_result
 
 
 def resultByAA(count, directory_result):
@@ -323,36 +327,45 @@ def resultProportionGlobalType(count, distanceGlobal,directory_result) :
         filout.close()
     
     
+
+
+
+
+
+
+
+
+
     
 
-def resultResidueDistance(countGlobalAmine, distanceMax, directory_out):
-
-    listDistance = structure.listDistance(distanceMax)
-    listAminoAcid = ["HOH", "ASP", "GLU", "THR", "SER", "ASN", "GLN", "TYR", "HIS", "LYS", "ARG", "PHE", "TRP", "ALA", "ILE", "LEU", "MET", "VAL", "CYS", "GLY", "PRO"]
-
-
-    for type_substructure in  countGlobalAmine["2.5"]["residue"].keys():
-        filout_side_chain = open(directory_out + str(type_substructure) + "/GlobalResidueSide" + str(type_substructure), "w")
-        filout_global = open(directory_out + str(type_substructure) + "/GlobalResidue" + str(type_substructure), "w")
-        for aminoAcid in listAminoAcid:
-            line_side = str(aminoAcid)
-            line_global = str(aminoAcid)
-            for distance in listDistance:
-                line_side = line_side + "\t"
-                line_global = line_global + "\t"
-                if aminoAcid == "HOH":
-                    line_side = line_side + str(countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["main"])
-                    line_global = line_global + str(countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["main"])
-                else:
-                    line_side = line_side + str(countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["side"])
-                    line_global = line_global + str(countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["side"] + countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["main"])
-
-            line_side = line_side + "\n"
-            line_global = line_global + "\n"
-            filout_side_chain.write(line_side)
-            filout_global.write(line_global)
-        filout_side_chain.close()
-        filout_global.close ()
+# def resultResidueDistance(countGlobalAmine, distanceMax, directory_out):
+# 
+#     listDistance = structure.listDistance(distanceMax)
+#     listAminoAcid = ["HOH", "ASP", "GLU", "THR", "SER", "ASN", "GLN", "TYR", "HIS", "LYS", "ARG", "PHE", "TRP", "ALA", "ILE", "LEU", "MET", "VAL", "CYS", "GLY", "PRO"]
+# 
+# 
+#     for type_substructure in  countGlobalAmine["2.5"]["residue"].keys():
+#         filout_side_chain = open(directory_out + str(type_substructure) + "/GlobalResidueSide" + str(type_substructure), "w")
+#         filout_global = open(directory_out + str(type_substructure) + "/GlobalResidue" + str(type_substructure), "w")
+#         for aminoAcid in listAminoAcid:
+#             line_side = str(aminoAcid)
+#             line_global = str(aminoAcid)
+#             for distance in listDistance:
+#                 line_side = line_side + "\t"
+#                 line_global = line_global + "\t"
+#                 if aminoAcid == "HOH":
+#                     line_side = line_side + str(countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["main"])
+#                     line_global = line_global + str(countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["main"])
+#                 else:
+#                     line_side = line_side + str(countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["side"])
+#                     line_global = line_global + str(countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["side"] + countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["main"])
+# 
+#             line_side = line_side + "\n"
+#             line_global = line_global + "\n"
+#             filout_side_chain.write(line_side)
+#             filout_global.write(line_global)
+#         filout_side_chain.close()
+#         filout_global.close ()
 
 
 
@@ -372,28 +385,26 @@ def resultResidueDistance(countGlobalAmine, distanceMax, directory_out):
 #         filout_side_chain.close()
 
 
-def resultGlobalResidue(count, distanceMax, directory_out):
+def resultResProx(stCount, distance_max, pr_result):
 
-    listDistance = structure.listDistance(distanceMax)
-    listAminoAcid = ["HOH", "ASP", "GLU", "THR", "SER", "ASN", "GLN", "TYR", "HIS", "LYS", "ARG", "PHE", "TRP", "ALA", "ILE", "LEU", "MET", "VAL", "CYS", "GLY", "PRO"]
-    filout_side = open(directory_out + "globalResidueAllAtomsSide", "w")
-    filout_all = open(directory_out + "globalResidueAllAtoms", "w")
-    for aminoAcid in listAminoAcid:
-        line_side = str(aminoAcid)
-        line_global = str(aminoAcid)
-        for distance in listDistance:
-            if aminoAcid == "HOH":
-                line_side = line_side + "\t" + str(count[distance]["ResidueAllAtom"][aminoAcid]["main"])
-                line_global = line_global + "\t" + str(count[distance]["ResidueAllAtom"][aminoAcid]["main"])
-            else:
-                line_side = line_side + "\t" + str(count[distance]["ResidueAllAtom"][aminoAcid]["side"])
-                line_global = line_global + "\t" + str(count[distance]["ResidueAllAtom"][aminoAcid]["side"] + count[distance]["ResidueAllAtom"][aminoAcid]["main"])
+    l_p_filout = []
+    l_distance = structure.listDistance(distance_max)
+    l_aa = ["HOH", "ASP", "GLU", "THR", "SER", "ASN", "GLN", "TYR", "HIS", "LYS", "ARG", "PHE", "TRP", "ALA", "ILE", "LEU", "MET", "VAL", "CYS", "GLY", "PRO"]
+    
+    for substruct in stCount.keys () : 
+        print substruct, "-----"
+        p_filout = pr_result + substruct + "resCount"
+        l_p_filout.append (p_filout)
+        filout = open (p_filout, "w")
+        for aa in l_aa : 
+            line_w = str (aa)
+            for distance in l_distance : 
+                line_w = "\t" + str(stCount[distance][aa])
+            line_w = line_w + "\n"
+            filout.write (line_w)
+        filout.close ()
 
-        line_side = line_side + "\n"
-        line_global = line_global + "\n"
-        filout_side.write(line_side)
-        filout_all.write(line_global)
-
+    
 
 def resultAtLeastOne(count_global, count_substructure, max_distance, directory_out):
 
@@ -457,7 +468,7 @@ def resultAngle(d_count, pr_out):
     return l_p_file
  
 
-def d_angle_type (count, directory_in):
+def dAngleType (count, directory_in):
     
     listClasse = structure.classificationATOM("", out_list = 1)
     for type_substruct in count.keys() : 

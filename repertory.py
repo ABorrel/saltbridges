@@ -66,6 +66,7 @@ def resultDistance(rep_int):
     except: pass
     return rep
 
+
 def lengthBond (rep_int):
 
     rep = rep_int + "lengthBond/"
@@ -121,6 +122,25 @@ def resultAngle(pr_int, name_in = ""):
     else : 
         pass
     return pr_angle
+
+
+def countGlobalProx (pr_int, name_in = ""):
+
+    if name_in == "" : 
+        pr_angle = pr_int + "countProx/"
+    else :
+        pr_angle = pr_int + "countProx/" + name_in + "/"
+        
+    if not path.isdir(pr_angle) : 
+        makedirs(pr_angle, mode=0777)
+    else : 
+        pass
+    return pr_angle
+
+
+
+
+
 
 def parsingDataset(pr_int):
     

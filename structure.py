@@ -151,7 +151,7 @@ def neighborStruct():
     return d_neighbor
 
 
-def d_angle_type () :
+def dAngleType () :
 
     classification = classificationATOM("", out_list=1)
     count = {}
@@ -234,7 +234,7 @@ def countType():
 
     count = {}
     count["ligand"] = countLigand()
-    count["angle"] = d_angle_type()
+    count["angle"] = dAngleType()
     count["atom"] = countAtom()
     count["residue"] = countResidue()
     count["byAA"] = countbyAminoAcid()
@@ -415,18 +415,18 @@ def countAngleDistance(d_count_angle, distance_max):
     
     l_angle = range(0, 190, 10)
     l_dist = listDistance(distance_max)
-    d_angle_type = {}
+    dAngleType = {}
     
     for type_strucutre in d_count_angle.keys():
-        d_angle_type[type_strucutre] = {}
+        dAngleType[type_strucutre] = {}
         for distance in l_dist:       
-            d_angle_type[type_strucutre][str(distance)] = {}
+            dAngleType[type_strucutre][str(distance)] = {}
             angleTemp = 0
             for keyAngle in l_angle : 
-                d_angle_type[type_strucutre][str(distance)][str(keyAngle)] = {}
+                dAngleType[type_strucutre][str(distance)][str(keyAngle)] = {}
             
                 for classe in  d_count_angle[type_strucutre].keys():    
-                    d_angle_type[type_strucutre][str(distance)][str(keyAngle)][classe] = 0
+                    dAngleType[type_strucutre][str(distance)][str(keyAngle)][classe] = 0
                     nbAngles = len(d_count_angle[type_strucutre][classe]["angles"])
                     for i in range(0, nbAngles) : 
                     # restrint angle position
@@ -434,32 +434,32 @@ def countAngleDistance(d_count_angle, distance_max):
                             if angleVector <= keyAngle :
                                 if angleVector >= angleTemp :
                                     if d_count_angle[type_strucutre][classe]["distance"][i] <= float(distance) : 
-                                        d_angle_type[type_strucutre][str(distance)][str(keyAngle)][classe] = d_angle_type[type_strucutre][str(distance)][str(keyAngle)][classe] + 1
+                                        dAngleType[type_strucutre][str(distance)][str(keyAngle)][classe] = dAngleType[type_strucutre][str(distance)][str(keyAngle)][classe] + 1
                 angleTemp = keyAngle
 
     
-    for type_strucutre in d_angle_type.keys():
-        for keyAngle in d_angle_type[type_strucutre]["2.0"].keys() : 
-            for classe in d_angle_type[type_strucutre]["2.0"][keyAngle].keys() : 
-                try : d_angle_type[type_strucutre]["2.5"][str(keyAngle)][classe] = d_angle_type[type_strucutre]["2.5"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["2.0"][str(keyAngle)][classe]
+    for type_strucutre in dAngleType.keys():
+        for keyAngle in dAngleType[type_strucutre]["2.0"].keys() : 
+            for classe in dAngleType[type_strucutre]["2.0"][keyAngle].keys() : 
+                try : dAngleType[type_strucutre]["2.5"][str(keyAngle)][classe] = dAngleType[type_strucutre]["2.5"][str(keyAngle)][classe] - dAngleType[type_strucutre]["2.0"][str(keyAngle)][classe]
                 except : pass
-                try : d_angle_type[type_strucutre]["3.0"][str(keyAngle)][classe] = d_angle_type[type_strucutre]["3.0"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["2.5"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["2.0"][str(keyAngle)][classe]
+                try : dAngleType[type_strucutre]["3.0"][str(keyAngle)][classe] = dAngleType[type_strucutre]["3.0"][str(keyAngle)][classe] - dAngleType[type_strucutre]["2.5"][str(keyAngle)][classe] - dAngleType[type_strucutre]["2.0"][str(keyAngle)][classe]
                 except : pass
-                try : d_angle_type[type_strucutre]["3.5"][str(keyAngle)][classe] = d_angle_type[type_strucutre]["3.5"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["3.0"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["2.5"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["2.0"][str(keyAngle)][classe]
+                try : dAngleType[type_strucutre]["3.5"][str(keyAngle)][classe] = dAngleType[type_strucutre]["3.5"][str(keyAngle)][classe] - dAngleType[type_strucutre]["3.0"][str(keyAngle)][classe] - dAngleType[type_strucutre]["2.5"][str(keyAngle)][classe] - dAngleType[type_strucutre]["2.0"][str(keyAngle)][classe]
                 except : pass
-                try : d_angle_type[type_strucutre]["4.0"][str(keyAngle)][classe] = d_angle_type[type_strucutre]["4.0"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["3.5"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["3.0"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["2.5"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["2.0"][str(keyAngle)][classe]
+                try : dAngleType[type_strucutre]["4.0"][str(keyAngle)][classe] = dAngleType[type_strucutre]["4.0"][str(keyAngle)][classe] - dAngleType[type_strucutre]["3.5"][str(keyAngle)][classe] - dAngleType[type_strucutre]["3.0"][str(keyAngle)][classe] - dAngleType[type_strucutre]["2.5"][str(keyAngle)][classe] - dAngleType[type_strucutre]["2.0"][str(keyAngle)][classe]
                 except : pass
-                try : d_angle_type[type_strucutre]["4.5"][str(keyAngle)][classe] = d_angle_type[type_strucutre]["4.5"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["4.0"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["3.5"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["3.0"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["2.5"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["2.0"][str(keyAngle)][classe]
+                try : dAngleType[type_strucutre]["4.5"][str(keyAngle)][classe] = dAngleType[type_strucutre]["4.5"][str(keyAngle)][classe] - dAngleType[type_strucutre]["4.0"][str(keyAngle)][classe] - dAngleType[type_strucutre]["3.5"][str(keyAngle)][classe] - dAngleType[type_strucutre]["3.0"][str(keyAngle)][classe] - dAngleType[type_strucutre]["2.5"][str(keyAngle)][classe] - dAngleType[type_strucutre]["2.0"][str(keyAngle)][classe]
                 except : pass
-                try : d_angle_type[type_strucutre]["5.0"][str(keyAngle)][classe] = d_angle_type[type_strucutre]["5.0"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["4.5"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["4.0"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["3.5"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["3.0"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["2.5"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["2.0"][str(keyAngle)][classe]
+                try : dAngleType[type_strucutre]["5.0"][str(keyAngle)][classe] = dAngleType[type_strucutre]["5.0"][str(keyAngle)][classe] - dAngleType[type_strucutre]["4.5"][str(keyAngle)][classe] - dAngleType[type_strucutre]["4.0"][str(keyAngle)][classe] - dAngleType[type_strucutre]["3.5"][str(keyAngle)][classe] - dAngleType[type_strucutre]["3.0"][str(keyAngle)][classe] - dAngleType[type_strucutre]["2.5"][str(keyAngle)][classe] - dAngleType[type_strucutre]["2.0"][str(keyAngle)][classe]
                 except : pass
-                try : d_angle_type[type_strucutre]["5.5"][str(keyAngle)][classe] = d_angle_type[type_strucutre]["5.5"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["5.0"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["4.5"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["4.0"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["3.5"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["3.0"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["2.5"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["2.0"][str(keyAngle)][classe]
+                try : dAngleType[type_strucutre]["5.5"][str(keyAngle)][classe] = dAngleType[type_strucutre]["5.5"][str(keyAngle)][classe] - dAngleType[type_strucutre]["5.0"][str(keyAngle)][classe] - dAngleType[type_strucutre]["4.5"][str(keyAngle)][classe] - dAngleType[type_strucutre]["4.0"][str(keyAngle)][classe] - dAngleType[type_strucutre]["3.5"][str(keyAngle)][classe] - dAngleType[type_strucutre]["3.0"][str(keyAngle)][classe] - dAngleType[type_strucutre]["2.5"][str(keyAngle)][classe] - dAngleType[type_strucutre]["2.0"][str(keyAngle)][classe]
                 except : pass
-                try : d_angle_type[type_strucutre]["6.0"][str(keyAngle)][classe] = d_angle_type[type_strucutre]["6.0"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["5.5"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["5.0"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["4.5"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["4.0"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["3.5"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["3.0"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["2.5"][str(keyAngle)][classe] - d_angle_type[type_strucutre]["2.0"][str(keyAngle)][classe]
+                try : dAngleType[type_strucutre]["6.0"][str(keyAngle)][classe] = dAngleType[type_strucutre]["6.0"][str(keyAngle)][classe] - dAngleType[type_strucutre]["5.5"][str(keyAngle)][classe] - dAngleType[type_strucutre]["5.0"][str(keyAngle)][classe] - dAngleType[type_strucutre]["4.5"][str(keyAngle)][classe] - dAngleType[type_strucutre]["4.0"][str(keyAngle)][classe] - dAngleType[type_strucutre]["3.5"][str(keyAngle)][classe] - dAngleType[type_strucutre]["3.0"][str(keyAngle)][classe] - dAngleType[type_strucutre]["2.5"][str(keyAngle)][classe] - dAngleType[type_strucutre]["2.0"][str(keyAngle)][classe]
                 except : pass
                 
                 
-    return d_angle_type
+    return dAngleType
 
 
 ###############################
