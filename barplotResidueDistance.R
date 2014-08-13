@@ -1,6 +1,7 @@
 #!/usr/bin/env Rscript
 
 
+# with update 12-08-2014 ot used
 calculmatrix = function(inMatrix){
 
 	nbCol = dim(inMatrix)[2]
@@ -43,7 +44,7 @@ AA = c("HOH","ASP","GLU","THR","SER","ASN","GLN","TYR","HIS","LYS","ARG","PHE","
 
 data = read.table(file, header = FALSE,, sep = "\t")
 
-data = calculmatrix (data)
+#data = calculmatrix (data)
 
 colorV = NULL
 colorL = NULL

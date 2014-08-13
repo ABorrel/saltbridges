@@ -14,7 +14,11 @@ if (type == "Atoms"){
 
 }else if (type == "Residues"){
 	nameX = "Residues"
+}else {
+	nameX = type
 }
+
+
 
 
 

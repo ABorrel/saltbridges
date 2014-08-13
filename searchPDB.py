@@ -96,15 +96,15 @@ def ligands(name_database, pr_init):
 
 
 
-################substructure search -> amine###############
+################substructure search -> stAtom###############
 
 def cn(listAtomConnectNitrogen, listAtomLigan):
-    """search primary amine 
+    """search primary stAtom 
     in: list atom connected of nitrogen, list atom ligand
     out: 1 or 0"""
 
-    amine = toolSubstructure.matrixElement(listAtomConnectNitrogen)
-    if amine == ["N", "C"] or amine == ["N", "C"]:
+    stAtom = toolSubstructure.matrixElement(listAtomConnectNitrogen)
+    if stAtom == ["N", "C"] or stAtom == ["N", "C"]:
         if toolSubstructure.checkSingleBond(listAtomConnectNitrogen[0], listAtomConnectNitrogen[1]) == 1:
             if toolSubstructure.checkConectOnlyC(listAtomConnectNitrogen[1], listAtomLigan) == 1 : 
                 return 1
@@ -112,13 +112,13 @@ def cn(listAtomConnectNitrogen, listAtomLigan):
 
 
 def cnc(listAtomConnectNitrogen, listAtomLigand):
-    """search secondary amine 
+    """search secondary stAtom 
     in: list atom connected of nitrogen, list atom ligand
     out: 1 or 0"""
 
-    amine = toolSubstructure.matrixElement(listAtomConnectNitrogen)
+    stAtom = toolSubstructure.matrixElement(listAtomConnectNitrogen)
 
-    if amine == ["N", "C", "C"]:
+    if stAtom == ["N", "C", "C"]:
         if toolSubstructure.checkConectOnlyC(listAtomConnectNitrogen[1], listAtomLigand) == 1 and toolSubstructure.checkConectOnlyC(listAtomConnectNitrogen[2], listAtomLigand) == 1:
             if toolSubstructure.checkSingleBond(listAtomConnectNitrogen[0], listAtomConnectNitrogen[1]) == 1 and toolSubstructure.checkSingleBond(listAtomConnectNitrogen[0], listAtomConnectNitrogen[2]) == 1:
                 return 1
@@ -126,13 +126,13 @@ def cnc(listAtomConnectNitrogen, listAtomLigand):
 
 
 def cncc(listAtomConnectNitrogen, listAtomligand):
-    """search tertiary amine 
+    """search tertiary stAtom 
     in: list atom connected of nitrogen, list atom ligand
     out: 1 or 0"""
 
-    amine = toolSubstructure.matrixElement(listAtomConnectNitrogen)
+    stAtom = toolSubstructure.matrixElement(listAtomConnectNitrogen)
 
-    if amine == ["N", "C", "C", "C"]:
+    if stAtom == ["N", "C", "C", "C"]:
         if toolSubstructure.checkConectOnlyC(listAtomConnectNitrogen[1], listAtomligand) == 1 and toolSubstructure.checkConectOnlyC(listAtomConnectNitrogen[2], listAtomligand) == 1 and toolSubstructure.checkConectOnlyC(listAtomConnectNitrogen[3], listAtomligand) == 1:
             if toolSubstructure.checkCoplanar(listAtomConnectNitrogen[0], listAtomligand) == 1:
                 if toolSubstructure.checkSingleBond(listAtomConnectNitrogen[0], listAtomConnectNitrogen[1]) == 1 and toolSubstructure.checkSingleBond(listAtomConnectNitrogen[0], listAtomConnectNitrogen[2]) == 1 and toolSubstructure.checkSingleBond(listAtomConnectNitrogen[0], listAtomConnectNitrogen[3]) == 1:
@@ -145,10 +145,10 @@ def guanidium(l_at_connect_N, listAtomLigand):
     in: list atom connected of nitrogen, list atom ligand
     out: 1 or 0"""
     
-    amine = toolSubstructure.matrixElement(l_at_connect_N)
+    stAtom = toolSubstructure.matrixElement(l_at_connect_N)
     findNH = 0
     # atom lateral
-    if amine == ["N", "C"] :
+    if stAtom == ["N", "C"] :
         l_at_connect_c, connectC = retrieveAtom.atomConnect(listAtomLigand , l_at_connect_N[1]["serial"])
         if connectC == ["C", "N", "N", "N"] :
             groupAtomN1, conect_N1 = retrieveAtom.atomConnect(listAtomLigand , int (l_at_connect_c[0]["connect"][1]))
@@ -174,7 +174,7 @@ def guanidium(l_at_connect_N, listAtomLigand):
                 else :
                     return [0, []]
                 
-            # check number primary amine -> case GAI not take, change ?
+            # check number primary stAtom -> case GAI not take, change ?
             if findNH == 2  : 
                 return [1, [l_at_connect_c[0]["serial"], groupAtomN1[0]["serial"], groupAtomN2[0]["serial"], groupAtomN3[0]["serial"], serial_out]]
                     
@@ -183,7 +183,7 @@ def guanidium(l_at_connect_N, listAtomLigand):
             return [0, []]
     
     # atom central structure
-    elif amine == ["N", "C", "C"] : 
+    elif stAtom == ["N", "C", "C"] : 
         for at_conect in l_at_connect_N[1:] : 
             l_group_at, conect_N = retrieveAtom.atomConnect(listAtomLigand , at_conect["serial"])
             if conect_N == ["C", "N", "N", "N"] :
@@ -250,9 +250,9 @@ def pyridine(listAtomConnectNitrogen, listAtomLigand):
     in: list atom connected of nitrogen, list atom ligand
     out: boolean"""
         
-    amine = toolSubstructure.matrixElement(listAtomConnectNitrogen)
+    stAtom = toolSubstructure.matrixElement(listAtomConnectNitrogen)
     
-    if amine == ["N", "C", "C"] : 
+    if stAtom == ["N", "C", "C"] : 
         nitrogenInit = listAtomConnectNitrogen[0]
         if  cycleOnlyTestCarbon(nitrogenInit["serial"], nitrogenInit["serial"], nitrogenInit["serial"], listAtomLigand, 6, 0) == 1 : 
             return 1
@@ -409,9 +409,9 @@ def imidazole(listAtomConnectNitrogen,list_atom_ligand):
     in: list atom connected of nitrogen, list atom ligand
     out: boolean"""
 
-    amine = toolSubstructure.matrixElement(listAtomConnectNitrogen)
+    stAtom = toolSubstructure.matrixElement(listAtomConnectNitrogen)
     
-    if amine == ["N", "C", "C"]:
+    if stAtom == ["N", "C", "C"]:
         l_atom_check = [listAtomConnectNitrogen[0]["serial"]]
         groupAtomC1, conect_C1 = retrieveAtom.atomConnect(list_atom_ligand, int (listAtomConnectNitrogen[0]["connect"][1]))
         groupAtomC2, conect_C2 = retrieveAtom.atomConnect(list_atom_ligand, int (listAtomConnectNitrogen[0]["connect"][2]))
@@ -622,10 +622,10 @@ def implementNeighborStruct (max_distance, list_atom_connect_central, name_PDB, 
     struct_neighbor[chemical_found].append(atom_neighbors)
 
 
-def regroupAtomNeighborGuanidium(listAtomRegroup, amine, listAtomLigand):  # #A revoir tres tres lourds en temps -> BUG
+def regroupAtomNeighborGuanidium(listAtomRegroup, stAtom, listAtomLigand):  # #A revoir tres tres lourds en temps -> BUG
     """Regroup neighbors for 3 nitrogen atoms guanidium
-    in: list atom finds in search neighbors, count structure amine, list atom of ligand in pdb
-    out: modification amine structure"""
+    in: list atom finds in search neighbors, count structure stAtom, list atom of ligand in pdb
+    out: modification stAtom structure"""
     
     
     for atomRegroup in listAtomRegroup : 
@@ -652,7 +652,7 @@ def regroupAtomNeighborGuanidium(listAtomRegroup, amine, listAtomLigand):  # #A 
                     if not neighbor in outAtom["neighbors"] : 
                         outAtom["neighbors"].append(neighbor)
     
-    amine.append(outAtom)
+    stAtom.append(outAtom)
     
 
 
@@ -726,7 +726,7 @@ def regroupNeighbor(serial1, serial2, listAtom):
 
 
 def buildAtom(rayon, at_central, namePDB, typeStudy, listAtomLigand):
-    """Build count structure for amine structure
+    """Build count structure for stAtom structure
     in: distance, serial atom nitrogen, type study, list atom ligand
     out: count strucutre"""
     

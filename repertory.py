@@ -38,12 +38,6 @@ def openPdbFile ():
     rep = repPDB
     return rep
 
-def pdbechemFile ():
-
-    rep = repInit + "PDBeChem/pdb/"
-    try: makedirs(rep, mode=0777)
-    except: pass
-    return rep
 
 def logFile () :
 
@@ -75,7 +69,7 @@ def lengthBond (rep_int):
     return rep
 
 
-def resultStruct(structure, dir_out):
+def resultSub(structure, dir_out):
 
     rep = dir_out + structure + "/"
     try: makedirs(rep, mode=0777)
@@ -138,7 +132,18 @@ def countGlobalProx (pr_int, name_in = ""):
     return pr_angle
 
 
+def countNeighbor(pr_int, name_in = ""):
 
+    if name_in == "" : 
+        pr_angle = pr_int + "neighbor/"
+    else :
+        pr_angle = pr_int + "neighbor/" + name_in + "/"
+        
+    if not path.isdir(pr_angle) : 
+        makedirs(pr_angle, mode=0777)
+    else : 
+        pass
+    return pr_angle
 
 
 

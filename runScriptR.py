@@ -46,51 +46,70 @@ def plotDistanceOx(p_filin, logFile, debug = 1):
     system(cmd)
 
 
-def globalStat(d_max, dir_in):
-    """MAIN draw plot
-    in: distance Atom study, distance Residues study"""
 
-    timeStart, logFile = log.initAction("Run R Scripts")
-    listStruct = structure.listStructure()
-    listType = ["Ligands", "Residues", "Atoms"]
-    listAminoAcid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS"]
- 
- 
-    for type_struct in listStruct:
-        repStruct = repertory.typeSubStructure(dir_in, type_struct)
-        for type_studies in listType:
-            path_file = repStruct + "stat" + type_studies + type_struct
-            if type_studies == "Atoms":
-                histStat(d_max, type_studies, path_file, type_struct, logFile)
-            elif type_studies == "Residues":
-                distance = 2.00
-                while distance <= d_max:
-                    fileTrace = path_file + str("%.2f" % distance)
-                    histStat(distance, type_studies, fileTrace, type_struct, logFile)
-                    histProportion(distance, dir_in, logFile)
-                    histProportionTypeNeighbors(distance, dir_in, logFile)
-  
-                    distance = distance + 0.5
- 
-            else:
-                histStat(d_max, type_studies, path_file, type_struct, logFile)
-            for aminoAcid in listAminoAcid:
-                path_file_aa = dir_in + type_struct + "/aminoAcid/" + type_struct + aminoAcid
-                barplotQuantity(d_max, aminoAcid, path_file_aa, logFile)
-#  
-        for aminoAcid in listAminoAcid:
-            path_file = dir_in + "AminoAcidGlobal/Global" + aminoAcid
-            barplotQuantity(d_max, aminoAcid, path_file, logFile)
- 
-    plotDistanceOx(repertory.resultDistance(dir_in), logFile)
-    ################################################## histGlobalProportion(dir_in, logFile)
-    barplotResDist(dir_in, logFile)
-    histProportionType(d_max, dir_in + "globalProportionType/", logFile)
-    histAtleastOne(dir_in, logFile)  
-    histNeigbor (dir_in, logFile)
-    plotAngle(d_max, dir_in, logFile)
-    
-    log.endAction("Run R Scripts", timeStart, logFile)
+
+def plotNbNeighbor(p_filin, logFile, debug = 1):
+    """Plot number neighbor 
+    in: distance for legend plot, type histogram (coplar or length), file with data, type of study, logFile
+    out: CMD in terminal -> plot """
+
+    repScript = repertory.scriptR()
+    if tool.checkFileEmpty(p_filin) == 1 : 
+        return
+    cmd = repScript + "plotNumberNeighbor.R " + p_filin
+    if debug : print cmd
+    logFile.write(cmd + "\n")
+    system(cmd)
+
+
+
+
+
+# # # # # # def globalStat(d_max, dir_in):
+# # # # # #     """MAIN draw plot
+# # # # # #     in: distance Atom study, distance Residues study"""
+# # # # # # 
+# # # # # #     timeStart, logFile = log.initAction("Run R Scripts")
+# # # # # #     listStruct = structure.listStructure()
+# # # # # #     listType = ["Ligands", "Residues", "Atoms"]
+# # # # # #     listAminoAcid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS"]
+# # # # # #  
+# # # # # #  
+# # # # # #     for type_struct in listStruct:
+# # # # # #         repStruct = repertory.typeSubStructure(dir_in, type_struct)
+# # # # # #         for type_studies in listType:
+# # # # # #             path_file = repStruct + "stat" + type_studies + type_struct
+# # # # # #             if type_studies == "Atoms":
+# # # # # #                 histStat(d_max, type_studies, path_file, type_struct, logFile)
+# # # # # #             elif type_studies == "Residues":
+# # # # # #                 distance = 2.00
+# # # # # #                 while distance <= d_max:
+# # # # # #                     fileTrace = path_file + str("%.2f" % distance)
+# # # # # #                     histStat(distance, type_studies, fileTrace, type_struct, logFile)
+# # # # # #                     histProportion(distance, dir_in, logFile)
+# # # # # #                     histProportionTypeNeighbors(distance, dir_in, logFile)
+# # # # # #   
+# # # # # #                     distance = distance + 0.5
+# # # # # #  
+# # # # # #             else:
+# # # # # #                 histStat(d_max, type_studies, path_file, type_struct, logFile)
+# # # # # #             for aminoAcid in listAminoAcid:
+# # # # # #                 path_file_aa = dir_in + type_struct + "/aminoAcid/" + type_struct + aminoAcid
+# # # # # #                 barplotQuantity(d_max, aminoAcid, path_file_aa, logFile)
+# # # # # # #  
+# # # # # #         for aminoAcid in listAminoAcid:
+# # # # # #             path_file = dir_in + "AminoAcidGlobal/Global" + aminoAcid
+# # # # # #             barplotQuantity(d_max, aminoAcid, path_file, logFile)
+# # # # # #  
+# # # # # #     plotDistanceOx(repertory.resultDistance(dir_in), logFile)
+# # # # # #     ################################################## histGlobalProportion(dir_in, logFile)
+# # # # # #     barplotResDist(dir_in, logFile)
+# # # # # #     histProportionType(d_max, dir_in + "globalProportionType/", logFile)
+# # # # # #     histAtleastOne(dir_in, logFile)  
+# # # # # #     histNeigbor (dir_in, logFile)
+# # # # # #     plotAngle(d_max, dir_in, logFile)
+# # # # # #     
+# # # # # #     log.endAction("Run R Scripts", timeStart, logFile)
 
 
 def histProportionType(distanceMax, dir_out, logFile):
@@ -257,6 +276,24 @@ def waterType (path_file, verbose = 1) :
         print cmd
     system (cmd)    
     
+
+def proportionAtomClassNeighbor (p_filin, logFile, verbose = 1):
+    
+    cmd = repertory.scriptR() + "AnalysisNeighbor.R " + p_filin + " " + p_filin.split ("/")[-1].split ("_")[-1]
+    system (cmd)
+    if verbose == 1 : print cmd
+    logFile.write (cmd + "\n")
+    
+
+def AFCPieFirstNeighbor (p_filin, logFile, verbose = 1):
+    
+    cmd = "AFCNeighbor.R " + p_filin
+    system (cmd)
+    if verbose == 1 : print cmd
+    logFile.write (cmd)
+
+    
+
     
 def histNeigbor (dir_in, logFile) : 
     
