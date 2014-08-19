@@ -48,79 +48,79 @@ def retrieveFirstSeqFileFasta(pathFileFasta):
 
 
 
-######compare#######
+######compare####### -> need blast or gobal alignment
 
 
-def compareSeqofPDB(listPDB, listSeq, lengthListPDB, i, j):
-    """Compare sequence of amino acid of list of pdb files pairwise sequence comparaison, preserve best resolution file and remove sequences and PDB in list
-    in : - list PDB file
-         - list of amino acid sequences
-         - number of PDB in list
-         - position files comparaison in list
-    out : - list pdb file
-          - list of amino acid sequences
-          - number of PDB file in list PDB after comparaison
-          - position files comparaison in list"""
-
-
-    if i == j:
-        return listPDB, listSeq, lengthListPDB, i, j
-
-    if listSeq[i]["seq"] == "" or listSeq[j]["seq"] == "":
-        return listPDB, listSeq, lengthListPDB, i, j
-
-    elif listSeq[i]["seq"] == listSeq[j]["seq"]:
-        if listSeq[i] < listSeq[j]["resolution"]:
-            del listPDB[j]
-            del listSeq[j]
-            j = j - 1
-            lengthListPDB = lengthListPDB - 1
-        else:
-            del listPDB[i]
-            del listSeq[i]
-            i = i - 1
-            lengthListPDB = lengthListPDB - 1
-
-        return listPDB, listSeq, lengthListPDB, i, j
-
-    elif incluedSequence(listSeq[i], listSeq[j]) == 1:
-        del listPDB[j]
-        del listSeq[j]
-        j = j - 1
-        lengthListPDB = lengthListPDB - 1
-
-        return listPDB, listSeq, lengthListPDB, i, j
-
-    elif incluedSequence(listSeq[j], listSeq[i]) == 1:
-        del listPDB[i]
-        del listSeq[i]
-        i = i - 1
-        lengthListPDB = lengthListPDB - 1
-
-        return listPDB, listSeq, lengthListPDB, i, j
-
-    else:
-
-        return listPDB, listSeq, lengthListPDB, i, j
-
-
-def incluedSequence(seq1, seq2):
-    """Function which look if seq1 is inclued in seq2
-    in : - seq1
-         - seq2
-    seq 1 bigger seq 2
-    out : 0 or 1
-          0 -> no inclued
-          1 -> inclued"""
-
-    try:
-        if search(seq1, seq2):
-            return 1
-        else:
-            return 0
-
-    except:
-        return 0
+# def compareSeqofPDB(listPDB, listSeq, lengthListPDB, i, j):
+#     """Compare sequence of amino acid of list of pdb files pairwise sequence comparaison, preserve best resolution file and remove sequences and PDB in list
+#     in : - list PDB file
+#          - list of amino acid sequences
+#          - number of PDB in list
+#          - position files comparaison in list
+#     out : - list pdb file
+#           - list of amino acid sequences
+#           - number of PDB file in list PDB after comparaison
+#           - position files comparaison in list"""
+# 
+# 
+#     if i == j:
+#         return listPDB, listSeq, lengthListPDB, i, j
+# 
+#     if listSeq[i]["seq"] == "" or listSeq[j]["seq"] == "":
+#         return listPDB, listSeq, lengthListPDB, i, j
+# 
+#     elif listSeq[i]["seq"] == listSeq[j]["seq"]:
+#         if listSeq[i] < listSeq[j]["resolution"]:
+#             del listPDB[j]
+#             del listSeq[j]
+#             j = j - 1
+#             lengthListPDB = lengthListPDB - 1
+#         else:
+#             del listPDB[i]
+#             del listSeq[i]
+#             i = i - 1
+#             lengthListPDB = lengthListPDB - 1
+# 
+#         return listPDB, listSeq, lengthListPDB, i, j
+# 
+#     elif incluedSequence(listSeq[i], listSeq[j]) == 1:
+#         del listPDB[j]
+#         del listSeq[j]
+#         j = j - 1
+#         lengthListPDB = lengthListPDB - 1
+# 
+#         return listPDB, listSeq, lengthListPDB, i, j
+# 
+#     elif incluedSequence(listSeq[j], listSeq[i]) == 1:
+#         del listPDB[i]
+#         del listSeq[i]
+#         i = i - 1
+#         lengthListPDB = lengthListPDB - 1
+# 
+#         return listPDB, listSeq, lengthListPDB, i, j
+# 
+#     else:
+# 
+#         return listPDB, listSeq, lengthListPDB, i, j
+# 
+# 
+# def incluedSequence(seq1, seq2):
+#     """Function which look if seq1 is inclued in seq2
+#     in : - seq1
+#          - seq2
+#     seq 1 bigger seq 2
+#     out : 0 or 1
+#           0 -> no inclued
+#           1 -> inclued"""
+# 
+#     try:
+#         if search(seq1, seq2):
+#             return 1
+#         else:
+#             return 0
+# 
+#     except:
+#         return 0
 
 
 def checkPDB(listPDB, nameLigand, limit_RX, limit_RFree):
@@ -157,4 +157,21 @@ def checkPDB(listPDB, nameLigand, limit_RX, limit_RFree):
     return
 
 
+
+def selectBestPDBamongList (l_PDB) : 
+    
+    l_RX = []
+    l_Rfree = []
+    
+    for PDB_ID in l_PDB : 
+        l_quality =  parsing.resolution(PDB_ID)
+        l_RX.append (l_quality[0])
+        l_Rfree.append (l_quality[1])
+    
+    i_best_PDB = l_RX.index (max (l_RX))
+    
+    return [l_PDB[i_best_PDB]]
+
+    
+    
 

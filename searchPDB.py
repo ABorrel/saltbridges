@@ -500,9 +500,9 @@ def globalSearch (max_distance, p_file_dataset,  pr_result, option_one_PDB = 0):
     pr_summary = pr_result + "Sum" +  p_file_dataset.split ("/")[-1][8:] + "/"
     
     # load structure in summary ---> if use need place option one PDB by ligand
-    struct_neighbor, struct_global_neighbo = loadFile.loadCloseStruct (pr_summary)
+    struct_neighbor, struct_global_neighbor = loadFile.loadCloseStruct (pr_summary, option_one_PDB)
     if struct_neighbor != None : 
-        return struct_neighbor, struct_global_neighbo
+        return struct_neighbor, struct_global_neighbor
      
     
     #start, logFile = log.initAction("search neighbors in " +path.basename(p_file_dataset))
@@ -545,6 +545,8 @@ def globalSearch (max_distance, p_file_dataset,  pr_result, option_one_PDB = 0):
     writeFile.neighborStruct(struct_neighbor, struct_global_neighbor, files_summary)
     writeFile.closeFileSummary(files_summary)
     
+    if option_one_PDB == 1 : 
+        struct_neighbor, struct_global_neighbor = loadFile.loadCloseStruct (pr_summary, option_one_PDB = option_one_PDB)
     
     return struct_neighbor, struct_global_neighbor
             

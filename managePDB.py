@@ -31,7 +31,6 @@ def formatFilePDB(dir_PDB):
         system(cmdRemove)  ####run remove repertory
 
 
-
 def appendExtention(rep):
     """Rename global pdb file in repertory with .pdb extention
     in: repertory"""
@@ -40,6 +39,7 @@ def appendExtention(rep):
     for file in listFile : 
         cmd = "mv " + rep + file + " " + rep + file + ".pdb"
         system(cmd)
+
 
 def retrievePDBFile(fileDataset, dir_PDB):
     ligandWithPDB = loadFile.resultFilterPDBLigand(fileDataset)
@@ -85,13 +85,12 @@ def retrievePDB (path_folder_database, path_file_withPDBid):
         except : pass
         
         
-        
 
 
 def retriveListPDB (name_database):
     
     if name_database == "PDB" : 
-        directory_PDB = repertory.repInit + "PDB/"
+        directory_PDB = repertory.pathDitrectoryPDB()
         list_files = listdir(directory_PDB)
         
         list_pdb = []
@@ -113,15 +112,4 @@ def retriveListPDB (name_database):
         
         return formatCharacter.lowerList(list_pdb) 
     
-    
-           
-    
-
-
-
-
-
-
-  
-
     

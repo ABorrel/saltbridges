@@ -6,6 +6,7 @@ import formatCharacter
 import parsing
 import repertory
 import structure
+import checkPDBfile
 
 
 
@@ -226,31 +227,59 @@ def globalPDB(PDB, ligand = ""):
 
 
 
-def loadCloseStruct (pr_result) :
+def loadCloseStruct (pr_result, option_onePDB_ligand = 0) :
     
     if not path.isdir(pr_result) : 
         return None, None
     
     struct_neighbor = structure.neighborStruct()
     struct_global_neighbor = []
-    flag = 0
-    
+    flag_file_empty = 0
     
     l_files = listdir(pr_result)
-    for name_file in l_files : 
-        if search(".sum", name_file) : 
-            if path.getsize(pr_result + name_file) != 0 : 
-                flag = flag + 1
-            sub_struct = name_file.split ("_")[-1].split (".")[0]
-            if sub_struct == "global" : 
-                struct_global_neighbor = loadSummary(pr_result + name_file)
-            else : 
-                struct_neighbor[sub_struct] = loadSummary(pr_result + name_file)
-    
 
-    if flag < 2 : 
-        return None, None
-    return struct_neighbor, struct_global_neighbor 
+    
+    if option_onePDB_ligand == 0 : 
+        for name_file in l_files : 
+            if search(".sum", name_file) : 
+                if path.getsize(pr_result + name_file) != 0 : 
+                    flag_file_empty = flag_file_empty + 1
+                sub_struct = name_file.split ("_")[-1].split (".")[0]
+                if sub_struct == "global" : 
+                    struct_global_neighbor = loadSummary(pr_result + name_file)
+                else : 
+                    struct_neighbor[sub_struct] = loadSummary(pr_result + name_file)
+        
+    
+        if flag_file_empty < 2 : 
+            return None, None
+        return struct_neighbor, struct_global_neighbor 
+    
+    else : 
+        for name_file in l_files : 
+            if search("one.sum", name_file) : 
+                if path.getsize(pr_result + name_file) != 0 : 
+                    flag_file_empty = flag_file_empty + 1
+                sub_struct = name_file.split ("_")[-1].split (".")[0]
+                if sub_struct == "global" : 
+                    struct_global_neighbor = loadSummary(pr_result + name_file)
+                else : 
+                    struct_neighbor[sub_struct] = loadSummary(pr_result + name_file)
+    
+    
+        print flag_file_empty
+        if flag_file_empty < 2 : 
+            struct_neighbor_all, struct_global_neighbor_all = loadCloseStruct (pr_result, option_onePDB_ligand = 0)
+            
+            if struct_neighbor_all == None : 
+                # run the extraction
+                return None, None
+            else : 
+                # select one PDB by ligand
+                for subs in  struct_neighbor.keys () : 
+                    loadOnePDBbyLigand (struct_neighbor[subs], pr_result + "neighbor_" + str(subs) + "_one.sum")
+                loadOnePDBbyLigand (struct_global_neighbor_all, pr_result + "neighbor_global_one.sum")
+                return struct_neighbor, struct_global_neighbor 
             
         
     
@@ -295,5 +324,45 @@ def loadSummary (path_summary) :
     
     
     
+def loadOnePDBbyLigand (st_all, p_filout):
+
+    d_PDB = {}
+    
+    for atom_central in st_all : 
+        if not atom_central["resName"] in d_PDB.keys () : 
+            d_PDB[atom_central["resName"]] = []
+        d_PDB[atom_central["resName"]].append (atom_central["PDB"])
+    
+    # retrieve best PDB
+    for lig_ID in d_PDB.keys () : 
+        if not len (d_PDB[lig_ID]) == 1 : 
+            d_PDB[lig_ID] = checkPDBfile.selectBestPDBamongList (d_PDB[lig_ID])
+
+    # change struct    
+    i = 0
+    nb_lig = len (st_all)
+    while i < nb_lig : 
+        if not st_all[i]["PDB"] in d_PDB[st_all[i]["resName"]]: 
+            del st_all[i]
+            nb_lig = nb_lig - 1
+            continue
+        else : 
+            i = i + 1
+    
+    # write file
+    filout = open (p_filout, "w")
+    for atom_central in st_all :
+        lineWrite = str(atom_central["PDB"]) + "\t" + str(atom_central["serial"]) + "/" + str(atom_central["resName"]) + "/" + str(atom_central["x"]) + "/" + str(atom_central["y"]) +  "/" + str(atom_central["z"]) + "\t"
+        for neighbor in atom_central["neighbors"]:
+            lineWrite = lineWrite + str(neighbor["serial"]) + " " + str(neighbor["resSeq"]) + " " + str(neighbor["element"]) + " " + str(neighbor["name"]) + " " + str(neighbor["resName"]) + " " + str("%.2f" % neighbor["distance"]) + " " +str("%.3f" % neighbor["x"]) + " " +str("%.3f" % neighbor["y"]) + " " +str("%.3f" % neighbor["z"])  
+            for angle in neighbor["angle"]:
+                lineWrite = lineWrite + " " + str("%.2f" % angle)
+            lineWrite = lineWrite + "//"
+        lineWrite = lineWrite + "\n"
+        filout.write (lineWrite)
+    filout.close ()
+    
+
+
 
 

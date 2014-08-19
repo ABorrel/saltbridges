@@ -21,11 +21,11 @@ import loadFile
 
 
 
-def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, option_angle = 0, RX = 3.0, RFree = 0.25, verbose = 1):
+def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, RX = 3.0, RFree = 0.25, verbose = 1):
     
     
     #format input
-#     max_distance = float (max_distance)
+    max_distance = float (max_distance)
      
     # run one database
     path_dir_result_global = repertory.result (name_database)
@@ -52,7 +52,7 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #
     # run for every dataset -> with diffrent resolution
     # short cut
-    list_path_file_dataset = ["/home/borrel/saltBridgesProject/result/PDBTest/dataset_3.00"]
+    list_path_file_dataset = ["/home/borrel/saltBridgesProject/result/PDB/dataset_3.00"]
     print list_path_file_dataset
 
     
@@ -60,41 +60,37 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
     for path_file_dataset in list_path_file_dataset : 
         
         name_folder =  path_file_dataset.split("_")[-1]
-        if option_angle == 1 : 
-            name_folder = name_folder + "_angle"
-        else : 
-            name_folder = name_folder + "_noangle"
                 
         if option_on_complexes_by_ligand == 1 : 
             name_folder = name_folder + "_onecomplexe"
         else : 
             name_folder = name_folder + "_morecomplexe"
             
-        path_dir_result = repertory.result (name_database + "/" + name_folder)
+        pr_result = repertory.result (name_database + "/" + name_folder)
         p_dir_result_het = repertory.result (name_database + "/" + name_folder + "het")
             
            
         print "########"
-        print path_dir_result
+        print pr_result
         print p_dir_result_het
         print "#########"
         
         
 #         # stat -> build structure, not filter is !!!
-    atom_interest_close, global_atom_close = searchPDB.globalSearch(max_distance, path_file_dataset, path_dir_result_global)
+    atom_interest_close, global_atom_close = searchPDB.globalSearch(max_distance, path_file_dataset, path_dir_result_global, option_one_PDB = option_on_complexes_by_ligand)
         
         # remove iron close -> statistic before 
         # Becarful because the dictionnary change
-#     atom_interest_het = hetCloseAnalysis.removeNeighborIron (atom_interest_close)
-#     global_atom_het = hetCloseAnalysis.removeNeighborIron (global_atom_close)
+    atom_interest_het = hetCloseAnalysis.removeNeighborIron (atom_interest_close)
+    global_atom_het = hetCloseAnalysis.removeNeighborIron (global_atom_close)
         
 #         superimpose neighbors -> refaire a Helsinki car MAJ de de la PDB
-#         superimpose.globalNeighbor (atom_interest_close, "Primary", path_dir_result)
-#         superimpose.globalNeighbor (atom_interest_close, "Secondary", path_dir_result)
-#         superimpose.globalNeighbor (atom_interest_close, "Tertiary", path_dir_result)
-#         superimpose.globalNeighbor (atom_interest_close, "Imidazole", path_dir_result)
-#         superimpose.globalNeighbor (atom_interest_close, "Guanidium", path_dir_result)
-#         superimpose.globalNeighbor (atom_interest_close, "AcidCarboxylic", path_dir_result)
+#         superimpose.globalNeighbor (atom_interest_close, "Primary", pr_result)
+#         superimpose.globalNeighbor (atom_interest_close, "Secondary", pr_result)
+#         superimpose.globalNeighbor (atom_interest_close, "Tertiary", pr_result)
+#         superimpose.globalNeighbor (atom_interest_close, "Imidazole", pr_result)
+#         superimpose.globalNeighbor (atom_interest_close, "Guanidium", pr_result)
+#         superimpose.globalNeighbor (atom_interest_close, "AcidCarboxylic", pr_result)
         
 # #         superimpose neighbors -> with het first stabilization 
 #         superimpose.globalNeighbor (atom_interest_het, "Primary", p_dir_result_het)
@@ -104,21 +100,21 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #         superimpose.globalNeighbor (atom_interest_het, "Guanidium", p_dir_result_het)
         
         # check planarity imidazole + guanidium
-# # # #         statistic.planarityImidazole (atom_interest_close, path_dir_result)
-# # # #         statistic.planarityGuanidium (atom_interest_close, path_dir_result)
+# # # #         statistic.planarityImidazole (atom_interest_close, pr_result)
+# # # #         statistic.planarityGuanidium (atom_interest_close, pr_result)
              
         # analyse length bond not use correctly because limited by crystallo quality !!!!
-# # #         statistic.lenBondAnalysis(atom_interest_close, "Primary",path_dir_result)
-# # #         statistic.lenBondAnalysis(atom_interest_close, "Secondary",path_dir_result)
-# # #         statistic.lenBondAnalysis(atom_interest_close, "Tertiary",path_dir_result)
+# # #         statistic.lenBondAnalysis(atom_interest_close, "Primary",pr_result)
+# # #         statistic.lenBondAnalysis(atom_interest_close, "Secondary",pr_result)
+# # #         statistic.lenBondAnalysis(atom_interest_close, "Tertiary",pr_result)
 
 
         # statistic
-    statistic.globalRunStatistic(atom_interest_close, global_atom_close, max_distance, option_angle, path_dir_result)
-#     statistic.globalRunStatistic(atom_interest_het, global_atom_het, max_distance, option_angle, p_dir_result_het)
+    statistic.globalRunStatistic(atom_interest_close, global_atom_close, max_distance, pr_result)
+    statistic.globalRunStatistic(atom_interest_het, global_atom_het, max_distance, p_dir_result_het)
     
     # draw plot
-#     runScriptR.globalStat(max_distance, path_dir_result)
+#     runScriptR.globalStat(max_distance, pr_result)
 #     runScriptR.globalStat(max_distance,  p_dir_result_het)
     
     
@@ -184,9 +180,6 @@ def waterFamily (name_database):
 #   Dataset building PDB file       #
 #####################################
 #Parameters
-# path_folder_database = "/home/borrel/saltBridgesProject/PDB20/"
-# path_folder_database = "/home/borrel/saltBridgesProject/PDB50/"
-# name_folder_result = "PDB50"
 max_distance = 4.0
 # option_on_complexes_by_ligand = 0
 # option_angle = 1
@@ -198,14 +191,13 @@ RFree_thresold = 0.25
 #RUN all
 #PDB 50
 # main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, RX = RX_thresold, RFree = RFree_thresold )
-# main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, option_angle = 0)
 # 
 # # PDB
-# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0)
+# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold)
 
 # test
-main ("PDBTest", max_distance = max_distance, option_on_complexes_by_ligand = 0, option_angle = 0, RX = RX_thresold, RFree = RFree_thresold )
-
+# main ("PDBTest", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold )
+main ("PDBTest", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold )
 
 
 ##############################
@@ -232,47 +224,3 @@ main ("PDBTest", max_distance = max_distance, option_on_complexes_by_ligand = 0,
 # waterFamily("PDB50")
 
 
-
-
-
-
-
-
-"""
-##############################
-#       Help fonctions       # -> found IMD
-##############################
-
-import loadFile
-import repertory
-
-ligandInPDB = loadFile.resultLigandPDB(repertory.result() + "resultLigandInPDB")
-
-list_ligand = ligandInPDB.keys()
-
-nb_ligand = len(list_ligand)
-
-i = 0
-while i < nb_ligand : 
-    if list_ligand[i] == "IMD" : 
-        
-        print i
-        i = nb_ligand
-    else :
-        i = i + 1
-
-
-for dataset in listDataSet : 
-    for onlyOnePDBByLigand in range(0,2) :
-        for optionAngle in range(0,1) :  
-            statistic.neighborsAmine(distanceMax, dataset,onlyOnePDBByLigand, optionAngle)
-            runScriptR.globalStat(3.5, distanceMax)
-            datasetRep = dataset
-            if onlyOnePDBByLigand == 1 : 
-                datasetRep = datasetRep + "_only1PDBbyligand_" + str(distanceMax)
-            if optionAngle == 1 : 
-                datasetRep = datasetRep + "_SelectAngles"
-            
-            tool.moveResult(datasetRep)
-
-"""

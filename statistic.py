@@ -485,7 +485,7 @@ def searchMoreClose (l_neighbors, option_lcopy = 0) :
 
 
 
-def globalRunStatistic(struct_atom_close, global_atom_close, max_distance, option_angle, pr_result):
+def globalRunStatistic(struct_atom_close, global_atom_close, max_distance, pr_result):
     """
     Search close environment of different amines
     arg: -> distance max 
@@ -500,29 +500,23 @@ def globalRunStatistic(struct_atom_close, global_atom_close, max_distance, optio
 # # # # # # # # # # # # # # # # # # # # # # #     countAtLeastOneGlobal = structure.countAtLeastOneGlobalStruct(max_distance)
     
     # distribution distance interest group and type atoms -> distance type
-#     distanceAnalysis(struct_atom_close, repertory.resultDistance(pr_result), logFile)
+    distanceAnalysis(struct_atom_close, repertory.resultDistance(pr_result), logFile)
     
     # angle -> directory angles
-#     angle(struct_atom_close, pr_result, max_distance, logFile)
+    angle(struct_atom_close, pr_result, max_distance, logFile)
     
     # global analysis proximity -1 atom ligand // -2 aa type // -3 atom classification
-#     ligandProx(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
-#     atomProx(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "atmProx"), max_distance, logFile)
-#     resProx(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "resProx"), max_distance, logFile)
-#     classifResProx(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "classifAtmProx"), max_distance, logFile)
-#     atomByAa(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "byAA") ,max_distance, logFile )
+    ligandProx(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
+    atomProx(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "atmProx"), max_distance, logFile)
+    resProx(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "resProx"), max_distance, logFile)
+    classifResProx(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "classifAtmProx"), max_distance, logFile)
+    atomByAa(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "byAA") ,max_distance, logFile )
     
     
     # analyse number of neighbors -> number of atom type (C, O, N)
-#     numberNeighbor (struct_atom_close, repertory.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
-#     neighborAtomComposition(struct_atom_close, repertory.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
+    numberNeighbor (struct_atom_close, repertory.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
+    neighborAtomComposition(struct_atom_close, repertory.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
     firstNeighbor (struct_atom_close, repertory.countNeighbor(pr_result, "firstNeighbor"), logFile)
-    
-    
-    
-    
-    
-#     neighborAtomClass (struct_atom_close, repertory.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
     
     
     
