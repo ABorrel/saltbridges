@@ -479,7 +479,7 @@ def listDistance (distanceMax):
 
 
 def listStructure ():
-    return ["Primary", "Secondary", "Tertiary", "Diamine", "Guanidium", "Imidazole", "Pyridine", "AcidCarboxylic"]
+    return ["Primary", "Secondary", "Tertiary", "Guanidium", "Imidazole", "AcidCarboxylic"]
     
 
 # def listAtLeastOneStudy(): 

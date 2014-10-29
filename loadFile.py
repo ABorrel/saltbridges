@@ -233,7 +233,6 @@ def loadCloseStruct (pr_result, option_onePDB_ligand = 0) :
         return None, None
     
     struct_neighbor = structure.neighborStruct()
-    struct_global_neighbor = []
     flag_file_empty = 0
     
     l_files = listdir(pr_result)
@@ -245,29 +244,32 @@ def loadCloseStruct (pr_result, option_onePDB_ligand = 0) :
                 if path.getsize(pr_result + name_file) != 0 : 
                     flag_file_empty = flag_file_empty + 1
                 sub_struct = name_file.split ("_")[-1].split (".")[0]
-                if sub_struct == "global" : 
-                    struct_global_neighbor = loadSummary(pr_result + name_file)
+                if sub_struct == "one" : 
+                    continue
                 else : 
-                    struct_neighbor[sub_struct] = loadSummary(pr_result + name_file)
-        
-    
+                    if path.getsize(pr_result + name_file) != 0 : 
+                        flag_file_empty = flag_file_empty + 1
+                    if sub_struct == "global" : 
+                        struct_global_temp = loadSummary(pr_result + name_file)
+                    else : 
+                        struct_neighbor[sub_struct] = loadSummary(pr_result + name_file)
         if flag_file_empty < 2 : 
             return None, None
-        return struct_neighbor, struct_global_neighbor 
-    
+        else : 
+            struct_global_neighbor = {}
+            struct_global_neighbor["global"] = struct_global_temp
+            return struct_neighbor, struct_global_neighbor 
     else : 
         for name_file in l_files : 
             if search("one.sum", name_file) : 
                 if path.getsize(pr_result + name_file) != 0 : 
                     flag_file_empty = flag_file_empty + 1
-                sub_struct = name_file.split ("_")[-1].split (".")[0]
+                sub_struct = name_file.split ("_")[-2].split (".")[0]
                 if sub_struct == "global" : 
-                    struct_global_neighbor = loadSummary(pr_result + name_file)
+                    struct_global_temp = loadSummary(pr_result + name_file)
                 else : 
                     struct_neighbor[sub_struct] = loadSummary(pr_result + name_file)
-    
-    
-        print flag_file_empty
+                    
         if flag_file_empty < 2 : 
             struct_neighbor_all, struct_global_neighbor_all = loadCloseStruct (pr_result, option_onePDB_ligand = 0)
             
@@ -277,13 +279,19 @@ def loadCloseStruct (pr_result, option_onePDB_ligand = 0) :
             else : 
                 # select one PDB by ligand
                 for subs in  struct_neighbor.keys () : 
-                    loadOnePDBbyLigand (struct_neighbor[subs], pr_result + "neighbor_" + str(subs) + "_one.sum")
-                loadOnePDBbyLigand (struct_global_neighbor_all, pr_result + "neighbor_global_one.sum")
-                return struct_neighbor, struct_global_neighbor 
+                    loadOnePDBbyLigand (struct_neighbor_all[subs], pr_result + "neighbor_" + str(subs) + "_one.sum")
+                loadOnePDBbyLigand (struct_global_neighbor_all["global"], pr_result + "neighbor_global_one.sum")
+                
+                return struct_neighbor, struct_global_neighbor_all 
+        else :
+            struct_global_neighbor = {}
+            struct_global_neighbor["global"] = struct_global_temp
+            return struct_neighbor, struct_global_neighbor
             
         
     
 def loadSummary (path_summary) : 
+    
     
     l_out = []
     
@@ -324,19 +332,34 @@ def loadSummary (path_summary) :
     
     
     
-def loadOnePDBbyLigand (st_all, p_filout):
+def loadOnePDBbyLigand (st_all, p_filout, debug = 0):
 
     d_PDB = {}
     
     for atom_central in st_all : 
         if not atom_central["resName"] in d_PDB.keys () : 
             d_PDB[atom_central["resName"]] = []
-        d_PDB[atom_central["resName"]].append (atom_central["PDB"])
+        if not atom_central["PDB"] in  d_PDB[atom_central["resName"]] : 
+            d_PDB[atom_central["resName"]].append (atom_central["PDB"])
+    
+    if debug == 1 : 
+        for lig_id in d_PDB.keys () : 
+            print lig_id, d_PDB[lig_id], "DEBUG"
     
     # retrieve best PDB
     for lig_ID in d_PDB.keys () : 
         if not len (d_PDB[lig_ID]) == 1 : 
             d_PDB[lig_ID] = checkPDBfile.selectBestPDBamongList (d_PDB[lig_ID])
+
+
+    
+    if debug == 1 :
+        print "**********"
+        print d_PDB 
+        for lig_id in d_PDB.keys () : 
+            print lig_id, d_PDB[lig_id], "DEBUG"
+    
+
 
     # change struct    
     i = 0

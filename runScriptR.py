@@ -287,7 +287,7 @@ def proportionAtomClassNeighbor (p_filin, logFile, verbose = 1):
 
 def AFCPieFirstNeighbor (p_filin, logFile, verbose = 1):
     
-    cmd = "AFCNeighbor.R " + p_filin
+    cmd = repertory.scriptR() + "AFCNeighbor.R " + p_filin
     system (cmd)
     if verbose == 1 : print cmd
     logFile.write (cmd)
@@ -348,7 +348,6 @@ def plot3D (p_file_coord) :
 def plotAngleVs (path_filin):    
     
     cmd = repertory.scriptR() + "plotAngleVS.R " + path_filin
-    
     print cmd
     system (cmd)
     
@@ -361,4 +360,12 @@ def AFC (pr_neighbors, number_neighbor):
     system (cmd)
 
 
+def multiHist (pr_filin):
+    
+    cmd = repertory.scriptR() + "multihist.R " + pr_filin 
+    print cmd
+    system (cmd)
+    
+    
+    
     

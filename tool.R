@@ -28,13 +28,40 @@ pieType = function (d, path_out){
 library (FactoMineR)
 
 factorAFC = function (xplot, yplot, xplotdata, yplotdata ){
-	#return (1)
-	factor = 1
-	while ( abs(max(xplot)) < max(abs(xplotdata)) && abs(max(yplot)) < max(abs(yplotdata)) ){
-		factor = factor + 0.2
-		xplot = xplot * factor
-		yplot = yplot* factor
+	# max window
+	print (yplotdata)
 
+	max_window_x = max (abs (xplotdata))
+	max_window_y = max (abs (yplotdata))
+
+	# max coordinate
+	max_x = max (abs (xplot))
+	max_y = max (abs (yplot))
+
+
+	factor = 1
+	while ( max_x < max_window_x  && max_y < max_window_y ){
+		factor = factor + 0.1
+		max_x = max_x * factor
+		max_y = max_y * factor
+
+	}
+
+
+	if (factor == 1 ){
+		while ( max_x > max_window_x || max_y > max_window_y ){
+
+			#print (max_x)
+			#print (max_y)
+			#print (max_window_x)
+			#print (max_window_y)
+			#print ("********")
+
+			factor = factor - 0.2
+			max_x = max_x * factor
+			max_y = max_y * factor
+			
+		}
 	}
 	return (factor)	
 }
@@ -50,13 +77,12 @@ AFC = function (d, path_file){
 	par(mar=c(8,8,8,8))
 
 	# descriptors
-	plot (r$row$coord[,1], r$row$coord[,2], type = "n", xlab = paste("DIM 1 : ", round(r$eig[1,2],1), "%", sep = ""), ylab = paste("DIM 2 : ", round(r$eig[2,2],1), "%", sep = ""), cex.lab = 2.4, ylim = c(-max(r$row$coord[,2]), max(r$row$coord[,2])), xlim = c(-max(r$row$coord[,1]), max(r$row$coord[,1])))
+	plot (r$row$coord[,1], r$row$coord[,2], type = "n", xlab = paste("DIM 1 : ", round(r$eig[1,2],1), "%", sep = ""), ylab = paste("DIM 2 : ", round(r$eig[2,2],1), "%", sep = ""), cex.lab = 2.4, ylim = c(-max(abs(r$row$coord[,2])), max(abs(r$row$coord[,2]))), xlim = c(-max(abs(r$row$coord[,1])), max(abs(r$row$coord[,1]))))
 	col_des = defColor(names(r$col$coord[,1]))
-
+	print (col_des)
 	factor = factorAFC (r$col$coord[,1], r$col$coord[,2], r$row$coord[,1], r$row$coord[,2] )
 
 	arrows (0,0,r$col$coord[,1]*factor, r$col$coord[,2]*factor, col = as.character(col_des), lwd = 3 )
-	#text (r$col$coord[,1]*factor, r$col$coord[,2]*factor, labels = names(r$col$coord[,1]), col = as.character(col_des), cex = 1.4)
 
 	# data
 	text (r$row$coord[,1], r$row$coord[,2], col = "#009DE0", label = names (r$row$coord[,1]), cex = 2)
@@ -108,7 +134,7 @@ defColor = function (l_name){
 			out = append (out, "green")
 		}
 		else if (element == "OxAccept"){
-			out = append (out, "lemonchiffon")
+			out = append (out, "bisque3")
 		}
 		else if (element == "H2O"){
 			out = append (out, "cyan")
@@ -193,4 +219,9 @@ deviationAngle = function(matrixAngle){
 
 }
 
+
+is.integer0 <- function(x)
+{
+  is.integer(x) && length(x) == 0L
+}
 

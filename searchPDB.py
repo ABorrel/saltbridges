@@ -37,10 +37,10 @@ def interestStructure (listAtomLigand, debug = 0):
             structureFound.append("Imidazole")
         elif guanidium(listAtomConnectNitrogen, listAtomLigand)[0] == 1 : 
             structureFound.append("Guanidium")    
-        elif diAmine(listAtomConnectNitrogen, listAtomLigand) == 1 : 
-            structureFound.append("Diamine")     
-        elif pyridine(listAtomConnectNitrogen, listAtomLigand) == 1 : 
-            structureFound.append("Pyridine")    
+#         elif diAmine(listAtomConnectNitrogen, listAtomLigand) == 1 : 
+#             structureFound.append("Diamine")     
+#         elif pyridine(listAtomConnectNitrogen, listAtomLigand) == 1 : 
+#             structureFound.append("Pyridine")    
         elif cn (listAtomConnectNitrogen, listAtomLigand) == 1:
             structureFound.append("Primary")
         elif cnc(listAtomConnectNitrogen, listAtomLigand) == 1:
@@ -502,6 +502,8 @@ def globalSearch (max_distance, p_file_dataset,  pr_result, option_one_PDB = 0):
     # load structure in summary ---> if use need place option one PDB by ligand
     struct_neighbor, struct_global_neighbor = loadFile.loadCloseStruct (pr_summary, option_one_PDB)
     if struct_neighbor != None : 
+        print "********INNNNNN*************"
+        print type (struct_global_neighbor["global"])
         return struct_neighbor, struct_global_neighbor
      
     
@@ -546,9 +548,17 @@ def globalSearch (max_distance, p_file_dataset,  pr_result, option_one_PDB = 0):
     writeFile.closeFileSummary(files_summary)
     
     if option_one_PDB == 1 : 
-        struct_neighbor, struct_global_neighbor = loadFile.loadCloseStruct (pr_summary, option_one_PDB = option_one_PDB)
+        struct_neighbor, struct_global_neighbor = loadFile.loadCloseStruct (pr_summary,  option_onePDB_ligand = option_one_PDB)
     
-    return struct_neighbor, struct_global_neighbor
+    # case where load directly substructure
+    if not "global" in struct_global_neighbor.keys () : 
+        struct_global = {}
+        struct_global["global"] = struct_global_neighbor
+        return struct_neighbor, struct_global
+    else :
+        struct_global = struct_global_neighbor
+    
+    return struct_neighbor, struct_global
             
 
 
@@ -577,10 +587,10 @@ def interestGroup (max_distance, list_atom_ligand, name_PDB, struct_neighbor):
             implementNeighborStruct (max_distance, listAtomConnectNitrogen, name_PDB, list_atom_ligand, "Imidazole", d_imd_temp)
         elif guanidium(listAtomConnectNitrogen, list_atom_ligand)[0] == 1:
             implementNeighborStruct (max_distance, listAtomConnectNitrogen, name_PDB, list_atom_ligand, "Guanidium", d_gua_temp)
-        elif diAmine(listAtomConnectNitrogen, list_atom_ligand) == 1:
-            implementNeighborStruct (max_distance, listAtomConnectNitrogen, name_PDB, list_atom_ligand, "Diamine", d_dia_temp)
-        elif pyridine(listAtomConnectNitrogen, list_atom_ligand) == 1:
-            implementNeighborStruct (max_distance, listAtomConnectNitrogen, name_PDB, list_atom_ligand, "Pyridine", struct_neighbor)
+#         elif diAmine(listAtomConnectNitrogen, list_atom_ligand) == 1:
+#             implementNeighborStruct (max_distance, listAtomConnectNitrogen, name_PDB, list_atom_ligand, "Diamine", d_dia_temp)
+#         elif pyridine(listAtomConnectNitrogen, list_atom_ligand) == 1:
+#             implementNeighborStruct (max_distance, listAtomConnectNitrogen, name_PDB, list_atom_ligand, "Pyridine", struct_neighbor)
         elif cn(listAtomConnectNitrogen, list_atom_ligand) == 1:
             implementNeighborStruct (max_distance, listAtomConnectNitrogen, name_PDB, list_atom_ligand, "Primary", struct_neighbor)
         elif cnc(listAtomConnectNitrogen, list_atom_ligand) == 1:

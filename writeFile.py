@@ -329,6 +329,56 @@ def countFirstNeighbor (stCount, pr_result):
         filout.write("\n")
     filout.close ()
     return [pr_result + "countFirst"]
+
+
+
+def distanceCountStruct(stCount, pr_result) : 
+    
+    l_filout = []
+    
+    print 
+    for sub_struct in stCount.keys() : 
+        filout = open (pr_result + "DistanceFirst" + str (sub_struct) + ".txt", "w")
+        l_filout.append (pr_result + "DistanceFirst" + str (sub_struct) + ".txt")
+        nb_fisrt = len (stCount[sub_struct][1]["distance"])
+        
+        print stCount[sub_struct][1]["distance"]
+        
+        i = 0
+        while i < nb_fisrt : 
+            print i
+            filout.write (str(stCount[sub_struct][1]["distance"][i]) + "\t" + str (stCount[sub_struct][1]["classe"][i]) + "\n")
+            print stCount[sub_struct][1]["distance"][i], stCount[sub_struct][1]["classe"][i]
+            i = i + 1
+        filout.close ()
+        
+    return l_filout
+    
+
+
+
+
+def countNeighborsAll(stCount, pr_result):
+    
+    l_typeatom = structure.classificationATOM("", out_list= 1)   
+    filout = open (pr_result + "countAll", "w")
+    filout.write ("\t".join(l_typeatom) + "\n")
+    
+    for sub_struct in stCount.keys() : 
+        filout.write (sub_struct)
+        for class_atom in l_typeatom : 
+            count = 0
+            for i_neighbor in stCount[sub_struct].keys () :
+                print i_neighbor, ">-----<" 
+                if type(stCount[sub_struct][i_neighbor]) == dict and class_atom in stCount[sub_struct][i_neighbor].keys () : 
+                    count = count + stCount[sub_struct][i_neighbor][class_atom]
+            filout.write("\t" + str(count)) # first neighbors
+        filout.write("\n")
+    filout.close ()
+    return [pr_result + "countAll"]
+
+
+
         
 def resultNeighbor (countStruct, pr_result) : 
     """
@@ -545,6 +595,7 @@ def resultResProx(stCount, distance_max, pr_result):
     
     for substruct in stCount.keys () : 
         print substruct, "-----"
+        print stCount[substruct]
         p_filout = pr_result + substruct + "resCount"
         l_p_filout.append (p_filout)
         filout = open (p_filout, "w")

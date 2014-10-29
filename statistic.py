@@ -358,7 +358,7 @@ def neighborAtomComposition(stAtom, pr_result, max_distance, logFile) :
     stCount = {}
     for substruct in stAtom.keys () : 
         stCount[substruct] = {}
-        searchNeighbor (stAtom, stCount, substruct, 8)
+        searchNeighbor (stAtom, stCount, substruct)
     
     # write files
     l_files_result = writeFile.proportionByPositionNeighbors(stCount, pr_result)
@@ -368,15 +368,41 @@ def neighborAtomComposition(stAtom, pr_result, max_distance, logFile) :
         runScriptR.proportionAtomClassNeighbor (file_result, logFile)
 
 
-def firstNeighbor (stAtom, pr_result, logFile):
+def firstNeighbor (stAtom, stAtomGlobal, pr_result, logFile):
+
 
     stCount = {}
     for substruct in stAtom.keys () : 
         stCount[substruct] = {}
-        searchNeighbor (stAtom, stCount, substruct, 1)
+        searchNeighbor (stAtom, stCount, substruct)
+    stCount["global"] = {}
+    searchNeighbor (stAtomGlobal, stCount, "global")
+    
     
     # write files
-    l_files_result = writeFile.countFirstNeighbor(stCount, pr_result)
+    l_files_count = writeFile.countFirstNeighbor(stCount, pr_result)
+    l_files_dist = writeFile.distanceCountStruct(stCount, pr_result)
+    
+    
+    for file_result in l_files_count : 
+        runScriptR.AFCPieFirstNeighbor (file_result, logFile)      
+    
+    for files_dist in l_files_dist : 
+        runScriptR.multiHist(files_dist)  
+
+
+def allNeighbors (stAtom, stAtomGlobal, pr_result, logFile):
+
+    stCount = {}
+    for substruct in stAtom.keys () : 
+        stCount[substruct] = {}
+        searchNeighbor (stAtom, stCount, substruct)
+    
+    # global
+    stCount["global"] = {}
+    searchNeighbor (stAtomGlobal, stCount, "global")
+    # write files
+    l_files_result = writeFile.countNeighborsAll(stCount, pr_result)
     
     for file_result in l_files_result : 
         runScriptR.AFCPieFirstNeighbor (file_result, logFile)        
@@ -384,7 +410,7 @@ def firstNeighbor (stAtom, pr_result, logFile):
 
 
     
-def searchNeighbor (stAtom, stCount, sub_struct, nb_neighbor):
+def searchNeighbor (stAtom, stCount, sub_struct):
     """
     Search neigbor in proximity
     """
@@ -398,12 +424,14 @@ def searchNeighbor (stAtom, stCount, sub_struct, nb_neighbor):
     neig_temp = deepcopy(stAtom[sub_struct])
     for atom_central in neig_temp : 
         l_neighbor = atom_central["neighbors"]
-        if len(l_neighbor) == 0  : 
+        nb_neighbor =  len(l_neighbor)   
+        if nb_neighbor == 0  : 
             continue
-                         
+        
+                    
         dtemp_angle = {}
         for i in range(1,nb_neighbor+1) :
-            classif_first, atom_first = searchMoreClose (l_neighbor)
+            classif_first, atom_first = searchMoreClose (l_neighbor) # remove the atom closer
             dtemp_angle[i] = atom_first
                              
             if classif_first == None : 
@@ -461,27 +489,12 @@ def searchMoreClose (l_neighbors, option_lcopy = 0) :
             atom_out = deepcopy(l_neighbors_use[i])
             i_out = i
         i = i + 1 
-     
+
     del l_neighbors_use[i_out]
     return classe_out, atom_out    
      
     
     
-    
-    
-    
-    
-    
-    
-    
-
-
-
-
-
-
-
-
 
 
 
@@ -494,98 +507,82 @@ def globalRunStatistic(struct_atom_close, global_atom_close, max_distance, pr_re
     
     start, logFile = log.initAction("RUN Statistic")
 
-   # remove structure count -> write directly the file to plot 
-# # # # # # # # # # # # # # #     # ##Count Structure
-# # # # # # # # # # # # # # # # # # # # # # #     countStruct = structure.countGlobalAmine(max_distance)  # global structure count
-# # # # # # # # # # # # # # # # # # # # # # #     countAtLeastOneGlobal = structure.countAtLeastOneGlobalStruct(max_distance)
-    
-    # distribution distance interest group and type atoms -> distance type
-    distanceAnalysis(struct_atom_close, repertory.resultDistance(pr_result), logFile)
-    
-    # angle -> directory angles
-    angle(struct_atom_close, pr_result, max_distance, logFile)
-    
-    # global analysis proximity -1 atom ligand // -2 aa type // -3 atom classification
-    ligandProx(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
-    atomProx(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "atmProx"), max_distance, logFile)
-    resProx(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "resProx"), max_distance, logFile)
-    classifResProx(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "classifAtmProx"), max_distance, logFile)
-    atomByAa(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "byAA") ,max_distance, logFile )
-    
-    
-    # analyse number of neighbors -> number of atom type (C, O, N)
-    numberNeighbor (struct_atom_close, repertory.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
-    neighborAtomComposition(struct_atom_close, repertory.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
-    firstNeighbor (struct_atom_close, repertory.countNeighbor(pr_result, "firstNeighbor"), logFile)
+#     distribution distance interest group and type atoms -> distance type
+#     distanceAnalysis(struct_atom_close, repertory.resultDistance(pr_result), logFile)
+#       
+# #     angle -> directory angles
+#     angle(struct_atom_close, pr_result, max_distance, logFile)
+#       
+# #     global analysis proximity -1 atom ligand // -2 aa type // -3 atom classification
+#     ligandProx(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
+#     atomProx(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "atmProx"), max_distance, logFile)
+#     resProx(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "resProx"), max_distance, logFile)
+#     classifResProx(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "classifAtmProx"), max_distance, logFile)
+#     atomByAa(struct_atom_close, repertory.countGlobalProx (pr_result, name_in = "byAA") ,max_distance, logFile )
+#       
+#       
+# #     analyse number of neighbors -> number of atom type (C, O, N)
+#     numberNeighbor (struct_atom_close, repertory.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
+#     neighborAtomComposition(struct_atom_close, repertory.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
+    firstNeighbor (struct_atom_close, global_atom_close, repertory.countNeighbor(pr_result, "firstNeighbor"), logFile)
+    allNeighbors (struct_atom_close, global_atom_close, repertory.countNeighbor(pr_result, "allNeighbor"), logFile)
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-#     atom(struct_atom_close, countStruct[str(max_distance)]["atom"])
-#     ligand(struct_atom_close, countStruct[str(max_distance)]["ligand"])
-#     atomByAa(struct_atom_close, countStruct[str(max_distance)]["byAA"])
-#     
-#     relationNeighbors (struct_atom_close, countStruct[str(max_distance)]["threeAnalysis"])
-#     relationNeighbors (global_atom_close, countStruct[str(max_distance)]["threeAnalysis"])
-# 
-#     # number of neighbor average
-#     numberNeighbor (struct_atom_close, countStruct[str(max_distance)]["numberNeighbors"])
-#     numberNeighbor (global_atom_close, countStruct[str(max_distance)]["numberNeighbors"])
-# 
-#     distance = max_distance
-# 
-#     while distance >= 2:
-# #         print distance
-#         # reduce structure with distance criterion
-#         neighborDistance(distance, max_distance, struct_atom_close)
-#         neighborDistanceList(distance, max_distance, global_atom_close) # analyse every distance
-#         
-# 
-#         proportionAtoms.stAtom(struct_atom_close, countStruct[str(distance)]["proportionAtom"])
-#         proportionType.stAtom(struct_atom_close, countStruct[str(distance)]["proportionType"])
-#         proportionAtoms.globalNeighbors(global_atom_close, countStruct[str(distance)]["proportionAtom"]["Global"])
-#         proportionType.globalNeighbors(global_atom_close, countStruct[str(distance)]["proportionType"]["Global"])
-#         
-#         residue(struct_atom_close, countStruct[str(distance)]["residue"])
-# #                 
-# #         # cumul at least one -> interest group
-#         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid"])
-#         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["H2O"])
-#         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["ODonAcc"])
-#         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["Carom"])
-#         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc"])
-#         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc", "H2O"])
-#         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["Nhis", "Nbasic"])
-# #        -> every atom         
-#         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid"])
-#         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["H2O"])
-#         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["ODonAcc"])
-#         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["Carom"])
-#         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc"])
-#         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc", "H2O"])
-#         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["Nhis", "Nbasic"])
-# #                 
-#         globalAtomResidue(global_atom_close, countStruct[str(distance)]["ResidueAllAtom"])
-#         angle(struct_atom_close, countStruct[str(distance)]["angle"])
-#         
-#         
-#         
-#         distance = distance - 0.5
-# #                 
-# # 
-#     writeFile.countGlobalCount(max_distance, countStruct, pr_result)
-#     writeFile.resultAtLeastOne(countAtLeastOneGlobal, countStruct, max_distance, pr_result)
+# # # # # # # #     atom(struct_atom_close, countStruct[str(max_distance)]["atom"])
+# # # # # # # #     ligand(struct_atom_close, countStruct[str(max_distance)]["ligand"])
+# # # # # # # #     atomByAa(struct_atom_close, countStruct[str(max_distance)]["byAA"])
+# # # # # # # #     
+# # # # # # # #     relationNeighbors (struct_atom_close, countStruct[str(max_distance)]["threeAnalysis"])
+# # # # # # # #     relationNeighbors (global_atom_close, countStruct[str(max_distance)]["threeAnalysis"])
+# # # # # # # # 
+# # # # # # # #     # number of neighbor average
+# # # # # # # #     numberNeighbor (struct_atom_close, countStruct[str(max_distance)]["numberNeighbors"])
+# # # # # # # #     numberNeighbor (global_atom_close, countStruct[str(max_distance)]["numberNeighbors"])
+# # # # # # # # 
+# # # # # # # #     distance = max_distance
+# # # # # # # # 
+# # # # # # # #     while distance >= 2:
+# # # # # # # # #         print distance
+# # # # # # # #         # reduce structure with distance criterion
+# # # # # # # #         neighborDistance(distance, max_distance, struct_atom_close)
+# # # # # # # #         neighborDistanceList(distance, max_distance, global_atom_close) # analyse every distance
+# # # # # # # #         
+# # # # # # # # 
+# # # # # # # #         proportionAtoms.stAtom(struct_atom_close, countStruct[str(distance)]["proportionAtom"])
+# # # # # # # #         proportionType.stAtom(struct_atom_close, countStruct[str(distance)]["proportionType"])
+# # # # # # # #         proportionAtoms.globalNeighbors(global_atom_close, countStruct[str(distance)]["proportionAtom"]["Global"])
+# # # # # # # #         proportionType.globalNeighbors(global_atom_close, countStruct[str(distance)]["proportionType"]["Global"])
+# # # # # # # #         
+# # # # # # # #         residue(struct_atom_close, countStruct[str(distance)]["residue"])
+# # # # # # # # #                 
+# # # # # # # # #         # cumul at least one -> interest group
+# # # # # # # #         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid"])
+# # # # # # # #         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["H2O"])
+# # # # # # # #         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["ODonAcc"])
+# # # # # # # #         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["Carom"])
+# # # # # # # #         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc"])
+# # # # # # # #         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc", "H2O"])
+# # # # # # # #         countAtLeastOne(struct_atom_close, countStruct[str(distance)]["atLeastOne"], ["Nhis", "Nbasic"])
+# # # # # # # # #        -> every atom         
+# # # # # # # #         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid"])
+# # # # # # # #         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["H2O"])
+# # # # # # # #         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["ODonAcc"])
+# # # # # # # #         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["Carom"])
+# # # # # # # #         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc"])
+# # # # # # # #         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc", "H2O"])
+# # # # # # # #         countAtLeastOne(global_atom_close, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["Nhis", "Nbasic"])
+# # # # # # # # #                 
+# # # # # # # #         globalAtomResidue(global_atom_close, countStruct[str(distance)]["ResidueAllAtom"])
+# # # # # # # #         angle(struct_atom_close, countStruct[str(distance)]["angle"])
+# # # # # # # #         
+# # # # # # # #         
+# # # # # # # #         
+# # # # # # # #         distance = distance - 0.5
+# # # # # # # # #                 
+# # # # # # # # # 
+# # # # # # # #     writeFile.countGlobalCount(max_distance, countStruct, pr_result)
+# # # # # # # #     writeFile.resultAtLeastOne(countAtLeastOneGlobal, countStruct, max_distance, pr_result)
 
     log.endAction("END Staistic run !!!", start, logFile)
 
@@ -664,84 +661,85 @@ def globalRunStatistic(struct_atom_close, global_atom_close, max_distance, pr_re
 #                 break # found at least one
 # 
 #                     
-# def planarityImidazole (atom_interest_close, p_dir_result) : 
-#     
-#     l_imidazole_atom_central = atom_interest_close["Imidazole"]
-#     
-#     
-#     p_dir_result = repertory.coplorIMD (p_dir_result)
-#     p_filout = p_dir_result + "coplarRing.txt"
-#     filout = open (p_filout, "w")
-# 
-#     nb_imd = len (l_imidazole_atom_central)
-#     i = 0
-#     while i < nb_imd : 
-#         PDB_ID = l_imidazole_atom_central[i]["PDB"]
-#         serial_at_central = l_imidazole_atom_central[i]["serial"]
-#         name_ligand =  l_imidazole_atom_central[i]["resName"]
-#         
-#         # load ligand
-#         l_at_lig = loadFile.ligandInPDB(PDB_ID, name_ligand)
-#         
-#         # load structure
-#         l_at_subs = retrieveAtom.substructure ("Imidazole", serial_at_central, l_at_lig)
-#         
-#         # coplar
-#         d_coplar = calcul.coplanarPoint(l_at_subs[3], [l_at_subs[0],l_at_subs[1], l_at_subs[2]])
-#         filout.write (str(d_coplar) + "\n")
-#         
-#         # criterion dell no IMD -> not used
-# #         if d_coplar > 0.01 :
-# #             del l_imidazole_atom_central[i]
-# #             nb_imd = nb_imd - 1
-# #         else : 
-#         i = i + 1
-#     
-#         filout.write (str(d_coplar) + "\n")
-#     filout.close ()
-#     
-#     
-# def planarityGuanidium (atom_interest_close, p_dir_result) : 
-#     
-#     l_guanidium_atom_central = atom_interest_close["Guanidium"]
-#     
-#     
-#     p_dir_result = repertory.coplorGUA (p_dir_result)
-#     p_filout = p_dir_result + "coplarRing.txt"
-#     filout = open (p_filout, "w")
-# 
-#     nb_gua = len (l_guanidium_atom_central)
-#     i = 0
-#     while i < nb_gua : 
-#         PDB_ID = l_guanidium_atom_central[i]["PDB"]
-#         serial_at_central = l_guanidium_atom_central[i]["serial"]
-#         name_ligand =  l_guanidium_atom_central[i]["resName"]
-#         
-#         # load ligand
-#         l_at_lig = loadFile.ligandInPDB(PDB_ID, name_ligand)
-#         
-#         # load structure
-#         l_at_subs = retrieveAtom.substructure ("Guanidium", serial_at_central, l_at_lig)
-# #         print len (l_at_subs)
-# #         print l_at_subs[0]["element"], l_at_subs[1]["element"], l_at_subs[2]["element"], l_at_subs[3]["element"], l_at_subs[4]["element"]
-#         
-#         # coplar
-#         d_coplar = calcul.coplanarPoint(l_at_subs[0], [l_at_subs[1],l_at_subs[2], l_at_subs[3]])
-# #         print d_coplar
-#         filout.write (str(d_coplar) + "\n")
-#         
-#         # criterion dell no IMD -> not used
-#         if d_coplar > 0.5 :
-#             del l_guanidium_atom_central[i]
-#             nb_gua = nb_gua - 1
+def planarityImidazole (atom_interest_close, p_dir_result) : 
+     
+    l_imidazole_atom_central = atom_interest_close["Imidazole"]
+     
+     
+    p_dir_result = repertory.coplorIMD (p_dir_result)
+    p_filout = p_dir_result + "coplarRing.txt"
+    filout = open (p_filout, "w")
+ 
+    nb_imd = len (l_imidazole_atom_central)
+    i = 0
+    while i < nb_imd : 
+        PDB_ID = l_imidazole_atom_central[i]["PDB"]
+        serial_at_central = l_imidazole_atom_central[i]["serial"]
+        name_ligand =  l_imidazole_atom_central[i]["resName"]
+         
+        # load ligand
+        l_at_lig = loadFile.ligandInPDB(PDB_ID, name_ligand)
+         
+        # load structure
+        l_at_subs = retrieveAtom.substructure ("Imidazole", serial_at_central, l_at_lig)
+         
+        # coplar
+        d_coplar = calcul.coplanarPoint(l_at_subs[3], [l_at_subs[0],l_at_subs[1], l_at_subs[2]])
+        filout.write (str(d_coplar) + "\n")
+         
+        # criterion dell no IMD -> not used
+#         if d_coplar > 0.01 :
+#             del l_imidazole_atom_central[i]
+#             nb_imd = nb_imd - 1
 #         else : 
-#             i = i + 1
-#     
-#         
-#         filout.write (str(d_coplar) + "\n")
-#     filout.close ()   
-#     
-#     
+        i = i + 1
+     
+        filout.write (str(d_coplar) + "\n")
+    filout.close ()
+
+
+
+def planarityGuanidium (atom_interest_close, p_dir_result) : 
+     
+    l_guanidium_atom_central = atom_interest_close["Guanidium"]
+     
+     
+    p_dir_result = repertory.coplorGUA (p_dir_result)
+    p_filout = p_dir_result + "coplarRing.txt"
+    filout = open (p_filout, "w")
+ 
+    nb_gua = len (l_guanidium_atom_central)
+    i = 0
+    while i < nb_gua : 
+        PDB_ID = l_guanidium_atom_central[i]["PDB"]
+        serial_at_central = l_guanidium_atom_central[i]["serial"]
+        name_ligand =  l_guanidium_atom_central[i]["resName"]
+         
+        # load ligand
+        l_at_lig = loadFile.ligandInPDB(PDB_ID, name_ligand)
+         
+        # load structure
+        l_at_subs = retrieveAtom.substructure ("Guanidium", serial_at_central, l_at_lig)
+#         print len (l_at_subs)
+#         print l_at_subs[0]["element"], l_at_subs[1]["element"], l_at_subs[2]["element"], l_at_subs[3]["element"], l_at_subs[4]["element"]
+         
+        # coplar
+        d_coplar = calcul.coplanarPoint(l_at_subs[0], [l_at_subs[1],l_at_subs[2], l_at_subs[3]])
+#         print d_coplar
+        filout.write (str(d_coplar) + "\n")
+         
+        # criterion dell no IMD -> not used
+        if d_coplar > 0.5 :
+            del l_guanidium_atom_central[i]
+            nb_gua = nb_gua - 1
+        else : 
+            i = i + 1
+     
+         
+        filout.write (str(d_coplar) + "\n")
+    filout.close ()   
+     
+     
 
 
 
