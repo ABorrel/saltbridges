@@ -38,6 +38,14 @@ for (element in l_element){
 	plot(data[,1], data[,2], xlab = "Distance Å", ylab = "Deviation of two angles", type = "n", xlim = c(1.5,5), main = as.character(element))
 	try(points(as.double(data_plot[,2])~as.double(data_plot[,1]), col = color_element[element], pch = 19))
 	dev.off()
+	
+	png(filename = paste(file , element, "density_deviation.png" , sep = ""), , width=6000, height = 6000)
+	
+	par(mar=c(30,30,30,30))
+
+	smoothScatter(data_plot, main = "", xlim = c(1.5,4), cex.lab = 10, xlab = "", ylab = "", cex.axis = 10, cex.main = 6)
+	dev.off()
+
 }
 
 png(filename=paste(file, "_angleDistribution.png", sep = ""))

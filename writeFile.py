@@ -214,7 +214,6 @@ def disributionNumberNeighbor (stCount, pr_result) :
             p_filout = pr_result + subs + distance
             l_p_filout.append (p_filout)
             filout = open (p_filout, "w")
-            print stCount[subs][distance]
             filout.write ("\n".join ([str(i) for i in stCount[subs][distance]]))
         filout.close ()
     return l_p_filout

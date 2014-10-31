@@ -323,29 +323,19 @@ def numberNeighbor (stAtom, pr_result, max_distance, logFile) :
         for atom_central in stAtom[substruct] :
             if atom_central["neighbors"] == []:
                 continue
-            d_temp = {}
-            for neighbor in atom_central["neighbors"] : 
-                f = 0
-                for distance in l_distance : 
-                    if not distance in stCount[substruct].keys () : 
-                        stCount[substruct][distance] = []
-                    if not distance in  d_temp.keys () : 
-                        d_temp[distance] = 0
-                    if neighbor["distance"] < float(distance) and f == 0: 
-                        d_temp[distance] = d_temp[distance] + 1
-                        f = 1
             
-            # cumul result
-            print d_temp
-            print l_distance
-            for d1 in l_distance [:-1]: 
-                for d2 in l_distance[1:] : 
-                    d_temp[d2] = d_temp[d2] + d_temp[d1]
-            for k in stCount[substruct].keys () : 
-                stCount[substruct][k].append (deepcopy(d_temp[k]))
-    
-    
-    
+            for distance in l_distance : 
+                count = 0
+                for neighbor in atom_central["neighbors"] : 
+                        if float(neighbor["distance"]) < float(distance) : 
+                            count = count + 1
+                
+                if not distance in stCount[substruct] :
+                    stCount[substruct][distance] = []
+                
+                stCount[substruct][distance].append (count)    
+                    
+                    
     l_p_filout = writeFile.disributionNumberNeighbor (stCount, pr_result)
     for p_filin in l_p_filout : 
         runScriptR.plotNbNeighbor(p_filin, logFile)
@@ -522,10 +512,10 @@ def globalRunStatistic(struct_atom_close, global_atom_close, max_distance, pr_re
 #       
 #       
 # #     analyse number of neighbors -> number of atom type (C, O, N)
-#     numberNeighbor (struct_atom_close, repertory.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
+    numberNeighbor (struct_atom_close, repertory.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
 #     neighborAtomComposition(struct_atom_close, repertory.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
-    firstNeighbor (struct_atom_close, global_atom_close, repertory.countNeighbor(pr_result, "firstNeighbor"), logFile)
-    allNeighbors (struct_atom_close, global_atom_close, repertory.countNeighbor(pr_result, "allNeighbor"), logFile)
+#     firstNeighbor (struct_atom_close, global_atom_close, repertory.countNeighbor(pr_result, "firstNeighbor"), logFile)
+#     allNeighbors (struct_atom_close, global_atom_close, repertory.countNeighbor(pr_result, "allNeighbor"), logFile)
     
     
     

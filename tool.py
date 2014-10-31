@@ -24,9 +24,6 @@ def transfomAA (aa_in):
     
     return "ERROR"
         
-    
-
-
 
 #########file management#########
 
