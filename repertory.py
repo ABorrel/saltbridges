@@ -61,6 +61,14 @@ def resultDistance(rep_int):
     return rep
 
 
+def resultSaltBridges (rep_int):
+    
+    rep = rep_int + "saltBridges/"
+    try: makedirs(rep, mode=0777)
+    except: pass
+    return rep
+
+
 def lengthBond (rep_int):
 
     rep = rep_int + "lengthBond/"

@@ -491,39 +491,35 @@ def listStructure ():
 def listGlobalStudy():
     return ['residue', 'proportionAtom', 'angleVector', 'ligand', 'ResidueAllAtom', 'distanceOx', 'byAA', 'H2O', 'atom', 'proportionType']
     
-def selectionAngle():
+def criteraAngle():
     """
     Impose angle in different structure
     """
     angleStruct = {}
     
     angleStruct["Primary"] = {}
-    angleStruct["Primary"]["INF"] = 90
-    angleStruct["Primary"]["SUP"] = 150
+    angleStruct["Primary"]["angle"] = [100,120]
+    angleStruct["Primary"]["distance"] = [2.5,3.0]
     
     angleStruct["Secondary"] = {}
-    angleStruct["Secondary"]["INF"] = 90
-    angleStruct["Secondary"]["SUP"] = 150
+    angleStruct["Secondary"]["angle"] = [80,120]
+    angleStruct["Secondary"]["distance"] = [2.5,3.0]
     
     angleStruct["Tertiary"] = {}
-    angleStruct["Tertiary"]["INF"] = 90
-    angleStruct["Tertiary"]["SUP"] = 150
+    angleStruct["Tertiary"]["angle"] = [80,120]
+    angleStruct["Tertiary"]["distance"] = [2.5,3.0]
     
     angleStruct["Imidazole"] = {}
-    angleStruct["Imidazole"]["INF"] = 0
-    angleStruct["Imidazole"]["SUP"] = 30
+    angleStruct["Imidazole"]["angle"] = [0,30]
+    angleStruct["Imidazole"]["distance"] = [2.5,3.0]
     
     angleStruct["Guanidium"] = {}
-    angleStruct["Guanidium"]["INF"] = 90
-    angleStruct["Guanidium"]["SUP"] = 150
+    angleStruct["Guanidium"]["angle"] = [100,130]
+    angleStruct["Guanidium"]["distance"] = [2.5,3.0]
     
-    angleStruct["Diamine"] = {}
-    angleStruct["Diamine"]["INF"] = 90
-    angleStruct["Diamine"]["SUP"] = 150
-    
-    angleStruct["Pyridine"] = {}
-    angleStruct["Pyridine"]["INF"] = 90
-    angleStruct["Pyridine"]["SUP"] = 150
+    angleStruct["AcidCarboxylic"] = {}
+    angleStruct["AcidCarboxylic"]["angle"] = [100,130]
+    angleStruct["AcidCarboxylic"]["distance"] = [2.5,3.0]
     
     return angleStruct
 
@@ -871,6 +867,9 @@ def DFile2K (pr_result):
         d_file_open[interest] = {}
         for type_neighbor in l_type_neighbor : 
             d_file_open[interest][type_neighbor] = open (pr_result + str(interest) + "_" + str (type_neighbor), "w")
+    
+    
+        d_file_open[interest]["density"] = open (pr_result + str(interest) + "_density", "w")
     
     return d_file_open
 

@@ -663,10 +663,17 @@ def resultAngle(d_count, pr_out):
             nbDistance = len(d_count[type_substruct][classe]["distance"])
             for i in range(0, nbDistance) : 
                 distanceAt = d_count[type_substruct][classe]["distance"][i]
-                filoutGlobal.write("%.2f" % distanceAt)
+                l_element = [str("%.2f" % distanceAt)]
+                #filoutGlobal.write("%.2f" % distanceAt)
+                
                 for angle in d_count[type_substruct][classe]["angles"][i] : 
-                    filoutGlobal.write("\t%.2f" % angle)
-                filoutGlobal.write("\t" + classe + "\n")
+                    a = "%.2f" % angle
+                    #filoutGlobal.write("\t%.2f" % angle)
+                    l_element.append (str(a))
+                l_element.append (classe)
+                if len (l_element) >= 3 : 
+                    print l_element
+                    filoutGlobal.write("\t".join (l_element) + "\n")
         filoutGlobal.close()
     return l_p_file
  

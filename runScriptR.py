@@ -32,7 +32,7 @@ def barplotQuantityByAA(distance, aminoAcid, path_file, logFile):
     system(cmd)
 
 
-def plotDistanceOx(p_filin, logFile, debug = 1):
+def plotDistance(p_filin, logFile, debug = 1):
     """Plot list distance
     in: distance for legend plot, type histogram (coplar or length), file with data, type of study, logFile
     out: CMD in terminal -> plot """
@@ -40,10 +40,23 @@ def plotDistanceOx(p_filin, logFile, debug = 1):
     repScript = repertory.scriptR()
     if tool.checkFileEmpty(p_filin) == 1 : 
         return
-    cmd = repScript + "plotDistanceOx.R " + p_filin
+    cmd = repScript + "plotDistance.R " + p_filin
     if debug : print cmd
     logFile.write(cmd + "\n")
     system(cmd)
+
+
+def plotDistanceDensity(p_filin, logFile, debug = 1):
+    """Plot density"""
+
+    repScript = repertory.scriptR()
+    if tool.checkFileEmpty(p_filin) == 1 : 
+        return
+    cmd = repScript + "densityDistance.R " + p_filin
+    if debug : print cmd
+    logFile.write(cmd + "\n")
+    system(cmd)
+
 
 
 
@@ -367,5 +380,13 @@ def multiHist (pr_filin):
     system (cmd)
     
     
+
+def saltBridgesProportion (p_filin):
     
+    cmd =  repertory.scriptR() + "pieProportion.R " + p_filin
+    print cmd
+    system (cmd)
+    
+    
+      
     
