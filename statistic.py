@@ -141,8 +141,6 @@ def angle(struct_neighbor, pr_result, d_max, log_file):
     # plot angle
     runScriptR.plotAngle(l_p_angle, log_file)
     
-  
-
 
 def atomProx(stAtom, pr_result, max_distance, logFile):
     
@@ -165,7 +163,6 @@ def atomProx(stAtom, pr_result, max_distance, logFile):
     l_files_result = writeFile.resultCount(stCount, "ATM", pr_result)
     for file_result in l_files_result : 
         runScriptR.barplotQuantity(max_distance, "Atoms", file_result, logFile)
-
 
 
 def ligandProx(stAtom, pr_result, max_distance, logFile):
@@ -194,8 +191,6 @@ def ligandProx(stAtom, pr_result, max_distance, logFile):
     for file_result in l_files_result : 
         runScriptR.barplotQuantity(max_distance, "Ligands", file_result, logFile)
     
-
-
 
 def resProx(stAtom, pr_result, max_distance, logFile):
 
@@ -237,8 +232,6 @@ def resProx(stAtom, pr_result, max_distance, logFile):
         runScriptR.barplotQuantity(max_distance, "Residues", file_result, logFile)
 
 
-
-
 def classifResProx(stAtom, pr_result, max_distance, logFile):
     
     # structure count
@@ -273,9 +266,7 @@ def classifResProx(stAtom, pr_result, max_distance, logFile):
     l_files_result = writeFile.resultResProx(stCount, max_distance ,pr_result)
     for file_result in l_files_result : 
         runScriptR.barplotResDist(file_result, logFile)
-    
-    
-    
+        
     
 def atomByAa(stAtom, pr_result ,max_distance, logFile ):
 
@@ -345,8 +336,6 @@ def numberNeighbor (stAtom, pr_result, max_distance, logFile) :
         runScriptR.plotNbNeighbor(p_filin, logFile)
 
 
-
-
 def neighborAtomComposition(stAtom, pr_result, max_distance, logFile) : 
     
     stCount = {}
@@ -401,8 +390,6 @@ def allNeighbors (stAtom, stAtomGlobal, pr_result, logFile):
     for file_result in l_files_result : 
         runScriptR.AFCPieFirstNeighbor (file_result, logFile)        
     
-
-
     
 def searchNeighbor (stAtom, stCount, sub_struct):
     """
@@ -455,8 +442,7 @@ def searchNeighbor (stAtom, stCount, sub_struct):
             stCount[sub_struct]["angle2_3"].append (calcul.angleVector(dtemp_angle[3], atom_central, dtemp_angle[2]))  
         except : 
             stCount[sub_struct]["angle2_3"].append ("NA")
-            
-        
+                
     
 def searchMoreClose (l_neighbors, option_lcopy = 0) : 
      
@@ -487,10 +473,6 @@ def searchMoreClose (l_neighbors, option_lcopy = 0) :
     del l_neighbors_use[i_out]
     return classe_out, atom_out    
      
-    
-    
-
-
 
 def globalRunStatistic(struct_atom_close, global_atom_close, max_distance, pr_result):
     """
@@ -501,10 +483,10 @@ def globalRunStatistic(struct_atom_close, global_atom_close, max_distance, pr_re
     
     start, logFile = log.initAction("RUN Statistic")
 
-    # proportion salt bridges
+#    # proportion salt bridges
     saltBridges (struct_atom_close, repertory.resultSaltBridges(pr_result), logFile)
 
-#     distribution distance interest group and type atoms -> distance type
+# #    distribution distance interest group and type atoms -> distance type
 #     distanceAnalysis(struct_atom_close, repertory.resultDistance(pr_result), logFile)
 #       
 # #     angle -> directory angles
@@ -523,6 +505,18 @@ def globalRunStatistic(struct_atom_close, global_atom_close, max_distance, pr_re
 #     neighborAtomComposition(struct_atom_close, repertory.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
 #     firstNeighbor (struct_atom_close, global_atom_close, repertory.countNeighbor(pr_result, "firstNeighbor"), logFile)
 #     allNeighbors (struct_atom_close, global_atom_close, repertory.countNeighbor(pr_result, "allNeighbor"), logFile)
+    
+#   # with two area defintion
+#     d_area1, d_area2 = splitTwoArea (struct_atom_close)
+#     d_global1, d_global2 = splitTwoArea (global_atom_close)
+#     allNeighbors (d_area1, d_global1, repertory.twoArea(pr_result, "neighborArea1"), logFile)
+#     allNeighbors (d_area2, d_global2, repertory.twoArea(pr_result, "neighborArea2"), logFile)
+
+#    # combination
+    combinationNeighbors (struct_atom_close, repertory.combination(pr_result), logFile)
+    
+    
+    
     
     
     
@@ -592,32 +586,47 @@ def globalRunStatistic(struct_atom_close, global_atom_close, max_distance, pr_re
 def saltBridges (st_atom, pr_result, logFile):
     
     filout = open (pr_result + "proportionSaltBridges", "w")
+    filout_sum = open (pr_result + "proportionSaltBridges.sum", "w")
     st_count = {}
     l_interaction = ["salt-bridges","H-bond","water","other"]
     
     for type_subs in st_atom.keys ():
+        
         if not type_subs in st_count.keys ():
             st_count[type_subs] = {}
             st_count[type_subs]["salt-bridges"] = 0
             st_count[type_subs]["H-bond"] = 0
             st_count[type_subs]["water"] = 0
             st_count[type_subs]["other"] = 0
+            st_count[type_subs]["out_distance"] = 0
+            st_count[type_subs]["out_angle"] = 0
+            
         
         for atom_central in st_atom[type_subs] : 
             type_stabilisation = retrieveInteraction (atom_central["neighbors"], type_subs)
             st_count[type_subs][type_stabilisation] = st_count[type_subs][type_stabilisation] + 1
+            if type_stabilisation == "out_angle" or type_stabilisation == "out_distance": 
+                st_count[type_subs]["other"] = st_count[type_subs]["other"] + 1
     
     filout.write ("\t".join (l_interaction) + "\n")
     for sub in st_count.keys () :
+        filout_sum.write ("== " + str (sub) + " ==\n")
         filout.write (sub)
         for interaction in l_interaction : 
             filout.write ("\t" + str(st_count[sub][interaction]))
+            filout_sum.write (interaction + ": " + str (st_count[sub][interaction]) + "\n")
+        
+        filout_sum.write (">-< Out distance: " + str (st_count[sub]["out_distance"]) + "\n")
+        filout_sum.write (">-< Out angle: " + str (st_count[sub]["out_angle"]) + "\n")
+        filout_sum.write ("Global: " + str (st_count[sub]["salt-bridges"] + st_count[sub]["H-bond"] + st_count[sub]["water"] + st_count[sub]["other"]) + "\n")
         filout.write ("\n")
+    
     filout.close ()
+    filout_sum.close ()
+    # write summary
     
     runScriptR.saltBridgesProportion(pr_result + "proportionSaltBridges")
-    
-    
+      
         
 def retrieveInteraction (l_atoms, subs) : 
      
@@ -626,14 +635,16 @@ def retrieveInteraction (l_atoms, subs) :
     flag_water = 0
     flag_ox = 0
     flag_hbond = 0
+    flag_out_distance = 0
+    flag_out_angle = 0
      
     for atom in l_atoms : 
         type_atom = structure.classificationATOM(atom)
         #print atom.keys ()
         
         
-        if atom["angle"] != [] and atom["angle"][0] >= st_angle[subs]["angle"][0] and atom["angle"][0] <= st_angle[subs]["angle"][1] : 
-            if atom["distance"] >= st_angle[subs]["distance"][0] and atom["distance"] <= st_angle[subs]["distance"][1] : 
+        if atom["distance"] >= st_angle[subs]["distance"][0] and atom["distance"] <= st_angle[subs]["distance"][1] : 
+            if atom["angle"] != [] and atom["angle"][0] >= st_angle[subs]["angle"][0] and atom["angle"][0] <= st_angle[subs]["angle"][1] : 
                 
                 print atom["angle"], atom["distance"], "****----***** OK", subs
                 
@@ -652,6 +663,22 @@ def retrieveInteraction (l_atoms, subs) :
                         flag_hbond = 1
                     elif  type_atom == "H2O" : 
                         flag_water = 1
+            else : 
+                if subs == "AcidCarboxylic" :
+                    if type_atom == "Nbasic" : 
+                        flag_out_angle = 1
+                else : 
+                    if type_atom == "OxAcid" : 
+                        flag_out_angle = 1
+        else : 
+            if subs == "AcidCarboxylic" :
+                if type_atom == "Nbasic" : 
+                    flag_out_distance = 1
+            else : 
+                if type_atom == "OxAcid" : 
+                    flag_out_distance = 1
+                        
+                        
                     
 #         print atom["angle"], atom["distance"], "****----***** NO-OK"
     
@@ -661,49 +688,14 @@ def retrieveInteraction (l_atoms, subs) :
         return "H-bond"
     if flag_water == 1 : 
         return "water"
+    if flag_out_angle == 1 :
+        return "out_angle"
+    if flag_out_distance == 1 : 
+        return "out_distance"
     
     return "other"
      
      
-     
-# def countAtLeastOne (struct_neighbor, struct_count, l_classifSearch):
-#     
-#     
-#     # check key structure count
-#     k_struct_count = "_".join(l_classifSearch)
-#     if not k_struct_count in struct_count.keys () : 
-#         struct_count[k_struct_count] = {}
-# 
-#         # in struct
-#         struct_count = struct_count[k_struct_count]
-#     else :
-#         struct_count = struct_count[k_struct_count]
-#     
-#     
-#     if type (struct_neighbor) is list : 
-#         struct_count["other"] = 0.0001 # -> proportion calcul
-#         struct_count[k_struct_count] = 0.0 # -> proportion calcul
-#         implementAtLeastOne(struct_neighbor, struct_count, k_struct_count,l_classifSearch)
-#     else :        
-#         for type_subsearch in struct_neighbor.keys():
-#             struct_count[type_subsearch] = {}
-#             struct_count[type_subsearch]["other"] = 0.0001 # -> proportion calcul
-#             struct_count[type_subsearch][k_struct_count] = 0.0 # -> proportion calcul
-#             implementAtLeastOne(struct_neighbor[type_subsearch], struct_count[type_subsearch], k_struct_count, l_classifSearch,)
-# 
-# 
-# def implementAtLeastOne (l_central_atom, struct_count_in, key_atleastOne_type, l_type_atLeastOne):
-#     
-#     for atom_central in l_central_atom:
-#         struct_count_in["other"] = struct_count_in["other"] + 1
-#         for neighbor in atom_central["neighbors"]:
-#             classif_neighbor = structure.classificationATOM(neighbor)
-#             if classif_neighbor in l_type_atLeastOne:
-#                 struct_count_in[key_atleastOne_type] = struct_count_in[key_atleastOne_type] + 1
-#                 struct_count_in["other"] = struct_count_in["other"] - 1
-#                 break # found at least one
-# 
-#                     
 def planarityImidazole (atom_interest_close, p_dir_result) : 
      
     l_imidazole_atom_central = atom_interest_close["Imidazole"]
@@ -739,7 +731,6 @@ def planarityImidazole (atom_interest_close, p_dir_result) :
      
         filout.write (str(d_coplar) + "\n")
     filout.close ()
-
 
 
 def planarityGuanidium (atom_interest_close, p_dir_result) : 
@@ -785,7 +776,57 @@ def planarityGuanidium (atom_interest_close, p_dir_result) :
      
 
 
+def combinationNeighbors (st_atom, pr_result, logFile):
 
+    d_nb_neighbor = structure.nbNeighbor ()
+
+    d_count = {}
+    
+    for struct in st_atom.keys () : 
+        if not struct in d_count.keys () : 
+            d_count[struct] = {}
+            
+        for atom_central in st_atom[struct] : 
+            nb_ind = d_nb_neighbor[struct]
+            l_neighbor = deepcopy(atom_central["neighbors"])
+            if len (l_neighbor) < nb_ind : 
+                continue
+            else : 
+                l_combination = []
+                for i_neighbors in range (1,nb_ind + 1) : 
+                    atom_class, d_atom = searchMoreClose (l_neighbor) 
+                    l_combination.append (atom_class)
+                
+                l_combination.sort ()
+                k = "_".join (l_combination)
+                if not k in d_count[struct] : 
+                    d_count[struct][k] = 0
+                
+                d_count[struct][k] =  d_count[struct][k]  + 1   
+    
+    for struct in d_count.keys () : 
+        filout = open (pr_result + struct + "_combi", "w")
+        for combi in d_count[struct].keys () : 
+            filout.write (combi + "\t" + str (d_count[struct][combi]) + "\n")
+        
+        filout.close ()
+        runScriptR.barplotCombination (pr_result + struct + "_combi", logFile)
+    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                     
+            
+            
+            
+        nb_neighbors = d_nb_neighbor[struct]
+        
+        
 
     
     
@@ -925,14 +966,46 @@ def planarityGuanidium (atom_interest_close, p_dir_result) :
 #             
 #             
             
+
+def splitTwoArea (st_atom_sub) : 
+    
+    st_division = structure.splitAreaDistance()
+    
+    d_area1 = {}
+    d_area2 = {}
+    
+    for sub in st_atom_sub.keys () :
         
+        d_area1[sub] = []
+        d_area2[sub] = []
+        
+        dist_split = st_division[sub]["distance"]
+        #print dist_split, "DISTANCE"
+        
+        for atom_central in st_atom_sub[sub] : 
+            if atom_central["neighbors"] == [] : 
+                continue
+            else :
+#                 print 'l892', len (atom_central["neighbors"]) 
+                atom_central1 =  deepcopy(atom_central)
+                atom_central1["neighbors"] = []
+                atom_central2 =  deepcopy(atom_central)
+                atom_central2["neighbors"] = []
+               
+               
+            for neighbor in atom_central["neighbors"] : 
+                if neighbor["distance"] < dist_split : 
+                    atom_central1["neighbors"].append (neighbor)
+                else : 
+                    atom_central2["neighbors"].append (neighbor)
     
     
+            if atom_central1["neighbors"] != [] : 
+                d_area1[sub].append (deepcopy(atom_central1))
+            if atom_central2["neighbors"] != [] : 
+                d_area2[sub].append (deepcopy(atom_central2))
+            
+            #print "l908", len (atom_central1["neighbors"]), len (atom_central2["neighbors"])
     
-    
-    
-    
-    
-
-
-
+    return d_area1, d_area2
+            

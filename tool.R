@@ -73,6 +73,8 @@ AFC = function (d, path_file){
 	#print (d)
 	r = CA (d, graph = FALSE)
 
+	print (r)
+
 	svg (file = paste (path_file, "_AFC.svg", sep = ""), 15, 15)
 	par(mar=c(8,8,8,8))
 

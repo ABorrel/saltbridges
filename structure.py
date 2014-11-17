@@ -524,6 +524,31 @@ def criteraAngle():
     return angleStruct
 
 
+def splitAreaDistance ():
+
+    distStruct = {}
+    
+    distStruct["Primary"] = {}
+    distStruct["Primary"]["distance"] = 3.5
+    
+    distStruct["Secondary"] = {}
+    distStruct["Secondary"]["distance"] = 3.5
+    
+    distStruct["Tertiary"] = {}
+    distStruct["Tertiary"]["distance"] = 3.5
+    
+    distStruct["Imidazole"] = {}
+    distStruct["Imidazole"]["distance"] = 3.5
+    
+    distStruct["Guanidium"] = {}
+    distStruct["Guanidium"]["distance"] = 3.25
+    
+    distStruct["AcidCarboxylic"] = {}
+    distStruct["AcidCarboxylic"]["distance"] = 3.25
+    
+    distStruct["global"] = {}
+    distStruct["global"]["distance"] = 3.25
+    return distStruct
 
 
 def substructureCoord (type_substructure):
@@ -888,8 +913,19 @@ def closeDFile2K (d_in) :
     
 
         
-        
-        
+def nbNeighbor () : 
+     
+    nbNeighborStruct = {}
+    
+    nbNeighborStruct["Primary"] = 3
+    nbNeighborStruct["Secondary"] = 2
+    nbNeighborStruct["Tertiary"] = 1
+    nbNeighborStruct["Imidazole"] = 2
+    nbNeighborStruct["Guanidium"] = 7
+    nbNeighborStruct["AcidCarboxylic"] = 4
+    nbNeighborStruct["global"] = 7
+
+    return nbNeighborStruct
         
         
         

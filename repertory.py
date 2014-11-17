@@ -87,6 +87,7 @@ def resultSub(structure, dir_out):
 
 
 def scriptR():
+    
     rep = "./"
     return rep
 
@@ -206,6 +207,7 @@ def imposeNeighbors (p_dir_result) :
 
 
 def bondLength (p_dir_result) : 
+    
     rep = p_dir_result + "bondLength/"
     try: makedirs(rep, mode=0777)
     except: pass
@@ -226,6 +228,37 @@ def coplorGUA (p_dir_result) :
     try: makedirs(rep, mode=0777)
     except: pass
     return rep
+
+
+def twoArea(pr_int, name_in = "") : 
+    
+    
+    if name_in == "" : 
+        pr_area = pr_int + "splitArea/"
+    else :
+        pr_area = pr_int + "splitArea/" + name_in + "/"
+        
+    if not path.isdir(pr_area) : 
+        makedirs(pr_area, mode=0777)
+    else : 
+        pass
+    return pr_area
+    
+
+def combination (pr_int, name_in = "") : 
+    
+    if name_in == "" : 
+        pr_combinatoire = pr_int + "combination/"
+    else :
+        pr_combinatoire = pr_int + "combination/" + name_in + "/"
+        
+    if not path.isdir(pr_combinatoire) : 
+        makedirs(pr_combinatoire, mode=0777)
+    else : 
+        pass
+    return pr_combinatoire
+
+
 
 #############################Serine Protease###################3
 
