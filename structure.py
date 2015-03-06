@@ -479,6 +479,7 @@ def listDistance (distanceMax):
 
 
 def listStructure ():
+    
     return ["Primary", "Secondary", "Tertiary", "Guanidium", "Imidazole", "AcidCarboxylic"]
     
 

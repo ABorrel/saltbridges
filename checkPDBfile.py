@@ -1,5 +1,6 @@
 from re import search
 from urllib import urlretrieve
+from copy import deepcopy
 
 import loadFile
 import parsing
@@ -52,7 +53,7 @@ def retrieveFirstSeqFileFasta(pathFileFasta):
 
 
 # def compareSeqofPDB(listPDB, listSeq, lengthListPDB, i, j):
-#     """Compare sequence of amino acid of list of pdb files pairwise sequence comparaison, preserve best resolution file and remove sequences and PDB in list
+#     """Compare sequence of amino acid of list of pdb files pairwise sequence comparaison, preserve best Quality file and remove sequences and PDB in list
 #     in : - list PDB file
 #          - list of amino acid sequences
 #          - number of PDB in list
@@ -70,7 +71,7 @@ def retrieveFirstSeqFileFasta(pathFileFasta):
 #         return listPDB, listSeq, lengthListPDB, i, j
 # 
 #     elif listSeq[i]["seq"] == listSeq[j]["seq"]:
-#         if listSeq[i] < listSeq[j]["resolution"]:
+#         if listSeq[i] < listSeq[j]["Quality"]:
 #             del listPDB[j]
 #             del listSeq[j]
 #             j = j - 1
@@ -123,51 +124,65 @@ def retrieveFirstSeqFileFasta(pathFileFasta):
 #         return 0
 
 
-def checkPDB(listPDB, nameLigand, limit_RX, limit_RFree):
-    """Check if the PDB file is similar and preserve file with the best resolution
+def CheckComplexQuality(l_in, name_lig, limit_RX, limit_RFree, one_PDB_out, debug = 1):
+    """Check if the PDB file is similar and preserve file with the best Quality
     remove file contain only DNA, RNA structure
     in : list of PDB files
-    out : list of PDB files"""
+    out : void -> change directly PDB list"""
 
-    nb_PDB = len(listPDB)
+    l_PDB = deepcopy(l_in)
+    
+    nb_PDB = len(l_PDB)
+    l_RX = []
 
     i = 0
     while i < nb_PDB:
-        print i
-        header_PDB = parsing.header(listPDB[i])
-        l_quality = parsing.resolution(listPDB[i])
-        print l_quality
+        header_PDB = parsing.header(l_PDB[i])
+        l_quality = parsing.Quality(l_PDB[i])
+        if debug : print l_quality, l_PDB[i]
         if l_quality[0] > limit_RX or l_quality[1] > limit_RFree : 
-            del listPDB[i]
+            del l_PDB[i]
             nb_PDB = nb_PDB - 1
         elif search ("dna", header_PDB) or search ("rna", header_PDB):
-            del listPDB[i]
+            del l_PDB[i]
             nb_PDB = nb_PDB - 1
-            print "out dna", nb_PDB
+            if debug : print "out dna", nb_PDB
         else :
-            l_atom_complex = loadFile.globalPDB(listPDB[i])
+            l_atom_complex = loadFile.globalPDB(l_PDB[i])
             # only first ligand included in PDB
-            l_atom_ligand = parsing.retrieveLigand (l_atom_complex, nameLigand)[0] 
+            l_atom_ligand = parsing.retrieveLigand (l_atom_complex, name_lig)[0] 
             if parsing.checkLigandHooked (l_atom_complex, l_atom_ligand) == 1:
                 nb_PDB = nb_PDB - 1
-                del listPDB[i]
+                del l_PDB[i]
             else : 
+                l_RX.append (l_quality[0])
                 i = i + 1
+    
+    if len (l_PDB) == 1 or len (l_PDB) == 0 :
+         
+        return l_PDB
+    
+    if one_PDB_out == 1 : 
+        
+        return l_PDB[l_PDB.index (min (l_PDB))]
 
-    return
 
 
 
-def selectBestPDBamongList (l_PDB) : 
+def SelectBestComplexRX (l_PDB) : 
+    """
+    Retrieve best PDB among list of PDB
+    """
     
     l_RX = []
     l_Rfree = []
     
     for PDB_ID in l_PDB : 
-        l_quality =  parsing.resolution(PDB_ID)
+        l_quality =  parsing.Quality(PDB_ID)
         l_RX.append (l_quality[0])
         l_Rfree.append (l_quality[1])
     
+    # based on Resolution
     i_best_PDB = l_RX.index (max (l_RX))
     
     return [l_PDB[i_best_PDB]]

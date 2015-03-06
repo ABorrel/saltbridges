@@ -7,7 +7,7 @@ import statistic
 import runScriptR
 import volumeFonction
 import managePDB
-import repertory
+import pathManage
 import os
 import runOtherSoft
 from time import sleep
@@ -28,22 +28,26 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
     max_distance = float (max_distance)
      
     # run one database
-    path_dir_result_global = repertory.result (name_database)
+    pr_result = pathManage.result (name_database)
     
     # search ligand in PDB
-    searchPDB.ligands(name_database, path_dir_result_global)
+    searchPDB.ligands(name_database, pr_result)
     
     # dataset with resolution
-    list_path_file_dataset = datasetFinal.construction(name_database,RX, RFree )
+    l_p_dataset = datasetFinal.Builder(name_database, RX, RFree, option_on_complexes_by_ligand)
+    
+    print l_p_dataset
+    ffff
+    
 #     
 #
 #     ########################
 #     #   Parsing dataset   #
 #     ########################
 # #     
-#     for path_dataSet in list_path_file_dataset : 
-#         statistic.parseDataSet(path_dataSet, 1)
-#         statistic.parseDataSet(path_dataSet, 0)
+    for p_dataset in l_p_dataset : 
+        statistic.ParseDataSet(p_dataset, 1)
+#         statistic.ParseDataSet(p_dataset, 0)
      
 #     ####################
 #     # result directory #
@@ -52,22 +56,22 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #
     # run for every dataset -> with diffrent resolution
     # short cut
-    list_path_file_dataset = ["/home/borrel/saltBridgesProject/result/PDB50/dataset_3.00"]
-    print list_path_file_dataset
+    l_p_dataset = ["/home/borrel/saltBridgesProject/result/PDB50/dataset_3.00"]
+    print l_p_dataset
 
     
 # #     
-    for path_file_dataset in list_path_file_dataset : 
+    for p_dataset in l_p_dataset : 
          
-        name_folder =  path_file_dataset.split("_")[-1]
+        name_folder =  p_dataset.split("_")[-1]
                  
         if option_on_complexes_by_ligand == 1 : 
             name_folder = name_folder + "_onecomplexe"
         else : 
             name_folder = name_folder + "_morecomplexe"
              
-        pr_result = repertory.result (name_database + "/" + name_folder)
-        pr_hetion = repertory.result (name_database + "/" + name_folder + "het")
+        pr_result = pathManage.result (name_database + "/" + name_folder)
+        pr_hetion = pathManage.result (name_database + "/" + name_folder + "het")
              
             
         print "########"
@@ -77,7 +81,7 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
         
         
 #         # stat -> build structure, not filter is !!!
-    atom_interest_close, global_atom_close = searchPDB.globalSearch(max_distance, path_file_dataset, path_dir_result_global, option_one_PDB = option_on_complexes_by_ligand)
+    atom_interest_close, global_atom_close = searchPDB.globalSearch(max_distance, p_dataset, pr_result, option_one_PDB = option_on_complexes_by_ligand)
     
         # remove iron close -> statistic before 
         # Becarful because the dictionnary change
@@ -130,7 +134,7 @@ def waterGlobal (name_database, limit_acc = 20.0):
     return: NONE
     """
     
-    path_dir_result_global = repertory.result (name_database)
+    path_dir_result_global = pathManage.result (name_database)
     
     # retrieve list PDB file
     list_PDBID = managePDB.retriveListPDB(name_database)
@@ -138,13 +142,13 @@ def waterGlobal (name_database, limit_acc = 20.0):
     
     # calcul acc with NACESS
     for PDB_ID in list_PDBID :
-        path_file_PDB = repertory.pathDitrectoryPDB () + PDB_ID + ".pdb"
+        path_file_PDB = pathManage.pathDitrectoryPDB () + PDB_ID + ".pdb"
         runOtherSoft.runNACESS(path_file_PDB)
     
     sleep(10)
     try :
-        os.system("mv *.asa " +  repertory.pathDitrectoryPDB ())
-        os.system("mv *.rsa " +  repertory.pathDitrectoryPDB ())
+        os.system("mv *.asa " +  pathManage.pathDitrectoryPDB ())
+        os.system("mv *.rsa " +  pathManage.pathDitrectoryPDB ())
         os.system("rm *.log")
     except : 
         pass

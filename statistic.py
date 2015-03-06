@@ -9,7 +9,7 @@ import searchPDB
 import structure
 import writeFile
 import tool
-import repertory
+import pathManage
 
 from os import path 
 from copy import deepcopy
@@ -17,21 +17,22 @@ from numpy import sum
 from re import search
 
 
-def parseDataSet(path_file_dataset, one_PDB_by_ligand = 0):
+def ParseDataSet(p_dataset, one_PDB_by_ligand = 0):
     """Statistic of dataset, repetition ligand in PDB file or in PDB
     out : file with count of repetition in file or files"""
 
     # log 
-    print path_file_dataset, "path"
-    start, logFile = log.initAction("Parsing dataset, ligand representation " + str(path.splitext(path.basename(path_file_dataset))[0]))
+    print p_dataset, "path"
+    start, logFile = log.initAction("Parsing dataset, ligand representation " + str(path.splitext(path.basename(p_dataset))[0]))
     
-    dataSetGlobal = loadFile.resultFilterPDBLigand(path_file_dataset)
-    print dataSetGlobal, "data"
+    d_dataset = loadFile.resultFilterPDBLigand(p_dataset)
+    print d_dataset, "data"
 
     countAmine = structure.countGroupDataset()
     listCount = []
     listPDB = []
-    for element in dataSetGlobal:
+    for element in d_dataset:
+        print '**', element
         count = structure.countInstanceDataSet()
         # print element["name"]
         logFile.write(element["name"] + "\n")
@@ -71,17 +72,16 @@ def parseDataSet(path_file_dataset, one_PDB_by_ligand = 0):
                 countAmine[struct] = countAmine[struct] + count["Number PDB"]
             
         countAmine["Imidazole"] = countAmine["Imidazole"] + int(flag_imidazole / 2) * count["Number PDB"]
-        countAmine["Pyridine"] = countAmine["Pyridine"] + int(flag_pyridine / 2) * count["Number PDB"]
-        countAmine["Diamine"] = countAmine["Diamine"] + int(flag_diamine / 2) * count["Number PDB"] 
         countAmine["Guanidium"] = countAmine["Guanidium"] + (int(flag_guanidium / 3) * count["Number PDB"])
+
         # divise by 2 because equivalent oxygen
         countAmine["AcidCarboxylic"] = countAmine["AcidCarboxylic"] + (int(flag_acidcarboxylic / 2) * count["Number PDB"])
         listCount.append(count)
         
     numberPDB = len(listPDB)
     if one_PDB_by_ligand == 1 : 
-        path_file_dataset = path_file_dataset + "OnePDB"
-    writeFile.parsingDataSet(listCount, countAmine, numberPDB, path_file_dataset)
+        p_dataset = p_dataset + "OnePDB"
+    writeFile.parsingDataSet(listCount, countAmine, numberPDB, p_dataset)
     log.endAction("Parsing dataset, ligand representation", start, logFile)
 
 
@@ -484,7 +484,7 @@ def globalRunStatistic(struct_atom_close, global_atom_close, max_distance, pr_re
     start, logFile = log.initAction("RUN Statistic")
 
 #    # proportion salt bridges
-    saltBridges (struct_atom_close, repertory.resultSaltBridges(pr_result), logFile)
+    saltBridges (struct_atom_close, pathManage.resultSaltBridges(pr_result), logFile)
 
 # #    distribution distance interest group and type atoms -> distance type
 #     distanceAnalysis(struct_atom_close, repertory.resultDistance(pr_result), logFile)
@@ -513,7 +513,7 @@ def globalRunStatistic(struct_atom_close, global_atom_close, max_distance, pr_re
 #     allNeighbors (d_area2, d_global2, repertory.twoArea(pr_result, "neighborArea2"), logFile)
 
 #    # combination
-    combinationNeighbors (struct_atom_close, repertory.combination(pr_result), logFile)
+    combinationNeighbors (struct_atom_close, pathManage.combination(pr_result), logFile)
     
     
     
@@ -701,7 +701,7 @@ def planarityImidazole (atom_interest_close, p_dir_result) :
     l_imidazole_atom_central = atom_interest_close["Imidazole"]
      
      
-    p_dir_result = repertory.coplorIMD (p_dir_result)
+    p_dir_result = pathManage.coplorIMD (p_dir_result)
     p_filout = p_dir_result + "coplarRing.txt"
     filout = open (p_filout, "w")
  
@@ -738,7 +738,7 @@ def planarityGuanidium (atom_interest_close, p_dir_result) :
     l_guanidium_atom_central = atom_interest_close["Guanidium"]
      
      
-    p_dir_result = repertory.coplorGUA (p_dir_result)
+    p_dir_result = pathManage.coplorGUA (p_dir_result)
     p_filout = p_dir_result + "coplarRing.txt"
     filout = open (p_filout, "w")
  

@@ -1,6 +1,6 @@
 import time
 import formatCharacter
-import repertory
+import pathManage
 
 
 
@@ -14,7 +14,7 @@ def initAction(actionName):
     dateStartFileName = formatCharacter.date(dateStart)
     print dateStart, ": ", actionName
     begin = time.time()
-    fileLog = open(repertory.logFile() + dateStartFileName + actionName.replace (" ", ""), "w")
+    fileLog = open(pathManage.logFile() + dateStartFileName + actionName.replace (" ", ""), "w")
     fileLog.write(actionName + "\n")
     fileLog.write(dateStart + "\n")
 

@@ -5,7 +5,7 @@ from urllib import urlretrieve
 from shutil import copy
 
 import loadFile
-import repertory
+import pathManage
 import formatCharacter
 
 def formatFilePDB(dir_PDB):
@@ -90,7 +90,7 @@ def retrievePDB (path_folder_database, path_file_withPDBid):
 def retriveListPDB (name_database):
     
     if name_database == "PDB" : 
-        directory_PDB = repertory.pathDitrectoryPDB()
+        directory_PDB = pathManage.pathDitrectoryPDB()
         list_files = listdir(directory_PDB)
         
         list_pdb = []
@@ -101,7 +101,7 @@ def retriveListPDB (name_database):
         return formatCharacter.lowerList(list_pdb)
     
     else : 
-        path_file_database = repertory.repInit + name_database + ".dat"
+        path_file_database = pathManage.repInit + name_database + ".dat"
         file_database = open (path_file_database, "r")
         file_read = file_database.read()
         file_database.close ()

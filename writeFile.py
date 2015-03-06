@@ -1,5 +1,5 @@
 import structure
-import repertory
+import pathManage
 from os import makedirs, path, mkdir
 import tool
 import numpy
@@ -107,7 +107,7 @@ def parsingDataSet(listCount, countAmine, numberPDB, path_file_dataset):
 
 def resultDistance(count, pr_result):
 
-    dir_result = repertory.resultDistance(pr_result)
+    dir_result = pathManage.resultDistance(pr_result)
     filout = open(dir_result + "resultDistanceOx", "w")
 
     for element in count.keys():
@@ -270,7 +270,7 @@ def resultByAA(stCount, max_distance ,pr_result):
     l_p_filout = []
     
     for substruct in stCount.keys ():
-        pr_sub = repertory.resultSub(substruct, pr_result)
+        pr_sub = pathManage.resultSub(substruct, pr_result)
         for res in stCount[substruct].keys():
             p_filout = pr_sub + str (res)
             l_p_filout.append (p_filout)
@@ -655,7 +655,7 @@ def resultAngle(d_count, pr_out):
     
     l_p_file = []
     for type_substruct in d_count.keys():
-        pr_final = repertory.resultAngle(pr_out, type_substruct)
+        pr_final = pathManage.resultAngle(pr_out, type_substruct)
         p_filout = pr_final + "angle_" + str(type_substruct)
         l_p_file.append (p_filout)
         filoutGlobal = open(p_filout, "w")
@@ -683,7 +683,7 @@ def dAngleType (count, directory_in):
     listClasse = structure.classificationATOM("", out_list = 1)
     for type_substruct in count.keys() : 
         for distance in count[type_substruct].keys() : 
-            pr_angle_type = repertory.resultAngle(directory_in, type_substruct)
+            pr_angle_type = pathManage.resultAngle(directory_in, type_substruct)
             filout = open(pr_angle_type + "angle_" + type_substruct + "_" + distance, "w")
             
             ### HEADER ###
@@ -712,7 +712,7 @@ def openFilesWithoutSummary(distanceMax, directory_in):
     for distance in listDistance : 
         fileClass[distance] = {}
         for struct in listStructureStudy :
-            dir_struct = repertory.withoutAtLeastOneSummary(directory_in)
+            dir_struct = pathManage.withoutAtLeastOneSummary(directory_in)
             fileClass[distance][struct] = open(dir_struct + struct + "_<" + distance, "w")
     
     return fileClass

@@ -509,8 +509,8 @@ def globalSearch (max_distance, p_file_dataset,  pr_result, option_one_PDB = 0):
     
     #start, logFile = log.initAction("search neighbors in " +path.basename(p_file_dataset))
      
-    list_ligands_in_PDB = loadFile.resultFilterPDBLigand(p_file_dataset)
-    nbLigand = len(list_ligands_in_PDB)
+    l_ligands = loadFile.resultFilterPDBLigand(p_file_dataset)
+    nbLigand = len(l_ligands)
     
     # ##Count Structure
     struct_neighbor = structure.neighborStruct()
@@ -523,22 +523,22 @@ def globalSearch (max_distance, p_file_dataset,  pr_result, option_one_PDB = 0):
     # inialization    
     i = 0
     while i < nbLigand :
-        print "Ligand: " + str(list_ligands_in_PDB[i]["name"]) + " " + str(i) + " " + str(nbLigand)
-        nbPDB = len(list_ligands_in_PDB[i]["PDB"])
+        print "Ligand: " + str(l_ligands[i]["name"]) + " " + str(i) + " " + str(nbLigand)
+        nbPDB = len(l_ligands[i]["PDB"])
         
         # take only one PDB by ligand
             
         j = 0
         while j < nbPDB : 
-            name_PDB = list_ligands_in_PDB[i]["PDB"][j]
-            list_atom_ligand = loadFile.ligandInPDB(list_ligands_in_PDB[i]["PDB"][j], list_ligands_in_PDB[i]["name"])
-            #print list_atom_ligand
+            name_PDB = l_ligands[i]["PDB"][j]
+            l_atom_ligand = loadFile.ligandInPDB(l_ligands[i]["PDB"][j], l_ligands[i]["name"])
+            #print l_atom_ligand
             
             # search neighbor for every atom in ligand selected
-            globalNeighbors(max_distance, list_atom_ligand, name_PDB, struct_global_neighbor)
+            globalNeighbors(max_distance, l_atom_ligand, name_PDB, struct_global_neighbor)
             
             # search neighbor for interest 
-            interestGroup(max_distance, list_atom_ligand, name_PDB, struct_neighbor)
+            interestGroup(max_distance, l_atom_ligand, name_PDB, struct_neighbor)
             
             j = j + 1
         i = i + 1

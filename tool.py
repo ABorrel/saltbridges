@@ -1,6 +1,6 @@
 import os.path
 import loadFile
-import repertory
+import pathManage
 import structure
 from os import makedirs
 from os import system

@@ -1,4 +1,4 @@
-import repertory
+import pathManage
 
 
 def globalStruct (nameFile, listAtom):
@@ -6,7 +6,7 @@ def globalStruct (nameFile, listAtom):
     in: list atoms, name of file out
     out: write file"""
     
-    filout = open(repertory.resultSerineProtease() + nameFile, "w")
+    filout = open(pathManage.resultSerineProtease() + nameFile, "w")
     for atom in listAtom : 
         coordinateStructure(atom, "HETATM", filout)
     

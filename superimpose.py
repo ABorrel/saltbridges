@@ -2,7 +2,7 @@ import structure
 import loadFile
 import retrieveAtom
 import writePDBfile
-import repertory
+import pathManage
 import tool
 import writeFile
 import runScriptR
@@ -148,7 +148,7 @@ def rmse (m_points1, m_points2):
 
 def globalNeighbor (atom_interest_close, substruct, p_dir_result) : 
     
-    p_dir_result = repertory.imposeNeighbors (p_dir_result)
+    p_dir_result = pathManage.imposeNeighbors (p_dir_result)
     l_at_ref =  structure.substructureCoord(substruct)
     l_superimpose = []
     

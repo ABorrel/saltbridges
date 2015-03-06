@@ -70,10 +70,10 @@ def header(namePDB):
     return l_lines[0][6:].lower().strip ()
 
 
-def resolution(namePDB):
-    """Retrieve by PDB file the resolution if X-ray header
+def Quality(namePDB):
+    """Retrieve by PDB file the Quality if X-ray header
     in : name of pdb file
-    out : resolution -> format float, return 1000.00 if have not resolution in file"""
+    out : Quality -> format float, return 1000.00 if have not Quality in file"""
 
     l_lines = loadFile.openPdbFile(namePDB)
     nb_line = len (l_lines)
@@ -90,10 +90,14 @@ def resolution(namePDB):
                 resolution = 1000.0
         
         elif search ("REMARK   3   R VALUE", l_lines[i]) : 
-            try : rfactor = float (l_lines[i].strip ().split (":")[-1].replace (" ", ""))
-            except : rfactor = 100.0
+            rfactor = l_lines[i].strip ().split (":")[-1].replace (" ", "")
+            if rfactor == "NULL" : 
+                rfactor = 0.0
+            else : 
+                rfactor =  float (rfactor)
         i = i + 1
-    return [1000, 100]
+    
+    return [1000.0, 100.0]
 
 
 

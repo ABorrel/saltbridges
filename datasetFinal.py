@@ -4,7 +4,7 @@ import log
 import searchPDB
 import structure
 import writeFile
-import repertory
+import pathManage
 import retrieveAtom
 import calcul
 import toolSubstructure
@@ -12,68 +12,81 @@ import runScriptR
 import parsing
 
 
-def construction(name_folder, RX = 3.00, RFree = 0.25):
+def Builder(name_database, RX = 3.00, RFree = 0.25, one_PDB_by_lig = 0, debug = 1):
     """
-    Dataset construction
+    Dataset Builder
     in : - open file result of filter ligand PDB
     out : - log file
           - dataset file -> ligand with associated PDB
     """
-
     
-    pr_result = repertory.result(name_folder)
+    if one_PDB_by_lig == 0 : 
+        name_dataset = name_database + "/" + str (RX) + "_" + str (RFree) + "_multiPDB"
+    else : 
+        name_dataset = name_database + "/" + str (RX) + "_" + str (RFree) + "_uniquePDB"
+    
+    pr_database = pathManage.result(name_database)
+    pr_result = pathManage.result(name_dataset)
+    if debug : print "== Path result " + pr_result + "==\n"
+    
     # check dataSet exist !!!!!!
     # short cut
-    list_file_dataset = repertory.retriveDataSetFile (pr_result)
-    if len(list_file_dataset) != 0 : 
-        return list_file_dataset
+    l_file_dataset = pathManage.retriveDataSetFile (pr_result)
+    if len(l_file_dataset) != 0 : 
+        return l_file_dataset
 
 
-    start, logFile = log.initAction("Dataset construction")
+    #start, logFile = log.initAction("Dataset Builder")
     
-    ligandInPDB = loadFile.resultLigandPDB(pr_result + "resultLigandInPDB")
+    d_lig_PDB = loadFile.LigandInPDB(pr_database + "resultLigandInPDB")
  
-    nbLigand = len(ligandInPDB.keys())
-    listligand = ligandInPDB.keys()
+    nb_lig = len(d_lig_PDB.keys())
      
     i = 0
-    while (i < nbLigand):
-        nameLigand = ligandInPDB.keys()[i]
-        PDB_ref = ligandInPDB[nameLigand][0]
+    while (i < nb_lig):
+        name_lig = d_lig_PDB.keys()[i]
+        PDB_ref = d_lig_PDB[name_lig][0]
  
         # load ligand
-        l_atom_lig_ref = loadFile.ligandInPDBConnectMatrixLigand(PDB_ref, nameLigand)
+        l_atom_lig_ref = loadFile.ligandInPDBConnectMatrixLigand(PDB_ref, name_lig)
         l_interest_sub = searchPDB.interestStructure(l_atom_lig_ref) # search interest structure
         if l_interest_sub == []:
-            del ligandInPDB[nameLigand]
-            nbLigand = nbLigand - 1
+            del d_lig_PDB[name_lig]
+            nb_lig = nb_lig - 1
             continue
         else : 
             # control dataset quality
-            checkPDBfile.checkPDB(ligandInPDB[nameLigand], nameLigand, RX, RFree)
-            if ligandInPDB[nameLigand] == []:
-                del ligandInPDB[nameLigand]
-                nbLigand = nbLigand - 1
+            d_lig_PDB[name_lig] = checkPDBfile.CheckComplexQuality(d_lig_PDB[name_lig], name_lig, RX, RFree, one_PDB_by_lig)
+            if d_lig_PDB[name_lig] == []:
+                del d_lig_PDB[name_lig]
+                nb_lig = nb_lig - 1
                 continue
             else :
                 i = i + 1
                 
                 
     # structure and file dataset and control RX + length bond
-    l_file_datast = buildStructDataset (ligandInPDB, pr_result)
-    log.endAction("Dataset construction", start, logFile)      
-    return l_file_datast 
-                
-                
-def buildStructDataset (d_lig_PDB, pr_init) :                
+    WriteDataset (d_lig_PDB, pr_result, one_PDB_by_lig)
+    #log.endAction("Dataset Builder", start, logFile)   
     
-    pr_quality = repertory.parsingDataset(pr_init)     
-    pr_bond = repertory.lengthBond (pr_init)
+       
+    return  Builder(name_database, RX , RFree , one_PDB_by_lig , debug = 1) 
+                
+                
+def WriteDataset (d_lig_PDB, pr_init) :                
+    """
+    Write folder with dataset 
+    -> run quality criteria analysis
+    
+    """
+    
+    pr_quality = pathManage.parsingDataset(pr_init)     
+    pr_bond = pathManage.lengthBond (pr_init)
     ld_cn = []
     ld_coplar = []
     l_RX = []
     l_RFree = []           
-    struct_dataset = structure.resolutionFilter()
+    d_dataset = structure.resolutionFilter()
             
                 
     for lig in d_lig_PDB.keys () :
@@ -82,9 +95,9 @@ def buildStructDataset (d_lig_PDB, pr_init) :
             controlLenCNBond(l_atom_lig, ld_cn)  # only one PDB by ligands
             controlCoplanarTertiaryAmine(l_atom_lig, ld_coplar)  # only one PDB by ligands
             
-            appendStruct(PDB, lig, struct_dataset)
+            appendStruct(PDB, lig, d_dataset)
                 
-            l_quality = parsing.resolution(PDB)
+            l_quality = parsing.Quality(PDB)
             l_RX.append (l_quality[0])
             l_RFree.append (l_quality[1])
     
@@ -104,7 +117,7 @@ def buildStructDataset (d_lig_PDB, pr_init) :
     runScriptR.histDistance(p_rx, "RX")
     runScriptR.histDistance(p_rf, "RFree")
     
-    return writeFile.resultFilterLigandPDB(struct_dataset, pr_init )
+    return writeFile.resultFilterLigandPDB(d_dataset, pr_init )
     
     
 
@@ -153,10 +166,10 @@ def appendStruct(filePDB, nameLigand, structDataset):
     in: filePDB, name ligand, structure save dataset
     out: append new ligand in structure dataset"""
 
-    type = parsing.header(filePDB)
-    RX = parsing.resolution(filePDB)[0]
+    method = parsing.header(filePDB)
+    RX = parsing.Quality(filePDB)[0]
 
-    if type == "SOLUTION":
+    if method == "SOLUTION":
         try:
             structDataset["NMR"][nameLigand].append(filePDB)
         except:

@@ -4,7 +4,7 @@ from os import path, listdir
 import calcul
 import formatCharacter
 import parsing
-import repertory
+import pathManage
 import structure
 import checkPDBfile
 
@@ -15,7 +15,7 @@ def openPdbFile(namePDB):
         in: name file
         out: lines interest in list"""
 
-    rep = repertory.openPdbFile()
+    rep = pathManage.openPdbFile()
     filin = open(rep + namePDB + ".pdb")
     list_lines = filin.readlines()
     filin.close()
@@ -173,36 +173,36 @@ def connectAtom(matrixConnect, listAtom):
 
 
 
-def resultLigandPDB(nameFile):
+def LigandInPDB(p_file_lig):
     """Load file result, PDB associated at ligand
     in: Name of file
     out: list ligand with PDB associated"""
 
 
-    fileOpen = open(nameFile, "r")
+    fileOpen = open(p_file_lig, "r")
 
     lineFile = fileOpen.readlines()
-    outFile = {}
+    d_out = {}
 
     for line in lineFile:
         line = line.split("\t")
         PDB = line[0]
 
-        listLigand = line[1]
-        listLigand = listLigand.split("\n")[0]
-        listLigand = listLigand.split(" ")
-        if listLigand == []:
+        l_ligand = line[1]
+        l_ligand = l_ligand.split("\n")[0]
+        l_ligand = l_ligand.split(" ")
+        if l_ligand == []:
             continue
 
-        for ligand in listLigand:
+        for ligand in l_ligand:
             if ligand != "":
                 try:
-                    outFile[ligand].append(PDB)
+                    d_out[ligand].append(PDB)
                 except:
-                    outFile[ligand] = []
-                    outFile[ligand].append(PDB)
+                    d_out[ligand] = []
+                    d_out[ligand].append(PDB)
 
-    return outFile
+    return d_out
 
 
 
@@ -349,7 +349,7 @@ def loadOnePDBbyLigand (st_all, p_filout, debug = 0):
     # retrieve best PDB
     for lig_ID in d_PDB.keys () : 
         if not len (d_PDB[lig_ID]) == 1 : 
-            d_PDB[lig_ID] = checkPDBfile.selectBestPDBamongList (d_PDB[lig_ID])
+            d_PDB[lig_ID] = checkPDBfile.SelectBestComplexRX (d_PDB[lig_ID])
 
 
     
