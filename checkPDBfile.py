@@ -164,7 +164,7 @@ def CheckComplexQuality(l_in, name_lig, limit_RX, limit_RFree, one_PDB_out, debu
     
     if one_PDB_out == 1 : 
         
-        return l_PDB[l_PDB.index (min (l_PDB))]
+        return [l_PDB[l_PDB.index (min (l_PDB))]]
 
 
 
