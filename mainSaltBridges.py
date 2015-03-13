@@ -13,9 +13,7 @@ import runOtherSoft
 from time import sleep
 import waterAnalysis
 import superimpose
-
-
-
+import writeICMScript
 import loadFile
 
 
@@ -37,9 +35,6 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
     l_p_dataset = datasetFinal.Builder(name_database, RX, RFree, option_on_complexes_by_ligand)
     
     print l_p_dataset
-    ffff
-    
-#     
 #
 #     ########################
 #     #   Parsing dataset   #
@@ -108,6 +103,8 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #     statistic.planarityGuanidium (atom_interest_close, pr_result)
              
         # analyse length bond not use correctly because limited by crystallo quality !!!!
+        
+#     analysis.ControlLengthBond (d_lig_PDB, pr_init)
 # # #         statistic.lenBondAnalysis(atom_interest_close, "Primary",pr_result)
 # # #         statistic.lenBondAnalysis(atom_interest_close, "Secondary",pr_result)
 # # #         statistic.lenBondAnalysis(atom_interest_close, "Tertiary",pr_result)
@@ -193,7 +190,7 @@ RFree_thresold = 0.25
 
 
 #RUN all
-#PDB 50
+#PDB 50 -> Rx 3.0 // Rfree 0.25 // 
 main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold )
 # 
 # # PDB
@@ -227,5 +224,15 @@ main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, R
 # waterGlobal ("PDB", limit_acc = 20.0)
 # waterFamily("PDB")
 # waterFamily("PDB50")
+
+
+#################
+#   GPCR dock   #
+#################
+
+pr_GPCRDock2010 = "/home/borrel/saltBridgesProject/GPCRDock2010/PDB_conserved/"
+pr_result = pathManage.result("GPCR_Dock")
+
+# writeICMScript.ScriptConvertICBtoPDB(pr_GPCRDock2010, pr_result + "convertGPCRDock2010.txt")
 
 

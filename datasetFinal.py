@@ -12,7 +12,7 @@ import runScriptR
 import parsing
 
 
-def Builder(name_database, RX = 3.00, RFree = 0.25, one_PDB_by_lig = 0, debug = 1):
+def Builder(name_database, RX = 3.00, RFree = 0.25, one_PDB_by_lig = 0, debug = 0):
     """
     Dataset Builder
     in : - open file result of filter ligand PDB
@@ -39,41 +39,53 @@ def Builder(name_database, RX = 3.00, RFree = 0.25, one_PDB_by_lig = 0, debug = 
     #start, logFile = log.initAction("Dataset Builder")
     
     d_lig_PDB = loadFile.LigandInPDB(pr_database + "resultLigandInPDB")
+    
  
     nb_lig = len(d_lig_PDB.keys())
-     
+    print d_lig_PDB.keys()
+    
     i = 0
     while (i < nb_lig):
         name_lig = d_lig_PDB.keys()[i]
         PDB_ref = d_lig_PDB[name_lig][0]
+        if debug : print PDB_ref, name_lig, i
  
         # load ligand
         l_atom_lig_ref = loadFile.ligandInPDBConnectMatrixLigand(PDB_ref, name_lig)
+        #print l_atom_lig_ref
         l_interest_sub = searchPDB.interestStructure(l_atom_lig_ref) # search interest structure
+        if debug : print "Interest substructure", l_interest_sub
         if l_interest_sub == []:
+            
             del d_lig_PDB[name_lig]
             nb_lig = nb_lig - 1
             continue
         else : 
             # control dataset quality
-            d_lig_PDB[name_lig] = checkPDBfile.CheckComplexQuality(d_lig_PDB[name_lig], name_lig, RX, RFree, one_PDB_by_lig)
+            l_PDB = checkPDBfile.CheckComplexQuality(d_lig_PDB[name_lig], name_lig, RX, RFree, one_PDB_by_lig)
+            print l_PDB, "append strut"
+            d_lig_PDB[name_lig] = l_PDB
             if d_lig_PDB[name_lig] == []:
                 del d_lig_PDB[name_lig]
                 nb_lig = nb_lig - 1
                 continue
             else :
                 i = i + 1
-                
+    if debug == 1 : print "struct ligand =>", d_lig_PDB
                 
     # structure and file dataset and control RX + length bond
-    WriteDataset (d_lig_PDB, pr_result, one_PDB_by_lig)
+    WriteDataset (d_lig_PDB, pr_result)
     #log.endAction("Dataset Builder", start, logFile)   
     
        
     return  Builder(name_database, RX , RFree , one_PDB_by_lig , debug = 1) 
+
+
+
+
+
                 
-                
-def WriteDataset (d_lig_PDB, pr_init) :                
+def WriteDataset (d_lig_PDB, pr_init, debug = 1) :                
     """
     Write folder with dataset 
     -> run quality criteria analysis
@@ -81,20 +93,21 @@ def WriteDataset (d_lig_PDB, pr_init) :
     """
     
     pr_quality = pathManage.parsingDataset(pr_init)     
-    pr_bond = pathManage.lengthBond (pr_init)
-    ld_cn = []
-    ld_coplar = []
     l_RX = []
     l_RFree = []           
     d_dataset = structure.resolutionFilter()
             
                 
     for lig in d_lig_PDB.keys () :
+        if debug == 1 : 
+            print "===Write dataset-1==="
+            print lig, "ligand"
+            print d_lig_PDB[lig], "struct data"
         for PDB in d_lig_PDB[lig]:
-            l_atom_lig = loadFile.ligandInPDB(PDB, lig)
-            controlLenCNBond(l_atom_lig, ld_cn)  # only one PDB by ligands
-            controlCoplanarTertiaryAmine(l_atom_lig, ld_coplar)  # only one PDB by ligands
-            
+            if debug == 1 :
+                print "===Write dataset-2===" 
+                print PDB, lig, "PDB + lig"
+                print d_dataset, "append struct"
             appendStruct(PDB, lig, d_dataset)
                 
             l_quality = parsing.Quality(PDB)
@@ -102,17 +115,9 @@ def WriteDataset (d_lig_PDB, pr_init) :
             l_RFree.append (l_quality[1])
     
     
-    
-    # bond length control
-    p_CN = writeFile.listFloat(ld_cn, pr_bond + "lengthCNallLigand")
-    p_Cop = writeFile.listFloat(ld_coplar, pr_bond + "distanceCoplanarNter")
-    
     # quality
     p_rx = writeFile.listFloat(l_RX, pr_quality + "RX")
     p_rf = writeFile.listFloat(l_RFree, pr_quality + "RFree")
-    
-    runScriptR.histDistance(p_CN, "CN")
-    runScriptR.histDistance(p_Cop, "coplar")
     
     runScriptR.histDistance(p_rx, "RX")
     runScriptR.histDistance(p_rf, "RFree")
@@ -161,55 +166,47 @@ def controlCoplanarTertiaryAmine(listAtomLigand, listDistanceCoplanar) :
                     pass
         
         
-def appendStruct(filePDB, nameLigand, structDataset):
-    """Append name filePDB in structure dataset
-    in: filePDB, name ligand, structure save dataset
+def appendStruct(PDB_ID, name_lig, d_dataset, debug = 0):
+    """Append name PDB_ID in structure dataset
+    in: PDB_ID, name ligand, structure save dataset
     out: append new ligand in structure dataset"""
 
-    method = parsing.header(filePDB)
-    RX = parsing.Quality(filePDB)[0]
+    method = parsing.methodStructure(PDB_ID)
+    RX = parsing.Quality(PDB_ID)[0]
+    
+    if debug : 
+        print "**RX**", RX
+        print d_dataset, "input -> append structure"
+        print "**method**", method
 
-    if method == "SOLUTION":
-        try:
-            structDataset["NMR"][nameLigand].append(filePDB)
-        except:
-            structDataset["NMR"][nameLigand] = []
-            structDataset["NMR"][nameLigand].append(filePDB)
+    if method == "XRAY":
+        if float(RX) > 3.00:
+            if debug: print "in OUT"
+            if not name_lig in d_dataset["OUT"].keys () : 
+                d_dataset["OUT"][name_lig] = []
+            d_dataset["OUT"][name_lig].append(PDB_ID)
+            
+        elif float(RX) <= 1.50:
+            if debug: print "in 1.5"
+            if not name_lig in d_dataset["1.50"].keys () : 
+                d_dataset["1.50"][name_lig] = []
+            d_dataset["1.50"][name_lig].append(PDB_ID)  
+            
+        elif float(RX) <= 2.00:
+            if debug: print "in 2.0"
+            if not name_lig in d_dataset["2.00"].keys () : 
+                d_dataset["2.00"][name_lig] = []
+            d_dataset["2.00"][name_lig].append(PDB_ID)   
 
-    else:
-        if RX > 3.00:
-            try:
-                structDataset["OUT"][nameLigand].append(filePDB)
-            except:
-                structDataset["OUT"][nameLigand] = []
-                structDataset["OUT"][nameLigand].append(filePDB)
+        elif float(RX) <= 2.50:
+            if debug: print "in 2.5"
+            if not name_lig in d_dataset["2.50"].keys () : 
+                d_dataset["2.50"][name_lig] = []
+            d_dataset["2.50"][name_lig].append(PDB_ID)
+            
+        elif float(RX) <= 3.00:
+            if debug: print "in 3.0"
+            if not name_lig in d_dataset["3.00"].keys () : 
+                d_dataset["3.00"][name_lig] = []
+            d_dataset["3.00"][name_lig].append(PDB_ID)   
 
-        if RX <= 3.00:
-            try:
-                structDataset["3.00"][nameLigand].append(filePDB)
-            except:
-                structDataset["3.00"][nameLigand] = []
-                structDataset["3.00"][nameLigand].append(filePDB)
-
-        if RX <= 2.50:
-            try:
-                structDataset["2.50"][nameLigand].append(filePDB)
-            except:
-                structDataset["2.50"][nameLigand] = []
-                structDataset["2.50"][nameLigand].append(filePDB)
-
-
-        if RX <= 2.00:
-            try:
-                structDataset["2.00"][nameLigand].append(filePDB)
-            except:
-                structDataset["2.00"][nameLigand] = []
-                structDataset["2.00"][nameLigand].append(filePDB)
-        
-        if RX <= 1.50:
-            try:
-                structDataset["1.50"][nameLigand].append(filePDB)
-            except:
-                structDataset["1.50"][nameLigand] = []
-                structDataset["1.50"][nameLigand].append(filePDB)
-                

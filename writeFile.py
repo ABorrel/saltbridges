@@ -5,41 +5,21 @@ import tool
 import numpy
 
 
-def resultFilterLigandPDB(struct, dir_out):
+def resultFilterLigandPDB(d_dataset, dir_out):
 
-    list_path_file_dataset = []
-    for resolutionKey in struct.keys():
+    l_p_dataset = []
+    for RX in d_dataset.keys():
         # open filout dataset
-        fileWriteXRay = open(dir_out + "dataset_" + resolutionKey, "w")
-        list_path_file_dataset.append (dir_out + "dataset_" + resolutionKey)
-        if resolutionKey != "NMR" and resolutionKey != "OUT":
-            fileWriteXRayRMN = open(dir_out + "dataset_" + resolutionKey + "_RMN", "w")
-            for ligandNMR in struct["NMR"].keys():
-                if not ligandNMR in struct[resolutionKey]:
-                    fileWriteXRayRMN.write(str(ligandNMR) + "\t")
-                    for PDBNMR in struct["NMR"][ligandNMR]:
-                        fileWriteXRayRMN.write(str(PDBNMR) + " ")
-                    fileWriteXRayRMN.write("\n")
-        for ligand in struct[resolutionKey].keys():
-            fileWriteXRay.write(str(ligand) + "\t")
-            if resolutionKey != "NMR" and resolutionKey != "OUT":
-                fileWriteXRayRMN.write(str(ligand) + "\t")
-            for PDB in struct[resolutionKey][ligand]:
-                fileWriteXRay.write(str(PDB) + " ")
-                if resolutionKey != "NMR" and resolutionKey != "OUT":
-                    fileWriteXRayRMN.write(str(PDB) + " ")
-            if resolutionKey != "NMR" and resolutionKey != "OUT":
-                if ligand in struct["NMR"]:
-                    for PDBMNR in struct["NMR"][ligand]:
-                        fileWriteXRayRMN.write(str(PDBMNR) + " ")
-            fileWriteXRay.write("\n")
-            if resolutionKey != "NMR" and resolutionKey != "OUT":
-                fileWriteXRayRMN.write("\n")
-        fileWriteXRay.close()
-        if resolutionKey != "NMR" and resolutionKey != "OUT":
-            fileWriteXRayRMN.close()
+        filoutXR = open(dir_out + "dataset_" + RX, "w")
+        l_p_dataset.append (dir_out + "dataset_" + RX)
+        for ligand in d_dataset[RX].keys():
+            filoutXR.write(str(ligand) + "\t")
+            for PDB in d_dataset[RX][ligand]:
+                filoutXR.write(str(PDB) + " ")
+            filoutXR.write("\n")
+        filoutXR.close()
         
-    return list_path_file_dataset
+    return l_p_dataset
 
 
 

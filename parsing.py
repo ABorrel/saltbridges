@@ -70,6 +70,16 @@ def header(namePDB):
     return l_lines[0][6:].lower().strip ()
 
 
+def methodStructure (namePDB):
+    l_lines = loadFile.openPdbFile(namePDB)
+    
+    for l in l_lines : 
+        if search("^EXPDTA", l) and search("SOLUTION", l) :
+            return "SOLUTION"
+    return "XRAY" 
+            
+
+
 def Quality(namePDB):
     """Retrieve by PDB file the Quality if X-ray header
     in : name of pdb file

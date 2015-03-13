@@ -101,7 +101,7 @@ def retriveListPDB (name_database):
         return formatCharacter.lowerList(list_pdb)
     
     else : 
-        path_file_database = pathManage.repInit + name_database + ".dat"
+        path_file_database = pathManage.repInit + name_database + ".xml"
         file_database = open (path_file_database, "r")
         file_read = file_database.read()
         file_database.close ()
@@ -110,6 +110,10 @@ def retriveListPDB (name_database):
         list_pdb = regex.findall (file_read)
         list_pdb = list(set(list_pdb))
         
+        print len (list_pdb)
+        
         return formatCharacter.lowerList(list_pdb) 
-    
-    
+
+
+# to test   
+#retriveListPDB("PDB50")   

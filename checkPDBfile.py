@@ -124,7 +124,7 @@ def retrieveFirstSeqFileFasta(pathFileFasta):
 #         return 0
 
 
-def CheckComplexQuality(l_in, name_lig, limit_RX, limit_RFree, one_PDB_out, debug = 1):
+def CheckComplexQuality(l_in, name_lig, limit_RX, limit_RFree, one_PDB_out, debug = 0):
     """Check if the PDB file is similar and preserve file with the best Quality
     remove file contain only DNA, RNA structure
     in : list of PDB files
@@ -139,7 +139,7 @@ def CheckComplexQuality(l_in, name_lig, limit_RX, limit_RFree, one_PDB_out, debu
     while i < nb_PDB:
         header_PDB = parsing.header(l_PDB[i])
         l_quality = parsing.Quality(l_PDB[i])
-        if debug : print l_quality, l_PDB[i]
+#         if debug : print l_quality, l_PDB[i]
         if l_quality[0] > limit_RX or l_quality[1] > limit_RFree : 
             del l_PDB[i]
             nb_PDB = nb_PDB - 1

@@ -184,7 +184,7 @@ def LigandInPDB(p_file_lig):
     lineFile = fileOpen.readlines()
     d_out = {}
 
-    for line in lineFile:
+    for line in lineFile: 
         line = line.split("\t")
         PDB = line[0]
 

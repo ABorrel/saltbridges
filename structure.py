@@ -390,15 +390,14 @@ def resolutionFilter():
     Result of resolution filter
     """
     
-    struct = {}
-    struct["1.50"] = {}
-    struct["2.00"] = {}
-    struct["2.50"] = {}
-    struct["3.00"] = {}
-    struct["OUT"] = {}
-    struct["NMR"] = {} # remove
+    d_out = {}
+    d_out["1.50"] = {}
+    d_out["2.00"] = {}
+    d_out["2.50"] = {}
+    d_out["3.00"] = {}
+    d_out["OUT"] = {}
 
-    return struct
+    return d_out
 
 
 def countGroupDataset() : 

@@ -29,32 +29,32 @@ def interestStructure (listAtomLigand, debug = 0):
         print l_serial_O
         print l_serial_N
     
-    structureFound = []
+    l_substruct = []
 
     for serial_nitrogen in l_serial_N:
         listAtomConnectNitrogen, connect = retrieveAtom.atomConnect(listAtomLigand, serial_nitrogen)
         if imidazole(listAtomConnectNitrogen, listAtomLigand)[0] == 1:
-            structureFound.append("Imidazole")
+            l_substruct.append("Imidazole")
         elif guanidium(listAtomConnectNitrogen, listAtomLigand)[0] == 1 : 
-            structureFound.append("Guanidium")    
+            l_substruct.append("Guanidium")    
 #         elif diAmine(listAtomConnectNitrogen, listAtomLigand) == 1 : 
-#             structureFound.append("Diamine")     
+#             l_substruct.append("Diamine")     
 #         elif pyridine(listAtomConnectNitrogen, listAtomLigand) == 1 : 
-#             structureFound.append("Pyridine")    
+#             l_substruct.append("Pyridine")    
         elif cn (listAtomConnectNitrogen, listAtomLigand) == 1:
-            structureFound.append("Primary")
+            l_substruct.append("Primary")
         elif cnc(listAtomConnectNitrogen, listAtomLigand) == 1:
-            structureFound.append("Secondary")
+            l_substruct.append("Secondary")
         elif cncc(listAtomConnectNitrogen, listAtomLigand) == 1:
-            structureFound.append("Tertiary")
+            l_substruct.append("Tertiary")
        
 
     for serial_oxygen in l_serial_O:
         listAtomConnectOxygen, connect = retrieveAtom.atomConnect(listAtomLigand, serial_oxygen)
         if acidCarboxylic(listAtomConnectOxygen, listAtomLigand)[0] >= 1:
-            structureFound.append("AcidCarboxylic")
+            l_substruct.append("AcidCarboxylic")
             
-    return structureFound
+    return l_substruct
 
 
 def ligands(name_database, pr_init):
@@ -67,6 +67,7 @@ def ligands(name_database, pr_init):
         return pr_init + "resultLigandInPDB"
     
     # import list PBD from file .dat
+    # http://www.rcsb.org/pdb/rest/representatives?cluster=50
     listPDB = managePDB.retriveListPDB(name_database)
     
     start, fileLog = log.initAction("Search ligands in PDB")
