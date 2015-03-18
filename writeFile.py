@@ -10,8 +10,8 @@ def resultFilterLigandPDB(d_dataset, dir_out):
     l_p_dataset = []
     for RX in d_dataset.keys():
         # open filout dataset
-        filoutXR = open(dir_out + "dataset_" + RX, "w")
-        l_p_dataset.append (dir_out + "dataset_" + RX)
+        filoutXR = open(dir_out + "dataset_" + RX + ".txt", "w")
+        l_p_dataset.append (dir_out + "dataset_" + RX + ".txt")
         for ligand in d_dataset[RX].keys():
             filoutXR.write(str(ligand) + "\t")
             for PDB in d_dataset[RX][ligand]:
@@ -48,13 +48,13 @@ def listFloat (l_value, p_filin):
     
     
 
-def parsingDataSet(listCount, countAmine, numberPDB, path_file_dataset):
+def AnalysisDataSet(l_count, d_count_sub, numberPDB, path_file_dataset):
 
-    filout = open(path_file_dataset  + ".stat", "w")
+    filout = open(path_file_dataset[0:-4]  + ".stat", "w")
     maxRepetition = 0
     SumPDB = 0.0
     
-    for count in listCount:
+    for count in l_count:
         filout.write(str(count["name"]) + "\t")
         filout.write(str(count["Number PDB"]))
         filout.write("\n")
@@ -62,7 +62,7 @@ def parsingDataSet(listCount, countAmine, numberPDB, path_file_dataset):
         if count["Number PDB"] > maxRepetition : 
             maxRepetition = count["Number PDB"] 
     
-    nbCount = len(listCount) 
+    nbCount = len(l_count) 
     filout.write("----------------------------------------\n")
     filout.write("Number ligand: " + str(nbCount) + "\n")
     filout.write("Number different PDB files: " + str(numberPDB) + "\n")
@@ -72,15 +72,8 @@ def parsingDataSet(listCount, countAmine, numberPDB, path_file_dataset):
     except : average = 0
     filout.write("%.3f\n" % average)
     filout.write("----------------------------------------\n")
-    filout.write("Number Primary Amine: " + str(countAmine["Primary"]) + "\n")
-    filout.write("Number Secondary Amine: " + str(countAmine["Secondary"]) + "\n")
-    filout.write("Number Tertiary Amine: " + str(countAmine["Tertiary"]) + "\n")
-    filout.write("Number Imidazole: " + str(countAmine["Imidazole"]) + "\n")
-    filout.write("Number Guanidium: " + str(countAmine["Guanidium"]) + "\n")
-    filout.write("Number Diamine: " + str(countAmine["Diamine"]) + "\n")
-    filout.write("Number Pyridine: " + str(countAmine["Pyridine"]) + "\n")
-    filout.write("Number Acid Carboxylic: " + str(countAmine["AcidCarboxylic"]) + "\n")
-    
+    for sub in d_count_sub.keys () : 
+        filout.write("Number of " + sub + ": " + str(d_count_sub[sub]) + "\n")
     filout.close()
 
 
@@ -130,16 +123,16 @@ def openFileSummary(pr_out):
         mkdir(pr_out)
     
     
-    listS = structure.listStructure()
-    listS.append("global")
+    l_sub = structure.ListSub()
+    l_sub.append("global")
 
-    dictFile = {}
+    d_filin = {}
 
-    for element in listS:
+    for element in l_sub:
         filout = open(pr_out + "neighbor_" + element + ".sum", "w")
-        dictFile[element] = filout
+        d_filin[element] = filout
 
-    return dictFile
+    return d_filin
 
 
 
@@ -219,9 +212,9 @@ def disributionNumberNeighbor (stCount, pr_result) :
 
 # # # # # # # # def resultAtom(count, directory_result):
 # # # # # # # # 
-# # # # # # # #     listStructure = structure.listStructure()
+# # # # # # # #     ListSub = structure.ListSub()
 # # # # # # # # 
-# # # # # # # #     for element in listStructure:
+# # # # # # # #     for element in ListSub:
 # # # # # # # #         directory_in = repertory.typeSubStructure(directory_result, element)
 # # # # # # # #         filout = open(directory_in + "statAtoms" + element, "w")
 # # # # # # # #         for atom in count[element].keys():
@@ -500,7 +493,7 @@ def barplotThreeAtomBarplot (countStruct, dir_out):
 #     
 #     listDistance = structure.listDistance(distanceGlobal)
 #     listClasse = structure.classificationATOM("", out_list=1)
-#     listStruct = structure.listStructure()
+#     listStruct = structure.ListSub()
 #     listStruct.append("Global") 
 #     
 #     for type_substructure in listStruct :
@@ -593,7 +586,7 @@ def resultResProx(stCount, distance_max, pr_result):
 # 
 #     # distance list
 #     listDistance = structure.listDistance(max_distance)
-#     l_study =  structure.listStructure()
+#     l_study =  structure.ListSub()
 #     l_study.append("global")
 # #     print l_study
 #     
@@ -687,7 +680,7 @@ def openFilesWithoutSummary(distanceMax, directory_in):
     fileClass = {}
     
     listDistance = structure.listDistance(distanceMax)
-    listStructureStudy = structure.listStructure()
+    listStructureStudy = structure.ListSub()
     
     for distance in listDistance : 
         fileClass[distance] = {}

@@ -186,25 +186,25 @@ def appendStruct(PDB_ID, name_lig, d_dataset, debug = 0):
                 d_dataset["OUT"][name_lig] = []
             d_dataset["OUT"][name_lig].append(PDB_ID)
             
-        elif float(RX) <= 1.50:
+        if float(RX) <= 1.50:
             if debug: print "in 1.5"
             if not name_lig in d_dataset["1.50"].keys () : 
                 d_dataset["1.50"][name_lig] = []
             d_dataset["1.50"][name_lig].append(PDB_ID)  
             
-        elif float(RX) <= 2.00:
+        if float(RX) <= 2.00:
             if debug: print "in 2.0"
             if not name_lig in d_dataset["2.00"].keys () : 
                 d_dataset["2.00"][name_lig] = []
             d_dataset["2.00"][name_lig].append(PDB_ID)   
 
-        elif float(RX) <= 2.50:
+        if float(RX) <= 2.50:
             if debug: print "in 2.5"
             if not name_lig in d_dataset["2.50"].keys () : 
                 d_dataset["2.50"][name_lig] = []
             d_dataset["2.50"][name_lig].append(PDB_ID)
             
-        elif float(RX) <= 3.00:
+        if float(RX) <= 3.00:
             if debug: print "in 3.0"
             if not name_lig in d_dataset["3.00"].keys () : 
                 d_dataset["3.00"][name_lig] = []

@@ -141,21 +141,21 @@ def countInstanceDataSet():
     return count
 
 
-def neighborStruct():
-
-    d_neighbor = {}
-    
-    for element in listStructure(): 
-        d_neighbor[element] = []
-
-    return d_neighbor
+# # # # # def neighborStruct():
+# # # # # 
+# # # # #     d_neighbor = {}
+# # # # #     
+# # # # #     for element in ListSub(): 
+# # # # #         d_neighbor[element] = []
+# # # # # 
+# # # # #     return d_neighbor
 
 
 def dAngleType () :
 
     classification = classificationATOM("", out_list=1)
     count = {}
-    for element in listStructure () : 
+    for element in ListSub () : 
         count[element] = {}
         for classe in classification :
             count[element][classe] = {}
@@ -168,7 +168,7 @@ def dAngleType () :
 def countOx ():
 
     count = {}
-    for element in listStructure() : 
+    for element in ListSub() : 
         count[element] = []
     
     return count
@@ -177,7 +177,7 @@ def countOx ():
 def countAtom():
 
     count = {}
-    for element in listStructure() : 
+    for element in ListSub() : 
         count[element] = {}
     
     return count
@@ -188,7 +188,7 @@ def countResidue():
     listAminoAcid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS", "HOH"]
     
     count = {}
-    for struct in listStructure() : 
+    for struct in ListSub() : 
         count[struct] = {}
         for aminoAcid in listAminoAcid:
             count[struct][aminoAcid] = {}
@@ -198,7 +198,7 @@ def countResidue():
 
 def countLigand():
 
-    listS = listStructure()
+    listS = ListSub()
     count = {}
     for struct in listS :
         count[struct] = {} 
@@ -208,7 +208,7 @@ def countLigand():
 def countbyAminoAcid():
 
     listAminoAcid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS"]
-    listStruct = listStructure()
+    listStruct = ListSub()
     count = {}
     for element in listStruct : 
         count[element] = {}
@@ -251,7 +251,7 @@ def countType():
 def countThreeNeigbors () : 
     
     d_out = {}
-    l_subs = listStructure()
+    l_subs = ListSub()
     l_subs.append("global")
     
     # MAJ 29-11-2013 -> nb_neighbor considering alway 8
@@ -292,7 +292,7 @@ def countThreeNeigbors () :
 def countProportionAtom ():
     
     count = {}
-    listStruct = listStructure()
+    listStruct = ListSub()
     for element in listStruct :
         count[element] = {}
     count["Global"] = {}
@@ -303,7 +303,7 @@ def countProportionAtom ():
 
 def countProportionType ():
 
-    listS = listStructure()
+    listS = ListSub()
     count = {}
     for struct in listS : 
         count[struct] = {}
@@ -363,7 +363,7 @@ def countAtLeastOneGlobalStruct(distanceMax):
     
 # def countAtLeastOne():
 # 
-#     listStudy = listStructure()
+#     listStudy = ListSub()
 #     struct_count = {}
 # 
 #     for studyStruct in listStudy : 
@@ -402,7 +402,7 @@ def resolutionFilter():
 
 def countGroupDataset() : 
 
-    listS = listStructure()    
+    listS = ListSub()    
     struct = {}
     for element in listS : 
         struct[element] = 0
@@ -477,7 +477,7 @@ def listDistance (distanceMax):
     return list_out
 
 
-def listStructure ():
+def ListSub ():
     
     return ["Primary", "Secondary", "Tertiary", "Guanidium", "Imidazole", "AcidCarboxylic"]
     
@@ -885,7 +885,7 @@ def substructureCoord (type_substructure):
 def DFile2K (pr_result):
     
     d_file_open = {}
-    l_interest = listStructure ()
+    l_interest = ListSub ()
     l_type_neighbor = classificationATOM (out_list = 1)
     
     for interest in l_interest : 

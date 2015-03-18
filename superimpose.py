@@ -200,7 +200,7 @@ def globalNeighbor (atom_interest_close, substruct, p_dir_result) :
     
     p_file_coord = writeFile.coordinates3D (l_superimpose, p_dir_result + substruct + "_neigbor.coord", substruct) 
     writePDBfile.coordinateSection(p_dir_result + substruct + "_neigbor.pdb", l_superimpose , "HETATM", "Superimpose neighbors " + substruct)
-    #runScriptR.plot3D (p_file_coord)
+    runScriptR.plot3D (p_file_coord)
     
         
             

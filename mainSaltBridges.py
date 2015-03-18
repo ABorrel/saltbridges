@@ -19,7 +19,7 @@ import loadFile
 
 
 
-def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, RX = 3.0, RFree = 0.25, verbose = 1):
+def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_superimpose = 0, option_on_complexes_by_ligand = 0, option_bond = 0, option_stat = 0,  verbose = 1):
     
     
     #format input
@@ -33,16 +33,16 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
     
     # dataset with resolution
     l_p_dataset = datasetFinal.Builder(name_database, RX, RFree, option_on_complexes_by_ligand)
-    
+ 
     print l_p_dataset
 #
 #     ########################
 #     #   Parsing dataset   #
 #     ########################
 # #     
-    for p_dataset in l_p_dataset : 
-        statistic.ParseDataSet(p_dataset, 1)
-#         statistic.ParseDataSet(p_dataset, 0)
+#     for p_dataset in l_p_dataset : 
+#         statistic.ParseDataSet(p_dataset)
+        
      
 #     ####################
 #     # result directory #
@@ -51,68 +51,57 @@ def main (name_database, max_distance = 5.0, option_on_complexes_by_ligand = 0, 
 #
     # run for every dataset -> with diffrent resolution
     # short cut
-    l_p_dataset = ["/home/borrel/saltBridgesProject/result/PDB50/dataset_3.00"]
-    print l_p_dataset
-
-    
+#     l_p_dataset = ["/home/borrel/saltBridgesProject/result/PDB50/3.0_0.25_uniquePDB/dataset_2.50.txt" ]
 # #     
     for p_dataset in l_p_dataset : 
-         
-        name_folder =  p_dataset.split("_")[-1]
-                 
-        if option_on_complexes_by_ligand == 1 : 
-            name_folder = name_folder + "_onecomplexe"
-        else : 
-            name_folder = name_folder + "_morecomplexe"
-             
-        pr_result = pathManage.result (name_database + "/" + name_folder)
-        pr_hetion = pathManage.result (name_database + "/" + name_folder + "het")
-             
-            
-        print "########"
-        print pr_result
-        print pr_hetion
-        print "#########"
+        
+        pr_result = pathManage.CreatePathDir(p_dataset[:-4] + "/")
+        pr_hetion = pathManage.CreatePathDir(p_dataset[:-4] + "/HET/")
+        
+        if verbose == 1 :  
+            print "== control path Main =="
+            print pr_result
+            print pr_hetion
+            print "======================="
         
         
 #         # stat -> build structure, not filter is !!!
-    atom_interest_close, global_atom_close = searchPDB.globalSearch(max_distance, p_dataset, pr_result, option_one_PDB = option_on_complexes_by_ligand)
+        d_sub_neighbor = searchPDB.globalSearch(max_distance, p_dataset, pr_result)
     
         # remove iron close -> statistic before 
         # Becarful because the dictionnary change
-    atom_interest_het = hetCloseAnalysis.removeNeighborIron (atom_interest_close, pr_hetion + "ionSummarySubstruct.txt")
-    global_atom_het = hetCloseAnalysis.removeNeighborIron (global_atom_close, pr_hetion + "ionSummaryGlobal.txt")
+        d_close_het = hetCloseAnalysis.removeNeighborIron (d_sub_neighbor, pr_hetion + "ionSummarySubstruct.txt")
         
-#         superimpose neighbors -> refaire a Helsinki car MAJ de de la PDB
-#     superimpose.globalNeighbor (atom_interest_close, "Primary", pr_result)
-#     superimpose.globalNeighbor (atom_interest_close, "Secondary", pr_result)
-#     superimpose.globalNeighbor (atom_interest_close, "Tertiary", pr_result)
-#     superimpose.globalNeighbor (atom_interest_close, "Imidazole", pr_result)
-#     superimpose.globalNeighbor (atom_interest_close, "Guanidium", pr_result)
-#     superimpose.globalNeighbor (atom_interest_close, "AcidCarboxylic", pr_result)
+        if option_superimpose == 1 : 
+            # superimpose neighbors -> refaire a Helsinki car MAJ de de la PDB
+            superimpose.globalNeighbor (d_sub_neighbor, "Primary", pr_result)
+            superimpose.globalNeighbor (d_sub_neighbor, "Secondary", pr_result)
+            superimpose.globalNeighbor (d_sub_neighbor, "Tertiary", pr_result)
+            superimpose.globalNeighbor (d_sub_neighbor, "Imidazole", pr_result)
+            superimpose.globalNeighbor (d_sub_neighbor, "Guanidium", pr_result)
+            superimpose.globalNeighbor (d_sub_neighbor, "AcidCarboxylic", pr_result)
+            
+            # superimpose neighbors -> with het first stabilization 
+            superimpose.globalNeighbor (d_close_het, "Primary", pr_hetion)
+            superimpose.globalNeighbor (d_close_het, "Secondary", pr_hetion)
+            superimpose.globalNeighbor (d_close_het, "Tertiary", pr_hetion)
+            superimpose.globalNeighbor (d_close_het, "Imidazole", pr_hetion)
+            superimpose.globalNeighbor (d_close_het, "Guanidium", pr_hetion)
         
-# #         superimpose neighbors -> with het first stabilization 
-#     superimpose.globalNeighbor (atom_interest_het, "Primary", pr_hetion)
-#     superimpose.globalNeighbor (atom_interest_het, "Secondary", pr_hetion)
-#     superimpose.globalNeighbor (atom_interest_het, "Tertiary", pr_hetion)
-#     superimpose.globalNeighbor (atom_interest_het, "Imidazole", pr_hetion)
-#     superimpose.globalNeighbor (atom_interest_het, "Guanidium", pr_hetion)
+        if option_bond == 1 : 
         
-        # check planarity imidazole + guanidium
-#     statistic.planarityImidazole (atom_interest_close, pr_result)
-#     statistic.planarityGuanidium (atom_interest_close, pr_result)
-             
-        # analyse length bond not use correctly because limited by crystallo quality !!!!
-        
-#     analysis.ControlLengthBond (d_lig_PDB, pr_init)
-# # #         statistic.lenBondAnalysis(atom_interest_close, "Primary",pr_result)
-# # #         statistic.lenBondAnalysis(atom_interest_close, "Secondary",pr_result)
-# # #         statistic.lenBondAnalysis(atom_interest_close, "Tertiary",pr_result)
+            # check planarity imidazole + guanidium
+            statistic.planarityImidazole (d_sub_neighbor, pr_result)
+            statistic.planarityGuanidium (d_sub_neighbor, pr_result)
+            
+            statistic.lenBondAnalysis(d_sub_neighbor, "Primary", pr_result)
+            statistic.lenBondAnalysis(d_sub_neighbor, "Secondary", pr_result)
+            statistic.lenBondAnalysis(d_sub_neighbor, "Tertiary", pr_result)
 
-
-        # statistic
-    statistic.globalRunStatistic(atom_interest_close, global_atom_close, max_distance, pr_result)
-    statistic.globalRunStatistic(atom_interest_het, global_atom_het, max_distance, pr_hetion)
+        if option_stat == 1: 
+            # statistic
+            statistic.globalRunStatistic(d_sub_neighbor, max_distance, pr_result)
+            statistic.globalRunStatistic(d_close_het, max_distance, pr_hetion)
     
 # # # # # #     draw plot -> remove completely, rewrite
 # # # # # #     runScriptR.globalStat(max_distance, pr_result)
@@ -191,16 +180,12 @@ RFree_thresold = 0.25
 
 #RUN all
 #PDB 50 -> Rx 3.0 // Rfree 0.25 // 
-main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold )
+main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0, option_stat =1 )
+# main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold )
 # 
 # # PDB
-# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold)
-
-# test
-# main ("PDBTest", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold )
-# main ("PDBTest", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold )
-
+# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold)
 
 ##############################
 #       Volume function      #
@@ -219,6 +204,7 @@ main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, R
 #     Water analysis       #
 ############################
 
+# pb avec le dossier ou nacess tourne
 # waterGlobal ("PDB20", limit_acc = 20.0)
 # waterGlobal ("PDB50", limit_acc = 20.0)
 # waterGlobal ("PDB", limit_acc = 20.0)
@@ -230,8 +216,8 @@ main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, R
 #   GPCR dock   #
 #################
 
-pr_GPCRDock2010 = "/home/borrel/saltBridgesProject/GPCRDock2010/PDB_conserved/"
-pr_result = pathManage.result("GPCR_Dock")
+# pr_GPCRDock2010 = "/home/borrel/saltBridgesProject/GPCRDock2010/PDB_conserved/"
+# pr_result = pathManage.result("GPCR_Dock")
 
 # writeICMScript.ScriptConvertICBtoPDB(pr_GPCRDock2010, pr_result + "convertGPCRDock2010.txt")
 

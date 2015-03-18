@@ -227,75 +227,42 @@ def globalPDB(PDB, ligand = ""):
 
 
 
-def loadCloseStruct (pr_result, option_onePDB_ligand = 0) :
+def loadCloseStruct (pr_result) :
     
     if not path.isdir(pr_result) : 
-        return None, None
+        return None
     
-    struct_neighbor = structure.neighborStruct()
+    d_summarize = {}
     flag_file_empty = 0
     
     l_files = listdir(pr_result)
 
     
-    if option_onePDB_ligand == 0 : 
-        for name_file in l_files : 
-            if search(".sum", name_file) : 
-                if path.getsize(pr_result + name_file) != 0 : 
-                    flag_file_empty = flag_file_empty + 1
-                sub_struct = name_file.split ("_")[-1].split (".")[0]
-                if sub_struct == "one" : 
-                    continue
-                else : 
-                    if path.getsize(pr_result + name_file) != 0 : 
-                        flag_file_empty = flag_file_empty + 1
-                    if sub_struct == "global" : 
-                        struct_global_temp = loadSummary(pr_result + name_file)
-                    else : 
-                        struct_neighbor[sub_struct] = loadSummary(pr_result + name_file)
-        if flag_file_empty < 2 : 
-            return None, None
-        else : 
-            struct_global_neighbor = {}
-            struct_global_neighbor["global"] = struct_global_temp
-            return struct_neighbor, struct_global_neighbor 
-    else : 
-        for name_file in l_files : 
-            if search("one.sum", name_file) : 
-                if path.getsize(pr_result + name_file) != 0 : 
-                    flag_file_empty = flag_file_empty + 1
-                sub_struct = name_file.split ("_")[-2].split (".")[0]
-                if sub_struct == "global" : 
-                    struct_global_temp = loadSummary(pr_result + name_file)
-                else : 
-                    struct_neighbor[sub_struct] = loadSummary(pr_result + name_file)
+    for name_file in l_files : 
+        if search(".sum", name_file) : 
+            if path.getsize(pr_result + name_file) != 0 : 
+                flag_file_empty = flag_file_empty + 1
+            sub_struct = name_file.split ("_")[-1].split (".")[0]
+            print sub_struct
+            d_summarize[sub_struct] = loadSummary(pr_result + name_file)
                     
-        if flag_file_empty < 2 : 
-            struct_neighbor_all, struct_global_neighbor_all = loadCloseStruct (pr_result, option_onePDB_ligand = 0)
+    if flag_file_empty < 2 : # case file empty -> need control 
+            # run the extraction
             
-            if struct_neighbor_all == None : 
-                # run the extraction
-                return None, None
-            else : 
-                # select one PDB by ligand
-                for subs in  struct_neighbor.keys () : 
-                    loadOnePDBbyLigand (struct_neighbor_all[subs], pr_result + "neighbor_" + str(subs) + "_one.sum")
-                loadOnePDBbyLigand (struct_global_neighbor_all["global"], pr_result + "neighbor_global_one.sum")
-                
-                return struct_neighbor, struct_global_neighbor_all 
-        else :
-            struct_global_neighbor = {}
-            struct_global_neighbor["global"] = struct_global_temp
-            return struct_neighbor, struct_global_neighbor
+            print "== ERROR 2 files summarize empty"
+            return None
+    else : 
+        print d_summarize.keys ()
+        return d_summarize
             
         
     
-def loadSummary (path_summary) : 
+def loadSummary (p_summary) : 
     
     
     l_out = []
     
-    filin = open (path_summary, "r")
+    filin = open (p_summary, "r")
     l_lines = filin.readlines ()
     filin.close ()
     

@@ -170,14 +170,14 @@ def retriveDataSetFile (directory_in) :
     search in directory file with dataset
     return : list of files
     """
-    list_out = []
+    l_out = []
     list_files = listdir(directory_in)
     for filin in list_files : 
-        if search("dataset", filin) and not search (".stat", filin) and not search ("RMN", filin) and not search ("NMR", filin) and not search ("OUT", filin): 
+        if search("dataset", filin) and search (".txt", filin) and not search ("RMN", filin) and not search ("NMR", filin) and not search ("OUT", filin): 
             if path.getsize(directory_in + filin) > 5 : 
-                list_out.append (directory_in + filin)
+                l_out.append (directory_in + filin)
     
-    return list_out
+    return l_out
 
 
 def retrieveSummaryFile (strut, name_dataset) : 
@@ -294,4 +294,9 @@ def typeSubStructure (directory_in, element) :
     except: pass
     return dir_out
 
-
+def CreatePathDir (pr_in):
+    
+    try : makedirs( pr_in, mode=0777 )
+    except : pass
+    
+    return pr_in

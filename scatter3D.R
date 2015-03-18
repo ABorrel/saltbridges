@@ -37,7 +37,7 @@ for (t in l_type){
 	
 	print (dim(d_vrml))	
 	
-	cloud3d(d_vrml[,1:3], vrml_showdensity = TRUE, labels = paste ("type", as.numeric(d_vrml[,4])), filename = paste(p_file, t, ".wrl", sep = ""))
+	#cloud3d(d_vrml[,1:3], vrml_showdensity = TRUE, labels = paste ("type", as.numeric(d_vrml[,4])), filename = paste(p_file, t, ".wrl", sep = ""))
 
 	# GIF
 	col_group = defColor (d_temp[,4])

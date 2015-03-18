@@ -107,7 +107,7 @@ def histProportionTypeNeighbors(distance, dir_out, logFile):
     in: Distance Max study, log file_data
     out: excecute CMD -> draw plot"""
     
-    listStruct = structure.listStructure()
+    listStruct = structure.ListSub()
     listStruct.append("GlobalAmine")
     listStruct.append("Global")
     for type in listStruct : 
@@ -127,7 +127,7 @@ def histProportion (distance, dir_in, logFile):
     out: excecute CMD -> draw plot"""
     
     repScript = pathManage.scriptR()
-    listType = structure.listStructure()
+    listType = structure.ListSub()
     listType.append("Global")
     listType.append("GlobalAmine")
 
@@ -261,6 +261,9 @@ def proportionAtomClassNeighbor (p_filin, logFile, verbose = 1):
     logFile.write (cmd + "\n")
     
 
+
+
+
 def AFCPieFirstNeighbor (p_filin, logFile, verbose = 1):
     
     cmd = pathManage.scriptR() + "AFCNeighbor.R " + p_filin
@@ -273,7 +276,7 @@ def AFCPieFirstNeighbor (p_filin, logFile, verbose = 1):
     
 def histNeigbor (dir_in, logFile) : 
     
-    l_study = structure.listStructure()
+    l_study = structure.ListSub()
     l_study.append("global")
     
     for substruct in l_study : 
@@ -346,10 +349,13 @@ def multiHist (pr_filin):
 
 def saltBridgesProportion (p_filin):
     
-    cmd =  pathManage.scriptR() + "pieProportion.R " + p_filin
-    print cmd
-    system (cmd)
+    
+    cmd_pie =  pathManage.scriptR() + "pieProportion.R " + p_filin
+    print cmd_pie
+    system (cmd_pie)
     
     
-      
+    cmd_barplot =  pathManage.scriptR() + "barplotProportion.R " + p_filin
+    print cmd_barplot
+    system (cmd_barplot)
     

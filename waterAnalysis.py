@@ -44,7 +44,7 @@ def resolutionWater (list_PDB, path_folder_result, limit_acc = 20.0):
 
 def resolutionByStructure (name_dataset) :
     
-    l_structure = structure.listStructure()
+    l_structure = structure.ListSub()
     l_path = []
     
     for strut in l_structure :
