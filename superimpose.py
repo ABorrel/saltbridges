@@ -146,13 +146,13 @@ def rmse (m_points1, m_points2):
 
 
 
-def globalNeighbor (atom_interest_close, substruct, p_dir_result) : 
+def globalNeighbor (atom_interest_close, subs, p_dir_result) : 
     
     p_dir_result = pathManage.imposeNeighbors (p_dir_result)
-    l_at_ref =  structure.substructureCoord(substruct)
+    l_at_ref =  structure.substructureCoord(subs)
     l_superimpose = []
     
-    for at_central in atom_interest_close[substruct] : 
+    for at_central in atom_interest_close[subs] : 
         PDB_ID = at_central["PDB"]
         serial_at_central = at_central["serial"]
         name_ligand =  at_central["resName"] 
@@ -162,7 +162,7 @@ def globalNeighbor (atom_interest_close, substruct, p_dir_result) :
         l_at_lig = loadFile.ligandInPDB(PDB_ID, name_ligand)
 #         for at_ligand in l_at_lig : 
 #             print at_ligand
-        l_at_subs = retrieveAtom.substructure (substruct, serial_at_central, l_at_lig)
+        l_at_subs = retrieveAtom.substructure (subs, serial_at_central, l_at_lig)
         
         
         
@@ -197,10 +197,18 @@ def globalNeighbor (atom_interest_close, substruct, p_dir_result) :
     # color with b factor
     tool.colorAtomType (l_superimpose)
     
-    
-    p_file_coord = writeFile.coordinates3D (l_superimpose, p_dir_result + substruct + "_neigbor.coord", substruct) 
-    writePDBfile.coordinateSection(p_dir_result + substruct + "_neigbor.pdb", l_superimpose , "HETATM", "Superimpose neighbors " + substruct)
+    # write gif
+    pr_init_gif = p_dir_result + "/gif/" + subs + "/"
+    pathManage.CreatePathDir(pr_init_gif)
+    p_file_coord = writeFile.coordinates3D (l_superimpose, pr_init_gif + subs + "_neigbor.coord", subs) 
     runScriptR.plot3D (p_file_coord)
+    
+    # write one PDB by atom close type 
+    pr_init_PDB = p_dir_result + "/PDB/" + subs + "/" 
+    pathManage.CreatePathDir(pr_init_PDB)
+    writeFile.coordinates3DPDB (l_superimpose, subs, pr_init_PDB)
+    
+    
     
         
             

@@ -115,7 +115,7 @@ def coplanarPoint (atom, l_atom):
 
 
 
-def buildConnectMatrix(listAtomLigand, namePDB):
+def buildConnectMatrix(l_atom_lig, namePDB = ""):
     """Building the matrix connect. threshold -> 1.6 angstroms
     in : - Atoms of ligands -> list of atoms -> dictionnary
          - PDB file associted of ligand
@@ -129,18 +129,18 @@ def buildConnectMatrix(listAtomLigand, namePDB):
 #             groupAtomPDB.append(parsing.lineCoords(line))
 
     # initialization of connect matrix
-    for atomLigand in listAtomLigand:
+    for atomLigand in l_atom_lig:
         atomLigand["connect"] = []
 
-    for atomLigand in listAtomLigand:
+    for atomLigand in l_atom_lig:
         atomLigand["connect"].append(atomLigand["serial"])
-        for atomPDB in listAtomLigand:
+        for atomPDB in l_atom_lig:
             distance = distanceTwoatoms(atomLigand, atomPDB)
             if distance < 1.8 and distance != 0.1 and distance != "ERROR":
                 if not atomPDB["serial"] in atomLigand["connect"]:
                     atomLigand["connect"].append(atomPDB["serial"])
 
-    return listAtomLigand
+    return l_atom_lig
 
 
 def equationPlan (A, B, C):

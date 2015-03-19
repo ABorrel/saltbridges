@@ -1,4 +1,5 @@
 import pathManage
+import calcul
 
 
 def globalStruct (nameFile, listAtom):
@@ -16,24 +17,50 @@ def globalStruct (nameFile, listAtom):
     filout.write("END\n")
 
 
-def coordinateSection (path_filout, listAtom, recorder, header = "", connect_matrix = 0):
+
+
+
+def coordinateSection (f_write, l_atom, recorder = "ATOM", header = "", connect_matrix = 0):
     """
     Write list atom in PDB file
     in: list atoms, name of file out
     out: write file
+    
+    arg -> header = 0 not header in file
     """
     
-    filout = open(path_filout, "w")
-    filout.write ("HEADER " + str (header) + "\n")
-    for atom in listAtom : 
+    
+    if type (f_write) == str : 
+        filout = open(f_write, "w")
+    elif  type (f_write) == file  : 
+        filout = f_write
+    else : 
+        print "======ERROR========"
+        print "flux writing ERROR"
+        print "l17 - write PDB file"
+        print "==================="
+        return 0
+        
+    if header != 0 : 
+        filout.write ("HEADER " + str (header) + "\n")
+    for atom in l_atom : 
         coordinateStructure(atom, recorder, filout)
     
-    if connect_matrix : 
-        for atom in listAtom : 
+    if connect_matrix == 1 :
+        calcul.buildConnectMatrix (l_atom)
+        for atom in l_atom : 
             connect(atom, filout)
+            
+            
     filout.write("END\n")
     
-    return path_filout
+    if type (f_write) == str : 
+        filout.close ()
+    else : 
+        pass
+    
+    return f_write
+
 
 
 

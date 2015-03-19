@@ -1,5 +1,6 @@
 import structure
 import pathManage
+import writePDBfile
 from os import makedirs, path, mkdir
 import tool
 import numpy
@@ -754,9 +755,20 @@ def coordinates3D (l_atom, p_filout, type_substruct) :
         
         
         
+def coordinates3DPDB (l_atom_in, subs, pr_init) : 
+    
+    d_file = {}
+    l_type_neighbors = structure.classificationATOM (out_list = 1)
+    l_atom_sub =  structure.substructureCoord(subs)
+    for type_neighbors in l_type_neighbors : 
+        d_file[type_neighbors] = open (pr_init + subs + "_" + type_neighbors + ".pdb", "w")
+        writePDBfile.coordinateSection(d_file [type_neighbors], l_atom_sub , "HETATM") 
+    
+    
+    for atom in l_atom_in : 
+        type_neighbor = structure.classificationATOM (atom)
+        writePDBfile.coordinateSection(d_file [type_neighbor], [atom] , "HETATM")
         
-        
-        
-        
-
+    for type_neighbors in l_type_neighbors : 
+        d_file[type_neighbors].close ()
 
