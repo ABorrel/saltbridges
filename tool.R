@@ -157,6 +157,58 @@ defColor = function (l_name){
 
 
 
+defColorGrep = function (l_name){
+	out = c()
+	for (element in l_name){
+		#print (element)
+		if (is.integer0 (grep("OxAcid", element)) == FALSE){
+			out = append (out, "red")
+		}
+		else if (is.integer0 ( grep("ODonAcc", element))== FALSE){
+			out = append (out, "orange")
+		}
+		else if (is.integer0 (grep("Sulfur", element))== FALSE){
+			out = append (out, "gold")
+		}
+		else if (is.integer0 (grep("Nhis", element))== FALSE){
+			out = append (out, "darkblue")
+		}
+		else if (is.integer0 (grep("Nbasic", element))== FALSE){
+			out = append (out, "blue")
+		}
+		else if (is.integer0 ( grep("Carom", element))== FALSE){
+			out = append (out, "purple")
+		}
+		else if (is.integer0 (grep("OxPep", element))== FALSE){
+			out = append (out, "coral")
+		}
+		else if (is.integer0 (grep("Ndonnor", element))== FALSE){
+			out = append (out, "green")
+		}
+		else if (is.integer0 (grep("OxAccept", element))== FALSE){
+			out = append (out, "bisque3")
+		}
+		else if (is.integer0 (grep("H2O", element))== FALSE){
+			out = append (out, "cyan")
+		}
+		else if (is.integer0 (grep("CPep", element))== FALSE){
+			out = append (out, "brown")
+		}
+		else if (is.integer0 (grep("others", element))== FALSE){
+			out = append (out, "grey")
+		}
+		else {
+			out = append (out, "black")
+		}
+	}
+	names(out) = l_name
+	return (out)
+}
+
+
+
+
+
 
 defColorSubstruct = function (l_name){
 

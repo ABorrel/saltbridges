@@ -405,7 +405,10 @@ def countGroupDataset() :
     listS = ListSub()    
     struct = {}
     for element in listS : 
-        struct[element] = 0
+        struct[element] = {}
+        struct[element][element] = 0
+        struct[element]["PDB"] = 0
+        struct[element]["ligand"] = 0
     
     return struct
 

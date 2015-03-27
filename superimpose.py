@@ -6,6 +6,7 @@ import pathManage
 import tool
 import writeFile
 import runScriptR
+import statistic
 
 
 from numpy import *
@@ -206,7 +207,7 @@ def globalNeighbor (atom_interest_close, subs, p_dir_result) :
     # write one PDB by atom close type 
     pr_init_PDB = p_dir_result + "/PDB/" + subs + "/" 
     pathManage.CreatePathDir(pr_init_PDB)
-    writeFile.coordinates3DPDB (l_superimpose, subs, pr_init_PDB)
+    writeFile.coordinates3DPDBbyNeighborType (l_superimpose, subs, pr_init_PDB)
     
     
     
@@ -215,24 +216,93 @@ def globalNeighbor (atom_interest_close, subs, p_dir_result) :
         
     
     
+def SuperimposeFirstNeighbors (st_atom, pr_result):
     
     
+    d_nb_neighbor = structure.nbNeighbor ()
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    for subs in st_atom.keys () : 
+        if subs == "global" : 
+            continue
+        
+        l_at_ref =  structure.substructureCoord(subs)
+        d_atom_superiposed = {}
+        
+        pr_superimpose = pr_result +  subs + "/"
+        pathManage.CreatePathDir(pr_superimpose)
+        
+        nb_ind = d_nb_neighbor[subs] # number of considered neighbors
+        
+        for at_central in st_atom[subs] : 
+            PDB_ID = at_central["PDB"]
+            serial_at_central = at_central["serial"]
+            name_ligand =  at_central["resName"] 
+        
+            # all atom ligand
+            l_at_lig = loadFile.ligandInPDB(PDB_ID, name_ligand)
+            l_at_subs = retrieveAtom.substructure (subs, serial_at_central, l_at_lig)
+        
+        
+        
+            v_atom_ref = mat(array(groupAtomCoord(l_at_ref[0:3])))
+            v_atom_central = mat(array(groupAtomCoord(l_at_subs[0:3])))
 
 
+            rotation, translocation =  rigid_transform_3D(v_atom_central, v_atom_ref)
+            if rotation == None or translocation == None : 
+                continue
+        
+            v_atom_rotated = applyTranformation(rotation, translocation, v_atom_central)
+            l_atom_rotated = applyTranformation(rotation, translocation, l_atom_in=l_at_subs)
 
+            print rmse(v_atom_central, v_atom_ref), "RMSE 1"
+            print rmse(v_atom_ref, v_atom_rotated), "RMSE 2"
+
+
+            #         print v_atom_rotated
+            #         print "************compare**********"
+            #         print l_at_subs
+            #         print l_atom_rotated
+        
+        
+        
+            
+            l_neighbor = deepcopy(at_central["neighbors"])
+            if len (l_neighbor) < nb_ind : 
+                continue
+            else : 
+                l_combination = []
+                l_atom_neighbors = []
+                for i_neighbors in range (1, nb_ind + 1) : 
+                    atom_class, d_atom = statistic.searchMoreClose (l_neighbor) 
+                    l_combination.append (atom_class)
+                    l_atom_neighbors.append (d_atom)
+                    
+                
+                l_combination.sort ()
+                k = "_".join (l_combination)
+                
+                
+                if not k in d_atom_superiposed.keys () : 
+                    d_atom_superiposed[k] = []
+                
+                l_atom_neighbor_rotated = applyTranformation(rotation, translocation, l_atom_in = l_atom_neighbors)
+                d_atom_superiposed[k] = d_atom_superiposed[k] + l_atom_rotated + l_atom_neighbor_rotated
+                
+                
+        for k in d_atom_superiposed.keys () : 
+            print k
+                   
+            # write gif
+            pr_init_gif = pr_superimpose + "gif/" 
+            pathManage.CreatePathDir(pr_init_gif)
+            p_file_coord = writeFile.coordinates3D (d_atom_superiposed[k], pr_init_gif + k + ".coord", subs) 
+            runScriptR.plot3D (p_file_coord, option = "global")
+    
+            # write one PDB by atom close type 
+            pr_init_PDB = pr_superimpose + "/PDB/"
+            pathManage.CreatePathDir(pr_init_PDB)
+            writeFile.coordinates3DPDB (d_atom_superiposed[k], subs, pr_init_PDB + k + ".pdb" )   
+                
+                

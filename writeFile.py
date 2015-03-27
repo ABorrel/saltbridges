@@ -74,7 +74,9 @@ def AnalysisDataSet(l_count, d_count_sub, numberPDB, path_file_dataset):
     filout.write("%.3f\n" % average)
     filout.write("----------------------------------------\n")
     for sub in d_count_sub.keys () : 
-        filout.write("Number of " + sub + ": " + str(d_count_sub[sub]) + "\n")
+        filout.write("Number of " + sub + ": " + str(d_count_sub[sub][sub]) + "\n")
+        filout.write("Number of PDB for " + sub + ": " + str(d_count_sub[sub]["PDB"]) + "\n")
+        filout.write("Number of ligand for " + sub + ": " + str(d_count_sub[sub]["ligand"]) + "\n")
     filout.close()
 
 
@@ -755,7 +757,7 @@ def coordinates3D (l_atom, p_filout, type_substruct) :
         
         
         
-def coordinates3DPDB (l_atom_in, subs, pr_init) : 
+def coordinates3DPDBbyNeighborType (l_atom_in, subs, pr_init) : 
     
     d_file = {}
     l_type_neighbors = structure.classificationATOM (out_list = 1)
@@ -771,4 +773,60 @@ def coordinates3DPDB (l_atom_in, subs, pr_init) :
         
     for type_neighbors in l_type_neighbors : 
         d_file[type_neighbors].close ()
+
+
+
+def coordinates3DPDB (l_atom_in, subs, p_filout) : 
+    
+    
+    filout = open (p_filout, "w")
+    
+    l_atom_sub =  structure.substructureCoord(subs)
+    writePDBfile.coordinateSection(filout, l_atom_sub , "HETATM")
+    writePDBfile.coordinateSection(filout, l_atom_in, "ATOM")
+    
+    filout.close ()
+
+
+
+def RelationAngleDistNeighbors (d_relation_neighbors, pr_result) : 
+    
+    l_filout = []
+    for subs in d_relation_neighbors.keys () : 
+        if subs == "global" : continue
+        
+        pr_sub = pr_result + subs + "/"
+        pathManage.CreatePathDir(pr_sub)
+        
+        filout_1_2 = open (pr_sub + subs + "_angles1_2VSDist", "w")
+        filout_1_3 = open (pr_sub + subs + "_angles1_3VSDist", "w")
+        filout_2_3 = open (pr_sub + subs + "_angles2_3VSDist", "w")
+        
+        l_filout.append (pr_sub + subs + "_angles1_2VSDist")
+        l_filout.append (pr_sub + subs + "_angles1_3VSDist")
+        l_filout.append (pr_sub + subs + "_angles2_3VSDist")
+        
+        i = 0
+        nb_neighbor = min ([len(d_relation_neighbors[subs][2]["classe"]), len(d_relation_neighbors[subs][1]["classe"]), len(d_relation_neighbors[subs][3]["classe"])])
+        while i < nb_neighbor :   
+            
+            print "distance", len (d_relation_neighbors[subs]["distance1_2"]), len (d_relation_neighbors[subs]["distance1_3"]), len (d_relation_neighbors[subs]["distance2_3"])
+            print "angle", len (d_relation_neighbors[subs]["angle1_2"]), len (d_relation_neighbors[subs]["angle1_3"]), len (d_relation_neighbors[subs]["angle2_3"])
+            print "type", len(d_relation_neighbors[subs][2]["classe"]), len(d_relation_neighbors[subs][1]["classe"]), len(d_relation_neighbors[subs][3]["classe"])
+            
+            filout_1_2.write (str(d_relation_neighbors[subs]["distance1_2"][i]) + "\t" + str(d_relation_neighbors[subs]["angle1_2"][i]) + "\t" + str(d_relation_neighbors[subs][1]["classe"][i]) + "_" + str(d_relation_neighbors[subs][2]["classe"][i]) + "\n")
+            filout_2_3.write (str(d_relation_neighbors[subs]["distance2_3"][i]) + "\t" + str(d_relation_neighbors[subs]["angle2_3"][i]) + "\t" + str(d_relation_neighbors[subs][2]["classe"][i]) + "_" + str(d_relation_neighbors[subs][3]["classe"][i]) + "\n")
+            filout_1_3.write (str(d_relation_neighbors[subs]["distance1_3"][i]) + "\t" + str(d_relation_neighbors[subs]["angle1_3"][i]) + "\t" + str(d_relation_neighbors[subs][1]["classe"][i]) + "_" + str(d_relation_neighbors[subs][3]["classe"][i]) + "\n")
+    
+            i = i + 1
+        
+        filout_1_2.close ()
+        filout_1_3.close ()
+        filout_2_3.close ()
+    
+    return l_filout
+    
+    
+
+
 

@@ -10,6 +10,7 @@ import structure
 import writeFile
 import tool
 import pathManage
+import superimpose
 
 from os import path 
 from copy import deepcopy
@@ -47,18 +48,25 @@ def ParseDataSet(p_dataset, debug = 0):
         l_sub_found = searchPDB.interestStructure(l_at_ligand)
         if debug : print l_sub_found, "==l48-statistic=="
         
+        # global count -> unique list
+        l_sub_unique = sorted(set(l_sub_found),key=l_sub_found.index) 
+        
+        for sub_unique in l_sub_unique:
+            d_sub[sub_unique]["PDB"] = d_sub[sub_unique]["PDB"] + count["Number PDB"]
+            d_sub[sub_unique]["ligand"] = d_sub[sub_unique]["ligand"] + 1
+        
         
         for sub_found in l_sub_found:
-            d_sub[sub_found] = d_sub[sub_found] + count["Number PDB"]
+            d_sub[sub_found][sub_found] = d_sub[sub_found][sub_found] + count["Number PDB"]
         l_count.append(count)
         
 
     # divise number for complexe queries
     for sub in d_sub.keys () : 
         if sub == "Imidazole" or sub == "AcidCarboxylic" : 
-            d_sub[sub] = d_sub[sub] / 2
+            d_sub[sub][sub] = d_sub[sub][sub] / 2
         elif sub == "Guanidium" : 
-            d_sub[sub] = d_sub[sub] / 3
+            d_sub[sub][sub] = d_sub[sub][sub] / 3
             
     n_PDB = len(l_PDB)
     writeFile.AnalysisDataSet(l_count, d_sub, n_PDB, p_dataset)
@@ -377,18 +385,22 @@ def allNeighbors (st_atom, pr_result, logFile):
         runScriptR.AFCPieFirstNeighbor (file_result, logFile)        
     
     
-def searchNeighbor (st_atom, stCount, sub_struct):
+def searchNeighbor (st_atom, d_stock, subs):
     """
     Search neigbor in proximity
     """
  
     l_type_atom = structure.classificationATOM("", out_list = 1)
-    stCount[sub_struct]["angle1_3"] = []
-    stCount[sub_struct]["angle1_2"] = []
-    stCount[sub_struct]["angle2_3"] = []
+    d_stock[subs]["angle1_3"] = []
+    d_stock[subs]["angle1_2"] = []
+    d_stock[subs]["angle2_3"] = []
+    
+    d_stock[subs]["distance1_3"] = []
+    d_stock[subs]["distance1_2"] = []
+    d_stock[subs]["distance2_3"] = []
  
  
-    neig_temp = deepcopy(st_atom[sub_struct])
+    neig_temp = deepcopy(st_atom[subs])
     for atom_central in neig_temp : 
         l_neighbor = atom_central["neighbors"]
         nb_neighbor =  len(l_neighbor)   
@@ -397,37 +409,51 @@ def searchNeighbor (st_atom, stCount, sub_struct):
         
                     
         dtemp_angle = {}
-        for i in range(1,nb_neighbor+1) :
+        for i in range(1, nb_neighbor+1) :
             classif_first, atom_first = searchMoreClose (l_neighbor) # remove the atom closer
             dtemp_angle[i] = atom_first
                              
             if classif_first == None : 
                 continue
-            if not i in stCount[sub_struct].keys () :
-                stCount[sub_struct][i] = {}
-                stCount[sub_struct][i]["distance"] = []
-                stCount[sub_struct][i]["classe"] = []
+            if not i in d_stock[subs].keys () :
+                d_stock[subs][i] = {}
+                d_stock[subs][i]["distance"] = []
+                d_stock[subs][i]["classe"] = []
                 for type_atom in l_type_atom : 
-                    stCount[sub_struct][i][type_atom] = 0
+                    d_stock[subs][i][type_atom] = 0
         
-            stCount[sub_struct][i]["distance"].append(str(atom_first["distance"]))
-            stCount[sub_struct][i]["classe"].append(classif_first)
-            stCount[sub_struct][i][classif_first] = stCount[sub_struct][i][classif_first] + 1
+            d_stock[subs][i]["distance"].append(str(atom_first["distance"]))
+            d_stock[subs][i]["classe"].append(classif_first)
+            d_stock[subs][i][classif_first] = d_stock[subs][i][classif_first] + 1
         
                  
         # angle
         try : 
-            stCount[sub_struct]["angle1_3"].append (calcul.angleVector(dtemp_angle[1], atom_central, dtemp_angle[3]))
+            d_stock[subs]["angle1_3"].append (calcul.angleVector(dtemp_angle[1], atom_central, dtemp_angle[3]))
         except : 
-            stCount[sub_struct]["angle1_3"].append ("NA")
+            d_stock[subs]["angle1_3"].append ("NA")
         try :   
-            stCount[sub_struct]["angle1_2"].append (calcul.angleVector(dtemp_angle[1], atom_central, dtemp_angle[2]))   
+            d_stock[subs]["angle1_2"].append (calcul.angleVector(dtemp_angle[1], atom_central, dtemp_angle[2]))   
         except : 
-            stCount[sub_struct]["angle1_2"].append ("NA") 
+            d_stock[subs]["angle1_2"].append ("NA") 
         try : 
-            stCount[sub_struct]["angle2_3"].append (calcul.angleVector(dtemp_angle[3], atom_central, dtemp_angle[2]))  
+            d_stock[subs]["angle2_3"].append (calcul.angleVector(dtemp_angle[3], atom_central, dtemp_angle[2]))  
         except : 
-            stCount[sub_struct]["angle2_3"].append ("NA")
+            d_stock[subs]["angle2_3"].append ("NA")
+        
+        # distance
+        try : 
+            d_stock[subs]["distance1_3"].append (calcul.distanceTwoatoms(dtemp_angle[1],  dtemp_angle[3]))
+        except : 
+            d_stock[subs]["distance1_3"].append ("NA")
+        try :   
+            d_stock[subs]["distance1_2"].append (calcul.distanceTwoatoms(dtemp_angle[1],  dtemp_angle[2]))   
+        except : 
+            d_stock[subs]["distance1_2"].append ("NA") 
+        try : 
+            d_stock[subs]["distance2_3"].append (calcul.distanceTwoatoms(dtemp_angle[2],  dtemp_angle[3])) 
+        except : 
+            d_stock[subs]["distance2_3"].append ("NA")        
                 
     
 def searchMoreClose (l_neighbors, option_lcopy = 0) : 
@@ -467,38 +493,43 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
          -> file with dataset
     """
     
+    
+    
     start, logFile = log.initAction("RUN Statistic")
-
-#    # proportion salt bridges
-    saltBridges (st_atom, pathManage.resultSaltBridges(pr_result), logFile)
- 
-    # distribution distance interest group and type atoms -> distance type
-    distanceAnalysis(st_atom, pathManage.resultDistance(pr_result), logFile)
-        
-    # angle -> directory angles
+# 
+# #    # proportion salt bridges
+#     saltBridges (st_atom, pathManage.resultSaltBridges(pr_result), logFile)
+#  
+#     # distribution distance interest group and type atoms -> distance type
+#     distanceAnalysis(st_atom, pathManage.resultDistance(pr_result), logFile)
+#         
+#     # angle -> directory angles
     angle(st_atom, pr_result, max_distance, logFile)
-        
-    # global analysis proximity -1 atom ligand // -2 aa type // -3 atom classification
-    ligandProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
-    atomProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "atmProx"), max_distance, logFile)
-    resProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "resProx"), max_distance, logFile)
-    classifResProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "classifAtmProx"), max_distance, logFile)
-    atomByAa(st_atom, pathManage.countGlobalProx (pr_result, name_in = "byAA") ,max_distance, logFile )
-        
-        
-    # analyse number of neighbors -> number of atom type (C, O, N)
-    numberNeighbor (st_atom, pathManage.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
-    neighborAtomComposition(st_atom, pathManage.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
-    firstNeighbor (st_atom, pathManage.countNeighbor(pr_result, "firstNeighbor"), logFile)
-    allNeighbors (st_atom, pathManage.countNeighbor(pr_result, "allNeighbor"), logFile)
-     
-    # with two area defintion
-    d_area1, d_area2 = splitTwoArea (st_atom)
-    allNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1"), logFile)
-    allNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
-
-#    # combination
-    combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
+#         
+#     # global analysis proximity -1 atom ligand // -2 aa type // -3 atom classification
+#     ligandProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
+#     atomProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "atmProx"), max_distance, logFile)
+#     resProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "resProx"), max_distance, logFile)
+#     classifResProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "classifAtmProx"), max_distance, logFile)
+#     atomByAa(st_atom, pathManage.countGlobalProx (pr_result, name_in = "byAA") ,max_distance, logFile )
+#         
+#         
+#     # analyse number of neighbors -> number of atom type (C, O, N)
+#     numberNeighbor (st_atom, pathManage.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
+#     neighborAtomComposition(st_atom, pathManage.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
+#     firstNeighbor (st_atom, pathManage.countNeighbor(pr_result, "firstNeighbor"), logFile)
+#     allNeighbors (st_atom, pathManage.countNeighbor(pr_result, "allNeighbor"), logFile)
+#      
+#     # with two area defintion
+#     d_area1, d_area2 = splitTwoArea (st_atom)
+#     allNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1"), logFile)
+#     allNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
+# 
+# #    # combination
+#     combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
+#     combinationNeighborsAngle (st_atom, pathManage.combination(pr_result, "angle"))
+#     superimpose.SuperimposeFirstNeighbors (st_atom, pathManage.combination(pr_result, "superimposed"))
+#     
     
     
     
@@ -770,12 +801,13 @@ def combinationNeighbors (st_atom, pr_result, logFile):
 
     d_count = {}
     
-    for struct in st_atom.keys () : 
-        if not struct in d_count.keys () : 
-            d_count[struct] = {}
+    for subs in st_atom.keys () : 
+        if not subs in d_count.keys () : 
+            d_count[subs] = {}
             
-        for atom_central in st_atom[struct] : 
-            nb_ind = d_nb_neighbor[struct]
+        for atom_central in st_atom[subs] : 
+            # number of neighbors considered
+            nb_ind = d_nb_neighbor[subs]
             l_neighbor = deepcopy(atom_central["neighbors"])
             if len (l_neighbor) < nb_ind : 
                 continue
@@ -787,24 +819,40 @@ def combinationNeighbors (st_atom, pr_result, logFile):
                 
                 l_combination.sort ()
                 k = "_".join (l_combination)
-                if not k in d_count[struct] : 
-                    d_count[struct][k] = 0
+                if not k in d_count[subs] : 
+                    d_count[subs][k] = 0
                 
-                d_count[struct][k] =  d_count[struct][k]  + 1   
+                d_count[subs][k] =  d_count[subs][k]  + 1   
     
-    for struct in d_count.keys () : 
-        filout = open (pr_result + struct + "_combi", "w")
-        for combi in d_count[struct].keys () : 
-            filout.write (combi + "\t" + str (d_count[struct][combi]) + "\n")
+    for subs in d_count.keys () : 
+        filout = open (pr_result + subs + "_combi", "w")
+        for combi in d_count[subs].keys () : 
+            filout.write (combi + "\t" + str (d_count[subs][combi]) + "\n")
         
         filout.close ()
-        runScriptR.barplotCombination (pr_result + struct + "_combi", logFile)
+        runScriptR.barplotCombination (pr_result + subs + "_combi", logFile)
     
-                    
-        nb_neighbors = d_nb_neighbor[struct]
+    
+    
+    
+def combinationNeighborsAngle (st_atom, pr_result):
+
+    d_relation_neighbors = {}
+
+    for sub in st_atom.keys () : 
         
+        d_relation_neighbors [sub] = {}
+        searchNeighbor (st_atom, d_relation_neighbors, sub)
+        
+    
+    l_p_filout = writeFile.RelationAngleDistNeighbors (d_relation_neighbors, pr_result)
+    
+    for p_filout in l_p_filout : 
+        runScriptR.DistVSAngleNeighbor (p_filout)
+    
         
 
+    
     
     
                 

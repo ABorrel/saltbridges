@@ -314,9 +314,9 @@ def barplotLenBond (path_filin) :
     system (cmd)
     
     
-def plot3D (p_file_coord) : 
+def plot3D (p_file_coord, option = "local") : 
     
-    cmd = pathManage.scriptR() + "scatter3D.R " + p_file_coord
+    cmd = pathManage.scriptR() + "scatter3D.R " + p_file_coord + " " + option
     print cmd 
     system (cmd)
     
@@ -358,4 +358,12 @@ def saltBridgesProportion (p_filin):
     cmd_barplot =  pathManage.scriptR() + "barplotProportion.R " + p_filin
     print cmd_barplot
     system (cmd_barplot)
+
+
+def DistVSAngleNeighbor (p_filin):
+    
+    cmd_area = pathManage.scriptR() + "plotAngleVSDistCombi.R " + p_filin 
+    print cmd_area
+    
+    system (cmd_area)
     

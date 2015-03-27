@@ -19,7 +19,7 @@ import loadFile
 
 
 
-def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_superimpose = 0, option_on_complexes_by_ligand = 0, option_bond = 0, option_stat = 0,  verbose = 1):
+def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_superimpose = 0, option_on_complexes_by_ligand = 0, option_bond = 0, option_stat = 0, option_stat_dataset = 0,  verbose = 1):
     
     
     #format input
@@ -39,9 +39,10 @@ def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_supe
 #     ########################
 #     #   Parsing dataset   #
 #     ########################
-# #     
-#     for p_dataset in l_p_dataset : 
-#         statistic.ParseDataSet(p_dataset)
+# # 
+    if option_stat_dataset == 1 : 
+        for p_dataset in l_p_dataset : 
+            statistic.ParseDataSet(p_dataset)
         
      
 #     ####################
@@ -180,18 +181,18 @@ RFree_thresold = 0.25
 
 #RUN all
 #PDB 50 -> Rx 3.0 // Rfree 0.25 // 
-# main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 1, option_bond = 0, option_stat =1 )
+# main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0, option_stat = 1, option_stat_dataset = 0)
 # main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold )
 # 
 # # PDB
-# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold)
+# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold)
 
 ##############################
 #       Volume function      #
 ##############################
 
-# volumeFonction.primaryAmine("/home/borrel/saltBridgesProject/result/Primary.pdb", 90, 150, "primary")
+volumeFonction.primaryAmine("/home/borrel/saltBridgesProject/result/Primary.pdb", 90, 150, "primary")
 # volumeFonction.secondaryAmine("/home/borrel/saltBridgesProject/result/Secondary.pdb", 90, 150, "secondary")
 # volumeFonction.tertiaryAmine("/home/borrel/saltBridgesProject/result/Tertiary.pdb", 90, 150, "tertiary")
 # volumeFonction.imidazole("/home/borrel/saltBridgesProject/result/Imidazole.pdb", 1, 30, "imidazole")

@@ -59,3 +59,65 @@ for (distance in listDistance){
 
 dev.off()
 warnings()
+
+# case area
+# limit 3.5
+
+limit_zone = 3.5
+d_area1 = 0
+d_area2 = 0
+
+for (distance in listDistance){
+	distance = as.character(distance)
+	lengthChar = nchar(distance)
+	if (lengthChar == 1){
+		distance = paste(distance,".0",sep = "")
+	}
+
+	file = paste(fileGlobal, "_",distance, sep = "")
+	
+	# Read table
+	d = read.table(file, sep = "\t",header = T)
+	
+	if (distance <= limit_zone){
+		
+		print (distance)
+		if (d_area1 == 0){
+			d_area1 = d
+		}
+		else {
+			d_area1 = d_area1 + d
+		}
+	}else{
+		print (distance)
+		if (d_area2 == 0){
+			d_area2 = d
+		}
+		else {
+			d_area2 = d_area2 + d
+		}
+	}
+}
+
+
+nameGroup = colnames(d_area1)
+name_angle = rownames(d_area1)
+color = defColor (nameGroup)
+
+d_area1 = d_area1[order (as.double(name_angle)),] # order with angle values
+d_area2 = d_area2[order (as.double(name_angle)),] # order with angle values	
+
+
+svg (paste(fileGlobal,"_area1_", limit_zone, ".svg", sep = ""), width = 10, height = 12)
+barplot(t(d_area1), ylab= "Number of occurences", col = color, xlab = "Angles (degres)", names.arg = rownames (d_area1),space = 0.5, main = "")
+legend( "right", legend = nameGroup, bty="n", fill=color)
+dev.off ()
+
+svg (paste(fileGlobal, "_area2_", limit_zone, ".svg", sep = ""), width = 10, height = 12)
+barplot(t(d_area2), ylab= "Number of occurences", col = color, xlab = "Angles (degres)", names.arg = rownames (d_area2),space = 0.5, main = "")
+legend( "right", legend = nameGroup, bty="n", fill=color)
+dev.off ()
+
+
+
+
