@@ -649,7 +649,7 @@ def saltBridges (st_atom, pr_result, logFile, debug = 1):
         
 def retrieveInteraction (l_atoms, subs) : 
      
-    st_angle = structure.criteraAngle()
+    st_angle = structure.criteraAngle(subs)
      
     flag_water = 0
     flag_ox = 0
@@ -662,8 +662,8 @@ def retrieveInteraction (l_atoms, subs) :
         #print atom.keys ()
         
         
-        if atom["distance"] >= st_angle[subs]["distance"][0] and atom["distance"] <= st_angle[subs]["distance"][1] : 
-            if atom["angle"] != [] and atom["angle"][0] >= st_angle[subs]["angle"][0] and atom["angle"][0] <= st_angle[subs]["angle"][1] : 
+        if atom["distance"] >= st_angle["distance"][0] and atom["distance"] <= st_angle["distance"][1] : 
+            if atom["angle"] != [] and atom["angle"][0] >= st_angle["angle"][0] and atom["angle"][0] <= st_angle["angle"][1] : 
                 
                 print atom["angle"], atom["distance"], "****----***** OK", subs
                 

@@ -494,7 +494,7 @@ def ListSub ():
 def listGlobalStudy():
     return ['residue', 'proportionAtom', 'angleVector', 'ligand', 'ResidueAllAtom', 'distanceOx', 'byAA', 'H2O', 'atom', 'proportionType']
     
-def criteraAngle():
+def criteraAngle(subs):
     """
     Impose angle in different structure
     """
@@ -524,7 +524,7 @@ def criteraAngle():
     angleStruct["AcidCarboxylic"]["angle"] = [100,130]
     angleStruct["AcidCarboxylic"]["distance"] = [2.5,3.0]
     
-    return angleStruct
+    return angleStruct[subs]
 
 
 def splitAreaDistance ():
@@ -932,7 +932,31 @@ def nbNeighbor () :
         
         
         
+ 
+ 
+def genericAtom (x, y, z, serialAtom = 2, nameAtom = "O", char = "", resName = "HOH", ChainID = "A", resSeq = 2, iCode = "", occupancy = 1.0, tempFactor = 10.0, element = "O", charge = 0):
+     
     
+    out = {}
+    out["serial"] = int(serialAtom)
+    out["name"] = nameAtom
+    out["char"] = char
+    out["resName"] = resName
+    out["chainID"] = ChainID
+    out["resSeq"] = int (resSeq)
+    out["iCode"] = str(iCode)
+    out["x"] = float (x)
+    out["y"] = float (y)
+    out["z"] = float (z)
+    out["element"] = element
+    
+    out["charge"] = charge
+    out["occupancy"] = occupancy
+    out["tempFactor"] = tempFactor
+    
+    out["connect"] = []
+    
+    return out
     
            
  

@@ -17,13 +17,13 @@ import managePDB
 
 
 #############global search######################
-def interestStructure (listAtomLigand, debug = 0):
+def interestStructure (l_atom_lig, debug = 0):
     """For one serial_nitrogen atom search substructure
     in : list atom ligand
     out : list of substructures found (list string)"""
 
-    l_serial_N = listAtomType (listAtomLigand, "N")
-    l_serial_O = listAtomType (listAtomLigand, "O")
+    l_serial_N = listAtomType (l_atom_lig, "N")
+    l_serial_O = listAtomType (l_atom_lig, "O")
     
     if debug : 
         print l_serial_O
@@ -32,26 +32,26 @@ def interestStructure (listAtomLigand, debug = 0):
     l_substruct = []
 
     for serial_nitrogen in l_serial_N:
-        listAtomConnectNitrogen, connect = retrieveAtom.atomConnect(listAtomLigand, serial_nitrogen)
-        if imidazole(listAtomConnectNitrogen, listAtomLigand)[0] == 1:
+        l_atom_connectN, connect = retrieveAtom.atomConnect(l_atom_lig, serial_nitrogen)
+        if imidazole(l_atom_connectN, l_atom_lig)[0] == 1:
             l_substruct.append("Imidazole")
-        elif guanidium(listAtomConnectNitrogen, listAtomLigand)[0] == 1 : 
+        elif guanidium(l_atom_connectN, l_atom_lig)[0] == 1 : 
             l_substruct.append("Guanidium")    
-#         elif diAmine(listAtomConnectNitrogen, listAtomLigand) == 1 : 
+#         elif diAmine(l_atom_connectN, l_atom_lig) == 1 : 
 #             l_substruct.append("Diamine")     
-#         elif pyridine(listAtomConnectNitrogen, listAtomLigand) == 1 : 
+#         elif pyridine(l_atom_connectN, l_atom_lig) == 1 : 
 #             l_substruct.append("Pyridine")    
-        elif cn (listAtomConnectNitrogen, listAtomLigand) == 1:
+        elif cn (l_atom_connectN, l_atom_lig) == 1:
             l_substruct.append("Primary")
-        elif cnc(listAtomConnectNitrogen, listAtomLigand) == 1:
+        elif cnc(l_atom_connectN, l_atom_lig) == 1:
             l_substruct.append("Secondary")
-        elif cncc(listAtomConnectNitrogen, listAtomLigand) == 1:
+        elif cncc(l_atom_connectN, l_atom_lig) == 1:
             l_substruct.append("Tertiary")
        
 
     for serial_oxygen in l_serial_O:
-        listAtomConnectOxygen, connect = retrieveAtom.atomConnect(listAtomLigand, serial_oxygen)
-        if acidCarboxylic(listAtomConnectOxygen, listAtomLigand)[0] >= 1:
+        listAtomConnectOxygen, connect = retrieveAtom.atomConnect(l_atom_lig, serial_oxygen)
+        if acidCarboxylic(listAtomConnectOxygen, l_atom_lig)[0] >= 1:
             l_substruct.append("AcidCarboxylic")
             
     return l_substruct
@@ -525,7 +525,7 @@ def globalSearch (dist_thresold, p_file_dataset,  pr_result, debug = 1):
     d_files_summary = writeFile.openFileSummary(pr_summary)# sumary result
     
     # inialization    
-    i = 0
+    i = 23
     while i < nb_lig :
         if debug: print "Ligand: " + str(l_lig[i]["name"]) + " " + str(i) + " " + str(nb_lig)
         nb_PDB = len(l_lig[i]["PDB"])
@@ -574,22 +574,22 @@ def interestGroup (max_distance, l_atom_lig, name_PDB, d_stock_neighbor):
     
     # different d_stock_neighbor
     for serialN in l_serialN:
-        listAtomConnectNitrogen, conect = retrieveAtom.atomConnect(l_atom_lig, serialN)
+        l_atom_connectN, conect = retrieveAtom.atomConnect(l_atom_lig, serialN)
         # check every substructure
-        if imidazole(listAtomConnectNitrogen, l_atom_lig)[0] == 1:
-            implementNeighborStruct (max_distance, listAtomConnectNitrogen, name_PDB, l_atom_lig, "Imidazole", d_imd_temp)
-        elif guanidium(listAtomConnectNitrogen, l_atom_lig)[0] == 1:
-            implementNeighborStruct (max_distance, listAtomConnectNitrogen, name_PDB, l_atom_lig, "Guanidium", d_gua_temp)
-#         elif diAmine(listAtomConnectNitrogen, l_atom_lig) == 1:
-#             implementNeighborStruct (max_distance, listAtomConnectNitrogen, name_PDB, l_atom_lig, "Diamine", d_dia_temp)
-#         elif pyridine(listAtomConnectNitrogen, l_atom_lig) == 1:
-#             implementNeighborStruct (max_distance, listAtomConnectNitrogen, name_PDB, l_atom_lig, "Pyridine", d_stock_neighbor)
-        elif cn(listAtomConnectNitrogen, l_atom_lig) == 1:
-            implementNeighborStruct (max_distance, listAtomConnectNitrogen, name_PDB, l_atom_lig, "Primary", d_stock_neighbor)
-        elif cnc(listAtomConnectNitrogen, l_atom_lig) == 1:
-            implementNeighborStruct (max_distance, listAtomConnectNitrogen, name_PDB, l_atom_lig, "Secondary", d_stock_neighbor)
-        elif cncc(listAtomConnectNitrogen, l_atom_lig) == 1:
-            implementNeighborStruct (max_distance, listAtomConnectNitrogen, name_PDB, l_atom_lig, "Tertiary", d_stock_neighbor)
+        if imidazole(l_atom_connectN, l_atom_lig)[0] == 1:
+            implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Imidazole", d_imd_temp)
+        elif guanidium(l_atom_connectN, l_atom_lig)[0] == 1:
+            implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Guanidium", d_gua_temp)
+#         elif diAmine(l_atom_connectN, l_atom_lig) == 1:
+#             implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Diamine", d_dia_temp)
+#         elif pyridine(l_atom_connectN, l_atom_lig) == 1:
+#             implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Pyridine", d_stock_neighbor)
+        elif cn(l_atom_connectN, l_atom_lig) == 1:
+            implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Primary", d_stock_neighbor)
+        elif cnc(l_atom_connectN, l_atom_lig) == 1:
+            implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Secondary", d_stock_neighbor)
+        elif cncc(l_atom_connectN, l_atom_lig) == 1:
+            implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Tertiary", d_stock_neighbor)
             
                
     for serialO in l_serialO :
@@ -618,20 +618,21 @@ def interestGroup (max_distance, l_atom_lig, name_PDB, d_stock_neighbor):
 #######regroup neighbors case of imidazole, guanidium and diamine###########
 
 
-def implementNeighborStruct (max_distance, l_atom_connect_central, name_PDB, l_atom_ligand, sub_found, struct_neighbor):
+def implementNeighborStruct (max_distance, l_atom_connect_central, name_PDB, l_atom_lig, subs, st_neighbor):
     
+    # case imidazole
+    if subs == "Imidazole" : 
+        atom_central = calcul.CenterImidazole (l_atom_connect_central, l_atom_lig)
+    else : 
+        atom_central = l_atom_connect_central[0]
     
-    atom_neighbors = buildAtom(max_distance, l_atom_connect_central[0], name_PDB, sub_found, l_atom_ligand)
+    atom_neighbors = buildAtom(max_distance, atom_central, name_PDB, subs, l_atom_lig)
     
-    # !!!!!!!!!!!!!!!!!!!!!!!!
-    # !!!!!!!!!
-#     if option_angle == 1 : -> check with count
-#         checkAngleInSearchNeighbor(atom_neighbors, sub_found)
-    #if len(atom_neighbors["neighbors"]) != 0 : 
-    
-    if not sub_found in struct_neighbor.keys () :
-        struct_neighbor[sub_found] = []
-    struct_neighbor[sub_found].append(atom_neighbors)
+
+    # dynamic implementation    
+    if not subs in st_neighbor.keys () :
+        st_neighbor[subs] = []
+    st_neighbor[subs].append(atom_neighbors)
 
 
 def regroupAtomNeighborGuanidium(listAtomRegroup, stAtom, listAtomLigand):  # #A revoir tres tres lourds en temps -> BUG
@@ -737,49 +738,49 @@ def regroupNeighbor(serial1, serial2, listAtom):
 ######################################################################################
 
 
-def buildAtom(rayon, at_central, namePDB, typeStudy, listAtomLigand):
+def buildAtom(rayon, at_central, PDB, subs, l_atom_lig):
     """Build count structure for stAtom structure
     in: distance, serial atom nitrogen, type study, list atom ligand
     out: count strucutre"""
     
     atom = {}
-    atom["PDB"] = namePDB
+    atom["PDB"] = PDB
     atom["resName"] = at_central["resName"]
     atom["serial"] = at_central["serial"]
     atom["x"] = at_central["x"]
     atom["y"] = at_central["y"]
     atom["z"] = at_central["z"]
     
-    atom["neighbors"] = neighbors(rayon, at_central, namePDB, typeStudy, listAtomLigand)
+    atom["neighbors"] = neighbors(rayon, at_central, PDB, subs, l_atom_lig)
 
     return atom
 
 
 
-def neighbors(rayon, central_atom, pdb, typeStructure = "global", ligandPDB = [] ):
+def neighbors(rayon, atom_central, pdb, typeStructure = "global", ligandPDB = [] ):
     """Search neighbors for all ligand
     in : rayon where is atoms, central atom, pdb file
     out : list atoms found"""
 
-    listAtom = []
+    l_atom = []
     linesPDB = loadFile.openPdbFile(pdb)
     for line in linesPDB:
         if search("^ATOM", line) or search("^HETATM", line): 
             atom = parsing.lineCoords(line)
             if atom != {} and atom["element"] != "H":
-                distance = calcul.distanceTwoatoms(central_atom, atom)
+                distance = calcul.distanceTwoatoms(atom_central, atom)
                 if distance <= rayon and distance != 0.0:
-                    if central_atom["resSeq"] != atom["resSeq"]: # check if variation
-                        if tool.atomInList(listAtom, atom) == 0:
+                    if atom_central["resSeq"] != atom["resSeq"]: # check if variation
+                        if tool.atomInList(l_atom, atom) == 0:
                             atom["distance"] = distance
-                            atom["angle"] = calcul.angle(central_atom, atom, ligandPDB, typeStructure)
+                            atom["angle"] = calcul.angle(atom_central, atom, ligandPDB, typeStructure)
                             atom["classification"] = structure.classificationATOM(atom)
-                            listAtom.append(atom)
+                            l_atom.append(atom)
 
-    return listAtom
+    return l_atom
 
 
-def repetitionInPBD(ligand, pdb):
+def repetitionInPDB(ligand, pdb):
     """Count number of same ligand in pdb file
     in : name of ligand, name of pdb file
     out : number of ligand in pdb"""
@@ -824,19 +825,19 @@ def listAtomType(groupAtom, type_atom):
 
 
 
-def checkAngleInSearchNeighbor(atomRetrieve, typeStructStudy):
+def checkAngleInSearchNeighbor(atomRetrieve, subs):
     """Check for every neighbors of atom retrieve the angle
     in: atomRetrieve
     out: atomRetrieve modified"""
     
-    conditionAngle = structure.selectionAngle()
+    d_angle_limit = structure.criteraAngle(subs)
     nbNeighbors = len(atomRetrieve["neighbors"])
         
     i = 0
     while i < nbNeighbors :
         # print atomRetrieve["neighbors"]
         
-        if checkListAngle(atomRetrieve["neighbors"][i]["angle"], conditionAngle[typeStructStudy]) == 0 : 
+        if checkListAngle(atomRetrieve["neighbors"][i]["angle"], d_angle_limit) == 0 : 
             del atomRetrieve["neighbors"][i]
             nbNeighbors = nbNeighbors - 1
             continue
@@ -844,13 +845,13 @@ def checkAngleInSearchNeighbor(atomRetrieve, typeStructStudy):
             i = i + 1
     
 
-def checkListAngle (list_angle, condition): 
+def checkListAngle (l_angle, d_limit): 
     
     
-    for angle in list_angle : 
-        if angle < condition["INF"] : 
+    for angle in l_angle : 
+        if angle < d_limit["INF"] : 
             return 0
-        if angle > condition["SUP"] : 
+        if angle > d_limit["SUP"] : 
             return 0
     
     return 1

@@ -370,26 +370,26 @@ def angleImidazolePyridine(atomNitrogen, atomFound, listAtomLigand):
 
 
 
-def angle(central_atom, atomFound, listAtomLigand, typeStructure):
+def angle(central_atom, atomFound, listAtomLigand, subs):
     """calcul angle for each structure study
     in: atom nitrogen, list atoms ligand, structure study
     out: list of angles"""
     
-    if typeStructure == "Primary" :
+    if subs == "Primary" :
         return anglePrimaryAmine(central_atom, atomFound, listAtomLigand)
-    elif typeStructure == "Secondary" :
+    elif subs == "Secondary" :
         return angleSecondaryAmine(central_atom, atomFound, listAtomLigand)
-    elif typeStructure == "Tertiary" :
+    elif subs == "Tertiary" :
         return angleTertiaryAmine(central_atom, atomFound, listAtomLigand)
-    elif typeStructure == "Imidazole" :
+    elif subs == "Imidazole" :
         return angleImidazolePyridine(central_atom, atomFound, listAtomLigand)
-    elif typeStructure == "Diamine" :
+#     elif subs == "Diamine" :
+#         return anglePrimaryAmine(central_atom, atomFound, listAtomLigand)
+#     elif subs == "Pyridine" :
+#         return angleSecondaryAmine(central_atom, atomFound, listAtomLigand)
+    elif subs == "Guanidium" :
         return anglePrimaryAmine(central_atom, atomFound, listAtomLigand)
-    elif typeStructure == "Pyridine" :
-        return angleSecondaryAmine(central_atom, atomFound, listAtomLigand)
-    elif typeStructure == "Guanidium" :
-        return anglePrimaryAmine(central_atom, atomFound, listAtomLigand)
-    elif typeStructure == "AcidCarboxylic" :
+    elif subs == "AcidCarboxylic" :
         return anglePrimaryAmine(central_atom, atomFound, listAtomLigand)
     
     else :
@@ -412,18 +412,18 @@ def anglePrimaryAmineCalculVol(atomN, atomC, atomTest):
     except : return [0.00]
 
 
-def angleSecondaryAmineCalculVol(atomNitrogen, atomC1, atomC2, atomTest):
+def angleSecondaryAmineCalculVol(atomN, atomC1, atomC2, atom_test):
     """calcul for three atoms angleVector for secondary amine
     in: atom nitrogen, atoms carbons and atom test
     out: list angles"""
 
-    distanceNitrogenTest = distanceTwoatoms(atomNitrogen, atomTest)
+    distanceNitrogenTest = distanceTwoatoms(atomN, atom_test)
 
-    distanceCarbon1Test = distanceTwoatoms(atomTest, atomC1)
-    distanceCarbon2Test = distanceTwoatoms(atomTest, atomC2)
+    distanceCarbon1Test = distanceTwoatoms(atom_test, atomC1)
+    distanceCarbon2Test = distanceTwoatoms(atom_test, atomC2)
 
-    distanceNitrogenCarbon1 = distanceTwoatoms(atomNitrogen, atomC1)
-    distanceNitrogenCarbon2 = distanceTwoatoms(atomNitrogen, atomC2)
+    distanceNitrogenCarbon1 = distanceTwoatoms(atomN, atomC1)
+    distanceNitrogenCarbon2 = distanceTwoatoms(atomN, atomC2)
 
     angle1 = degrees(acos((distanceNitrogenCarbon1 * distanceNitrogenCarbon1 + distanceNitrogenTest * distanceNitrogenTest - distanceCarbon1Test * distanceCarbon1Test) / (2 * distanceNitrogenCarbon1 * distanceNitrogenTest)))
     angle2 = degrees(acos((distanceNitrogenCarbon2 * distanceNitrogenCarbon2 + distanceNitrogenTest * distanceNitrogenTest - distanceCarbon2Test * distanceCarbon2Test) / (2 * distanceNitrogenCarbon2 * distanceNitrogenTest)))
@@ -457,13 +457,59 @@ def angleTertiaryAmineCalculVol (atomNitrogen, atomTest, atomC1, atomC2, atomC3)
 
 
 
-def angleImidazolePyridineCalculVol(atomNitrogen, atomC1, atomC2, atomTest):
+def angleImidazoleCalculVol(atomN1, atomN3, atom_test):
+
+
+    atom_center = {}
+    atom_center["x"] = (atomN1["x"] + atomN3["x"]) / 2
+    atom_center["y"] = (atomN1["y"] + atomN3["y"]) / 2
+    atom_center["z"] = (atomN1["z"] + atomN3["z"]) / 2
     
-    plan = equationPlan(atomC1, atomNitrogen, atomC2)   
     
-    xN = atomNitrogen["x"]
-    yN = atomNitrogen["y"]
-    zN = atomNitrogen["z"]
+    return anglePrimaryAmineCalculVol(atom_center, atomN1, atom_test)
+    
+  
+    
+def CenterImidazole (l_atom_connectN, l_atom_lig) : 
+    
+    a_out = parsing.EmptyAtom()
+    
+    atomN1 = l_atom_connectN[0]
+    
+    
+    for atom_connectN in l_atom_connectN[1:] :
+        l_atom_connect2, l_serial = retrieveAtom.atomConnect(l_atom_lig, atom_connectN["serial"])
+        
+        for atom_connect2 in l_atom_connect2[1:] : 
+            if atom_connect2["element"] == "N" : 
+                d_N = distanceTwoatoms(atomN1, atom_connect2)
+                print d_N
+                if d_N < 2.4 : 
+                    a_out["x"] = (atomN1["x"] + atom_connect2["x"])/2
+                    a_out["y"] = (atomN1["y"] + atom_connect2["y"])/2
+                    a_out["z"] = (atomN1["z"] + atom_connect2["z"])/2
+                    
+    
+                    return a_out
+                
+    print "ERROR"            
+    return "ERROR"   
+    
+    
+    
+    
+    
+    
+        
+
+
+def anglePlanImidazole(atomN1, atomC1, atomC2, atomN3):
+    
+    plan = equationPlan(atomC1, atomN1, atomC2)   
+    
+    xN = atomN1["x"]
+    yN = atomN1["y"]
+    zN = atomN1["z"]
 
     minDiff = 1000
     pointTest = {}
@@ -472,7 +518,7 @@ def angleImidazolePyridineCalculVol(atomNitrogen, atomC1, atomC2, atomTest):
     pointTest["z"] = zN
     pointTest["element"] = "S"
     pointRef = pointTest
-    alpha = angleVector(atomC1, atomNitrogen, atomC2)
+    alpha = angleVector(atomC1, atomN1, atomC2)
 
     for x in range (-5, 5) :
         pointTest["x"] = xN + x * 0.2
@@ -480,11 +526,11 @@ def angleImidazolePyridineCalculVol(atomNitrogen, atomC1, atomC2, atomTest):
             pointTest["y"] = yN + y * 0.2
             for z in range (-5, 5) :
                 pointTest["z"] = zN + z * 0.2
-                Diff = checkPoint(pointTest, atomNitrogen, atomC1, atomC2, plan, alpha)
+                Diff = checkPoint(pointTest, atomN1, atomC1, atomC2, plan, alpha)
                 if Diff < minDiff :
                     pointRef = deepcopy(pointTest)
                     minDiff = Diff
                     
     # print minDiff           
-    return [angleVector(atomTest, atomNitrogen, pointRef)], pointRef
+    return [angleVector(atomN3, atomN1, pointRef)], pointRef
     

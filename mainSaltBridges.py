@@ -182,23 +182,24 @@ RFree_thresold = 0.25
 #RUN all
 #PDB 50 -> Rx 3.0 // Rfree 0.25 // 
 # main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0, option_stat = 1, option_stat_dataset = 0)
-# main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold )
 # 
 # # PDB
-# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0)
-# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold)
+main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0)
 
 ##############################
 #       Volume function      #
 ##############################
 
-volumeFonction.primaryAmine("/home/borrel/saltBridgesProject/result/Primary.pdb", 90, 150, "primary")
-# volumeFonction.secondaryAmine("/home/borrel/saltBridgesProject/result/Secondary.pdb", 90, 150, "secondary")
-# volumeFonction.tertiaryAmine("/home/borrel/saltBridgesProject/result/Tertiary.pdb", 90, 150, "tertiary")
-# volumeFonction.imidazole("/home/borrel/saltBridgesProject/result/Imidazole.pdb", 1, 30, "imidazole")
-# volumeFonction.guanidium("/home/borrel/saltBridgesProject/result/Guanidium.pdb", 90, 150,1,30, "guanidium")
-# volumeFonction.pyridine("/home/borrel/saltBridgesProject/result/Pyridine.pdb", 1, 30, "pyridine")
-# volumeFonction.diamine("/home/borrel/saltBridgesProject/result/Diamine.pdb", 90, 150, "diamine")
+# volumeFonction.defVolumePrimary("/home/borrel/saltBridgesProject/result/", "Primary")
+# volumeFonction.defVolumeSecondary("/home/borrel/saltBridgesProject/result/", "Secondary")
+# volumeFonction.defVolumeTertiary("/home/borrel/saltBridgesProject/result/", "Tertiary")
+# volumeFonction.defVolumeImidazole("/home/borrel/saltBridgesProject/result/", "Imidazole")
+
+# # # # # # # volumeFonction.tertiaryAmine("/home/borrel/saltBridgesProject/result/Tertiary.pdb", 90, 150, "tertiary")
+# # # # # # # volumeFonction.imidazole("/home/borrel/saltBridgesProject/result/Imidazole.pdb", 1, 30, "imidazole")
+# # # # # # # volumeFonction.guanidium("/home/borrel/saltBridgesProject/result/Guanidium.pdb", 90, 150,1,30, "guanidium")
+# # # # # # # volumeFonction.pyridine("/home/borrel/saltBridgesProject/result/Pyridine.pdb", 1, 30, "pyridine")
+# # # # # # # volumeFonction.diamine("/home/borrel/saltBridgesProject/result/Diamine.pdb", 90, 150, "diamine")
 
 
 ############################

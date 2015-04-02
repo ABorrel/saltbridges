@@ -40,6 +40,28 @@ def lineCoords (line):
     return atom
 
 
+def EmptyAtom ():
+
+
+    atom = {}
+    atom["serial"] = 0
+    atom["name"] = ""
+    atom["char"] = ""
+    atom["resName"] = ""
+    atom["chainID"] = ""
+    atom["resSeq"] = 0
+    atom["iCode"] = "0"
+    atom["x"] = 0.0
+    atom["y"] = 0.0
+    atom["z"] = 0.0
+    atom["element"] = "Z"
+    atom["charge"] = "0"
+    atom["occupancy"] = "0"
+    atom["tempFactor"] = "0"
+    
+    atom["connect"] = []
+    return atom
+
 
 
 def lineConnectMatrix(line):
