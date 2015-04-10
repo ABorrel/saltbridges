@@ -98,7 +98,7 @@ def distanceAnalysis(stAtm, dir_out, logfile):
             runScriptR.plotDistance(p_file, logfile)
 
 
-def angle(st_atom, pr_result, d_max, log_file):
+def angleSubs(st_atom, pr_result, d_max, log_file):
 
     d_count_global = {}
     log_file.write ("[ANGLE] - count structure implementation\n")
@@ -114,10 +114,10 @@ def angle(st_atom, pr_result, d_max, log_file):
                 if not classif_neighbor in d_count_global[subs].keys () : 
                     d_count_global[subs][classif_neighbor] = {}
                     d_count_global[subs][classif_neighbor]["distance"] = [central_atom["neighbors"][i]["distance"]]
-                    d_count_global[subs][classif_neighbor]["angles"] = [central_atom["neighbors"][i]["angle"]]
+                    d_count_global[subs][classif_neighbor]["angles"] = [central_atom["neighbors"][i]["angleSubs"]]
                 else : 
                     d_count_global[subs][classif_neighbor]["distance"].append(central_atom["neighbors"][i]["distance"])
-                    d_count_global[subs][classif_neighbor]["angles"].append(central_atom["neighbors"][i]["angle"])
+                    d_count_global[subs][classif_neighbor]["angles"].append(central_atom["neighbors"][i]["angleSubs"])
                 i = i + 1
     
     # write global
@@ -128,7 +128,7 @@ def angle(st_atom, pr_result, d_max, log_file):
     
     writeFile.dAngleType(d_count_angle, pr_result)
     
-    # plot angle
+    # plot angleSubs
     runScriptR.plotAngle(l_p_angle, log_file)
     
 
@@ -427,7 +427,7 @@ def searchNeighbor (st_atom, d_stock, subs):
             d_stock[subs][i][classif_first] = d_stock[subs][i][classif_first] + 1
         
                  
-        # angle
+        # angleSubs
         try : 
             d_stock[subs]["angle1_3"].append (calcul.angleVector(dtemp_angle[1], atom_central, dtemp_angle[3]))
         except : 
@@ -503,8 +503,8 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 #     # distribution distance interest group and type atoms -> distance type
 #     distanceAnalysis(st_atom, pathManage.resultDistance(pr_result), logFile)
 #         
-#     # angle -> directory angles
-    angle(st_atom, pr_result, max_distance, logFile)
+#     # angleSubs -> directory angles
+    angleSubs(st_atom, pr_result, max_distance, logFile)
 #         
 #     # global analysis proximity -1 atom ligand // -2 aa type // -3 atom classification
 #     ligandProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
@@ -527,7 +527,7 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 # 
 # #    # combination
 #     combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
-#     combinationNeighborsAngle (st_atom, pathManage.combination(pr_result, "angle"))
+#     combinationNeighborsAngle (st_atom, pathManage.combination(pr_result, "angleSubs"))
 #     superimpose.SuperimposeFirstNeighbors (st_atom, pathManage.combination(pr_result, "superimposed"))
 #     
     
@@ -581,7 +581,7 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 # # # # # # # #         countAtLeastOne(st_atom_global, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["Nhis", "Nbasic"])
 # # # # # # # # #                 
 # # # # # # # #         globalAtomResidue(st_atom_global, countStruct[str(distance)]["ResidueAllAtom"])
-# # # # # # # #         angle(st_atom, countStruct[str(distance)]["angle"])
+# # # # # # # #         angleSubs(st_atom, countStruct[str(distance)]["angleSubs"])
 # # # # # # # #         
 # # # # # # # #         
 # # # # # # # #         
@@ -636,7 +636,7 @@ def saltBridges (st_atom, pr_result, logFile, debug = 1):
             filout_sum.write (interaction + ": " + str (st_count[sub][interaction]) + "\n")
         
         filout_sum.write (">-< Out distance: " + str (st_count[sub]["out_distance"]) + "\n")
-        filout_sum.write (">-< Out angle: " + str (st_count[sub]["out_angle"]) + "\n")
+        filout_sum.write (">-< Out angleSubs: " + str (st_count[sub]["out_angle"]) + "\n")
         filout_sum.write ("Global: " + str (st_count[sub]["salt-bridges"] + st_count[sub]["H-bond"] + st_count[sub]["water"] + st_count[sub]["other"]) + "\n")
         filout.write ("\n")
     
@@ -663,9 +663,9 @@ def retrieveInteraction (l_atoms, subs) :
         
         
         if atom["distance"] >= st_angle["distance"][0] and atom["distance"] <= st_angle["distance"][1] : 
-            if atom["angle"] != [] and atom["angle"][0] >= st_angle["angle"][0] and atom["angle"][0] <= st_angle["angle"][1] : 
+            if atom["angleSubs"] != [] and atom["angleSubs"][0] >= st_angle["angleSubs"][0] and atom["angleSubs"][0] <= st_angle["angleSubs"][1] : 
                 
-                print atom["angle"], atom["distance"], "****----***** OK", subs
+                print atom["angleSubs"], atom["distance"], "****----***** OK", subs
                 
                 if subs == "AcidCarboxylic" : 
                     if type_atom == "Nbasic" : 
@@ -699,7 +699,7 @@ def retrieveInteraction (l_atoms, subs) :
                         
                         
                     
-#         print atom["angle"], atom["distance"], "****----***** NO-OK"
+#         print atom["angleSubs"], atom["distance"], "****----***** NO-OK"
     
     if flag_ox == 1 : 
         return "salt-bridges"
@@ -974,7 +974,7 @@ def lenBondAnalysis (struct_neighbor, substruct, p_dir_result ):
             for c_atom in l_at_subs[1:] : 
                 l_distance_temp.append (calcul.distanceTwoatoms(c_atom, N_ref))
              
-            l_angle.append(sum(atom_close["angle"]))
+            l_angle.append(sum(atom_close["angleSubs"]))
             l_distance.append (sum (l_distance_temp))
             l_first.append (classif_first)
      

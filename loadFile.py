@@ -290,9 +290,9 @@ def loadSummary (p_summary) :
             d_n["y"] = float(element_n[7])
             d_n["z"] = float(element_n[8])
             
-            d_n["angle"] = []
-            for angle in element_n [9:] :
-                d_n["angle"].append (float(angle))
+            d_n["angleSubs"] = []
+            for angleSubs in element_n [9:] :
+                d_n["angleSubs"].append (float(angleSubs))
             d_line["neighbors"].append (d_n)
         l_out.append (d_line)
     return l_out     
@@ -345,8 +345,8 @@ def loadOnePDBbyLigand (st_all, p_filout, debug = 0):
         lineWrite = str(atom_central["PDB"]) + "\t" + str(atom_central["serial"]) + "/" + str(atom_central["resName"]) + "/" + str(atom_central["x"]) + "/" + str(atom_central["y"]) +  "/" + str(atom_central["z"]) + "\t"
         for neighbor in atom_central["neighbors"]:
             lineWrite = lineWrite + str(neighbor["serial"]) + " " + str(neighbor["resSeq"]) + " " + str(neighbor["element"]) + " " + str(neighbor["name"]) + " " + str(neighbor["resName"]) + " " + str("%.2f" % neighbor["distance"]) + " " +str("%.3f" % neighbor["x"]) + " " +str("%.3f" % neighbor["y"]) + " " +str("%.3f" % neighbor["z"])  
-            for angle in neighbor["angle"]:
-                lineWrite = lineWrite + " " + str("%.2f" % angle)
+            for angleSubs in neighbor["angleSubs"]:
+                lineWrite = lineWrite + " " + str("%.2f" % angleSubs)
             lineWrite = lineWrite + "//"
         lineWrite = lineWrite + "\n"
         filout.write (lineWrite)

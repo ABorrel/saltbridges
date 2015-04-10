@@ -323,8 +323,37 @@ def anglePrimaryAmine(atomNitrogen, atomCounterIon, atomLigands):
         return [angle1]
 
 
-def angleImidazolePyridine(atomNitrogen, atomFound, listAtomLigand):
+
+def angleImidazole(atom_central, atom_check, l_atom_lig, debug = 0):
+    """
+    based one central atom
+    """
     
+    mindistN = 100 
+    mindistCheck = 100
+    for atom_lig in l_atom_lig : 
+        if atom_lig["element"] == "N" : 
+            distN = distanceTwoatoms(atom_central, atom_lig)
+            distCheck = distanceTwoatoms(atom_central, atom_check)
+            
+            if debug : print distCheck, distN
+            if mindistN < distN :
+                continue
+            else :
+                mindistN = distN
+            if distCheck < mindistCheck : 
+                mindistCheck = distCheck
+                d_NConsidered = deepcopy(atom_lig)
+    
+    return [angleVector(d_NConsidered, atom_central, atom_check)]
+
+
+
+
+def angleImidazolePyridine(atomNitrogen, atomFound, listAtomLigand):
+    """
+    OLD VERSION based on nitrogen
+    """
     matrix = atomNitrogen["connect"]
     atomC1 = retrieveAtom.serial(matrix[1], listAtomLigand)
     atomC2 = retrieveAtom.serial(matrix[2], listAtomLigand)
@@ -370,31 +399,48 @@ def angleImidazolePyridine(atomNitrogen, atomFound, listAtomLigand):
 
 
 
-def angle(central_atom, atomFound, listAtomLigand, subs):
-    """calcul angle for each structure study
+def angleSubs(central_atom, atom_found, l_atom_lig, subs):
+    """calcul angleSubs for each structure study
     in: atom nitrogen, list atoms ligand, structure study
     out: list of angles"""
     
     if subs == "Primary" :
-        return anglePrimaryAmine(central_atom, atomFound, listAtomLigand)
+        return anglePrimaryAmine(central_atom, atom_found, l_atom_lig)
     elif subs == "Secondary" :
-        return angleSecondaryAmine(central_atom, atomFound, listAtomLigand)
+        return angleSecondaryAmine(central_atom, atom_found, l_atom_lig)
     elif subs == "Tertiary" :
-        return angleTertiaryAmine(central_atom, atomFound, listAtomLigand)
+        return angleTertiaryAmine(central_atom, atom_found, l_atom_lig)
     elif subs == "Imidazole" :
-        return angleImidazolePyridine(central_atom, atomFound, listAtomLigand)
+        return angleImidazole(central_atom, atom_found, l_atom_lig)
 #     elif subs == "Diamine" :
-#         return anglePrimaryAmine(central_atom, atomFound, listAtomLigand)
+#         return anglePrimaryAmine(central_atom, atom_found, l_atom_lig)
 #     elif subs == "Pyridine" :
-#         return angleSecondaryAmine(central_atom, atomFound, listAtomLigand)
+#         return angleSecondaryAmine(central_atom, atom_found, l_atom_lig)
     elif subs == "Guanidium" :
-        return anglePrimaryAmine(central_atom, atomFound, listAtomLigand)
+        return angleGuanidium(central_atom, atom_found, l_atom_lig)
     elif subs == "AcidCarboxylic" :
-        return anglePrimaryAmine(central_atom, atomFound, listAtomLigand)
+        return anglePrimaryAmine(central_atom, atom_found, l_atom_lig)
     
     else :
         return []
     
+
+
+def angleGuanidium(central_atom, atom_check, l_atom_lig) : 
+    
+    
+    l_atom_connect_central, l_atom_element = retrieveAtom.atomConnect(l_atom_lig, central_atom["serial"])
+    
+    for atom_N in l_atom_connect_central[1:] : 
+        l_atom_connect_N, l_element_N = retrieveAtom.atomConnect(l_atom_lig, atom_N["serial"])
+        if l_element_N != ["N", "C"] : 
+            N_considered = l_atom_connect_N[0]
+            break
+    
+    return angleVector(central_atom, N_considered, atom_check)
+    
+    
+
 
 
 def anglePrimaryAmineCalculVol(atomN, atomC, atomTest):
@@ -497,9 +543,27 @@ def CenterImidazole (l_atom_connectN, l_atom_lig) :
     
     
     
+def CenterGuanidium (l_atom_connectN, l_atom_lig) : 
     
     
+    l_atom_connect = []
+    for atom_connectN in l_atom_connectN : 
+        l_atom_connect.append (atom_connectN["element"])
+    print l_atom_connect
     
+    if l_atom_connect == ['N', 'C', 'C'] : 
+        for C_atom in l_atom_connectN[1:] : 
+            l_C_atom, l_connect = retrieveAtom.atomConnect(l_atom_lig, C_atom["serial"])
+            if l_connect == ["C", "N", "N", "N"] : 
+                return deepcopy(l_C_atom[0])
+    
+    
+    if l_atom_connect == ["N", "C"] : 
+        return deepcopy(l_atom_connectN[-1])
+ 
+ 
+    print "ERROR"
+    return "ERROR"
         
 
 

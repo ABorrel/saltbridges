@@ -141,7 +141,7 @@ def cncc(listAtomConnectNitrogen, listAtomligand):
     return 0
 
 
-def guanidium(l_at_connect_N, listAtomLigand):
+def guanidium(l_at_connect_N, l_atom_lig):
     """search guanidium 
     in: list atom connected of nitrogen, list atom ligand
     out: 1 or 0"""
@@ -150,11 +150,11 @@ def guanidium(l_at_connect_N, listAtomLigand):
     findNH = 0
     # atom lateral
     if stAtom == ["N", "C"] :
-        l_at_connect_c, connectC = retrieveAtom.atomConnect(listAtomLigand , l_at_connect_N[1]["serial"])
+        l_at_connect_c, connectC = retrieveAtom.atomConnect(l_atom_lig , l_at_connect_N[1]["serial"])
         if connectC == ["C", "N", "N", "N"] :
-            groupAtomN1, conect_N1 = retrieveAtom.atomConnect(listAtomLigand , int (l_at_connect_c[0]["connect"][1]))
-            groupAtomN2, conect_N2 = retrieveAtom.atomConnect(listAtomLigand , int (l_at_connect_c[0]["connect"][2]))
-            groupAtomN3, conect_N3 = retrieveAtom.atomConnect(listAtomLigand , int (l_at_connect_c[0]["connect"][3]))
+            groupAtomN1, conect_N1 = retrieveAtom.atomConnect(l_atom_lig , int (l_at_connect_c[0]["connect"][1]))
+            groupAtomN2, conect_N2 = retrieveAtom.atomConnect(l_atom_lig , int (l_at_connect_c[0]["connect"][2]))
+            groupAtomN3, conect_N3 = retrieveAtom.atomConnect(l_atom_lig , int (l_at_connect_c[0]["connect"][3]))
             l_conect = [conect_N1, conect_N2, conect_N3]
             l_group_atom =  [groupAtomN1, groupAtomN2, groupAtomN3]
             
@@ -186,11 +186,11 @@ def guanidium(l_at_connect_N, listAtomLigand):
     # atom central structure
     elif stAtom == ["N", "C", "C"] : 
         for at_conect in l_at_connect_N[1:] : 
-            l_group_at, conect_N = retrieveAtom.atomConnect(listAtomLigand , at_conect["serial"])
+            l_group_at, conect_N = retrieveAtom.atomConnect(l_atom_lig , at_conect["serial"])
             if conect_N == ["C", "N", "N", "N"] :
                 l_c_central = l_group_at
                 for group_at in l_group_at[1:] : 
-                    l_goup_N, connect_N = retrieveAtom.atomConnect(listAtomLigand , group_at["serial"])
+                    l_goup_N, connect_N = retrieveAtom.atomConnect(l_atom_lig , group_at["serial"])
                     if connect_N == ["N", "C"] : 
                         findNH = findNH + 1
             else : 
@@ -211,10 +211,10 @@ def guanidium(l_at_connect_N, listAtomLigand):
 #         
 #         for atomConnectNitrogen in l_at_connect_N : 
 #             if atomConnectNitrogen ["element"] == "C" : 
-#                 listAtomC, connectElementC = retrieveAtom.atomConnect(listAtomLigand, atomConnectNitrogen["serial"])
+#                 listAtomC, connectElementC = retrieveAtom.atomConnect(l_atom_lig, atomConnectNitrogen["serial"])
 #                 if connectElementC == ["C", "N", "N", "N"] : 
 #                     for atomConnectC in listAtomC[1:] : 
-#                         nitrogenConnect, connectNitrogen = retrieveAtom.atomConnect(listAtomLigand, atomConnectC["serial"])
+#                         nitrogenConnect, connectNitrogen = retrieveAtom.atomConnect(l_atom_lig, atomConnectC["serial"])
 #                         if connectNitrogen == ["N", "C"] : 
 #                             findNH = findNH + 1
 #         
@@ -224,7 +224,7 @@ def guanidium(l_at_connect_N, listAtomLigand):
 #     return [0, []]
 
 
-# def guanidiumNitrogenCentral(l_at_connect_N, listAtomLigand):
+# def guanidiumNitrogenCentral(l_at_connect_N, l_atom_lig):
 #     """Search guanidium 
 #     in: list Atom connected of nitrogen, list global atoms
 #     out: boolean"""
@@ -232,10 +232,10 @@ def guanidium(l_at_connect_N, listAtomLigand):
 #     findNH = 0
 #     for atomConnectNitrogen in l_at_connect_N : 
 #         if atomConnectNitrogen ["element"] == "C" : 
-#             listAtomC, connectElementC = retrieveAtom.atomConnect(listAtomLigand, atomConnectNitrogen["serial"])
+#             listAtomC, connectElementC = retrieveAtom.atomConnect(l_atom_lig, atomConnectNitrogen["serial"])
 #             if connectElementC == ["C", "N", "N", "N"] : 
 #                 for atomConnectC in listAtomC[1:] : 
-#                     nitrogenConnect, connectNitrogen = retrieveAtom.atomConnect(listAtomLigand, atomConnectC["serial"])
+#                     nitrogenConnect, connectNitrogen = retrieveAtom.atomConnect(l_atom_lig, atomConnectC["serial"])
 #                     if connectNitrogen == ["N", "C"] : 
 #                         findNH = findNH + 1
 #     
@@ -524,8 +524,12 @@ def globalSearch (dist_thresold, p_file_dataset,  pr_result, debug = 1):
     # ##Write summary file
     d_files_summary = writeFile.openFileSummary(pr_summary)# sumary result
     
-    # inialization    
-    i = 23
+    # inialization  !!!!!!! 
+     
+    i = 0
+    
+    i=12
+    nb_lig = 14
     while i < nb_lig :
         if debug: print "Ligand: " + str(l_lig[i]["name"]) + " " + str(i) + " " + str(nb_lig)
         nb_PDB = len(l_lig[i]["PDB"])
@@ -563,8 +567,6 @@ def interestGroup (max_distance, l_atom_lig, name_PDB, d_stock_neighbor):
     l_serialN = listAtomType(l_atom_lig, "N")
     l_serialO = listAtomType(l_atom_lig, "O")
     
-    d_imd_temp = {}
-    d_imd_temp["Imidazole"] = []
     d_gua_temp = {}
     d_gua_temp["Guanidium"] = []   
 #     d_dia_temp = {}
@@ -577,9 +579,9 @@ def interestGroup (max_distance, l_atom_lig, name_PDB, d_stock_neighbor):
         l_atom_connectN, conect = retrieveAtom.atomConnect(l_atom_lig, serialN)
         # check every substructure
         if imidazole(l_atom_connectN, l_atom_lig)[0] == 1:
-            implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Imidazole", d_imd_temp)
+            implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Imidazole", d_stock_neighbor)
         elif guanidium(l_atom_connectN, l_atom_lig)[0] == 1:
-            implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Guanidium", d_gua_temp)
+            implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Guanidium", d_stock_neighbor)
 #         elif diAmine(l_atom_connectN, l_atom_lig) == 1:
 #             implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Diamine", d_dia_temp)
 #         elif pyridine(l_atom_connectN, l_atom_lig) == 1:
@@ -602,16 +604,7 @@ def interestGroup (max_distance, l_atom_lig, name_PDB, d_stock_neighbor):
         if not "AcidCarboxylic" in d_stock_neighbor : 
             d_stock_neighbor["AcidCarboxylic"] = []
         regroupAtomNeighbor(d_acd_temp["AcidCarboxylic"], d_stock_neighbor["AcidCarboxylic"], l_atom_lig)
-    if len(d_gua_temp["Guanidium"]) > 0 : 
-        if not "Guanidium" in d_stock_neighbor : 
-            d_stock_neighbor["Guanidium"] = []
-        regroupAtomNeighborGuanidium(d_gua_temp["Guanidium"], d_stock_neighbor["Guanidium"], l_atom_lig)
-    if len(d_imd_temp["Imidazole"]) > 0 : 
-        if not "Imidazole" in d_stock_neighbor : 
-            d_stock_neighbor["Imidazole"] = []
-        regroupAtomNeighbor(d_imd_temp["Imidazole"], d_stock_neighbor["Imidazole"], l_atom_lig)
-#     if len(d_dia_temp["Diamine"]) > 0 : 
-#         regroupAtomNeighbor(d_dia_temp["Diamine"], struct_neighbor["Diamine"], list_atom_ligand)
+
 
  
 
@@ -623,12 +616,15 @@ def implementNeighborStruct (max_distance, l_atom_connect_central, name_PDB, l_a
     # case imidazole
     if subs == "Imidazole" : 
         atom_central = calcul.CenterImidazole (l_atom_connect_central, l_atom_lig)
+    elif subs == "Guanidium" : 
+        atom_central = calcul.CenterGuanidium (l_atom_connect_central, l_atom_lig)
+        print atom_central
     else : 
         atom_central = l_atom_connect_central[0]
     
+#     print "Test atom considered", atom_central
     atom_neighbors = buildAtom(max_distance, atom_central, name_PDB, subs, l_atom_lig)
     
-
     # dynamic implementation    
     if not subs in st_neighbor.keys () :
         st_neighbor[subs] = []
@@ -757,7 +753,7 @@ def buildAtom(rayon, at_central, PDB, subs, l_atom_lig):
 
 
 
-def neighbors(rayon, atom_central, pdb, typeStructure = "global", ligandPDB = [] ):
+def neighbors(rayon, atom_central, pdb, subs = "global", ligandPDB = [] ):
     """Search neighbors for all ligand
     in : rayon where is atoms, central atom, pdb file
     out : list atoms found"""
@@ -773,7 +769,8 @@ def neighbors(rayon, atom_central, pdb, typeStructure = "global", ligandPDB = []
                     if atom_central["resSeq"] != atom["resSeq"]: # check if variation
                         if tool.atomInList(l_atom, atom) == 0:
                             atom["distance"] = distance
-                            atom["angle"] = calcul.angle(atom_central, atom, ligandPDB, typeStructure)
+                            atom["angleSubs"] = calcul.angleSubs(atom_central, atom, ligandPDB, subs)
+                            print "****", atom["angleSubs"]
                             atom["classification"] = structure.classificationATOM(atom)
                             l_atom.append(atom)
 
@@ -826,7 +823,7 @@ def listAtomType(groupAtom, type_atom):
 
 
 def checkAngleInSearchNeighbor(atomRetrieve, subs):
-    """Check for every neighbors of atom retrieve the angle
+    """Check for every neighbors of atom retrieve the angleSubs
     in: atomRetrieve
     out: atomRetrieve modified"""
     
@@ -837,7 +834,7 @@ def checkAngleInSearchNeighbor(atomRetrieve, subs):
     while i < nbNeighbors :
         # print atomRetrieve["neighbors"]
         
-        if checkListAngle(atomRetrieve["neighbors"][i]["angle"], d_angle_limit) == 0 : 
+        if checkListAngle(atomRetrieve["neighbors"][i]["angleSubs"], d_angle_limit) == 0 : 
             del atomRetrieve["neighbors"][i]
             nbNeighbors = nbNeighbors - 1
             continue
@@ -848,10 +845,10 @@ def checkAngleInSearchNeighbor(atomRetrieve, subs):
 def checkListAngle (l_angle, d_limit): 
     
     
-    for angle in l_angle : 
-        if angle < d_limit["INF"] : 
+    for angleSubs in l_angle : 
+        if angleSubs < d_limit["INF"] : 
             return 0
-        if angle > d_limit["SUP"] : 
+        if angleSubs > d_limit["SUP"] : 
             return 0
     
     return 1

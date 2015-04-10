@@ -228,21 +228,67 @@ def defVolumeImidazole (pr_init, subs):
   
 
 
-
-def WriteParameter (p_file_parameter, subs, def_volume, nb_atom):
+  
+def defVolumeGuanidium (pr_init, subs):
+    """calculation of volume around nitrogen of primary amine
+    in: filePDB with only primary amine, extreme value of l_angle, structure subs
+    out: file format filePDB with water"""
     
+    pr_volume = pathManage.CreatePathDir(pr_init + "Volume/")
+    filout = open (pr_volume + "volume_" + subs + ".pdb", "w")
+    l_atom_sub = structure.substructureCoord(subs)
+    def_volume = structure.criteraAngle(subs)
+    writePDBfile.coordinateSection(filout, l_atom_sub, "HETATM")
+
+    
+    angle_inf = def_volume["angle"][0]
+    angle_sup = def_volume["angle"][1]
+    
+    d_inf = def_volume["distance"][0]
+    d_sup = def_volume["distance"][1]
+    
+    
+    for atom_sub in l_atom_sub : 
+        if atom_sub["name"] == "N01" : 
+            atomN1 = atom_sub
+        if atom_sub["name"] == "N02" : 
+            atomN2 = atom_sub
         
-    # file of parameter
-    file_parameter = open (p_file_parameter, "w")
-    file_parameter.write ("===" + subs + "===\n")
-    file_parameter.write ("-> ANGLES\n")
-    file_parameter.write ("Inferior: " + str (def_volume["angle"][0]) + "\n")
-    file_parameter.write ("Superior: " + str (def_volume["angle"][1]) + "\n")
-    file_parameter.write ("-> DISTANCE\n")
-    file_parameter.write ("Inferior: " + str (def_volume["distance"][0]) + "\n")
-    file_parameter.write ("Superior: " + str (def_volume["distance"][1]) + "\n")
-    file_parameter.write ("==> NB atom positionned:" + str (nb_atom) + "\n")
-    file_parameter.close () 
+    atom_center = {}
+    atom_center["x"] = (atomN1["x"] + atomN2["x"]) / 2
+    atom_center["y"] = (atomN1["y"] + atomN2["y"]) / 2
+    atom_center["z"] = (atomN1["z"] + atomN2["z"]) / 2
+        
+    
+    serial = 0
+    for x_test in [atom_center["x"] + x * 0.1 for x in range (-100,100)] : 
+        for y_test in [atom_center["y"] + y * 0.1 for y in range (-100,100)] : 
+            for z_test in [atom_center["z"] + z * 0.1 for z in range (-100,100)] :  
+                atom_test = structure.genericAtom(x_test, y_test, z_test)
+                distance1 = calcul.distanceTwoatoms(atom_test, atomN1)
+                distance2 = calcul.distanceTwoatoms(atom_test, atomN3)
+                l_angleN1 = calcul.angleImidazoleCalculVol(atomN1, atomN3, atom_test)
+                l_angleN3 = calcul.angleImidazoleCalculVol(atomN3, atomN1, atom_test)
+                
+                if distance1 < d_sup and distance1 > d_inf: 
+                    if l_angleN1[0] > angle_inf and l_angleN1[0] < angle_sup :
+                        serial = serial + 1
+                        atom_test["serial"] = serial
+                        atom_test["resSeq"] = serial
+                        writePDBfile.coordinateStructure(atom_test, "HETATM", filout)
+                        continue
+                            
+                if distance2 < d_sup and distance2 > d_inf: 
+                    if l_angleN3[0] > angle_inf and l_angleN3[0] < angle_sup :
+                        serial = serial + 1
+                        atom_test["serial"] = serial
+                        atom_test["resSeq"] = serial
+                        writePDBfile.coordinateStructure(atom_test, "HETATM", filout)
+                    
+                    
+    filout.close()
+    WriteParameter (pr_volume + subs + ".param", subs, def_volume, serial) 
+  
     
 
 
@@ -519,5 +565,19 @@ def diamine(path_filePDB, inferiorLimit, superiorLimit, study):
 
 
 
+
+def WriteParameter (p_file_parameter, subs, def_volume, nb_atom):
     
+        
+    # file of parameter
+    file_parameter = open (p_file_parameter, "w")
+    file_parameter.write ("===" + subs + "===\n")
+    file_parameter.write ("-> ANGLES\n")
+    file_parameter.write ("Inferior: " + str (def_volume["angle"][0]) + "\n")
+    file_parameter.write ("Superior: " + str (def_volume["angle"][1]) + "\n")
+    file_parameter.write ("-> DISTANCE\n")
+    file_parameter.write ("Inferior: " + str (def_volume["distance"][0]) + "\n")
+    file_parameter.write ("Superior: " + str (def_volume["distance"][1]) + "\n")
+    file_parameter.write ("==> NB atom positionned:" + str (nb_atom) + "\n")
+    file_parameter.close ()     
 

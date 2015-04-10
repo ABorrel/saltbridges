@@ -111,8 +111,8 @@ def neighborStruct(struct_neighbor, struct_global_neighbor, files):
             lineWrite = str(atom_central["PDB"]) + "\t" + str(atom_central["serial"]) + "/" + str(atom_central["resName"]) + "/" + str(atom_central["x"]) + "/" + str(atom_central["y"]) +  "/" + str(atom_central["z"]) + "\t"
             for neighbor in atom_central["neighbors"]:
                 lineWrite = lineWrite + str(neighbor["serial"]) + " " + str(neighbor["resSeq"]) + " " + str(neighbor["element"]) + " " + str(neighbor["name"]) + " " + str(neighbor["resName"]) + " " + str("%.2f" % neighbor["distance"]) + " " +str("%.3f" % neighbor["x"]) + " " +str("%.3f" % neighbor["y"]) + " " +str("%.3f" % neighbor["z"])  
-                for angle in neighbor["angle"]:
-                    lineWrite = lineWrite + " " + str("%.2f" % angle)
+                for angleSubs in neighbor["angleSubs"]:
+                    lineWrite = lineWrite + " " + str("%.2f" % angleSubs)
                 lineWrite = lineWrite + "//"
             lineWrite = lineWrite + "\n"
             files[type_search].write(lineWrite)
@@ -642,9 +642,9 @@ def resultAngle(d_count, pr_out):
                 l_element = [str("%.2f" % distanceAt)]
                 #filoutGlobal.write("%.2f" % distanceAt)
                 
-                for angle in d_count[type_substruct][classe]["angles"][i] : 
-                    a = "%.2f" % angle
-                    #filoutGlobal.write("\t%.2f" % angle)
+                for angleSubs in d_count[type_substruct][classe]["angles"][i] : 
+                    a = "%.2f" % angleSubs
+                    #filoutGlobal.write("\t%.2f" % angleSubs)
                     l_element.append (str(a))
                 l_element.append (classe)
                 if len (l_element) >= 3 : 
@@ -669,10 +669,10 @@ def dAngleType (count, directory_in):
             filout.write("\n")
             ##############
             
-            for angle in count[type_substruct][distance].keys() : 
-                filout.write(str(angle))
+            for angleSubs in count[type_substruct][distance].keys() : 
+                filout.write(str(angleSubs))
                 for classe in listClasse : 
-                    try : filout.write("\t" + str(count[type_substruct][distance][angle][classe]))
+                    try : filout.write("\t" + str(count[type_substruct][distance][angleSubs][classe]))
                     except : filout.write("\t0")
                 filout.write("\n")
         filout.close()    
@@ -811,7 +811,7 @@ def RelationAngleDistNeighbors (d_relation_neighbors, pr_result) :
         while i < nb_neighbor :   
             
             print "distance", len (d_relation_neighbors[subs]["distance1_2"]), len (d_relation_neighbors[subs]["distance1_3"]), len (d_relation_neighbors[subs]["distance2_3"])
-            print "angle", len (d_relation_neighbors[subs]["angle1_2"]), len (d_relation_neighbors[subs]["angle1_3"]), len (d_relation_neighbors[subs]["angle2_3"])
+            print "angleSubs", len (d_relation_neighbors[subs]["angle1_2"]), len (d_relation_neighbors[subs]["angle1_3"]), len (d_relation_neighbors[subs]["angle2_3"])
             print "type", len(d_relation_neighbors[subs][2]["classe"]), len(d_relation_neighbors[subs][1]["classe"]), len(d_relation_neighbors[subs][3]["classe"])
             
             filout_1_2.write (str(d_relation_neighbors[subs]["distance1_2"][i]) + "\t" + str(d_relation_neighbors[subs]["angle1_2"][i]) + "\t" + str(d_relation_neighbors[subs][1]["classe"][i]) + "_" + str(d_relation_neighbors[subs][2]["classe"][i]) + "\n")
