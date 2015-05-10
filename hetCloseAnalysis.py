@@ -11,34 +11,34 @@ def removeNeighborIron (st_atom, p_summary):
     d_count = {}
     
     ld_out = {}
-    for sub_struct in st_atom.keys() : 
-        if not sub_struct in d_count.keys ():
-            d_count[sub_struct] = {}
-            d_count[sub_struct]["Ions"] = 0
-            d_count[sub_struct]["DNA"] = 0
-            d_count[sub_struct]["other"] = 0
+    for subs in st_atom.keys() : 
+        if not subs in d_count.keys ():
+            d_count[subs] = {}
+            d_count[subs]["Ions"] = 0
+            d_count[subs]["DNA"] = 0
+            d_count[subs]["other"] = 0
             
-        nb_central_atom = len (st_atom[sub_struct] )
+        nb_central_atom = len (st_atom[subs] )
         if nb_central_atom == 0 : 
             continue
         i = 0
         while i < nb_central_atom : 
-            l_neighbors = st_atom[sub_struct][i]["neighbors"]
-            ion_close = closeIron (l_neighbors)
+            l_neighbors = st_atom[subs][i]["neighbors"]
+            ion_close = closeIon (l_neighbors)
            
             if ion_close != 0 :
                 if ion_close["resName"] in l_ions : 
-                    d_count[sub_struct]["Ions"] = d_count[sub_struct]["Ions"] + 1
+                    d_count[subs]["Ions"] = d_count[subs]["Ions"] + 1
                 elif ion_close["resName"] in l_DNA : 
-                    d_count[sub_struct]["DNA"] = d_count[sub_struct]["DNA"] + 1
+                    d_count[subs]["DNA"] = d_count[subs]["DNA"] + 1
                 else : 
-                    d_count[sub_struct]["other"] = d_count[sub_struct]["other"] + 1
+                    d_count[subs]["other"] = d_count[subs]["other"] + 1
                 
-                if not sub_struct in ld_out.keys () : 
-                    ld_out [sub_struct] = []
-                ld_out [sub_struct].append (deepcopy(st_atom[sub_struct][i]))
-                filout.write (str(st_atom[sub_struct][i]["PDB"]) + "\t" + str (sub_struct) + "\t" + str(ion_close["resName"]) + "\t" + str (ion_close["distance"]) + "\n")
-                del st_atom[sub_struct][i]
+                if not subs in ld_out.keys () : 
+                    ld_out [subs] = []
+                ld_out [subs].append (deepcopy(st_atom[subs][i]))
+                filout.write (str(st_atom[subs][i]["PDB"]) + "\t" + str (subs) + "\t" + str(ion_close["resName"]) + "\t" + str (ion_close["distance"]) + "\n")
+                del st_atom[subs][i]
                 nb_central_atom = nb_central_atom - 1
                 continue
             else : 
@@ -61,7 +61,7 @@ def removeNeighborIron (st_atom, p_summary):
                     
     
     
-def closeIron (l_neighbors) : 
+def closeIon (l_neighbors) : 
     # peut etre changer pour linstant je suprime si pas dans la liste des aa
 
     listAminoAcid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS", "HOH"]

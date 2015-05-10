@@ -15,8 +15,8 @@ for (sub in rownames (d)){
 
 	leg = NULL
 	for (l in colnames (d)){
-		print (d[sub,l])
-		print (sum(d[sub,]))
+		#print (d[sub,l])
+		#print (sum(d[sub,]))
 		leg = append (leg, paste (l, "\n", round (d[sub,l]/sum(d[sub,])*100), "%", sep = ""))
 	}
 

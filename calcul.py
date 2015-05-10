@@ -318,76 +318,66 @@ def anglePrimaryAmine(atomNitrogen, atomCounterIon, atomLigands):
 
 def angleImidazole(atom_central, atom_check, l_atom_lig, debug = 0):
     """
-    based one central atom
+    based one central atom, take C between the two N
     """
     
-    mindistN = 100 
-    mindistCheck = 100
     for atom_lig in l_atom_lig : 
-        if atom_lig["element"] == "N" : 
-            distN = distanceTwoatoms(atom_central, atom_lig)
-            distCheck = distanceTwoatoms(atom_central, atom_check)
-            
-            if debug : print distCheck, distN
-            if mindistN < distN :
-                continue
-            else :
-                mindistN = distN
-            if distCheck < mindistCheck : 
-                mindistCheck = distCheck
-                d_NConsidered = deepcopy(atom_lig)
+        if atom_lig["element"] == "C" :
+            d_temp = distanceTwoatoms(atom_central, atom_lig)
+            if d_temp < 2.0 : 
+                d_Cconsidered = deepcopy(atom_lig)
+                return [angleVector(d_Cconsidered, atom_central, atom_check)]
+    return ["NA"]
     
-    return [angleVector(d_NConsidered, atom_central, atom_check)]
 
 
 
-
-def angleImidazolePyridine(atomNitrogen, atomFound, listAtomLigand):
-    """
-    OLD VERSION based on nitrogen
-    """
-    matrix = atomNitrogen["connect"]
-    atomC1 = retrieveAtom.serial(matrix[1], listAtomLigand)
-    atomC2 = retrieveAtom.serial(matrix[2], listAtomLigand)
-    
-    if len (matrix) == 4 : 
-        if atomC1 == 0 : 
-            atomC1 = retrieveAtom.serial(matrix[-1], listAtomLigand)
-        if atomC2 == 0 : 
-            atomC2 = retrieveAtom.serial(matrix[-1], listAtomLigand)
-            
-#     print "c1", atomC1
-#     print "c2", atomC2
-#     print "c3", atomNitrogen
-
-    plan = equationPlan(atomC1, atomNitrogen, atomC2)    
-    
-    xN = atomNitrogen["x"]
-    yN = atomNitrogen["y"]
-    zN = atomNitrogen["z"]
-
-    minDiff = 100
-    pointTest = {}
-    pointTest["x"] = xN
-    pointTest["y"] = yN
-    pointTest["z"] = zN
-    pointTest["element"] = "O"
-
-    alpha = angleVector(atomC1, atomNitrogen, atomC2)
-
-    for x in range (-5, 5) :
-        pointTest["x"] = xN + x * 0.2
-        for y in range (-5, 5) :
-            pointTest["y"] = yN + y * 0.2
-            for z in range (-5, 5) :
-                pointTest["z"] = zN + z * 0.2
-                Diff = checkPoint(pointTest, atomNitrogen, atomC1, atomC2, plan, alpha)
-                if Diff < minDiff :
-                    pointRef = deepcopy(pointTest)
-                    minDiff = Diff
-
-    try : return [angleVector(atomFound, atomNitrogen, pointRef)]
-    except : return []
+# def angleImidazolePyridine(atomNitrogen, atomFound, listAtomLigand):
+#     """
+#     OLD VERSION based on nitrogen
+#     """
+#     matrix = atomNitrogen["connect"]
+#     atomC1 = retrieveAtom.serial(matrix[1], listAtomLigand)
+#     atomC2 = retrieveAtom.serial(matrix[2], listAtomLigand)
+#     
+#     if len (matrix) == 4 : 
+#         if atomC1 == 0 : 
+#             atomC1 = retrieveAtom.serial(matrix[-1], listAtomLigand)
+#         if atomC2 == 0 : 
+#             atomC2 = retrieveAtom.serial(matrix[-1], listAtomLigand)
+#             
+# #     print "c1", atomC1
+# #     print "c2", atomC2
+# #     print "c3", atomNitrogen
+# 
+#     plan = equationPlan(atomC1, atomNitrogen, atomC2)    
+#     
+#     xN = atomNitrogen["x"]
+#     yN = atomNitrogen["y"]
+#     zN = atomNitrogen["z"]
+# 
+#     minDiff = 100
+#     pointTest = {}
+#     pointTest["x"] = xN
+#     pointTest["y"] = yN
+#     pointTest["z"] = zN
+#     pointTest["element"] = "O"
+# 
+#     alpha = angleVector(atomC1, atomNitrogen, atomC2)
+# 
+#     for x in range (-5, 5) :
+#         pointTest["x"] = xN + x * 0.2
+#         for y in range (-5, 5) :
+#             pointTest["y"] = yN + y * 0.2
+#             for z in range (-5, 5) :
+#                 pointTest["z"] = zN + z * 0.2
+#                 Diff = checkPoint(pointTest, atomNitrogen, atomC1, atomC2, plan, alpha)
+#                 if Diff < minDiff :
+#                     pointRef = deepcopy(pointTest)
+#                     minDiff = Diff
+# 
+#     try : return [angleVector(atomFound, atomNitrogen, pointRef)]
+#     except : return []
 
 
 
@@ -566,6 +556,15 @@ def CenterImidazole (l_atom_connectN, l_atom_lig) :
 def CenterPoint (atom1, atom2):
 
     a_out = parsing.EmptyAtom()
+    
+    a_out["serial"] = 0
+    a_out["name"] = atom1["name"]
+    a_out["char"] = atom1["char"]
+    a_out["resName"] = atom1["resName"]
+    a_out["chainID"] = atom1["chainID"]
+    a_out["resSeq"] = atom1["resSeq"]
+    a_out["iCode"] = atom1["iCode"]
+    a_out["element"] = "Z"
     
     a_out["x"] = (atom1["x"] + atom2["x"])/2
     a_out["y"] = (atom1["y"] + atom2["y"])/2

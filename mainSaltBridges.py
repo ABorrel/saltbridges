@@ -73,6 +73,8 @@ def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_supe
         # Becarful because the dictionnary change
         d_close_het = hetCloseAnalysis.removeNeighborIron (d_sub_neighbor, pr_hetion + "ionSummarySubstruct.txt")
         
+        print len (d_sub_neighbor["Imidazole"])
+        
         if option_superimpose == 1 : 
             # superimpose neighbors -> refaire a Helsinki car MAJ de de la PDB
             superimpose.globalNeighbor (d_sub_neighbor, "Primary", pr_result)
@@ -103,10 +105,6 @@ def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_supe
             # statistic
             statistic.globalRunStatistic(d_sub_neighbor, max_distance, pr_result)
             statistic.globalRunStatistic(d_close_het, max_distance, pr_hetion)
-    
-# # # # # #     draw plot -> remove completely, rewrite
-# # # # # #     runScriptR.globalStat(max_distance, pr_result)
-# # # # # #     runScriptR.globalStat(max_distance,  pr_hetion)
     
     
         

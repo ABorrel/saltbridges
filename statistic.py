@@ -499,6 +499,7 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 # 
 # #    # proportion salt bridges
     saltBridges (st_atom, pathManage.resultSaltBridges(pr_result), logFile)
+    ddd
 #  
 #     # distribution distance interest group and type atoms -> distance type
     distanceAnalysis(st_atom, pathManage.resultDistance(pr_result), logFile)
@@ -647,7 +648,7 @@ def saltBridges (st_atom, pr_result, logFile, debug = 1):
     runScriptR.saltBridgesProportion(pr_result + "proportionSaltBridges")
       
         
-def retrieveInteraction (l_atoms, subs) : 
+def retrieveInteraction (l_atoms, subs, debug = 1) : 
      
     st_angle = structure.criteraAngle(subs)
      
@@ -661,13 +662,15 @@ def retrieveInteraction (l_atoms, subs) :
         type_atom = structure.classificationATOM(atom)
         #print atom.keys ()
         # print atom
-        for angle in atom["angleSubs"] : 
+        for angle in atom["angleSubs"] :
+            if debug == 1 : 
+                if subs == "Imidazole" : print angle, subs 
             if angle == "NA" : 
                 continue
         if atom["distance"] >= st_angle["distance"][0] and atom["distance"] <= st_angle["distance"][1] : 
             if atom["angleSubs"] != [] and atom["angleSubs"][0] >= st_angle["angle"][0] and atom["angleSubs"][0] <= st_angle["angle"][1] : 
                 
-                print atom["angleSubs"], atom["distance"], "****----***** OK", subs
+#                 if debug == 1 : print atom["angleSubs"], atom["distance"], "****----***** OK", subs
                 
                 if subs == "AcidCarboxylic" : 
                     if type_atom == "Nbasic" : 
@@ -701,7 +704,6 @@ def retrieveInteraction (l_atoms, subs) :
                         
                         
                     
-#         print atom["angleSubs"], atom["distance"], "****----***** NO-OK"
     
     if flag_ox == 1 : 
         return "salt-bridges"

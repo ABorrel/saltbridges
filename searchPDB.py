@@ -451,7 +451,7 @@ def imidazoleATOM5(l_at_c4, l_atom_check, listAtomLigand):
 ######################################################################################################################
 
 
-def globalSearch (dist_thresold, p_file_dataset,  pr_result, debug = 1):
+def globalSearch (dist_thresold, p_file_dataset,  pr_result, debug = 0):
     
     
     pr_summary = pr_result + "Sum/"
