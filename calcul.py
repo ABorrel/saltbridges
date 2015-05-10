@@ -205,7 +205,7 @@ def angleVector(pointD, pointCentral, pointG):
         alpha = degrees(acos(scalarNC1NC2 / (normeNC1 * normeNC2)))
         return alpha
     except :
-        return 0
+        return "ERROR"
     
     
 
@@ -223,14 +223,6 @@ def checkPoint(pointTest, pointN, pointC1, pointC2, plan, alpha):
         return  diffAngle + abs(Eqplan) * 10
     else :
         return 1000
-
-
-
-
-
-
-
-
 
 
 
@@ -419,25 +411,61 @@ def angleSubs(central_atom, atom_found, l_atom_lig, subs):
     elif subs == "Guanidium" :
         return angleGuanidium(central_atom, atom_found, l_atom_lig)
     elif subs == "AcidCarboxylic" :
-        return anglePrimaryAmine(central_atom, atom_found, l_atom_lig)
+        return angleAcidCarboxylic(central_atom, atom_found, l_atom_lig)
     
     else :
         return []
     
 
 
+
+def angleAcidCarboxylic(central_atom, atom_check, l_atom_lig) : 
+    
+    l_atom_connect, matrix_connect = retrieveAtom.atomConnect(l_atom_lig, central_atom["serial"])
+    l_O_temp = []
+    
+    for atom_connect in l_atom_connect[1:] : 
+        l_temp_connect, connect_matrix = retrieveAtom.atomConnect(l_atom_lig, atom_connect["serial"])
+        if connect_matrix == ["O", "C"] : 
+            l_O_temp.append (atom_connect)
+    
+    
+    at_considered = CenterPoint(l_O_temp[0], l_O_temp[1])    
+        
+    
+    return [angleVector(central_atom, at_considered, atom_check)]
+
+
+
 def angleGuanidium(central_atom, atom_check, l_atom_lig) : 
     
+    l_N_temp = []
     
     l_atom_connect_central, l_atom_element = retrieveAtom.atomConnect(l_atom_lig, central_atom["serial"])
     
     for atom_N in l_atom_connect_central[1:] : 
         l_atom_connect_N, l_element_N = retrieveAtom.atomConnect(l_atom_lig, atom_N["serial"])
-        if l_element_N != ["N", "C"] : 
-            N_considered = l_atom_connect_N[0]
-            break
-    
-    return angleVector(central_atom, N_considered, atom_check)
+        
+        print l_element_N
+        
+        if l_element_N == ["N", "C"] : 
+            if not l_atom_connect_N[0] in l_N_temp : 
+                l_N_temp.append (deepcopy(l_atom_connect_N[0]))
+
+
+    if len(l_N_temp) == 2 :
+        at_considered = CenterPoint(l_N_temp[0], l_N_temp[-1])
+
+    elif len(l_N_temp) > 2 : 
+        for N_temp in l_N_temp : 
+            if distanceTwoatoms(central_atom, N_temp) > 3.0 : 
+                del N_temp 
+        if len(l_N_temp) == 2 :
+            at_considered = CenterPoint(l_N_temp[0], l_N_temp[-1])
+    else : 
+        return "ERROR"
+        
+    return [angleVector(central_atom, at_considered, atom_check)]
     
     
 
@@ -518,8 +546,6 @@ def angleImidazoleCalculVol(atomN1, atomN3, atom_test):
     
 def CenterImidazole (l_atom_connectN, l_atom_lig) : 
     
-    a_out = parsing.EmptyAtom()
-    
     atomN1 = l_atom_connectN[0]
     
     
@@ -531,17 +557,22 @@ def CenterImidazole (l_atom_connectN, l_atom_lig) :
                 d_N = distanceTwoatoms(atomN1, atom_connect2)
                 print d_N
                 if d_N < 2.4 : 
-                    a_out["x"] = (atomN1["x"] + atom_connect2["x"])/2
-                    a_out["y"] = (atomN1["y"] + atom_connect2["y"])/2
-                    a_out["z"] = (atomN1["z"] + atom_connect2["z"])/2
-                    
-    
-                    return a_out
+                    return CenterPoint(atomN1, atom_connect2)
                 
     print "ERROR"            
     return "ERROR"   
     
+
+def CenterPoint (atom1, atom2):
+
+    a_out = parsing.EmptyAtom()
     
+    a_out["x"] = (atom1["x"] + atom2["x"])/2
+    a_out["y"] = (atom1["y"] + atom2["y"])/2
+    a_out["z"] = (atom1["z"] + atom2["z"])/2
+    
+    return a_out
+
     
 def CenterGuanidium (l_atom_connectN, l_atom_lig) : 
     
@@ -549,7 +580,6 @@ def CenterGuanidium (l_atom_connectN, l_atom_lig) :
     l_atom_connect = []
     for atom_connectN in l_atom_connectN : 
         l_atom_connect.append (atom_connectN["element"])
-    print l_atom_connect
     
     if l_atom_connect == ['N', 'C', 'C'] : 
         for C_atom in l_atom_connectN[1:] : 
@@ -565,6 +595,19 @@ def CenterGuanidium (l_atom_connectN, l_atom_lig) :
     print "ERROR"
     return "ERROR"
         
+
+def CenterAcidCarboxylic (l_atom_connectO, l_atom_lig):
+    
+    
+    
+    if l_atom_connectO[1]["element"] == "C" :
+         
+        return deepcopy(l_atom_connectO[1])
+    
+    print "ERROR"
+    return "ERROR"
+    
+    
 
 
 def anglePlanImidazole(atomN1, atomC1, atomC2, atomN3):

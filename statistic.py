@@ -26,50 +26,50 @@ def ParseDataSet(p_dataset, debug = 0):
     if debug : print p_dataset, "==path dataset=="
     start, logFile = log.initAction("Parsing dataset, ligand representation " + str(path.splitext(path.basename(p_dataset))[0]))
     
-    d_dataset = loadFile.resultFilterPDBLigand(p_dataset)
-    if debug : print d_dataset, "dico loaded"
+    l_lig_dataset = loadFile.resultFilterPDBLigand(p_dataset)
+    if debug : print l_lig_dataset, "dico loaded"
 
-    d_sub = structure.countGroupDataset()
+    d_count = structure.countGroupDataset()
     l_count = []
     l_PDB = []
-    for element in d_dataset:
-        if debug : print '**', element
+    for lig_dataset in l_lig_dataset:
+        if debug : print '**', lig_dataset
         count = structure.countInstanceDataSet()
-        # print element["name"]
-        logFile.write(element["name"] + "\n")
-        count["name"] = element["name"]
-        count["Number PDB"] = len(element["PDB"])
+        # print lig_dataset["name"]
+        logFile.write(lig_dataset["name"] + "\n")
+        count["name"] = lig_dataset["name"]
+        count["Number PDB"] = len(lig_dataset["PDB"])
         
-        for PDB in element["PDB"] : 
+        for PDB in lig_dataset["PDB"] : 
             if not PDB in l_PDB : 
                 l_PDB.append(PDB)
         
-        l_at_ligand = loadFile.ligandInPDB(element["PDB"][0], element["name"])
+        l_at_ligand = loadFile.ligandInPDB(lig_dataset["PDB"][0], lig_dataset["name"])
         l_sub_found = searchPDB.interestStructure(l_at_ligand)
         if debug : print l_sub_found, "==l48-statistic=="
         
-        # global count -> unique list
+        # global count -> unique list => no unique because pb with multisub in the ligand
         l_sub_unique = sorted(set(l_sub_found),key=l_sub_found.index) 
         
         for sub_unique in l_sub_unique:
-            d_sub[sub_unique]["PDB"] = d_sub[sub_unique]["PDB"] + count["Number PDB"]
-            d_sub[sub_unique]["ligand"] = d_sub[sub_unique]["ligand"] + 1
+            d_count[sub_unique]["PDB"] = d_count[sub_unique]["PDB"] + count["Number PDB"]
+            d_count[sub_unique]["ligand"] = d_count[sub_unique]["ligand"] + 1
         
         
         for sub_found in l_sub_found:
-            d_sub[sub_found][sub_found] = d_sub[sub_found][sub_found] + count["Number PDB"]
+            d_count[sub_found][sub_found] = d_count[sub_found][sub_found] + count["Number PDB"]
         l_count.append(count)
         
 
     # divise number for complexe queries
-    for sub in d_sub.keys () : 
+    for sub in d_count.keys () : 
         if sub == "Imidazole" or sub == "AcidCarboxylic" : 
-            d_sub[sub][sub] = d_sub[sub][sub] / 2
+            d_count[sub][sub] = d_count[sub][sub] / 2
         elif sub == "Guanidium" : 
-            d_sub[sub][sub] = d_sub[sub][sub] / 3
+            d_count[sub][sub] = d_count[sub][sub] / 3
             
     n_PDB = len(l_PDB)
-    writeFile.AnalysisDataSet(l_count, d_sub, n_PDB, p_dataset)
+    writeFile.AnalysisDataSet(l_count, d_count, n_PDB, p_dataset)
     log.endAction("Parsing dataset, ligand representation", start, logFile)
 
 
@@ -498,37 +498,37 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
     start, logFile = log.initAction("RUN Statistic")
 # 
 # #    # proportion salt bridges
-#     saltBridges (st_atom, pathManage.resultSaltBridges(pr_result), logFile)
+    saltBridges (st_atom, pathManage.resultSaltBridges(pr_result), logFile)
 #  
 #     # distribution distance interest group and type atoms -> distance type
-#     distanceAnalysis(st_atom, pathManage.resultDistance(pr_result), logFile)
+    distanceAnalysis(st_atom, pathManage.resultDistance(pr_result), logFile)
 #         
 #     # angleSubs -> directory angles
     angleSubs(st_atom, pr_result, max_distance, logFile)
 #         
 #     # global analysis proximity -1 atom ligand // -2 aa type // -3 atom classification
-#     ligandProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
-#     atomProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "atmProx"), max_distance, logFile)
-#     resProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "resProx"), max_distance, logFile)
-#     classifResProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "classifAtmProx"), max_distance, logFile)
-#     atomByAa(st_atom, pathManage.countGlobalProx (pr_result, name_in = "byAA") ,max_distance, logFile )
+    ligandProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
+    atomProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "atmProx"), max_distance, logFile)
+    resProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "resProx"), max_distance, logFile)
+    classifResProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "classifAtmProx"), max_distance, logFile)
+    atomByAa(st_atom, pathManage.countGlobalProx (pr_result, name_in = "byAA") ,max_distance, logFile )
 #         
 #         
 #     # analyse number of neighbors -> number of atom type (C, O, N)
-#     numberNeighbor (st_atom, pathManage.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
-#     neighborAtomComposition(st_atom, pathManage.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
-#     firstNeighbor (st_atom, pathManage.countNeighbor(pr_result, "firstNeighbor"), logFile)
-#     allNeighbors (st_atom, pathManage.countNeighbor(pr_result, "allNeighbor"), logFile)
+    numberNeighbor (st_atom, pathManage.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
+    neighborAtomComposition(st_atom, pathManage.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
+    firstNeighbor (st_atom, pathManage.countNeighbor(pr_result, "firstNeighbor"), logFile)
+    allNeighbors (st_atom, pathManage.countNeighbor(pr_result, "allNeighbor"), logFile)
 #      
 #     # with two area defintion
-#     d_area1, d_area2 = splitTwoArea (st_atom)
-#     allNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1"), logFile)
-#     allNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
+    d_area1, d_area2 = splitTwoArea (st_atom)
+    allNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1"), logFile)
+    allNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
 # 
 # #    # combination
-#     combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
-#     combinationNeighborsAngle (st_atom, pathManage.combination(pr_result, "angleSubs"))
-#     superimpose.SuperimposeFirstNeighbors (st_atom, pathManage.combination(pr_result, "superimposed"))
+    combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
+    combinationNeighborsAngle (st_atom, pathManage.combination(pr_result, "angleSubs"))
+    superimpose.SuperimposeFirstNeighbors (st_atom, pathManage.combination(pr_result, "superimposed"))
 #     
     
     
@@ -660,10 +660,12 @@ def retrieveInteraction (l_atoms, subs) :
     for atom in l_atoms : 
         type_atom = structure.classificationATOM(atom)
         #print atom.keys ()
-        
-        
+        # print atom
+        for angle in atom["angleSubs"] : 
+            if angle == "NA" : 
+                continue
         if atom["distance"] >= st_angle["distance"][0] and atom["distance"] <= st_angle["distance"][1] : 
-            if atom["angleSubs"] != [] and atom["angleSubs"][0] >= st_angle["angleSubs"][0] and atom["angleSubs"][0] <= st_angle["angleSubs"][1] : 
+            if atom["angleSubs"] != [] and atom["angleSubs"][0] >= st_angle["angle"][0] and atom["angleSubs"][0] <= st_angle["angle"][1] : 
                 
                 print atom["angleSubs"], atom["distance"], "****----***** OK", subs
                 
@@ -853,90 +855,6 @@ def combinationNeighborsAngle (st_atom, pr_result):
         
 
     
-    
-    
-                
-# def neighborDistance(distance, distanceGlobal, struct_neighbor):
-# 
-#     if distance == distanceGlobal:
-#         return
-#     else:
-#         for substruct in struct_neighbor.keys():
-#             for azote in struct_neighbor[substruct]:
-#                 nbNeighbor = len(azote["neighbors"])
-#                 i = 0
-#                 while i < nbNeighbor:
-#                     if float(azote["neighbors"][i]["distance"]) >= float(distance):
-#                         del azote["neighbors"][i]
-#                         nbNeighbor = nbNeighbor - 1
-#                     else:
-#                         i = i + 1
-# 
-# 
-# def neighborDistanceList(distance, distanceGlobal, listAtom):
-# 
-#     if distance == distanceGlobal:
-#         return
-# 
-#     else:
-#         for atom in listAtom:
-#             nbNeighbor = len(atom["neighbors"])
-#             i = 0
-#             while i < nbNeighbor:
-#                 if float(atom["neighbors"][i]["distance"]) >= float(distance):
-#                     del atom["neighbors"][i]
-#                     nbNeighbor = nbNeighbor - 1
-#                 else:
-#                     i = i + 1
-
-
-# def globalAtomResidue (listAtom, count):
-# 
-#     atomMajorChain = ["C", "O", "CA", "N", "OXT", "NXT"]
-# 
-#     for atom in listAtom:
-#         if atom["neighbors"] == []:
-#             continue
-#         listCheck = structure.listAminoAcidCheck()
-#         for neighbor in atom["neighbors"]:
-#             if neighbor["resName"] in count.keys():
-#                 if neighbor["name"] in atomMajorChain:
-#                     if listCheck[neighbor["resName"]]["main"] == 1:
-#                         continue
-#                     else:
-#                         count[neighbor["resName"]]["main"] = count[neighbor["resName"]]["main"] + 1
-#                         listCheck[neighbor["resName"]]["main"] = 1
-#                 else:
-#                     if listCheck[neighbor["resName"]]["side"] == 1:
-#                         continue
-#                     else:
-#                         count[neighbor["resName"]]["side"] = count[neighbor["resName"]]["side"] + 1
-#                         listCheck[neighbor["resName"]]["side"] = 1
-
-  
-
-
-# def relationNeighbors (struct_neighbor, countStruct) : 
-# 
-#     l_substruct = structure.listStructure()
-#     
-#     for substruct in l_substruct : 
-#         if substruct == "Primary" : 
-#             searchNeighbor (struct_neighbor, countStruct, substruct, 8)
-#         elif substruct == "Tertiary" : 
-#             searchNeighbor (struct_neighbor, countStruct, substruct, 8)
-#         elif substruct == "Imidazole" or substruct == "Secondary": 
-#             searchNeighbor (struct_neighbor, countStruct, substruct, 8)
-#         else : 
-#             searchNeighbor (struct_neighbor, countStruct, substruct,  8)
-
-
-
-
-
-
-
-
 def lenBondAnalysis (struct_neighbor, substruct, p_dir_result ):
  
     p_dir_result = pathManage.bondLength (p_dir_result)

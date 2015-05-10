@@ -105,14 +105,12 @@ def neighborStruct(struct_neighbor, struct_global_neighbor, files):
         if struct_neighbor[type_search] == [] : 
             continue
         for atom_central in struct_neighbor[type_search]:
-            
-            print atom_central.keys (), type_search, "check"
-                
             lineWrite = str(atom_central["PDB"]) + "\t" + str(atom_central["serial"]) + "/" + str(atom_central["resName"]) + "/" + str(atom_central["x"]) + "/" + str(atom_central["y"]) +  "/" + str(atom_central["z"]) + "\t"
             for neighbor in atom_central["neighbors"]:
                 lineWrite = lineWrite + str(neighbor["serial"]) + " " + str(neighbor["resSeq"]) + " " + str(neighbor["element"]) + " " + str(neighbor["name"]) + " " + str(neighbor["resName"]) + " " + str("%.2f" % neighbor["distance"]) + " " +str("%.3f" % neighbor["x"]) + " " +str("%.3f" % neighbor["y"]) + " " +str("%.3f" % neighbor["z"])  
                 for angleSubs in neighbor["angleSubs"]:
-                    lineWrite = lineWrite + " " + str("%.2f" % angleSubs)
+                    try : lineWrite = lineWrite + " " + str("%.2f" % angleSubs)
+                    except : lineWrite = lineWrite + " NA"
                 lineWrite = lineWrite + "//"
             lineWrite = lineWrite + "\n"
             files[type_search].write(lineWrite)
@@ -300,7 +298,9 @@ def countFirstNeighbor (stCount, pr_result):
     for sub_struct in stCount.keys() : 
         filout.write (sub_struct)
         for class_atom in l_typeatom : 
-            filout.write("\t" + str(stCount[sub_struct][1][class_atom])) # first neighbors
+            #print "***", stCount[sub_struct]
+            try : filout.write("\t" + str(stCount[sub_struct][1][class_atom])) # first neighbors
+            except : filout.write("\tNA") # first neighbors
         filout.write("\n")
     filout.close ()
     return [pr_result + "countFirst"]
@@ -311,19 +311,20 @@ def distanceCountStruct(stCount, pr_result) :
     
     l_filout = []
     
-    print 
     for sub_struct in stCount.keys() : 
+        try : nb_fisrt = len (stCount[sub_struct][1]["distance"])
+        except : continue
+
         filout = open (pr_result + "DistanceFirst" + str (sub_struct) + ".txt", "w")
         l_filout.append (pr_result + "DistanceFirst" + str (sub_struct) + ".txt")
-        nb_fisrt = len (stCount[sub_struct][1]["distance"])
         
-        print stCount[sub_struct][1]["distance"]
+        # print stCount[sub_struct][1]["distance"]
         
         i = 0
         while i < nb_fisrt : 
-            print i
+            # print i
             filout.write (str(stCount[sub_struct][1]["distance"][i]) + "\t" + str (stCount[sub_struct][1]["classe"][i]) + "\n")
-            print stCount[sub_struct][1]["distance"][i], stCount[sub_struct][1]["classe"][i]
+            # print stCount[sub_struct][1]["distance"][i], stCount[sub_struct][1]["classe"][i]
             i = i + 1
         filout.close ()
         
@@ -571,6 +572,8 @@ def resultResProx(stCount, distance_max, pr_result):
     for substruct in stCount.keys () : 
         print substruct, "-----"
         print stCount[substruct]
+        if stCount[substruct] == {} : 
+            continue
         p_filout = pr_result + substruct + "resCount"
         l_p_filout.append (p_filout)
         filout = open (p_filout, "w")
@@ -643,7 +646,10 @@ def resultAngle(d_count, pr_out):
                 #filoutGlobal.write("%.2f" % distanceAt)
                 
                 for angleSubs in d_count[type_substruct][classe]["angles"][i] : 
-                    a = "%.2f" % angleSubs
+                    if angleSubs == "NA" : 
+                        a = "NA"
+                    else : 
+                        a = "%.2f" % angleSubs
                     #filoutGlobal.write("\t%.2f" % angleSubs)
                     l_element.append (str(a))
                 l_element.append (classe)
@@ -807,7 +813,8 @@ def RelationAngleDistNeighbors (d_relation_neighbors, pr_result) :
         l_filout.append (pr_sub + subs + "_angles2_3VSDist")
         
         i = 0
-        nb_neighbor = min ([len(d_relation_neighbors[subs][2]["classe"]), len(d_relation_neighbors[subs][1]["classe"]), len(d_relation_neighbors[subs][3]["classe"])])
+        try : nb_neighbor = min ([len(d_relation_neighbors[subs][2]["classe"]), len(d_relation_neighbors[subs][1]["classe"]), len(d_relation_neighbors[subs][3]["classe"])])
+        except : nb_neighbor = 0
         while i < nb_neighbor :   
             
             print "distance", len (d_relation_neighbors[subs]["distance1_2"]), len (d_relation_neighbors[subs]["distance1_3"]), len (d_relation_neighbors[subs]["distance2_3"])

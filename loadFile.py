@@ -51,22 +51,22 @@ def resultFilterPDBLigand (path_file):
     file_open.close()
     len_file = len(lines)
 
-    ligands = []
+    l_out = []
     for i in range(0, len_file):
-        ligand = {}
+        d_lig = {}
         line = lines[i].split("\t")
-        ligand["name"] = line[0]
-        list_pdb = line[1].split("\n")[0]
-        list_pdb = list_pdb.split(" ")
-        ligand["PDB"] = []
+        d_lig["name"] = line[0]
+        l_pdb = line[1].split("\n")[0]
+        l_pdb = l_pdb.split(" ")
+        d_lig["PDB"] = []
 
-        for pdb in list_pdb:
+        for pdb in l_pdb:
             if pdb != "":
-                ligand["PDB"].append(pdb)
+                d_lig["PDB"].append(pdb)
 
-        ligands.append(ligand)
+        l_out.append(d_lig)
 
-    return ligands
+    return l_out
 
 
 
@@ -292,7 +292,10 @@ def loadSummary (p_summary) :
             
             d_n["angleSubs"] = []
             for angleSubs in element_n [9:] :
-                d_n["angleSubs"].append (float(angleSubs))
+                if angleSubs == "NA" :                     
+                    d_n["angleSubs"].append ("NA")
+                else : 
+                    d_n["angleSubs"].append (float(angleSubs))
             d_line["neighbors"].append (d_n)
         l_out.append (d_line)
     return l_out     

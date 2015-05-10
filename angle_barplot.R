@@ -81,7 +81,7 @@ for (distance in listDistance){
 	
 	if (distance <= limit_zone){
 		
-		print (distance)
+		# print (distance)
 		if (d_area1 == 0){
 			d_area1 = d
 		}
@@ -89,7 +89,7 @@ for (distance in listDistance){
 			d_area1 = d_area1 + d
 		}
 	}else{
-		print (distance)
+		# print (distance)
 		if (d_area2 == 0){
 			d_area2 = d
 		}

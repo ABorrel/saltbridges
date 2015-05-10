@@ -19,7 +19,7 @@ nbLine = dim(data)[1]
 nb_col = dim(data)[2]
 
 # case with several angle -> deviation with median position
-print (nb_col)
+# print (nb_col)
 if (nb_col > 3){
 	data = deviationAngle(data)
 }
