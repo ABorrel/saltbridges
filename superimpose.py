@@ -14,10 +14,13 @@ from copy import deepcopy
 
 
 
-def groupAtomCoord (list_atom1):
+def groupAtomCoord (l_atom):
+    
+    print "--- l-19", l_atom
     
     l_out = []
-    for atom in list_atom1 : 
+    for atom in l_atom :
+        print "**", atom 
         l_out.append ([float(atom["x"]), float(atom["y"]), float(atom["z"])])
     
     return l_out
@@ -163,13 +166,15 @@ def globalNeighbor (atom_interest_close, subs, p_dir_result) :
         l_at_lig = loadFile.ligandInPDB(PDB_ID, name_ligand)
 #         for at_ligand in l_at_lig : 
 #             print at_ligand
-        l_at_subs = retrieveAtom.substructure (subs, serial_at_central, l_at_lig)
-        
+        l_at_subs = retrieveAtom.substructure (subs, at_central, l_at_lig)
         
         
         v_atom_ref = mat(array(groupAtomCoord(l_at_ref[0:3])))
+        
         v_atom_central = mat(array(groupAtomCoord(l_at_subs[0:3])))
 
+        print v_atom_central
+        print v_atom_ref
 
         rotation, translocation =  rigid_transform_3D(v_atom_central, v_atom_ref)
         if rotation == None or translocation == None : 

@@ -499,7 +499,6 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 # 
 # #    # proportion salt bridges
     saltBridges (st_atom, pathManage.resultSaltBridges(pr_result), logFile)
-    ddd
 #  
 #     # distribution distance interest group and type atoms -> distance type
     distanceAnalysis(st_atom, pathManage.resultDistance(pr_result), logFile)

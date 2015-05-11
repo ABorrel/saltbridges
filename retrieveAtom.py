@@ -89,29 +89,33 @@ def cycle(serialAtomInit, listAtomLigand):
 ###################################################################
 
 
-def substructure (substruct, serial_at_central, l_at) : 
+def substructure (subs, at_central, l_at_lig) : 
     
-    if substruct == "Primary" or substruct == "Secondary" or substruct == "Tertiary" : 
-        l_out = atomConnect(l_at, serial_at_central)
-        return l_out[0]
+    if subs == "Primary" or subs == "Secondary" or subs == "Tertiary" : 
+        serial_atom = at_central["Serial"]
+        l_sub = atomConnect(l_at_lig, serial_atom)
+        return l_sub[0]
     
-    elif substruct == "Imidazole" : 
-        l_out = []
-        out_imd = searchPDB.imidazole(atomConnect(l_at, serial_at_central)[0], l_at)
+    elif subs == "Imidazole" : 
+        atom_N = searchPDB.Nclose (at_central, l_at_lig)
+        l_connectN, conect = atomConnect(l_at_lig, atom_N["serial"])
+        out_imd = searchPDB.imidazole(l_connectN, l_at_lig)
+        
         if out_imd[0] == 0 : 
-            print "ERROR"
+            print "ERROR, retrieveAtom: l-104"
             return []
-        l_serial = out_imd[1]
-        
-        for serial_at in l_serial : 
-#             print serial_at
-            l_out.append (serial(serial_at, l_at))
-        
-        return l_out
+        else : 
+            l_atom_IMD = []
+            for serial_atom in out_imd[1] : 
+                l_atom_IMD.append (serial(serial_atom, l_at_lig))
+            return l_atom_IMD
     
-    elif substruct == "Guanidium" : 
+    elif subs == "Guanidium" : 
         l_out = []
-        out_gua = searchPDB.guanidium(atomConnect(l_at, serial_at_central)[0], l_at)
+        l_atomC, connectC = atomConnect(l_at_lig, at_central["serial"])
+        l_atom_N, connectN = atomConnect(l_at_lig, l_atomC[1]["serial"])
+        out_gua = searchPDB.guanidium(l_atom_N, l_at_lig)
+        
         if out_gua[0] == 0 : 
             print "ERROR"
             return []
@@ -119,13 +123,22 @@ def substructure (substruct, serial_at_central, l_at) :
         
         for serial_at in l_serial : 
 #             print serial_at
-            l_out.append (serial(serial_at, l_at))
+            l_out.append (serial(serial_at, l_at_lig))
         return l_out
     
-    elif substruct == "AcidCarboxylic" : 
+    elif subs == "AcidCarboxylic" : 
+         
+        l_atomC, connectC = atomConnect(l_at_lig, at_central["serial"])
+        if connectC[1] == "O" : 
+            l_atom_O, connectO = atomConnect(l_at_lig, l_atomC[1]["serial"])
+        else : 
+            l_atom_O, connectO = atomConnect(l_at_lig, l_atomC[2]["serial"])  
          
         l_out = []
-        out_coo = searchPDB.acidCarboxylic(atomConnect(l_at, serial_at_central)[0], l_at)
+        out_coo = searchPDB.acidCarboxylic(l_atom_O, l_at_lig)
+        
+        
+#         print out_coo[0], len (out_coo[1])
         if out_coo[0] == 0 : 
             print "ERROR"
             return []
@@ -133,7 +146,7 @@ def substructure (substruct, serial_at_central, l_at) :
         
         for serial_at in l_serial : 
 #             print serial_at
-            l_out.append (serial(serial_at, l_at))
+            l_out.append (serial(serial_at, l_at_lig))
         return l_out
     
     

@@ -51,7 +51,7 @@ def interestStructure (l_atom_lig, debug = 0):
 
     for serial_oxygen in l_serial_O:
         l_atom_connectO, connect = retrieveAtom.atomConnect(l_atom_lig, serial_oxygen)
-        if acidCarboxylic(l_atom_connectO, l_atom_lig) == 1:
+        if acidCarboxylic(l_atom_connectO, l_atom_lig)[0] == 1:
             l_substruct.append("AcidCarboxylic")
             
     return l_substruct
@@ -208,68 +208,74 @@ def guanidium(l_at_connect_N, l_atom_lig):
         
         
 
-
-def pyridine(listAtomConnectNitrogen, listAtomLigand):
-    """search pyridine 
-    in: list atom connected of nitrogen, list atom ligand
-    out: boolean"""
-        
-    stAtom = toolSubstructure.matrixElement(listAtomConnectNitrogen)
-    
-    if stAtom == ["N", "C", "C"] : 
-        nitrogenInit = listAtomConnectNitrogen[0]
-        if  cycleOnlyTestCarbon(nitrogenInit["serial"], nitrogenInit["serial"], nitrogenInit["serial"], listAtomLigand, 6, 0) == 1 : 
-            return 1
-        
-         
-def diAmine (l_at_connect_N, listAtomLigand):
-    """search diamine 
-    in: list atom connected of nitrogen, list atom ligand
-    out: boolean"""
-        
-    connect_element = toolSubstructure.matrixElement(l_at_connect_N)
-#     print connect_element, "l199"
-    if connect_element != ["N", "C"] :
-        return 0
-    else : 
-        l_connect_C1, connect_C1 = retrieveAtom.atomConnect(listAtomLigand, l_at_connect_N[0]["connect"][1]) 
-#         print connect_C1, "l204"
-        if connect_C1 == ["C", "C", "N", "N"] or connect_C1 == ["C", "N", "C", "N"] or connect_C1 == ["C", "N", "N", "C"] : 
-            for atom_connect in l_connect_C1[:1] :
-                l_connect_atom, connect_atom = retrieveAtom.atomConnect(listAtomLigand, atom_connect ["serial"])
-                
-                if atom_connect ["element"] == "N" : 
-                    if connect_atom != ["N", "C"]  : 
-#                         print "l211"
-                        return 0
-                else  : 
-                    if connect_atom == ["C", "C", "C", "C"] :
-#                         print "l214" 
-                        return 0
-        else : 
-#             print connect_C1
-            return 0
-    return 1
+# # 
+# # def pyridine(listAtomConnectNitrogen, listAtomLigand):
+# #     """search pyridine 
+# #     in: list atom connected of nitrogen, list atom ligand
+# #     out: boolean"""
+# #         
+# #     stAtom = toolSubstructure.matrixElement(listAtomConnectNitrogen)
+# #     
+# #     if stAtom == ["N", "C", "C"] : 
+# #         nitrogenInit = listAtomConnectNitrogen[0]
+# #         if  cycleOnlyTestCarbon(nitrogenInit["serial"], nitrogenInit["serial"], nitrogenInit["serial"], listAtomLigand, 6, 0) == 1 : 
+# #             return 1
+# #         
+# #          
+# # def diAmine (l_at_connect_N, listAtomLigand):
+# #     """search diamine 
+# #     in: list atom connected of nitrogen, list atom ligand
+# #     out: boolean"""
+# #         
+# #     connect_element = toolSubstructure.matrixElement(l_at_connect_N)
+# # #     print connect_element, "l199"
+# #     if connect_element != ["N", "C"] :
+# #         return 0
+# #     else : 
+# #         l_connect_C1, connect_C1 = retrieveAtom.atomConnect(listAtomLigand, l_at_connect_N[0]["connect"][1]) 
+# # #         print connect_C1, "l204"
+# #         if connect_C1 == ["C", "C", "N", "N"] or connect_C1 == ["C", "N", "C", "N"] or connect_C1 == ["C", "N", "N", "C"] : 
+# #             for atom_connect in l_connect_C1[:1] :
+# #                 l_connect_atom, connect_atom = retrieveAtom.atomConnect(listAtomLigand, atom_connect ["serial"])
+# #                 
+# #                 if atom_connect ["element"] == "N" : 
+# #                     if connect_atom != ["N", "C"]  : 
+# # #                         print "l211"
+# #                         return 0
+# #                 else  : 
+# #                     if connect_atom == ["C", "C", "C", "C"] :
+# # #                         print "l214" 
+# #                         return 0
+# #         else : 
+# # #             print connect_C1
+# #             return 0
+# #     return 1
             
 
 
-def acidCarboxylic(listAtomConnectOx, listAtomLigand) : 
+def acidCarboxylic(l_conect_ox, l_atom_lig) : 
     
-    connect_element = toolSubstructure.matrixElement(listAtomConnectOx)
+    l_out = []
+    connect_element = toolSubstructure.matrixElement(l_conect_ox)
     if connect_element != ["O", "C"] : 
-        return 0
+        return [0, []]
     else : 
-        l_atom_connect_C, connect_matrix_C = retrieveAtom.atomConnect(listAtomLigand, listAtomConnectOx[1]["serial"])
+        l_atom_connect_C, connect_matrix_C = retrieveAtom.atomConnect(l_atom_lig, l_conect_ox[1]["serial"])
         if connect_matrix_C == ["C", "O", "O", "C"] or connect_matrix_C == ["C", "O", "C", "O"] or  connect_matrix_C == ["C", "C", "O", "O"] : 
+            l_out.append (l_conect_ox[1]["serial"])
             for atom_connect_C in l_atom_connect_C[1:] :
                 if atom_connect_C["element"] == "O" : 
-                    l_atom_connect_ox, connect_matrix_ox = retrieveAtom.atomConnect(listAtomLigand, atom_connect_C["serial"])
+                    l_atom_connect_ox, connect_matrix_ox = retrieveAtom.atomConnect(l_atom_lig, atom_connect_C["serial"])
                     if connect_matrix_ox != ["O", "C"] :
-                        return 0
+                        return [0, []]
+                    else : 
+                        l_out.append (l_conect_ox[0]["serial"])
+                        
+            return [1,l_out]
         else : 
-            return 0
+            return [0, []]
     
-    return 1
+    return [0, []]
 
 
     
@@ -361,22 +367,22 @@ def riboseFromADPRiboseAtom4 (serial, listAtomLigand, serialInit, serialPrevious
     
 ##########Search Imidazole###############
 
-def imidazole(listAtomConnectNitrogen,list_atom_ligand):
+def imidazole(l_atom_connect_N, l_atom_lig):
     """search imidazole global
     in: list atom connected of nitrogen, list atom ligand
     out: boolean"""
-
-    stAtom = toolSubstructure.matrixElement(listAtomConnectNitrogen)
+    
+    stAtom = toolSubstructure.matrixElement(l_atom_connect_N)
     
     if stAtom == ["N", "C", "C"]:
-        l_atom_check = [listAtomConnectNitrogen[0]["serial"]]
-        groupAtomC1, conect_C1 = retrieveAtom.atomConnect(list_atom_ligand, int (listAtomConnectNitrogen[0]["connect"][1]))
-        groupAtomC2, conect_C2 = retrieveAtom.atomConnect(list_atom_ligand, int (listAtomConnectNitrogen[0]["connect"][2]))
+        l_atom_check = [l_atom_connect_N[0]["serial"]]
+        groupAtomC1, conect_C1 = retrieveAtom.atomConnect(l_atom_lig, int (l_atom_connect_N[0]["connect"][1]))
+        groupAtomC2, conect_C2 = retrieveAtom.atomConnect(l_atom_lig, int (l_atom_connect_N[0]["connect"][2]))
 #         print conect_C1, "C1"
 #         print conect_C2, "C2"
         if conect_C1 == ["C", "C", "N", "N"] or conect_C1 == ["C", "N", "N", "C"] or conect_C1 == ["C", "N", "C", "N"] or conect_C1 == ["C", "N", "N"]:
             l_atom_check.append (groupAtomC1[0]["serial"])
-            if imidazoleATOM3(groupAtomC1, l_atom_check, list_atom_ligand)[0] == 1:
+            if imidazoleATOM3(groupAtomC1, l_atom_check, l_atom_lig)[0] == 1:
 #                 print "l344"
                 return [1, l_atom_check]
 
@@ -384,7 +390,7 @@ def imidazole(listAtomConnectNitrogen,list_atom_ligand):
 #             print "IN C2"
 #             print l_atom_check, "l348"
             l_atom_check.append (groupAtomC2[0]["serial"])
-            if imidazoleATOM3(groupAtomC2, l_atom_check, list_atom_ligand)[0] == 1:
+            if imidazoleATOM3(groupAtomC2, l_atom_check, l_atom_lig)[0] == 1:
 #                 print "l350"
                 return [1, l_atom_check]
 
@@ -973,3 +979,21 @@ def cycleOnlyTestCarbon(serialFirst, serialTest, serialPrevious, atomLigand, tes
 
 
 
+def Nclose (atom, l_at_lig) : 
+    
+    d_min = 100
+    for at_lig in l_at_lig : 
+        if at_lig["element"] != "N" : 
+            continue
+        else : 
+            d = calcul.distanceTwoatoms(atom, at_lig)
+            if d < d_min : 
+                d_min = d
+                atom_temp = deepcopy(at_lig)
+    
+    if "atom_temp" in locals() : 
+        print d_min
+        return atom_temp
+    else : 
+        return {}
+            
