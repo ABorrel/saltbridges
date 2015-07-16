@@ -3,11 +3,11 @@
 
 
 
-grapheCN = function(file){
+grapheCN = function(file, type_bond){
 	data = read.table(file)
 	brk = seq(0,max(data[,1])+0.01,0.01)
 	png(filename=paste(file,".png",sep = ""))
-	hist(data[,1], xlab ="Length of bond C,N (Å)", ylab = "Number of occurences", xlim=c(1,2), breaks = brk, main="Distribution of lengths for C,N bonds",las=1, freq=T)
+	hist(data[,1], xlab = paste("Length of bond ", type_bond, " (Å)", sep = ""), ylab = "Number of occurences", xlim=c(1,2), breaks = brk, main="", las=1, freq=T)
 	dev.off()
 
 }
@@ -58,14 +58,14 @@ type = args[2]
 print (file)
 print (type)
 
-if (type == "CN"){
-	grapheCN(file)
+if (type == "CN" | type == "CO"){
+	grapheCN(file, type)
 }
 if(type == "coplar"){
 	graphePolar(file)
 
 }else{
-	grapheOther (file,type )
+	grapheOther (file, type)
 }
 
 

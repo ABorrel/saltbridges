@@ -7,11 +7,12 @@ from re import search, sub
 from copy import deepcopy
 
 
-def lineCoords (line):
+def lineCoords (line, remove_H = 0):
     """Parsing line of coordinate PDB File
     in: line
     out: dictionnary atom"""
 
+    line = line.strip ()
     atom = {}
     try :atom["serial"] = int(line[6:11].replace (" ", ""))
     except :line[6:11].replace (" ", "")
@@ -37,6 +38,8 @@ def lineCoords (line):
     atom["tempFactor"] = line[60:66].replace (" ", "")
     
     atom["connect"] = []
+    if atom["element"] == "H" and remove_H == 1 :
+        return None 
     return atom
 
 
@@ -150,7 +153,7 @@ def countH2O (path_file_PDB) :
     
 
 
-def loadCoordSectionPDB (path_PDB_file, section = "", debug = 1):
+def loadCoordSectionPDB (path_PDB_file, section = "", remove_H = 0, debug = 0):
     """
     Retrieve every atom in cordiante section. If it is NMR complex
     retrieve only first model
@@ -169,10 +172,14 @@ def loadCoordSectionPDB (path_PDB_file, section = "", debug = 1):
         
         if section == "" : 
             if search ("^ATOM", line_PDB) or search ("^HETATM", line_PDB) : 
-                list_atom.append (lineCoords(line_PDB))
+                atom = lineCoords(line_PDB, remove_H)
+                if atom != None : 
+                    list_atom.append (atom)
         else : 
             if search ("^" + section, line_PDB)  : 
-                list_atom.append (lineCoords(line_PDB))
+                atom = lineCoords(line_PDB, remove_H)
+                if atom != None : 
+                    list_atom.append (atom)
                 
 #    if debug : 
 #        print "TEST"            
@@ -182,7 +189,7 @@ def loadCoordSectionPDB (path_PDB_file, section = "", debug = 1):
     
 
 
-def retrieveLigand  (list_atom_parsed, name_ligand, extend = 2, debug = 0):
+def retrieveLigand  (l_atom, name_ligand, extend = 2, debug = 0):
     """
     Retrieve list of ligand in PDB
     args: -> PDB parsed
@@ -198,7 +205,7 @@ def retrieveLigand  (list_atom_parsed, name_ligand, extend = 2, debug = 0):
         
     name_ligand = name_ligand.upper ()
     list_atom_ligand = []
-    for element in list_atom_parsed : 
+    for element in l_atom : 
         if element ["resName"] == name_ligand : 
             list_atom_ligand.append (deepcopy(element))
             
@@ -218,7 +225,7 @@ def retrieveLigand  (list_atom_parsed, name_ligand, extend = 2, debug = 0):
             print "Threshold: ", extend
             print "--------------------"
         if extend <= 4.0 : 
-            return retrieveLigand (list_atom_parsed, name_ligand, extend + 0.1, debug = 0)
+            return retrieveLigand (l_atom, name_ligand, extend + 0.1, debug = 0)
     
     return separateByLigand (list_atom_ligand)
 
@@ -284,13 +291,23 @@ def retrieveSerialLigand (list_atom):
 
 
 
-def checkLigandHooked (PDB_parsed, list_atom_ligand_parsed):
+def checkLigandHooked (l_atom_complex, l_atom_lig, thresold = 1.9):
     
-    for atom_ligan in list_atom_ligand_parsed : 
-        for atom_pdb in PDB_parsed : 
-            if not atom_pdb["resName"] == atom_ligan["resName"] : 
-                if (calcul.distanceTwoatoms(atom_pdb, atom_ligan)) < 1.9 : 
-                    return 1
+    l_atom_prot = deepcopy(l_atom_complex)
+    
+    for atom_lig in l_atom_lig : 
+        i = 0
+        nb_atom = len(l_atom_prot)
+        while i < nb_atom : 
+            d = calcul.distanceTwoatoms(l_atom_prot[i], atom_lig)
+            if d < thresold : 
+                return 1
+            # reduce combination with atom away
+            elif d > (thresold * len (l_atom_lig)) : 
+                del l_atom_prot[i]
+                nb_atom = nb_atom - 1
+            else : 
+                i = i + 1
     return 0
 
 
@@ -347,5 +364,28 @@ def separateByLigand (l_atom_ligand, debug = 0) :
 
 
 
+def retrieveListLigand ( path_file_PDB, option_not_ligand = 0 , debug=0 ):
+    """
+    Retrieve list ligand in PDB file, only ligands, remove metals
+    args: - path file
+    return: list ligands
+    """
+    
+    list_not_ligand = ["SO4", "FE2", "GOL", "FES", "PO4", "MSE", "DMS", "URE", "FMT", "TRS", "NCO"]
+    
+    filin = open ( path_file_PDB, "r" )
+    list_line_pdb = filin.readlines ()
+    filin.close()
+    list_out = []
+    for line_pdb in list_line_pdb : 
+        if search ( "^HETATM", line_pdb ) : 
+            ligand = line_pdb[17:21].replace ( " ", "" )
+            if debug : print ligand
+            if not ligand in list_out and ligand != "HOH"  :
+                if len (ligand) > 2 : # remove metals just 2 letters
+                    if not ligand in list_not_ligand : 
+                        list_out.append ( ligand )
+    return list_out 
+    
 
 

@@ -51,8 +51,8 @@ def coordinateSection (f_write, l_atom, recorder = "ATOM", header = "", connect_
         for atom in l_atom : 
             connect(atom, filout)
             
-            
-    filout.write("END\n")
+    if header != 0 :        
+        filout.write("END\n")
     
     if type (f_write) == str : 
         filout.close ()

@@ -11,6 +11,7 @@ import writeFile
 import tool
 import pathManage
 import superimpose
+import structure
 
 from os import path 
 from copy import deepcopy
@@ -44,7 +45,8 @@ def ParseDataSet(p_dataset, debug = 0):
             if not PDB in l_PDB : 
                 l_PDB.append(PDB)
         
-        l_at_ligand = loadFile.ligandInPDB(lig_dataset["PDB"][0], lig_dataset["name"])
+        try : l_at_ligand = loadFile.ligandInPDB(lig_dataset["PDB"][0], lig_dataset["name"])
+        except : continue
         l_sub_found = searchPDB.interestStructure(l_at_ligand)
         if debug : print l_sub_found, "==l48-statistic=="
         
@@ -255,7 +257,6 @@ def classifResProx(st_atom, pr_result, max_distance, logFile):
                             stCount[subs][distance][res] = stCount[subs][distance][res] + 1
                             l_check.append (neighbor["resSeq"])
     
-    print stCount.keys ()
     # write file
     l_files_result = writeFile.resultResProx(stCount, max_distance ,pr_result)
     for file_result in l_files_result : 
@@ -496,100 +497,50 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
     
     
     start, logFile = log.initAction("RUN Statistic")
-# 
-# #    # proportion salt bridges
+# # 
+    # proportion salt bridges
     saltBridges (st_atom, pathManage.resultSaltBridges(pr_result), logFile)
-#  
-#     # distribution distance interest group and type atoms -> distance type
-    distanceAnalysis(st_atom, pathManage.resultDistance(pr_result), logFile)
-#         
-#     # angleSubs -> directory angles
-    angleSubs(st_atom, pr_result, max_distance, logFile)
-#         
-#     # global analysis proximity -1 atom ligand // -2 aa type // -3 atom classification
-    ligandProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
-    atomProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "atmProx"), max_distance, logFile)
-    resProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "resProx"), max_distance, logFile)
-    classifResProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "classifAtmProx"), max_distance, logFile)
-    atomByAa(st_atom, pathManage.countGlobalProx (pr_result, name_in = "byAA") ,max_distance, logFile )
-#         
-#         
-#     # analyse number of neighbors -> number of atom type (C, O, N)
-    numberNeighbor (st_atom, pathManage.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
-    neighborAtomComposition(st_atom, pathManage.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
-    firstNeighbor (st_atom, pathManage.countNeighbor(pr_result, "firstNeighbor"), logFile)
-    allNeighbors (st_atom, pathManage.countNeighbor(pr_result, "allNeighbor"), logFile)
-#      
-#     # with two area defintion
-    d_area1, d_area2 = splitTwoArea (st_atom)
-    allNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1"), logFile)
-    allNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
-# 
-# #    # combination
-    combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
-    combinationNeighborsAngle (st_atom, pathManage.combination(pr_result, "angleSubs"))
-    superimpose.SuperimposeFirstNeighbors (st_atom, pathManage.combination(pr_result, "superimposed"))
-#     
+    EnvironmentSaltBridges (st_atom, pathManage.resultSaltBridges (pr_result, name_in = "conditional"), logFile)
+
+    # loose    
+    saltBridges (st_atom, pathManage.resultSaltBridges(pr_result, "loose"), logFile, restrained = 0)
+    EnvironmentSaltBridges (st_atom, pathManage.resultSaltBridges (pr_result, name_in = "loose/conditional"), logFile, restrained = 0)    
+    
+# #  
+# #     # distribution distance interest group and type atoms -> distance type
+#     distanceAnalysis(st_atom, pathManage.resultDistance(pr_result), logFile)
+# #         
+# #     # angleSubs -> directory angles
+#     angleSubs(st_atom, pr_result, max_distance, logFile)
+# #         
+# #     # global analysis proximity -1 atom ligand // -2 aa type // -3 atom classification
+#     ligandProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
+#     atomProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "atmProx"), max_distance, logFile)
+#     resProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "resProx"), max_distance, logFile)
+#     classifResProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "classifAtmProx"), max_distance, logFile)
+#     atomByAa(st_atom, pathManage.countGlobalProx (pr_result, name_in = "byAA") ,max_distance, logFile )
+# #         
+# #         
+# #     # analyse number of neighbors -> number of atom type (C, O, N)
+#     numberNeighbor (st_atom, pathManage.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
+#     neighborAtomComposition(st_atom, pathManage.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
+#     firstNeighbor (st_atom, pathManage.countNeighbor(pr_result, "firstNeighbor"), logFile)
+#     allNeighbors (st_atom, pathManage.countNeighbor(pr_result, "allNeighbor"), logFile)
+# #      
+# #     # with two area defintion
+#     d_area1, d_area2 = splitTwoArea (st_atom)
+#     allNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1"), logFile)
+#     allNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
+# # 
+# # #    # combination
+#     combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
+#     combinationNeighborsAngle (st_atom, pathManage.combination(pr_result, "angleSubs"))
+#     superimpose.SuperimposeFirstNeighbors (st_atom, pathManage.combination(pr_result, "superimposed"))
+# #     
+
     
     
     
-    
-    
-    
-# # # # # # # #     atom(st_atom, countStruct[str(max_distance)]["atom"])
-# # # # # # # #     ligand(st_atom, countStruct[str(max_distance)]["ligand"])
-# # # # # # # #     atomByAa(st_atom, countStruct[str(max_distance)]["byAA"])
-# # # # # # # #     
-# # # # # # # #     relationNeighbors (st_atom, countStruct[str(max_distance)]["threeAnalysis"])
-# # # # # # # #     relationNeighbors (st_atom_global, countStruct[str(max_distance)]["threeAnalysis"])
-# # # # # # # # 
-# # # # # # # #     # number of neighbor average
-# # # # # # # #     numberNeighbor (st_atom, countStruct[str(max_distance)]["numberNeighbors"])
-# # # # # # # #     numberNeighbor (st_atom_global, countStruct[str(max_distance)]["numberNeighbors"])
-# # # # # # # # 
-# # # # # # # #     distance = max_distance
-# # # # # # # # 
-# # # # # # # #     while distance >= 2:
-# # # # # # # # #         print distance
-# # # # # # # #         # reduce structure with distance criterion
-# # # # # # # #         neighborDistance(distance, max_distance, st_atom)
-# # # # # # # #         neighborDistanceList(distance, max_distance, st_atom_global) # analyse every distance
-# # # # # # # #         
-# # # # # # # # 
-# # # # # # # #         proportionAtoms.stAtom(st_atom, countStruct[str(distance)]["proportionAtom"])
-# # # # # # # #         proportionType.stAtom(st_atom, countStruct[str(distance)]["proportionType"])
-# # # # # # # #         proportionAtoms.globalNeighbors(st_atom_global, countStruct[str(distance)]["proportionAtom"]["Global"])
-# # # # # # # #         proportionType.globalNeighbors(st_atom_global, countStruct[str(distance)]["proportionType"]["Global"])
-# # # # # # # #         
-# # # # # # # #         residue(st_atom, countStruct[str(distance)]["residue"])
-# # # # # # # # #                 
-# # # # # # # # #         # cumul at least one -> interest group
-# # # # # # # #         countAtLeastOne(st_atom, countStruct[str(distance)]["atLeastOne"], ["OxAcid"])
-# # # # # # # #         countAtLeastOne(st_atom, countStruct[str(distance)]["atLeastOne"], ["H2O"])
-# # # # # # # #         countAtLeastOne(st_atom, countStruct[str(distance)]["atLeastOne"], ["ODonAcc"])
-# # # # # # # #         countAtLeastOne(st_atom, countStruct[str(distance)]["atLeastOne"], ["Carom"])
-# # # # # # # #         countAtLeastOne(st_atom, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc"])
-# # # # # # # #         countAtLeastOne(st_atom, countStruct[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc", "H2O"])
-# # # # # # # #         countAtLeastOne(st_atom, countStruct[str(distance)]["atLeastOne"], ["Nhis", "Nbasic"])
-# # # # # # # # #        -> every atom         
-# # # # # # # #         countAtLeastOne(st_atom_global, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid"])
-# # # # # # # #         countAtLeastOne(st_atom_global, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["H2O"])
-# # # # # # # #         countAtLeastOne(st_atom_global, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["ODonAcc"])
-# # # # # # # #         countAtLeastOne(st_atom_global, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["Carom"])
-# # # # # # # #         countAtLeastOne(st_atom_global, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc"])
-# # # # # # # #         countAtLeastOne(st_atom_global, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["OxAcid", "ODonAcc", "H2O"])
-# # # # # # # #         countAtLeastOne(st_atom_global, countAtLeastOneGlobal[str(distance)]["atLeastOne"], ["Nhis", "Nbasic"])
-# # # # # # # # #                 
-# # # # # # # #         globalAtomResidue(st_atom_global, countStruct[str(distance)]["ResidueAllAtom"])
-# # # # # # # #         angleSubs(st_atom, countStruct[str(distance)]["angleSubs"])
-# # # # # # # #         
-# # # # # # # #         
-# # # # # # # #         
-# # # # # # # #         distance = distance - 0.5
-# # # # # # # # #                 
-# # # # # # # # # 
-# # # # # # # #     writeFile.countGlobalCount(max_distance, countStruct, pr_result)
-# # # # # # # #     writeFile.resultAtLeastOne(countAtLeastOneGlobal, countStruct, max_distance, pr_result)
 
     log.endAction("END Staistic run !!!", start, logFile)
 
@@ -599,7 +550,7 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 
 
 
-def saltBridges (st_atom, pr_result, logFile, debug = 1):
+def saltBridges (st_atom, pr_result, logFile, restrained = 1, debug = 1):
     
     filout = open (pr_result + "proportionSaltBridges", "w")
     filout_sum = open (pr_result + "proportionSaltBridges.sum", "w")
@@ -622,7 +573,7 @@ def saltBridges (st_atom, pr_result, logFile, debug = 1):
             
         
         for atom_central in st_atom[type_subs] : 
-            type_stabilisation = retrieveInteraction (atom_central["neighbors"], type_subs)
+            type_stabilisation = retrieveInteraction (atom_central["neighbors"], type_subs, restrained)
             st_count[type_subs][type_stabilisation] = st_count[type_subs][type_stabilisation] + 1
             if type_stabilisation == "out_angle" or type_stabilisation == "out_distance": 
                 st_count[type_subs]["other"] = st_count[type_subs]["other"] + 1
@@ -647,9 +598,12 @@ def saltBridges (st_atom, pr_result, logFile, debug = 1):
     runScriptR.saltBridgesProportion(pr_result + "proportionSaltBridges")
       
         
-def retrieveInteraction (l_atoms, subs, debug = 1) : 
+def retrieveInteraction (l_atoms, subs, restrained = 1, debug = 1) : 
      
-    st_angle = structure.criteraAngle(subs)
+    if restrained == 1 : 
+        st_angle = structure.criteraAngle(subs)
+    else : 
+        st_angle = structure.criteraAngleLit(subs)
      
     flag_water = 0
     flag_ox = 0
@@ -731,17 +685,19 @@ def planarityImidazole (atom_interest_close, p_dir_result) :
     i = 0
     while i < nb_imd : 
         PDB_ID = l_imidazole_atom_central[i]["PDB"]
-        serial_at_central = l_imidazole_atom_central[i]["serial"]
         name_ligand =  l_imidazole_atom_central[i]["resName"]
          
         # load ligand
         l_at_lig = loadFile.ligandInPDB(PDB_ID, name_ligand)
          
         # load structure
-        l_at_subs = retrieveAtom.substructure ("Imidazole", serial_at_central, l_at_lig)
+        l_at_subs = retrieveAtom.substructure ("Imidazole", l_imidazole_atom_central[i], l_at_lig)
          
         # coplar
-        d_coplar = calcul.coplanarPoint(l_at_subs[3], [l_at_subs[0],l_at_subs[1], l_at_subs[2]])
+        try : d_coplar = calcul.coplanarPoint(l_at_subs[3], [l_at_subs[0],l_at_subs[1], l_at_subs[2]])
+        except : 
+            i = i + 1
+            continue
         filout.write (str(d_coplar) + "\n")
          
         # criterion dell no IMD -> not used
@@ -768,14 +724,13 @@ def planarityGuanidium (atom_interest_close, p_dir_result) :
     i = 0
     while i < nb_gua : 
         PDB_ID = l_guanidium_atom_central[i]["PDB"]
-        serial_at_central = l_guanidium_atom_central[i]["serial"]
         name_ligand =  l_guanidium_atom_central[i]["resName"]
          
         # load ligand
         l_at_lig = loadFile.ligandInPDB(PDB_ID, name_ligand)
          
         # load structure
-        l_at_subs = retrieveAtom.substructure ("Guanidium", serial_at_central, l_at_lig)
+        l_at_subs = retrieveAtom.substructure ("Guanidium", l_guanidium_atom_central[i], l_at_lig)
 #         print len (l_at_subs)
 #         print l_at_subs[0]["element"], l_at_subs[1]["element"], l_at_subs[2]["element"], l_at_subs[3]["element"], l_at_subs[4]["element"]
          
@@ -868,12 +823,11 @@ def lenBondAnalysis (struct_neighbor, substruct, p_dir_result ):
      
     for at_central in struct_neighbor[substruct] : 
         PDB_ID = at_central["PDB"]
-        serial_at_central = at_central["serial"]
         name_ligand =  at_central["resName"] 
          
         # all atom ligand
         l_at_lig = loadFile.ligandInPDB(PDB_ID, name_ligand)
-        l_at_subs = retrieveAtom.substructure (substruct, serial_at_central, l_at_lig)
+        l_at_subs = retrieveAtom.substructure (substruct, at_central, l_at_lig)
          
         # first neighbor
         if len (at_central["neighbors"]) == 0 : 
@@ -953,3 +907,140 @@ def splitTwoArea (st_atom_sub) :
     
     return d_area1, d_area2
             
+
+
+def EnvironmentSaltBridges (st_atom, pr_result, file_log, restrained = 1) : 
+    
+    d_neighbor_considered = structure.nbNeighbor()
+    
+    # first step fix if there are a salt bridges i.e. counter ion close to the substructure
+    for type_subs in st_atom.keys () : 
+        if type_subs == "global" : 
+            continue
+    
+        # create directory
+        pr_count = pathManage.CreatePathDir(pr_result + str(type_subs) + "/Count/")
+        pr_dist = pathManage.CreatePathDir(pr_result + str(type_subs) + "/Dist/")
+        pr_angle = pathManage.CreatePathDir(pr_result + str(type_subs) + "/Angle/")
+    
+        # structure of count
+        d_count_SB = {}
+        d_count_noSB = {}
+        d_dist = {}
+        d_angle = {}
+        
+        for atom_central in st_atom[type_subs] : 
+            type_stabilisation = retrieveInteraction (atom_central["neighbors"], type_subs, restrained)
+            
+            # case -> stabilization by salt bridges
+            nb_neighbor = d_neighbor_considered[type_subs]
+            if type_stabilisation == "salt-bridges" : 
+                l_neighbors = deepcopy(atom_central["neighbors"])
+                
+                
+                i = 1
+                while i <= nb_neighbor :  
+                    type_neighbor, atom_neighbor = searchMoreClose(l_neighbors, option_lcopy = 0)
+                    
+                    if not i in d_count_SB.keys () : 
+                        d_count_SB[i] = structure.countClassificationAtoms()
+                        d_count_SB[i]["out"] = 0 # case where there is not enough neighbor
+                    if not i in d_dist.keys () : 
+                        d_dist[i] = structure.EmptyListClassifAtom()
+                    
+                    if type_neighbor == None : 
+                        d_count_SB[i]["out"] = d_count_SB[i]["out"] + 1
+                    else : 
+                        d_count_SB[i][type_neighbor] = d_count_SB[i][type_neighbor] + 1
+                        d_dist[i][type_neighbor].append (atom_neighbor["distance"])
+                        
+                        # for angle
+                        if i == 1 : 
+                            d_angle_temp = {}
+                            d_angle_temp[i] = atom_neighbor
+                        else : 
+                            d_angle_temp[i] = atom_neighbor
+                            
+                            # init angle dico
+                            k_in = str ("angle" + str (i-1) + "_" + str (i))
+                            if not k_in in d_angle.keys () : 
+                                d_angle[k_in] = {}
+                                d_angle[k_in]["distance"] = []
+                                d_angle[k_in]["angle"] = []
+                                d_angle[k_in]["type"] = [] 
+                                
+                            d_angle[k_in]["distance"].append (calcul.distanceTwoatoms(d_angle_temp[i-1], d_angle_temp[i]))
+                            d_angle[k_in]["angle"].append (calcul.angleVector(d_angle_temp[i-1], atom_central, d_angle_temp[i]))
+                            d_angle[k_in]["type"].append (str (structure.classificationATOM (d_angle_temp[i-1])) + "_" + str (structure.classificationATOM (d_angle_temp[i])))
+                    i = i +1
+            
+            else : 
+                l_neighbors = deepcopy(atom_central["neighbors"])
+                i = 1
+                while i <= nb_neighbor :  
+                    type_neighbor, atom_neighbor = searchMoreClose(l_neighbors, option_lcopy = 0)
+                    
+                    k_in = str (i) + "-no"
+                    if not k_in in d_count_noSB.keys () : 
+                        d_count_noSB[k_in] = structure.countClassificationAtoms()
+                        d_count_noSB[k_in]["out"] = 0 # case where there is not enough neighbor
+                    
+                    if type_neighbor == None : 
+                        d_count_noSB[k_in]["out"] = d_count_noSB[k_in]["out"] + 1
+                    else : 
+                        d_count_noSB[k_in][type_neighbor] = d_count_noSB[k_in][type_neighbor] + 1
+                        
+                    i = i +1
+        
+        
+        
+        # statistic of substructure with salt bridge
+        if d_count_SB != {} : 
+            p_file_count = writeFile.CountByNeighbors(d_count_SB, pr_count + str (type_subs))
+            runScriptR.AFC(p_file_count, nb_neighbor)
+    
+        if d_dist != {} : 
+            d_file_dist = writeFile.DistByType(d_dist, type_subs, pr_dist)
+            for neighbor in d_file_dist.keys () : 
+                for type_atom in d_file_dist[neighbor].keys () : 
+                    p_filin = d_file_dist[neighbor][type_atom].name
+                    if type_atom == "density" : 
+                        if path.getsize(p_filin) > 30 : 
+                            runScriptR.plotDistanceDensity(p_filin, file_log, debug = 1)
+                    else : 
+                        if path.getsize(p_filin) > 10 : 
+                            runScriptR.plotDistance(p_filin, file_log)
+            
+            
+        if d_angle != {} : 
+            l_p_file_angle = writeFile.AngleByType(d_angle, pr_angle)
+            
+            for p_file_angle in l_p_file_angle : 
+                runScriptR.DistVSAngleNeighbor (p_file_angle)
+        
+        
+        # AFC with substructure no stabilized by SB
+        if d_count_noSB != {} : 
+            p_file_count = writeFile.CountByNeighbors(d_count_noSB, pr_count + "no" + str (type_subs))
+            runScriptR.AFC(p_file_count, nb_neighbor)
+        
+        # merge d_count with and without SB
+        d_count_SBnoSB = MergeDicCount (d_count_SB, d_count_noSB)
+        p_file_count = writeFile.CountByNeighbors(d_count_SBnoSB, pr_count + "SBandnoSB" + str (type_subs))
+        runScriptR.AFC(p_file_count, nb_neighbor)
+        
+
+def MergeDicCount (d_count1, d_count2):
+    
+    d_out = deepcopy(d_count1)
+    
+    for k2 in d_count2.keys () :
+        d_out[k2] = deepcopy(d_count2[k2])
+    
+    return d_out
+    
+    
+    
+           
+        
+        

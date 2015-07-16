@@ -55,16 +55,12 @@ def countNumberPDB(file):
     in: file result search ligand in PDB files
     out: number of PDB files"""
     
-    ligandPDB = loadFile.resultLigandPDB(file)
-
+    ligandPDB = loadFile.LigandInPDB(file) # to check
     nbPDB = 0
     for ligand in ligandPDB:
         nbPDB = nbPDB + len(ligand["PDB"])
 
     return nbPDB
-
-
-
 
 
 def existFile(pathFile):

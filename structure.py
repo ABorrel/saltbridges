@@ -22,9 +22,9 @@ def classificationATOM (atom="", out_list = 0):
     in: atom
     out: classification (string)"""
     
-    list_classif = ["OxAcid", "ODonAcc", "Sulfur", "Nhis", "Nbasic", "Carom", "OxPep", "Ndonnor","OxAccept" , "H2O", "CPep", "others"]
+    l_classif = ["OxAcid", "ODonAcc", "Sulfur", "Nhis", "Nbasic", "Carom", "OxPep", "Ndonnor","OxAccept" , "H2O", "CPep", "others"]
     if out_list : 
-        return list_classif
+        return l_classif
     
     
     listAminoAcid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS"]
@@ -334,6 +334,16 @@ def countClassificationAtoms():
     
     return count
 
+def EmptyListClassifAtom():
+    
+    d_out = {}
+    l_classe = classificationATOM("", out_list = 1)
+    for classe in l_classe : 
+        d_out[classe] = []
+    
+    return d_out
+    
+
 
 def listAminoAcidCheck():
     listOut = {}
@@ -509,20 +519,54 @@ def criteraAngle(subs):
     angleStruct["Secondary"]["distance"] = [2.5,3.0]
     
     angleStruct["Tertiary"] = {}
-    angleStruct["Tertiary"]["angle"] = [80,120]
+    angleStruct["Tertiary"]["angle"] = [90,130]
     angleStruct["Tertiary"]["distance"] = [2.5,3.0]
     
     angleStruct["Imidazole"] = {}
-    angleStruct["Imidazole"]["angle"] = [0,30]
-    angleStruct["Imidazole"]["distance"] = [2.5,3.0]
+    angleStruct["Imidazole"]["angle"] = [110,150]
+    angleStruct["Imidazole"]["distance"] = [2.2,3.0]
     
     angleStruct["Guanidium"] = {}
-    angleStruct["Guanidium"]["angle"] = [100,130]
-    angleStruct["Guanidium"]["distance"] = [2.5,3.0]
+    angleStruct["Guanidium"]["angle"] = [0,180]
+    angleStruct["Guanidium"]["distance"] = [3.0,4.5]
     
     angleStruct["AcidCarboxylic"] = {}
-    angleStruct["AcidCarboxylic"]["angle"] = [100,130]
-    angleStruct["AcidCarboxylic"]["distance"] = [2.5,3.0]
+    angleStruct["AcidCarboxylic"]["angle"] = [130,160]
+    angleStruct["AcidCarboxylic"]["distance"] = [3.2,3.7]
+    
+    return angleStruct[subs]
+
+
+
+def criteraAngleLit(subs):
+    """
+    Impose angle in different structure
+    """
+    angleStruct = {}
+    
+    angleStruct["Primary"] = {}
+    angleStruct["Primary"]["angle"] = [100,120]
+    angleStruct["Primary"]["distance"] = [0,4.0]
+    
+    angleStruct["Secondary"] = {}
+    angleStruct["Secondary"]["angle"] = [80,120]
+    angleStruct["Secondary"]["distance"] = [0,4.0]
+    
+    angleStruct["Tertiary"] = {}
+    angleStruct["Tertiary"]["angle"] = [90,130]
+    angleStruct["Tertiary"]["distance"] = [0,4.0]
+    
+    angleStruct["Imidazole"] = {}
+    angleStruct["Imidazole"]["angle"] = [110,150]
+    angleStruct["Imidazole"]["distance"] = [0,5.0]
+    
+    angleStruct["Guanidium"] = {}
+    angleStruct["Guanidium"]["angle"] = [0,180]
+    angleStruct["Guanidium"]["distance"] = [0,5.0]
+    
+    angleStruct["AcidCarboxylic"] = {}
+    angleStruct["AcidCarboxylic"]["angle"] = [130,160]
+    angleStruct["AcidCarboxylic"]["distance"] = [0,4.0]
     
     return angleStruct[subs]
 
@@ -544,13 +588,13 @@ def splitAreaDistance ():
     distStruct["Imidazole"]["distance"] = 3.5
     
     distStruct["Guanidium"] = {}
-    distStruct["Guanidium"]["distance"] = 3.25
+    distStruct["Guanidium"]["distance"] = 4.5
     
     distStruct["AcidCarboxylic"] = {}
-    distStruct["AcidCarboxylic"]["distance"] = 3.25
+    distStruct["AcidCarboxylic"]["distance"] = 4.25
     
     distStruct["global"] = {}
-    distStruct["global"]["distance"] = 3.25
+    distStruct["global"]["distance"] = 3.5
     return distStruct
 
 
@@ -920,13 +964,13 @@ def nbNeighbor () :
      
     nbNeighborStruct = {}
     
-    nbNeighborStruct["Primary"] = 3
-    nbNeighborStruct["Secondary"] = 2
-    nbNeighborStruct["Tertiary"] = 1
-    nbNeighborStruct["Imidazole"] = 2
-    nbNeighborStruct["Guanidium"] = 7
-    nbNeighborStruct["AcidCarboxylic"] = 4
-    nbNeighborStruct["global"] = 7
+    nbNeighborStruct["Primary"] = 4
+    nbNeighborStruct["Secondary"] = 3
+    nbNeighborStruct["Tertiary"] = 3
+    nbNeighborStruct["Imidazole"] = 5
+    nbNeighborStruct["Guanidium"] = 8
+    nbNeighborStruct["AcidCarboxylic"] = 5
+    nbNeighborStruct["global"] = 8
 
     return nbNeighborStruct
         

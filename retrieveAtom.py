@@ -92,7 +92,7 @@ def cycle(serialAtomInit, listAtomLigand):
 def substructure (subs, at_central, l_at_lig) : 
     
     if subs == "Primary" or subs == "Secondary" or subs == "Tertiary" : 
-        serial_atom = at_central["Serial"]
+        serial_atom = at_central["serial"]
         l_sub = atomConnect(l_at_lig, serial_atom)
         return l_sub[0]
     

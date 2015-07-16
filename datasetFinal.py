@@ -12,7 +12,7 @@ import runScriptR
 import parsing
 
 
-def Builder(name_database, RX = 3.00, RFree = 0.25, one_PDB_by_lig = 0, debug = 0):
+def Builder(name_database, RX = 3.00, RFree = 0.25, one_PDB_by_lig = 0, debug = 1):
     """
     Dataset Builder
     in : - open file result of filter ligand PDB
@@ -36,41 +36,41 @@ def Builder(name_database, RX = 3.00, RFree = 0.25, one_PDB_by_lig = 0, debug = 
         return l_file_dataset
 
 
-    #start, logFile = log.initAction("Dataset Builder")
-    
+    # load structure    
     d_lig_PDB = loadFile.LigandInPDB(pr_database + "resultLigandInPDB")
     
+    # list of ligand
+    l_lig = d_lig_PDB.keys()
  
     nb_lig = len(d_lig_PDB.keys())
     print d_lig_PDB.keys()
     
     i = 0
     while (i < nb_lig):
-        name_lig = d_lig_PDB.keys()[i]
+        name_lig = l_lig[i]
         PDB_ref = d_lig_PDB[name_lig][0]
         if debug : print PDB_ref, name_lig, i
  
         # load ligand
-        l_atom_lig_ref = loadFile.ligandInPDBConnectMatrixLigand(PDB_ref, name_lig)
-        #print l_atom_lig_ref
+        try : l_atom_lig_ref = loadFile.ligandInPDBConnectMatrixLigand(PDB_ref, name_lig)
+        except : 
+            i = i + 1
+            continue
+        
+        # search substructure interest
         l_interest_sub = searchPDB.interestStructure(l_atom_lig_ref) # search interest structure
         if debug : print "Interest substructure", l_interest_sub
         if l_interest_sub == []:
-            
             del d_lig_PDB[name_lig]
-            nb_lig = nb_lig - 1
-            continue
         else : 
             # control dataset quality
             l_PDB = checkPDBfile.CheckComplexQuality(d_lig_PDB[name_lig], name_lig, RX, RFree, one_PDB_by_lig)
-            print l_PDB, "append strut"
             d_lig_PDB[name_lig] = l_PDB
             if d_lig_PDB[name_lig] == []:
                 del d_lig_PDB[name_lig]
-                nb_lig = nb_lig - 1
-                continue
-            else :
-                i = i + 1
+        i = i + 1
+        
+        
     if debug == 1 : print "struct ligand =>", d_lig_PDB
                 
     # structure and file dataset and control RX + length bond

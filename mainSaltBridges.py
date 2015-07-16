@@ -1,3 +1,4 @@
+# personnel
 import searchPDB
 import datasetFinal
 import tool
@@ -8,14 +9,18 @@ import runScriptR
 import volumeFonction
 import managePDB
 import pathManage
-import os
 import runOtherSoft
-from time import sleep
 import waterAnalysis
 import superimpose
 import writeICMScript
 import loadFile
+import GPCRDockAnalysis
+import bondLength
 
+
+# global
+import os
+from time import sleep
 
 
 
@@ -52,7 +57,7 @@ def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_supe
 #
     # run for every dataset -> with diffrent resolution
     # short cut
-    l_p_dataset = ["/home/borrel/saltBridgesProject/result/PDB/3.0_0.25_uniquePDB/dataset_3.00.txt" ]
+#     l_p_dataset = ["/home/borrel/saltBridgesProject/result/PDB/3.0_0.25_uniquePDB/dataset_3.00.txt" ]
 # #     
     for p_dataset in l_p_dataset : 
         
@@ -76,13 +81,13 @@ def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_supe
         
         if option_superimpose == 1 : 
             # superimpose neighbors -> refaire a Helsinki car MAJ de de la PDB
-#             superimpose.globalNeighbor (d_sub_neighbor, "Primary", pr_result)
-#             superimpose.globalNeighbor (d_sub_neighbor, "Secondary", pr_result)
-#             superimpose.globalNeighbor (d_sub_neighbor, "Tertiary", pr_result)
-#             superimpose.globalNeighbor (d_sub_neighbor, "Imidazole", pr_result)
-#             superimpose.globalNeighbor (d_sub_neighbor, "Guanidium", pr_result)
+            superimpose.globalNeighbor (d_sub_neighbor, "Primary", pr_result)
+            superimpose.globalNeighbor (d_sub_neighbor, "Secondary", pr_result)
+            superimpose.globalNeighbor (d_sub_neighbor, "Tertiary", pr_result)
+            superimpose.globalNeighbor (d_sub_neighbor, "Imidazole", pr_result)
+            superimpose.globalNeighbor (d_sub_neighbor, "Guanidium", pr_result)
             superimpose.globalNeighbor (d_sub_neighbor, "AcidCarboxylic", pr_result)
-            sss
+            
             # superimpose neighbors -> with het first stabilization 
             superimpose.globalNeighbor (d_close_het, "Primary", pr_hetion)
             superimpose.globalNeighbor (d_close_het, "Secondary", pr_hetion)
@@ -105,8 +110,8 @@ def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_supe
             statistic.globalRunStatistic(d_sub_neighbor, max_distance, pr_result)
             statistic.globalRunStatistic(d_close_het, max_distance, pr_hetion)
     
-    
-        
+ 
+ 
 
 
 def waterGlobal (name_database, limit_acc = 20.0):
@@ -179,9 +184,15 @@ RFree_thresold = 0.25
 #RUN all
 #PDB 50 -> Rx 3.0 // Rfree 0.25 // 
 # main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0, option_stat = 1, option_stat_dataset = 0)
-# 
+
 # # PDB
-main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 1, option_bond = 0,  option_stat = 0, option_stat_dataset = 0)
+main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0)
+# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 0, option_stat_dataset = 0)
+
+# test
+# main ("test", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0, option_stat = 1, option_stat_dataset = 0)
+
+
 
 ##############################
 #       Volume function      #
@@ -194,11 +205,13 @@ main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX
 # volumeFonction.guanidium("/home/borrel/saltBridgesProject/result/Guanidium.pdb", 90, 150,1,30, "guanidium")
 
 
-# # # # # # # volumeFonction.tertiaryAmine("/home/borrel/saltBridgesProject/result/Tertiary.pdb", 90, 150, "tertiary")
-# # # # # # # volumeFonction.imidazole("/home/borrel/saltBridgesProject/result/Imidazole.pdb", 1, 30, "imidazole")
-# # # # # # # volumeFonction.guanidium("/home/borrel/saltBridgesProject/result/Guanidium.pdb", 90, 150,1,30, "guanidium")
-# # # # # # # volumeFonction.pyridine("/home/borrel/saltBridgesProject/result/Pyridine.pdb", 1, 30, "pyridine")
-# # # # # # # volumeFonction.diamine("/home/borrel/saltBridgesProject/result/Diamine.pdb", 90, 150, "diamine")
+###########################
+#      Bond length        #
+###########################
+
+# bondLength.BondCNAndCO("PDB", 1.5)
+
+
 
 
 ############################
@@ -218,8 +231,10 @@ main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX
 #################
 
 # pr_GPCRDock2010 = "/home/borrel/saltBridgesProject/GPCRDock2010/PDB_conserved/"
-# pr_result = pathManage.result("GPCR_Dock")
-
-# writeICMScript.ScriptConvertICBtoPDB(pr_GPCRDock2010, pr_result + "convertGPCRDock2010.txt")
-
+# pr_data = "/home/borrel/saltBridgesProject/GPCRDock/data/"
+# pr_result = pathManage.result("GPCRDock")
+# 
+# # writeICMScript.ScriptConvertICBtoPDB(pr_GPCRDock2010, pr_result + "convertGPCRDock2010.txt")
+# GPCRDockAnalysis.SearchChemicalSubstruct(pr_data, pr_result, control = 1)
+# GPCRDockAnalysis.SearchSaltBridges(pr_data, pr_result)
 

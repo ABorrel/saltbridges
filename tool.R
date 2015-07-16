@@ -1,5 +1,17 @@
 #!/usr/bin/env Rscript
 
+
+
+
+is.integer0 <- function(x)
+{
+  is.integer(x) && length(x) == 0L
+}
+
+
+
+
+
 ############
 # PIE plot #
 ############
@@ -70,30 +82,20 @@ factorAFC = function (xplot, yplot, xplotdata, yplotdata ){
 
 AFC = function (d, path_file){
 
-	#print (d)
-	r = CA (d, graph = FALSE)
+	print (dim(d))
 
-	print (r)
+	r = CA (d, graph = FALSE)
 
 	svg (file = paste (path_file, "_AFC.svg", sep = ""), 15, 15)
 	par(mar=c(8,8,8,8))
 
 	# descriptors
-	plot (r$row$coord[,1], r$row$coord[,2], type = "n", xlab = paste("DIM 1 : ", round(r$eig[1,2],1), "%", sep = ""), ylab = paste("DIM 2 : ", round(r$eig[2,2],1), "%", sep = ""), cex.lab = 2.4, ylim = c(-max(abs(r$row$coord[,2])), max(abs(r$row$coord[,2]))), xlim = c(-max(abs(r$row$coord[,1])), max(abs(r$row$coord[,1]))))
+	plot (c(r$row$coord[,1], r$col$coord[,1]), c(r$row$coord[,2], r$col$coord[,2]), type = "n", xlab = paste("DIM 1 : ", round(r$eig[1,2],1), "%", sep = ""), ylab = paste("DIM 2 : ", round(r$eig[2,2],1), "%", sep = ""), cex.lab = 2.4)
 	col_des = defColor(names(r$col$coord[,1]))
-	print (col_des)
-	factor = factorAFC (r$col$coord[,1], r$col$coord[,2], r$row$coord[,1], r$row$coord[,2] )
-
-	arrows (0,0,r$col$coord[,1]*factor, r$col$coord[,2]*factor, col = as.character(col_des), lwd = 3 )
-
+	text (r$col$coord[,1], r$col$coord[,2], label = names(r$col$coord[,1]), col = col_des, cex = 2)
 	# data
-	text (r$row$coord[,1], r$row$coord[,2], col = "#009DE0", label = names (r$row$coord[,1]), cex = 2)
+	text (r$row$coord[,1], r$row$coord[,2], col = "black", label = names (r$row$coord[,1]), cex = 2.5)
 	abline(h=0,v=0)
-
-	nameGroup = colnames(data)
-	name_angle = rownames(data)
-	color = defColor (nameGroup)
-	legend( "bottomleft" , legend=names(r$col$coord[,1]), bty="n", fill=col_des)
 
 	dev.off()
 }
@@ -110,41 +112,41 @@ AFC = function (d, path_file){
 defColor = function (l_name){
 	out = c()
 	for (element in l_name){
-		#print (element)
-		if (element == "OxAcid"){
+	
+		if (attr(regexpr("OxAcid",element),"match.length") >= 1){
 			out = append (out, "red")
 		}
-		else if (element == "ODonAcc"){
+		else if (attr(regexpr("ODonAcc",element),"match.length") >= 1){
 			out = append (out, "orange")
 		}
-		else if (element == "Sulfur"){
+		else if (attr(regexpr("Sulfur",element),"match.length") >= 1){
 			out = append (out, "gold")
 		}
-		else if (element == "Nhis"){
+		else if (attr(regexpr("Nhis",element),"match.length") >= 1){
 			out = append (out, "darkblue")
 		}
-		else if (element == "Nbasic"){
+		else if (attr(regexpr("Nbasic",element),"match.length") >= 1){
 			out = append (out, "blue")
 		}
-		else if (element == "Carom"){
+		else if (attr(regexpr("Carom",element),"match.length") >= 1){
 			out = append (out, "purple")
 		}
-		else if (element == "OxPep"){
+		else if (attr(regexpr("OxPep",element),"match.length") >= 1){
 			out = append (out, "coral")
 		}
-		else if (element == "Ndonnor"){
+		else if (attr(regexpr("Ndonnor",element),"match.length") >= 1){
 			out = append (out, "green")
 		}
-		else if (element == "OxAccept"){
+		else if (attr(regexpr("OxAccept",element),"match.length") >= 1){
 			out = append (out, "bisque3")
 		}
-		else if (element == "H2O"){
+		else if (attr(regexpr("H2O",element),"match.length") >= 1){
 			out = append (out, "cyan")
 		}
-		else if (element == "CPep"){
+		else if (attr(regexpr("CPep",element),"match.length") >= 1){
 			out = append (out, "brown")
 		}
-		else if (element == "others"){
+		else if (attr(regexpr("others",element),"match.length") >= 1){
 			out = append (out, "grey")
 		}
 		else {
@@ -271,11 +273,5 @@ deviationAngle = function(matrixAngle){
 		}
 	return (as.matrix(matrix_out))
 
-}
-
-
-is.integer0 <- function(x)
-{
-  is.integer(x) && length(x) == 0L
 }
 

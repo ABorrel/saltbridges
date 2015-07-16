@@ -61,12 +61,19 @@ def resultDistance(rep_int):
     return rep
 
 
-def resultSaltBridges (rep_int):
+def resultSaltBridges (pr_int, name_in = ""):
     
-    rep = rep_int + "saltBridges/"
-    try: makedirs(rep, mode=0777)
-    except: pass
-    return rep
+    if name_in == "" : 
+        pr_salt_bridges = pr_int + "saltBridges/"
+    else :
+        pr_salt_bridges = pr_int + "saltBridges/" + name_in + "/"
+        
+    if not path.isdir(pr_salt_bridges) : 
+        makedirs(pr_salt_bridges, mode=0777)
+    else : 
+        pass
+    return pr_salt_bridges
+
 
 
 def lengthBond (rep_int):

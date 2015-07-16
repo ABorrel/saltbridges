@@ -11,14 +11,12 @@ def resultFilterLigandPDB(d_dataset, dir_out):
     l_p_dataset = []
     for RX in d_dataset.keys():
         # open filout dataset
-        filoutXR = open(dir_out + "dataset_" + RX + ".txt", "w")
+        filout_dataset = open(dir_out + "dataset_" + RX + ".txt", "w")
         l_p_dataset.append (dir_out + "dataset_" + RX + ".txt")
         for ligand in d_dataset[RX].keys():
-            filoutXR.write(str(ligand) + "\t")
-            for PDB in d_dataset[RX][ligand]:
-                filoutXR.write(str(PDB) + " ")
-            filoutXR.write("\n")
-        filoutXR.close()
+            filout_dataset.write(str(ligand) + "\t")
+            filout_dataset.write (" ".join(d_dataset[RX][ligand]) + "\n")
+        filout_dataset.close()
         
     return l_p_dataset
 
@@ -143,26 +141,6 @@ def closeFileSummary(dictFile):
         dictFile[key].close()
 
 
-# # # # # # # def countGlobalCount(dist_max, stCount, dir_out):
-# # # # # # # 
-# # # # # # # #     resultDistanceOx(stCount[str(dist_max)]["distanceOx"], dir_out)
-# # # # # # #     resultLigand(stCount[str(dist_max)]["ligand"], dir_out)
-# # # # # # #     resultAtom(stCount[str(dist_max)]["atom"], dir_out)
-# # # # # # #     resultByAA(stCount[str(dist_max)]["byAA"], dir_out)
-# # # # # # #     resultAngle(stCount, dist_max, dir_out)
-# # # # # # #     resultNeighbor (stCount[str(dist_max)]["threeAnalysis"], dir_out)
-# # # # # # #     resultNumberNeighbor (stCount[str(dist_max)]["numberNeighbors"], dir_out)
-# # # # # # # 
-# # # # # # #     for distance in stCount.keys():
-# # # # # # #         resultResidue(float(distance), stCount[str(distance)]["residue"], dir_out)
-# # # # # # #         resultProportion(float(distance), stCount[str(distance)]["proportionAtom"], dir_out)
-# # # # # # #         resultProportionType(float(distance), stCount[str(distance)]["proportionType"], dir_out)
-# # # # # # # 
-# # # # # # #         
-# # # # # # #     resultProportionGlobalType(stCount, dist_max, dir_out)
-# # # # # # #     resultGlobalResidue(stCount, dist_max, dir_out)
-# # # # # # #     resultResidueDistance(stCount, dist_max, dir_out)
-    
 
 def resultCount(stCountLigand, type_count, pr_result):
 
@@ -193,35 +171,6 @@ def disributionNumberNeighbor (stCount, pr_result) :
     return l_p_filout
     
     
-
-# def resultNumberNeighbor (count, directory_result) : 
-#     
-#     # define new fold
-#     try : makedirs(directory_result + "NumberNeighbor/" , mode=0777)
-#     except : pass
-#     
-#     filout_means = open(directory_result + "NumberNeighbor/means.result", "w")
-#     for substruct in count.keys () : 
-#         filout_means.write (str (substruct) + " " + str (numpy.mean(count[substruct])) + " " + str (numpy.std(count[substruct])) + "\n")
-#         filout = open(directory_result + "NumberNeighbor/" + substruct, "w")
-#         for nb_neighbor in count[substruct] : 
-#             filout.write (str (nb_neighbor) + "\n")
-#         filout.close ()
-#     filout_means.close ()
-
-
-
-# # # # # # # # def resultAtom(count, directory_result):
-# # # # # # # # 
-# # # # # # # #     ListSub = structure.ListSub()
-# # # # # # # # 
-# # # # # # # #     for element in ListSub:
-# # # # # # # #         directory_in = repertory.typeSubStructure(directory_result, element)
-# # # # # # # #         filout = open(directory_in + "statAtoms" + element, "w")
-# # # # # # # #         for atom in count[element].keys():
-# # # # # # # #             filout.write(str(atom) + "\t" + str(count[element][atom]) + "\n")
-# # # # # # # # 
-# # # # # # # #         filout.close()
 
 
 def resultCountAA(stCountAA, pr_result):
@@ -329,13 +278,123 @@ def distanceCountStruct(stCount, pr_result) :
         filout.close ()
         
     return l_filout
+
+
+def CountByNeighbors (d_count, p_result):
+    
+    filout = open (p_result, "w")
+    
+    l_neighbor = d_count.keys ()
+    l_type_atom = d_count[l_neighbor[0]].keys ()
+    
+    print l_type_atom
+    print l_neighbor
+    
+    filout.write ("\t".join(l_type_atom) + "\n")
+    
+    for neighbor in l_neighbor : 
+        filout.write (str (neighbor))
+        for type_atom in l_type_atom : 
+            filout.write ("\t" + str (d_count[neighbor][type_atom]))
+        filout.write ("\n")
+    
+    filout.close ()
+    
+    return p_result
+    
+    
+def CountByDist (d_count, p_result):
+    
+    
+    filout = open (p_result, "w")
+    
+    l_neighbor = d_count.keys ()
+    l_type_atom = d_count[l_neighbor[0]].keys ()
+    
+    print l_type_atom
+    print l_neighbor
+    
+    filout.write ("\t".join(l_type_atom) + "\n")
+    
+    for neighbor in l_neighbor : 
+        filout.write (str (neighbor))
+        for type_atom in l_type_atom : 
+            filout.write ("\t" + str (d_count[neighbor][type_atom]))
+        filout.write ("\n")
+    
+    filout.close ()
+    
+    return p_result
     
 
 
+
+def DistByType (d_dist, subs, pr_result):
+    
+    
+    d_file = {}
+    
+    l_neighbor = d_dist.keys ()
+    l_type_atom = d_dist[l_neighbor[0]].keys ()
+    
+    print l_neighbor
+    print l_type_atom
+    
+    
+    
+    for neighbor in l_neighbor :
+        if not neighbor in d_file.keys () : 
+            d_file[neighbor] = {}
+            d_file[neighbor]["density"] = open ( pr_result + str (neighbor) + "_density", "w")
+            
+            
+            for type_atom in l_type_atom : 
+                if not type_atom in d_file[neighbor].keys () : 
+                    d_file[neighbor][type_atom] = open(pr_result + str (neighbor) + "_" + str (type_atom), "w")
+                    if d_dist[neighbor][type_atom] == [] : 
+                        continue
+                    else : 
+                        d_file[neighbor][type_atom].write ("\n".join([str(dist) + "\t" + str (type_atom) + "\t" + str(subs) for dist in d_dist[neighbor][type_atom]]) + "\n")
+                        d_file[neighbor]["density"].write ("\n".join([str(dist) + "\t" + str (type_atom) + "\t" + str(subs) for dist in d_dist[neighbor][type_atom]]) + "\n")
+    
+    
+    # close file
+    for neighbor in l_neighbor :
+        d_file[neighbor]["density"].close ()
+        for type_atom in l_type_atom : 
+            d_file[neighbor][type_atom].close ()
+
+    return d_file
+    
+    
+
+
+def AngleByType(d_angle, pr_angle) : 
+    
+    l_out = []
+    
+    for type_angle in d_angle.keys () : 
+        print type_angle
+        
+        p_filout = pr_angle + type_angle
+        l_out.append (p_filout)
+        filout = open (p_filout, "w")
+        
+        filout.write ("\n".join([str(d_angle[type_angle]["distance"][i]) + "\t" + str(d_angle[type_angle]["angle"][i]) + "\t" +  str(d_angle[type_angle]["type"][i]) for i in range (0, len(d_angle[type_angle]["type"]))]) + "\n")
+        
+        filout.close ()
+    
+    return l_out
+    
+    
+    
+    
 
 
 def countNeighborsAll(stCount, pr_result):
-    
+    """
+    -> need optimized to pass in argument the folder
+    """
     l_typeatom = structure.classificationATOM("", out_list= 1)   
     filout = open (pr_result + "countAll", "w")
     filout.write ("\t".join(l_typeatom) + "\n")
@@ -459,107 +518,6 @@ def barplotThreeAtomBarplot (countStruct, dir_out):
     
 
 
-# def resultProportion (distance, count, directory_result):
-#     """Write file proportion number of neighbors"""
-# 
-# 
-#     for type_substruct in count.keys():
-#         dir_in = repertory.globalProportionAtom(directory_result)
-#         filout = open (dir_in + "proportionAtom" + type_substruct + str("%.2f" % distance), "w")
-#         for nbNeighbor in count[type_substruct].keys():
-#             filout.write(str(nbNeighbor) + "\t" + str(count[type_substruct][nbNeighbor]["C"]) + "\t" + str(count[type_substruct][nbNeighbor]["O"]) + "\t" + str(count[type_substruct][nbNeighbor]["N"]) + "\t" + str(count[type_substruct][nbNeighbor]["S"]) + "\t" + str(count[type_substruct][nbNeighbor]["others"]) + "\n")
-# 
-# 
-#         filout.close()
-        
-        
-# def resultProportionType (distance, count, directory_result):
-# 
-#     listClasse = structure.classificationATOM("", out_list= 1)
-#     for type in count.keys():
-#         dir_in = repertory.globalProportionType(directory_result)
-#         filout = open (dir_in + "proportionType" + type + str("%.2f" % distance), "w")
-#         filout.write ("\t".join(listClasse) + "\n")
-#         for nbNeighbor in count[type].keys():
-#             if not nbNeighbor == "allNumberNeighbors" : 
-#                 filout.write(str(nbNeighbor))
-#                 
-#                 for classe in listClasse : 
-#                     filout.write("\t" + str(count[type][nbNeighbor][classe]))
-#                 filout.write("\n")
-#                 
-#         if count[type].keys() == [] : 
-#             filout.write(str(0) + "\t" + str(0) + "\t" + str(0) + "\t" + str(0) + "\t" + str(0) + "\t" + str(0) + "\n")
-#         
-#         filout.close()
-
-# def resultProportionGlobalType(count, distanceGlobal,directory_result) : 
-#     
-#     listDistance = structure.listDistance(distanceGlobal)
-#     listClasse = structure.classificationATOM("", out_list=1)
-#     listStruct = structure.ListSub()
-#     listStruct.append("Global") 
-#     
-#     for type_substructure in listStruct :
-#         dir_in = repertory.globalProportionType(directory_result) 
-#         filout = open (dir_in + "proportionType" + type_substructure , "w")
-#         filout.write("\t".join(listClasse) + "\n")
-#         for distance in listDistance :
-#             filout.write(str(distance))
-#             for classe in listClasse : 
-#                 filout.write("\t" + str(count[distance]["proportionType"][type_substructure]["allNumberNeighbors"][classe]))
-#             filout.write("\n")
-#             
-#         filout.close()
-#     
-    
-
-    
-
-# def resultResidueDistance(countGlobalAmine, distanceMax, directory_out):
-# 
-#     listDistance = structure.listDistance(distanceMax)
-#     listAminoAcid = ["HOH", "ASP", "GLU", "THR", "SER", "ASN", "GLN", "TYR", "HIS", "LYS", "ARG", "PHE", "TRP", "ALA", "ILE", "LEU", "MET", "VAL", "CYS", "GLY", "PRO"]
-# 
-# 
-#     for type_substructure in  countGlobalAmine["2.5"]["residue"].keys():
-#         filout_side_chain = open(directory_out + str(type_substructure) + "/GlobalResidueSide" + str(type_substructure), "w")
-#         filout_global = open(directory_out + str(type_substructure) + "/GlobalResidue" + str(type_substructure), "w")
-#         for aminoAcid in listAminoAcid:
-#             line_side = str(aminoAcid)
-#             line_global = str(aminoAcid)
-#             for distance in listDistance:
-#                 line_side = line_side + "\t"
-#                 line_global = line_global + "\t"
-#                 if aminoAcid == "HOH":
-#                     line_side = line_side + str(countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["main"])
-#                     line_global = line_global + str(countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["main"])
-#                 else:
-#                     line_side = line_side + str(countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["side"])
-#                     line_global = line_global + str(countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["side"] + countGlobalAmine[distance]["residue"][type_substructure][aminoAcid]["main"])
-# 
-#             line_side = line_side + "\n"
-#             line_global = line_global + "\n"
-#             filout_side_chain.write(line_side)
-#             filout_global.write(line_global)
-#         filout_side_chain.close()
-#         filout_global.close ()
-
-
-
-# def resultAtLeastOneGlobal(countGlobal, distanceMax, directory_out):
-# 
-#     listDistance = structure.listDistance(distanceMax)
-#     listStudyAtLeastOne = countGlobal[str(distanceMax)]["atLeastOne"].keys()
-#     
-#     for StudyAtleastOne in listStudyAtLeastOne : 
-#         filout_side_chain = open(directory_out + "atLeastOneGlobal_" + StudyAtleastOne, "w")
-#         line_side = ""
-#         for distance in listDistance :  
-#             line_side = line_side + str(countGlobal[distance]["atLeastOne"][StudyAtleastOne][StudyAtleastOne]) + "\t" + str(countGlobal[distance]["atLeastOne"][StudyAtleastOne]["others"]) + "\t"
-#         line_side = line_side + "\n" 
-#         
-#         filout_side_chain.write(line_side)
 #         filout_side_chain.close()
 
 
@@ -588,45 +546,6 @@ def resultResProx(stCount, distance_max, pr_result):
     return l_p_filout
     
 
-# def resultAtLeastOne(count_global, count_substructure, max_distance, directory_out):
-# 
-#     # distance list
-#     listDistance = structure.listDistance(max_distance)
-#     l_study =  structure.ListSub()
-#     l_study.append("global")
-# #     print l_study
-#     
-#     # directory result
-#     dir_out = directory_out + "AtLeastOne/"
-#     try : 
-#         makedirs(dir_out, mode=0777)
-#     except : 
-#         pass
-#     
-#     # type at least one
-# #     print count_substructure[listDistance[0]]["atLeastOne"].keys()
-#     for type_atleastone in count_substructure[listDistance[0]]["atLeastOne"].keys() : 
-#         filout = open (dir_out + type_atleastone + ".dat", "w")
-#         
-#         # header
-#         for distance in listDistance : 
-#             filout.write(str(distance) + "\t")
-#         
-#         # rownames
-#         filout.write("\n")
-#         
-#         for type_study in l_study : 
-#             filout.write (str(type_study) + "\t")
-#         
-#             # data
-#             for distance in listDistance :
-#                 # print type_study
-#                 if type_study == "global" : 
-#                     filout.write (str(count_global[distance]["atLeastOne"][type_atleastone][type_atleastone] / (count_global[distance]["atLeastOne"][type_atleastone][type_atleastone] +count_global[distance]["atLeastOne"][type_atleastone]["other"]) ) + "\t")
-#                 else : 
-#                     filout.write (str(count_substructure[distance]["atLeastOne"][type_atleastone][type_study][type_atleastone] / (count_substructure[distance]["atLeastOne"][type_atleastone][type_study][type_atleastone] +count_substructure[distance]["atLeastOne"][type_atleastone][type_study]["other"]) ) + "\t")
-#             filout.write("\n")
-#         filout.close()
 
 
 
@@ -763,32 +682,35 @@ def coordinates3D (l_atom, p_filout, type_substruct) :
         
         
         
-def coordinates3DPDBbyNeighborType (l_atom_in, subs, pr_init) : 
+def coordinates3DPDBbyNeighborType (l_atom_in, l_atom_subs, subs, pr_init) : 
     
     d_file = {}
     l_type_neighbors = structure.classificationATOM (out_list = 1)
-    l_atom_sub =  structure.substructureCoord(subs)
+    l_atom_sub_ref =  structure.substructureCoord(subs)
     for type_neighbors in l_type_neighbors : 
         d_file[type_neighbors] = open (pr_init + subs + "_" + type_neighbors + ".pdb", "w")
-        writePDBfile.coordinateSection(d_file [type_neighbors], l_atom_sub , "HETATM") 
+        writePDBfile.coordinateSection(d_file [type_neighbors], l_atom_sub_ref , "HETATM") 
+        writePDBfile.coordinateSection(d_file [type_neighbors], l_atom_subs , "HETATM")
+        
     
     
     for atom in l_atom_in : 
         type_neighbor = structure.classificationATOM (atom)
-        writePDBfile.coordinateSection(d_file [type_neighbor], [atom] , "HETATM")
+        writePDBfile.coordinateSection(d_file [type_neighbor], [atom] , "ATOM", header = 0)
         
     for type_neighbors in l_type_neighbors : 
         d_file[type_neighbors].close ()
 
 
 
-def coordinates3DPDB (l_atom_in, subs, p_filout) : 
+def coordinates3DPDB (l_atom_in, l_atom_subs = [], subs = "", p_filout = "") : 
     
     
     filout = open (p_filout, "w")
     
-    l_atom_sub =  structure.substructureCoord(subs)
-    writePDBfile.coordinateSection(filout, l_atom_sub , "HETATM")
+    l_atom_ref =  structure.substructureCoord(subs)
+    writePDBfile.coordinateSection(filout, l_atom_ref , "HETATM")
+    writePDBfile.coordinateSection(filout, l_atom_subs , "HETATM")
     writePDBfile.coordinateSection(filout, l_atom_in, "ATOM")
     
     filout.close ()
@@ -833,7 +755,5 @@ def RelationAngleDistNeighbors (d_relation_neighbors, pr_result) :
     
     return l_filout
     
-    
-
 
 

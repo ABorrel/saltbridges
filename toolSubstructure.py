@@ -32,25 +32,28 @@ def connectMatrixSerialToConnectMatrixElement(connectMatrixSerial, listAtom):
     return link
 
 
-def checkSingleBond(atom1, atom2):
+def checkSingleBond(atom1, atom2, d_min = 1.42):
     """check distance between two atoms (1.42)
     in: atom1 and atom2
     out: 0 or 1"""
     
     distance = calcul.distanceTwoatoms(atom1, atom2)
-    if distance >= 1.42:
+#     print distance
+    if distance >= d_min:
         return 1
     else:
         return 0
 
 
-def checkCoplanar (nitrogenAtom, listAtom):
+def checkCoplanar (NAtom, l_atom):
     """Check if tertiary amine is coplanar
     in: atom nitrogen
     out: list atom"""
     
-    try: distance = calcul.coplanar(nitrogenAtom, listAtom)
+    try: distance = calcul.coplanar(NAtom, l_atom)
     except: return 0
+    
+#     print distance
 
     if distance >= 1.0:
         return 1

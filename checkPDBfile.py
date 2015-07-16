@@ -137,31 +137,43 @@ def CheckComplexQuality(l_in, name_lig, limit_RX, limit_RFree, one_PDB_out, debu
 
     i = 0
     while i < nb_PDB:
-        header_PDB = parsing.header(l_PDB[i])
-        l_quality = parsing.Quality(l_PDB[i])
-#         if debug : print l_quality, l_PDB[i]
-        if l_quality[0] > limit_RX or l_quality[1] > limit_RFree : 
-            del l_PDB[i]
-            nb_PDB = nb_PDB - 1
-        elif search ("dna", header_PDB) or search ("rna", header_PDB):
-            del l_PDB[i]
-            nb_PDB = nb_PDB - 1
+        
+        # case of obsolete PDB 
+        try : header_PDB = parsing.header(l_PDB[i])
+        except : 
+            i = i + 1
+            continue
+        
+        # Check DNA or RNA
+        if search ("dna", header_PDB) or search ("rna", header_PDB):
             if debug : print "out dna", nb_PDB
+            del l_PDB[i]
+            nb_PDB = nb_PDB - 1
+            continue
         else :
-            l_atom_complex = loadFile.globalPDB(l_PDB[i])
-            # only first ligand included in PDB
-            l_atom_ligand = parsing.retrieveLigand (l_atom_complex, name_lig)[0] 
-            if parsing.checkLigandHooked (l_atom_complex, l_atom_ligand) == 1:
-                nb_PDB = nb_PDB - 1
+            l_quality = parsing.Quality(l_PDB[i])
+            if l_quality[0] > limit_RX or l_quality[1] > limit_RFree : 
                 del l_PDB[i]
-            else : 
-                l_RX.append (l_quality[0])
-                i = i + 1
+                nb_PDB = nb_PDB - 1
+                continue
+            else :
+                l_atom_complex = loadFile.globalPDB(l_PDB[i])
+                # only first ligand included in PDB
+                l_atom_ligand = parsing.retrieveLigand (l_atom_complex, name_lig)[0] 
+                if parsing.checkLigandHooked (l_atom_complex, l_atom_ligand) == 1:
+                    nb_PDB = nb_PDB - 1
+                    del l_PDB[i]
+                else : 
+                    l_RX.append (l_quality[0])
+                    i = i + 1
+    
+    
     
     if len (l_PDB) == 1 or len (l_PDB) == 0 :
          
         return l_PDB
     
+    # case where we want only one PDB -> retrieve best quality
     if one_PDB_out == 1 : 
         
         return [l_PDB[l_PDB.index (min (l_PDB))]]

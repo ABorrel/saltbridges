@@ -17,7 +17,7 @@ import managePDB
 
 
 #############global search######################
-def interestStructure (l_atom_lig, debug = 0):
+def interestStructure (l_atom_lig, more_flex = 0, debug = 0):
     """For one serial_nitrogen atom search substructure
     in : list atom ligand
     out : list of substructures found (list string)"""
@@ -43,9 +43,9 @@ def interestStructure (l_atom_lig, debug = 0):
 #             l_substruct.append("Pyridine")    
         elif cn (l_atom_connectN, l_atom_lig) == 1:
             l_substruct.append("Primary")
-        elif cnc(l_atom_connectN, l_atom_lig) == 1:
+        elif cnc(l_atom_connectN, l_atom_lig, more_flex = more_flex) == 1:
             l_substruct.append("Secondary")
-        elif cncc(l_atom_connectN, l_atom_lig) == 1:
+        elif cncc(l_atom_connectN, l_atom_lig, more_flex = more_flex) == 1:
             l_substruct.append("Tertiary")
        
 
@@ -53,7 +53,7 @@ def interestStructure (l_atom_lig, debug = 0):
         l_atom_connectO, connect = retrieveAtom.atomConnect(l_atom_lig, serial_oxygen)
         if acidCarboxylic(l_atom_connectO, l_atom_lig)[0] == 1:
             l_substruct.append("AcidCarboxylic")
-            
+    
     return l_substruct
 
 
@@ -112,32 +112,44 @@ def cn(listAtomConnectNitrogen, listAtomLigan):
     return 0
 
 
-def cnc(listAtomConnectNitrogen, listAtomLigand):
-    """search secondary stAtom 
+def cnc(l_atom_connectN, l_atom_lig, more_flex = 0):
+    """search secondary connect_element 
     in: list atom connected of nitrogen, list atom ligand
     out: 1 or 0"""
 
-    stAtom = toolSubstructure.matrixElement(listAtomConnectNitrogen)
+    connect_element = toolSubstructure.matrixElement(l_atom_connectN)
 
-    if stAtom == ["N", "C", "C"]:
-        if toolSubstructure.checkConectOnlyC(listAtomConnectNitrogen[1], listAtomLigand) == 1 and toolSubstructure.checkConectOnlyC(listAtomConnectNitrogen[2], listAtomLigand) == 1:
-            if toolSubstructure.checkSingleBond(listAtomConnectNitrogen[0], listAtomConnectNitrogen[1]) == 1 and toolSubstructure.checkSingleBond(listAtomConnectNitrogen[0], listAtomConnectNitrogen[2]) == 1:
+    if connect_element == ["N", "C", "C"]:
+#         print "IN - NH2"
+        if more_flex == 1 : 
+            #if toolSubstructure.checkConectOnlyC(l_atom_connectN[1], l_atom_lig) == 1 and toolSubstructure.checkConectOnlyC(l_atom_connectN[2], l_atom_lig) == 1:
+            if toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[1]) == 1 and toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[2]) == 1:
                 return 1
+        else : 
+            if toolSubstructure.checkConectOnlyC(l_atom_connectN[1], l_atom_lig) == 1 and toolSubstructure.checkConectOnlyC(l_atom_connectN[2], l_atom_lig) == 1:
+                if toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[1]) == 1 and toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[2]) == 1:
+                    return 1
     return 0
 
 
-def cncc(listAtomConnectNitrogen, listAtomligand):
-    """search tertiary stAtom 
-    in: list atom connected of nitrogen, list atom ligand
-    out: 1 or 0"""
+def cncc(l_atom_connectN, l_atom_lig, more_flex = 0):
+    """
+    Search tertiary amine in list of atom lig
+    - Append option 
+    """
 
-    stAtom = toolSubstructure.matrixElement(listAtomConnectNitrogen)
+    connect_element = toolSubstructure.matrixElement(l_atom_connectN)
 
-    if stAtom == ["N", "C", "C", "C"]:
-        if toolSubstructure.checkConectOnlyC(listAtomConnectNitrogen[1], listAtomligand) == 1 and toolSubstructure.checkConectOnlyC(listAtomConnectNitrogen[2], listAtomligand) == 1 and toolSubstructure.checkConectOnlyC(listAtomConnectNitrogen[3], listAtomligand) == 1:
-            if toolSubstructure.checkCoplanar(listAtomConnectNitrogen[0], listAtomligand) == 1:
-                if toolSubstructure.checkSingleBond(listAtomConnectNitrogen[0], listAtomConnectNitrogen[1]) == 1 and toolSubstructure.checkSingleBond(listAtomConnectNitrogen[0], listAtomConnectNitrogen[2]) == 1 and toolSubstructure.checkSingleBond(listAtomConnectNitrogen[0], listAtomConnectNitrogen[3]) == 1:
+    if connect_element == ["N", "C", "C", "C"]:
+        if more_flex == 1 : 
+            if toolSubstructure.checkCoplanar(l_atom_connectN[0], l_atom_lig) == 1:
+                if toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[1], d_min = 1.34) == 1 and toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[2], d_min = 1.34) == 1 and toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[3], d_min = 1.34) == 1:
                     return 1
+        else :     
+            if toolSubstructure.checkConectOnlyC(l_atom_connectN[1], l_atom_lig) == 1 and toolSubstructure.checkConectOnlyC(l_atom_connectN[2], l_atom_lig) == 1 and toolSubstructure.checkConectOnlyC(l_atom_connectN[3], l_atom_lig) == 1:
+                if toolSubstructure.checkCoplanar(l_atom_connectN[0], l_atom_lig) == 1:
+                    if toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[1]) == 1 and toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[2]) == 1 and toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[3]) == 1:
+                        return 1
     return 0
 
 
@@ -553,7 +565,7 @@ def interestGroup (max_distance, l_atom_lig, name_PDB, d_stock_neighbor):
                
     for serialO in l_serialO :
         l_atom_connectO, conect = retrieveAtom.atomConnect(l_atom_lig, serialO)
-        if acidCarboxylic(l_atom_connectO, l_atom_lig)== 1:
+        if acidCarboxylic(l_atom_connectO, l_atom_lig)[0] == 1:
             implementNeighborStruct (max_distance + 1.3, l_atom_connectO, name_PDB, l_atom_lig, "AcidCarboxylic", d_stock_neighbor)
             
 
@@ -582,105 +594,105 @@ def implementNeighborStruct (max_distance, l_atom_connect_central, name_PDB, l_a
         st_neighbor[subs].append(atom_neighbors)
 
 
-def regroupAtomNeighborGuanidium(listAtomRegroup, stAtom, listAtomLigand):  # #A revoir tres tres lourds en temps -> BUG
-    """Regroup neighbors for 3 nitrogen atoms guanidium
-    in: list atom finds in search neighbors, count structure stAtom, list atom of ligand in pdb
-    out: modification stAtom structure"""
-    
-    
-    for atomRegroup in listAtomRegroup : 
-        atomRegroupConnect, connectAtomRegroup = retrieveAtom.atomConnect(listAtomLigand, atomRegroup["serial"])
-        if connectAtomRegroup == ["N", "C"] : 
-            atom1 = atomRegroup 
-            
-    outAtom = {}
-    outAtom["PDB"] = atom1["PDB"]
-    outAtom["resName"] = atom1["resName"]
-    outAtom["serial"] = atom1["serial"]
-    outAtom["x"] = atom1["x"]
-    outAtom["y"] = atom1["y"]
-    outAtom["z"] = atom1["z"]
-    outAtom["neighbors"] = deepcopy(atom1["neighbors"]) 
-    
-    listAtomConnectN, connectMatrixN = retrieveAtom.atomConnect(listAtomLigand, atom1["serial"])
-    listAtomConnectC, connectMatrixC = retrieveAtom.atomConnect(listAtomLigand, listAtomConnectN[1]["serial"])
-    
-    for atomConnectC in listAtomConnectC : 
-        for atom in listAtomRegroup :
-            if atom["serial"] == atomConnectC["serial"] : 
-                for neighbor in atom["neighbors"] : 
-                    if not neighbor in outAtom["neighbors"] : 
-                        outAtom["neighbors"].append(neighbor)
-    
-    stAtom.append(outAtom)
-    
-
-
-
-def regroupAtomNeighbor (atomRegroup, struct_neighbor, listAtomLigand):
-    """regroup equivalent atom
-    in: atom no regroup, struct_neighbor structure neighbor, list atom ligand
-    out: struct_neighbor modified"""
-    
-    
-    if len(atomRegroup) == 2 : 
-        struct_neighbor.append(regroupNeighbor(atomRegroup[0]["serial"], atomRegroup[1]["serial"], atomRegroup))
-        
-        
-    else : 
-        l_atom_serial = []
-        for atom in atomRegroup : 
-            l_atom_serial.append(atom["serial"])
-        nbSerial = len(l_atom_serial)
-      
-        i = 0
-        while i < nbSerial : 
-            l_atom_bond, conect = retrieveAtom.atomConnect(listAtomLigand, l_atom_serial[i])
-            
-            for atom_bond in l_atom_bond[1:] : 
-                l_intersect = list(set(l_atom_serial) & set(atom_bond["connect"]))# intersect list
-                if len(l_intersect) > 2 : 
-                    print "ERROR regroup (searchPDB line 625)"
-                elif len(l_intersect) == 2 : 
-                    struct_neighbor.append(regroupNeighbor(atomRegroup[0]["serial"], atomRegroup[1]["serial"], atomRegroup))
-                    l_atom_serial.remove (l_intersect[0])
-                    l_atom_serial.remove (l_intersect[1])
-                    nbSerial = nbSerial -2
-                    continue
-                else : 
-                    pass
-            i = i + 1
-    
-                    
-def regroupNeighbor(serial1, serial2, l_atom_lig):
-    """Regroup list neighbor that 2 atom
-    in: atom serial 1, atom serial 2, list atoms
-    out: list neighbors global"""
-    
-    for atom in l_atom_lig : 
-        if atom["serial"] == serial1 : 
-            atom1 = atom
-            
-        if atom["serial"] == serial2 : 
-            atom2 = atom
-
-#    print len(atom1["neighbors"]), len(atom2["neighbors"])    
-    outAtom = {}
-    outAtom["PDB"] = atom1["PDB"]
-    outAtom["resName"] = atom1["resName"]
-    outAtom["serial"] = atom1["serial"]
-    outAtom["x"] = atom1["x"]
-    outAtom["y"] = atom1["y"]
-    outAtom["z"] = atom1["z"]
-    
-    outAtom["neighbors"] = deepcopy(atom1["neighbors"])
-    
-    for neighbor in atom2["neighbors"] : 
-        outAtom["neighbors"].append(neighbor)
-    
-#    print len(outAtom["neighbors"])
-    return outAtom
-    
+# # # # # # # def regroupAtomNeighborGuanidium(listAtomRegroup, stAtom, listAtomLigand):  # #A revoir tres tres lourds en temps -> BUG
+# # # # # # #     """Regroup neighbors for 3 nitrogen atoms guanidium
+# # # # # # #     in: list atom finds in search neighbors, count structure stAtom, list atom of ligand in pdb
+# # # # # # #     out: modification stAtom structure"""
+# # # # # # #     
+# # # # # # #     
+# # # # # # #     for atomRegroup in listAtomRegroup : 
+# # # # # # #         atomRegroupConnect, connectAtomRegroup = retrieveAtom.atomConnect(listAtomLigand, atomRegroup["serial"])
+# # # # # # #         if connectAtomRegroup == ["N", "C"] : 
+# # # # # # #             atom1 = atomRegroup 
+# # # # # # #             
+# # # # # # #     outAtom = {}
+# # # # # # #     outAtom["PDB"] = atom1["PDB"]
+# # # # # # #     outAtom["resName"] = atom1["resName"]
+# # # # # # #     outAtom["serial"] = atom1["serial"]
+# # # # # # #     outAtom["x"] = atom1["x"]
+# # # # # # #     outAtom["y"] = atom1["y"]
+# # # # # # #     outAtom["z"] = atom1["z"]
+# # # # # # #     outAtom["neighbors"] = deepcopy(atom1["neighbors"]) 
+# # # # # # #     
+# # # # # # #     listAtomConnectN, connectMatrixN = retrieveAtom.atomConnect(listAtomLigand, atom1["serial"])
+# # # # # # #     listAtomConnectC, connectMatrixC = retrieveAtom.atomConnect(listAtomLigand, listAtomConnectN[1]["serial"])
+# # # # # # #     
+# # # # # # #     for atomConnectC in listAtomConnectC : 
+# # # # # # #         for atom in listAtomRegroup :
+# # # # # # #             if atom["serial"] == atomConnectC["serial"] : 
+# # # # # # #                 for neighbor in atom["neighbors"] : 
+# # # # # # #                     if not neighbor in outAtom["neighbors"] : 
+# # # # # # #                         outAtom["neighbors"].append(neighbor)
+# # # # # # #     
+# # # # # # #     stAtom.append(outAtom)
+# # # # # # #     
+# # # # # # # 
+# # # # # # # 
+# # # # # # # 
+# # # # # # # def regroupAtomNeighbor (atomRegroup, struct_neighbor, listAtomLigand):
+# # # # # # #     """regroup equivalent atom
+# # # # # # #     in: atom no regroup, struct_neighbor structure neighbor, list atom ligand
+# # # # # # #     out: struct_neighbor modified"""
+# # # # # # #     
+# # # # # # #     
+# # # # # # #     if len(atomRegroup) == 2 : 
+# # # # # # #         struct_neighbor.append(regroupNeighbor(atomRegroup[0]["serial"], atomRegroup[1]["serial"], atomRegroup))
+# # # # # # #         
+# # # # # # #         
+# # # # # # #     else : 
+# # # # # # #         l_atom_serial = []
+# # # # # # #         for atom in atomRegroup : 
+# # # # # # #             l_atom_serial.append(atom["serial"])
+# # # # # # #         nbSerial = len(l_atom_serial)
+# # # # # # #       
+# # # # # # #         i = 0
+# # # # # # #         while i < nbSerial : 
+# # # # # # #             l_atom_bond, conect = retrieveAtom.atomConnect(listAtomLigand, l_atom_serial[i])
+# # # # # # #             
+# # # # # # #             for atom_bond in l_atom_bond[1:] : 
+# # # # # # #                 l_intersect = list(set(l_atom_serial) & set(atom_bond["connect"]))# intersect list
+# # # # # # #                 if len(l_intersect) > 2 : 
+# # # # # # #                     print "ERROR regroup (searchPDB line 625)"
+# # # # # # #                 elif len(l_intersect) == 2 : 
+# # # # # # #                     struct_neighbor.append(regroupNeighbor(atomRegroup[0]["serial"], atomRegroup[1]["serial"], atomRegroup))
+# # # # # # #                     l_atom_serial.remove (l_intersect[0])
+# # # # # # #                     l_atom_serial.remove (l_intersect[1])
+# # # # # # #                     nbSerial = nbSerial -2
+# # # # # # #                     continue
+# # # # # # #                 else : 
+# # # # # # #                     pass
+# # # # # # #             i = i + 1
+# # # # # # #     
+# # # # # # #                     
+# # # # # # # def regroupNeighbor(serial1, serial2, l_atom_lig):
+# # # # # # #     """Regroup list neighbor that 2 atom
+# # # # # # #     in: atom serial 1, atom serial 2, list atoms
+# # # # # # #     out: list neighbors global"""
+# # # # # # #     
+# # # # # # #     for atom in l_atom_lig : 
+# # # # # # #         if atom["serial"] == serial1 : 
+# # # # # # #             atom1 = atom
+# # # # # # #             
+# # # # # # #         if atom["serial"] == serial2 : 
+# # # # # # #             atom2 = atom
+# # # # # # # 
+# # # # # # # #    print len(atom1["neighbors"]), len(atom2["neighbors"])    
+# # # # # # #     outAtom = {}
+# # # # # # #     outAtom["PDB"] = atom1["PDB"]
+# # # # # # #     outAtom["resName"] = atom1["resName"]
+# # # # # # #     outAtom["serial"] = atom1["serial"]
+# # # # # # #     outAtom["x"] = atom1["x"]
+# # # # # # #     outAtom["y"] = atom1["y"]
+# # # # # # #     outAtom["z"] = atom1["z"]
+# # # # # # #     
+# # # # # # #     outAtom["neighbors"] = deepcopy(atom1["neighbors"])
+# # # # # # #     
+# # # # # # #     for neighbor in atom2["neighbors"] : 
+# # # # # # #         outAtom["neighbors"].append(neighbor)
+# # # # # # #     
+# # # # # # # #    print len(outAtom["neighbors"])
+# # # # # # #     return outAtom
+# # # # # # #     
 
 ######################################################################################
 
@@ -755,16 +767,16 @@ def globalNeighbors(distance, l_atom_ligand, pdb, struct_global_neighbor):
 
 
 
-def listAtomType(groupAtom, type_atom):
+def listAtomType(l_atom, type_atom):
     """Search N in the atoms list
     return a list of number atom"""
 
     list_out = []
-    for i in groupAtom:
-        if i["element"] == type_atom:
-            serial = i["serial"]
+    for atom in l_atom:
+        if atom["element"] == type_atom:
+            serial = atom["serial"]
             if not serial in list_out:
-                list_out.append(i["serial"])
+                list_out.append(atom["serial"])
     return  list_out
 
 
@@ -909,6 +921,8 @@ def appendAtomConnect(atom, listRetrive, atomLigand):
 #    
 #    return 0
 #    
+
+################ Cyles #######################
     
 def cycleGlobal(atomLigand):
     
@@ -978,6 +992,8 @@ def cycleOnlyTestCarbon(serialFirst, serialTest, serialPrevious, atomLigand, tes
     return 0
 
 
+#################### other fonction search ################"
+
 
 def Nclose (atom, l_at_lig) : 
     
@@ -996,4 +1012,52 @@ def Nclose (atom, l_at_lig) :
         return atom_temp
     else : 
         return {}
+
+
+
+
+def BondLengthCN (l_atom_lig) : 
+    
+    l_distance = []
+    l_serialN = listAtomType(l_atom_lig, "N")
+    
+    for serialN in l_serialN : 
+#         print serialN
+        l_atom_connectN, connect = retrieveAtom.atomConnect(l_atom_lig, serialN)
+        
+        i = 0
+        nb_connect = len (connect)
+        while i < nb_connect : 
+            if connect[i] == "C" : 
+                distance = calcul.distanceTwoatoms(l_atom_connectN[0], l_atom_connectN[1])
+#                 print distance
+                if distance != 1000.0 : 
+                    l_distance.append (str(distance))
+            i = i + 1
+    
+    return l_distance
+                
+        
+ 
+def BondLengthCO (l_atom_lig) : 
+    
+    l_distance = []
+    l_serialN = listAtomType(l_atom_lig, "O")
+    
+    for serialN in l_serialN : 
+#         print serialN
+        l_atom_connectO, connect = retrieveAtom.atomConnect(l_atom_lig, serialN)
+        
+        i = 0
+        nb_connect = len (connect)
+        while i < nb_connect : 
+            if connect[i] == "C" :
+                distance = calcul.distanceTwoatoms(l_atom_connectO[0], l_atom_connectO[1])
+#                 print distance
+                if distance != 1000.0 : 
+                    l_distance.append (str(distance))
+            i = i + 1
+    
+    return l_distance       
+        
             

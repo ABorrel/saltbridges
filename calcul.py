@@ -207,6 +207,7 @@ def angleVector(pointD, pointCentral, pointG):
     except :
         return "ERROR"
     
+
     
 
 def checkPoint(pointTest, pointN, pointC1, pointC2, plan, alpha):

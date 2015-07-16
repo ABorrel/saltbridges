@@ -115,5 +115,6 @@ def retriveListPDB (name_database):
         return formatCharacter.lowerList(list_pdb) 
 
 
+
 # to test   
 #retriveListPDB("PDB50")   

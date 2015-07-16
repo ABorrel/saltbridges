@@ -10,29 +10,33 @@ import checkPDBfile
 
 
 
-def openPdbFile(namePDB):
+def openPdbFile(PDBin):
     """Open PDB file, check if there are in file many model structure and chose first model
         in: name file
         out: lines interest in list"""
 
-    rep = pathManage.openPdbFile()
-    filin = open(rep + namePDB + ".pdb")
-    list_lines = filin.readlines()
+    if path.exists(PDBin) : 
+        filin = open(PDBin, "r")
+    else : 
+        rep = pathManage.openPdbFile()
+        filin = open(rep + PDBin + ".pdb", "r")
+
+    l_lines = filin.readlines()
     filin.close()
 
-    int_nblines = len(list_lines)
+    int_nblines = len(l_lines)
     for i in range(0, int_nblines):
         # retrieve only first model
-        if search("^ENDMDL", list_lines[i]):
+        if search("^ENDMDL", l_lines[i]):
             lineEnd = i
-        if search("^CONECT", list_lines[i]):
+        if search("^CONECT", l_lines[i]):
             lineStartConect = i
             break
 
     if "lineStartConect" in locals() and "lineEnd" in locals():
-        return list_lines[0: lineEnd] + list_lines[lineStartConect:int_nblines] # concatene lists 
+        return l_lines[0: lineEnd] + l_lines[lineStartConect:int_nblines] # concatene lists 
     else:
-        return list_lines
+        return l_lines
 
 
 
@@ -41,7 +45,7 @@ def resultFilterPDBLigand (path_file):
     in: name file result
     out: list of ligand"""
 
-    print path.getsize(path_file)
+#     print path.getsize(path_file)
     # list empty
     if path.getsize(path_file) == 0 : 
         return []
@@ -71,27 +75,28 @@ def resultFilterPDBLigand (path_file):
 
 
 
-def ligandInPDB(PDB_ID, ligand_ID):
-    """load list_atom_ligand in structure in PDB file on single list_atom_ligand by pdb and remove H
+def ligandInPDB(PDBin, ligand_ID):
+    """load l_atom_lig in structure in PDB file on single l_atom_lig by pdb and remove H
     out : atom in ligands
-    out: list of atoms that list_atom_ligand"""
+    out: list of atoms that l_atom_lig"""
 
 
-    linesPDB = openPdbFile(PDB_ID)
-    list_atom_ligand = []
+    linesPDB = openPdbFile(PDBin)
+    
+    l_atom_lig = []
     for line in linesPDB:
         if search ("^HETATM", line):
             atom = parsing.lineCoords(line)
             if atom["resName"] == ligand_ID and atom["element"] != "H":
-                list_atom_ligand.append(atom)
-    checkOnlyOneLigand(list_atom_ligand)
-    connectMatrix = connectMatrixInPDB(PDB_ID)
+                l_atom_lig.append(atom)
+    checkOnlyOneLigand(l_atom_lig)
+    connectMatrix = connectMatrixInPDB(PDBin)
 
-    if connectAtom(connectMatrix, list_atom_ligand) == "False":
+    if connectAtom(connectMatrix, l_atom_lig) == "False":
         print "Construt Matrix"
-        calcul.buildConnectMatrix(list_atom_ligand, PDB_ID)
+        calcul.buildConnectMatrix(l_atom_lig, PDBin)
 
-    return list_atom_ligand
+    return l_atom_lig
 
 
 def checkOnlyOneLigand(groupAtom):
@@ -184,7 +189,7 @@ def LigandInPDB(p_file_lig):
     lineFile = fileOpen.readlines()
     d_out = {}
 
-    for line in lineFile: 
+    for line in lineFile: ##### !!!!!! 
         line = line.split("\t")
         PDB = line[0]
 
@@ -243,7 +248,6 @@ def loadCloseStruct (pr_result) :
             if path.getsize(pr_result + name_file) != 0 : 
                 flag_file_empty = flag_file_empty + 1
             sub_struct = name_file.split ("_")[-1].split (".")[0]
-            print sub_struct
             d_summarize[sub_struct] = loadSummary(pr_result + name_file)
                     
     if flag_file_empty < 2 : # case file empty -> need control 
@@ -252,7 +256,6 @@ def loadCloseStruct (pr_result) :
             print "== ERROR 2 files summarize empty"
             return None
     else : 
-        print d_summarize.keys ()
         return d_summarize
             
         
@@ -299,6 +302,9 @@ def loadSummary (p_summary) :
             d_line["neighbors"].append (d_n)
         l_out.append (d_line)
     return l_out     
+
+
+
     
     
     

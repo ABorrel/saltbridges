@@ -15,21 +15,37 @@ l_color = defColor (l_class)
 print (l_class)
 print (l_color)
 
-png(filename=paste(p_density ,".png",sep = ""),width=as.integer(1000), heigh = 600)
+
 
 dist_temp = d[which (d[,2] == l_class[1]),1]
-plot (density (dist_temp), lwd = 3, xlim = c(2,6), ylim = c(0,1), col = l_color[l_class[1]], main ="")
-l_class = l_class[-1]
+
+# remove row with less than 2 element
+for (class in l_class){
+	i_temp = which (d[,2] == class)
+	print (i_temp)
+	if (length (i_temp) < 2){
+		d = d[-i_temp,]
+	}
+
+}
+
+
+# redefine color without line removed
+l_class = unique (d[,2])
+l_color = defColor (l_class)
+
+png(filename=paste(p_density ,".png",sep = ""),width=as.integer(1000), heigh = 600)
+
+plot (density (dist_temp), lwd = 3, xlim = c(2,6), col = l_color, main ="", type = "n")
 
 for (x in seq (2,6,0.25)){
-	segments (x,0,x,1,lwd = 2)
+	segments (x,0,x,max(density(dist_temp)$y),lwd = 2)
 }
-for (y in seq (0,1,0.25)){
+for (y in seq (0,max(density(dist_temp)$y),0.25)){
 	segments (2,y,6,y,lwd = 2)
 }
 
 for (class in l_class){
-
 	dist_temp = d[which (d[,2] == class),1]
 	lines (density(dist_temp), col = l_color[class], lwd = 3)
 

@@ -12,6 +12,8 @@ sumData = dim(data)[1]
 png(filename=paste(file,".png",sep = ""), 600, 600)
 par (mar = c(6,6,2,2))
 hist(d[,1], breaks = 20, xlim=c(0,max(d[,1])),  right=F, main="" , freq=T, col = "#009DE0", cex = 2, cex.lab = 2, cex.axis = 1, xlab = "Distance (Ang.)", ylab = "Number of occurencies" )
+
+
 #max_count = max (hist(d[,1], plot = FALSE)$count)
 #vertical
 #segments (0,0,0,max_count,lwd = 6)
@@ -31,12 +33,4 @@ hist(d[,1], breaks = 20, xlim=c(0,max(d[,1])),  right=F, main="" , freq=T, col =
 
 
 dev.off()
-
-#png(filename=paste(file,"density.png",sep = ""), 6000, 6000)
-#par (mar = c(30,30,30,30), oma = c (5,5,5,5))
-
-#plot (density(data[,1]))
-
-#dev.off()
-
 

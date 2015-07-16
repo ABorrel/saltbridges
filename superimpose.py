@@ -20,7 +20,6 @@ def groupAtomCoord (l_atom):
     
     l_out = []
     for atom in l_atom :
-        print "**", atom 
         l_out.append ([float(atom["x"]), float(atom["y"]), float(atom["z"])])
     
     return l_out
@@ -153,8 +152,12 @@ def rmse (m_points1, m_points2):
 def globalNeighbor (atom_interest_close, subs, p_dir_result) : 
     
     p_dir_result = pathManage.imposeNeighbors (p_dir_result)
+    # extract from ideal position
     l_at_ref =  structure.substructureCoord(subs)
-    l_superimpose = []
+    l_superimpose_neighbor = []
+    l_superimpose_subs = []
+    
+    l_RMSE = []
     
     for at_central in atom_interest_close[subs] : 
         PDB_ID = at_central["PDB"]
@@ -169,50 +172,53 @@ def globalNeighbor (atom_interest_close, subs, p_dir_result) :
         l_at_subs = retrieveAtom.substructure (subs, at_central, l_at_lig)
         
         
-        v_atom_ref = mat(array(groupAtomCoord(l_at_ref[0:3])))
+        v_atom_ref = mat(array(groupAtomCoord(l_at_ref)))
         
-        v_atom_central = mat(array(groupAtomCoord(l_at_subs[0:3])))
-
-        print v_atom_central
-        print v_atom_ref
+        v_atom_central = mat(array(groupAtomCoord(l_at_subs)))
 
         rotation, translocation =  rigid_transform_3D(v_atom_central, v_atom_ref)
         if rotation == None or translocation == None : 
             continue
         
         v_atom_rotated = applyTranformation(rotation, translocation, v_atom_central)
-        l_atom_rotated = applyTranformation(rotation, translocation, l_atom_in=l_at_subs)
+        l_subs_rotated = applyTranformation(rotation, translocation, l_atom_in = l_at_subs)
 
+        RMSE_rot = rmse(v_atom_ref, v_atom_rotated)
         print rmse(v_atom_central, v_atom_ref), "RMSE 1"
         print rmse(v_atom_ref, v_atom_rotated), "RMSE 2"
 
+        l_RMSE.append (str(RMSE_rot))
 
 #         print v_atom_rotated
 #         print "************compare**********"
 #         print l_at_subs
-#         print l_atom_rotated
+#         print l_subs_rotated
 #         print "/////////////////////////////"
         
         l_atom_neighbors = at_central["neighbors"]
         try : 
             l_atom_neighbor_rotated = applyTranformation(rotation, translocation, l_atom_in=l_atom_neighbors)
-            l_superimpose = l_superimpose + l_atom_rotated + l_atom_neighbor_rotated
+            l_superimpose_neighbor = l_superimpose_neighbor + l_atom_neighbor_rotated
+            l_superimpose_subs = l_superimpose_subs + l_subs_rotated
         except : 
             continue
     
     # color with b factor
-    tool.colorAtomType (l_superimpose)
+    tool.colorAtomType (l_superimpose_neighbor)
     
     # write gif
     pr_init_gif = p_dir_result + "/gif/" + subs + "/"
     pathManage.CreatePathDir(pr_init_gif)
-    p_file_coord = writeFile.coordinates3D (l_superimpose, pr_init_gif + subs + "_neigbor.coord", subs) 
+    p_file_coord = writeFile.coordinates3D (l_superimpose_neighbor + l_superimpose_subs, pr_init_gif + subs + "_neigbor.coord", subs) 
     runScriptR.plot3D (p_file_coord)
     
     # write one PDB by atom close type 
     pr_init_PDB = p_dir_result + "/PDB/" + subs + "/" 
     pathManage.CreatePathDir(pr_init_PDB)
-    writeFile.coordinates3DPDBbyNeighborType (l_superimpose, subs, pr_init_PDB)
+    file_RMSE = open (pr_init_PDB + "RMSE", "w")
+    file_RMSE.write ("\n".join(l_RMSE) + "\n")
+    file_RMSE.close ()
+    writeFile.coordinates3DPDBbyNeighborType (l_superimpose_neighbor, l_superimpose_subs, subs, pr_init_PDB)
     
     
     
@@ -241,12 +247,11 @@ def SuperimposeFirstNeighbors (st_atom, pr_result):
         
         for at_central in st_atom[subs] : 
             PDB_ID = at_central["PDB"]
-            serial_at_central = at_central["serial"]
             name_ligand =  at_central["resName"] 
         
             # all atom ligand
             l_at_lig = loadFile.ligandInPDB(PDB_ID, name_ligand)
-            l_at_subs = retrieveAtom.substructure (subs, serial_at_central, l_at_lig)
+            l_at_subs = retrieveAtom.substructure (subs, at_central, l_at_lig)
         
         
         
@@ -297,8 +302,6 @@ def SuperimposeFirstNeighbors (st_atom, pr_result):
                 
                 
         for k in d_atom_superiposed.keys () : 
-            print k
-                   
             # write gif
             pr_init_gif = pr_superimpose + "gif/" 
             pathManage.CreatePathDir(pr_init_gif)
