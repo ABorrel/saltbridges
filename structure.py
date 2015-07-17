@@ -524,7 +524,7 @@ def criteraAngle(subs):
     
     angleStruct["Imidazole"] = {}
     angleStruct["Imidazole"]["angle"] = [110,150]
-    angleStruct["Imidazole"]["distance"] = [2.2,3.0]
+    angleStruct["Imidazole"]["distance"] = [2.2,5.0]
     
     angleStruct["Guanidium"] = {}
     angleStruct["Guanidium"]["angle"] = [0,180]
