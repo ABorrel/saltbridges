@@ -99,7 +99,7 @@ def ligands(name_database, pr_init):
 
 ################substructure search -> stAtom###############
 
-def cn(listAtomConnectNitrogen, listAtomLigan):
+def cn(listAtomConnectNitrogen, l_atom_lig):
     """search primary stAtom 
     in: list atom connected of nitrogen, list atom ligand
     out: 1 or 0"""
@@ -107,7 +107,7 @@ def cn(listAtomConnectNitrogen, listAtomLigan):
     stAtom = toolSubstructure.matrixElement(listAtomConnectNitrogen)
     if stAtom == ["N", "C"] or stAtom == ["N", "C"]:
         if toolSubstructure.checkSingleBond(listAtomConnectNitrogen[0], listAtomConnectNitrogen[1]) == 1:
-            if toolSubstructure.checkConectOnlyC(listAtomConnectNitrogen[1], listAtomLigan) == 1 : 
+            if toolSubstructure.checkConectOnlyC(listAtomConnectNitrogen[1], l_atom_lig) == 1 : 
                 return 1
     return 0
 
@@ -121,10 +121,10 @@ def cnc(l_atom_connectN, l_atom_lig, more_flex = 0):
 
     if connect_element == ["N", "C", "C"]:
 #         print "IN - NH2"
-        if more_flex == 1 : 
+        if more_flex == 1 : # more flexible control just connectivity
             #if toolSubstructure.checkConectOnlyC(l_atom_connectN[1], l_atom_lig) == 1 and toolSubstructure.checkConectOnlyC(l_atom_connectN[2], l_atom_lig) == 1:
-            if toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[1]) == 1 and toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[2]) == 1:
-                return 1
+            #if toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[1]) == 1 and toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[2]) == 1:
+            return 1
         else : 
             if toolSubstructure.checkConectOnlyC(l_atom_connectN[1], l_atom_lig) == 1 and toolSubstructure.checkConectOnlyC(l_atom_connectN[2], l_atom_lig) == 1:
                 if toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[1]) == 1 and toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[2]) == 1:
@@ -142,9 +142,9 @@ def cncc(l_atom_connectN, l_atom_lig, more_flex = 0):
 
     if connect_element == ["N", "C", "C", "C"]:
         if more_flex == 1 : 
-            if toolSubstructure.checkCoplanar(l_atom_connectN[0], l_atom_lig) == 1:
-                if toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[1], d_min = 1.34) == 1 and toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[2], d_min = 1.34) == 1 and toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[3], d_min = 1.34) == 1:
-                    return 1
+            #if toolSubstructure.checkCoplanar(l_atom_connectN[0], l_atom_lig) == 1:
+            #    if toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[1], d_min = 1.34) == 1 and toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[2], d_min = 1.34) == 1 and toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[3], d_min = 1.34) == 1:
+            return 1
         else :     
             if toolSubstructure.checkConectOnlyC(l_atom_connectN[1], l_atom_lig) == 1 and toolSubstructure.checkConectOnlyC(l_atom_connectN[2], l_atom_lig) == 1 and toolSubstructure.checkConectOnlyC(l_atom_connectN[3], l_atom_lig) == 1:
                 if toolSubstructure.checkCoplanar(l_atom_connectN[0], l_atom_lig) == 1:
@@ -531,13 +531,14 @@ def globalSearch (dist_thresold, p_file_dataset,  pr_result, debug = 0):
     
 
 
-def interestGroup (max_distance, l_atom_lig, name_PDB, d_stock_neighbor):
+def interestGroup (max_distance, l_atom_lig, name_PDB, d_stock_neighbor, more_flex = 0):
     """Search different groups
     in : ligands in namePDB
     out : major nitrogen in the group of different structures
     change distance max for guanidium + 1.5
     imidazole + 1.1
-    and acid carboxylic + 1.3"""
+    and acid carboxylic + 1.3
+    append more flex to GPCR study"""
     
     l_serialN = listAtomType(l_atom_lig, "N")
     l_serialO = listAtomType(l_atom_lig, "O")
@@ -557,9 +558,9 @@ def interestGroup (max_distance, l_atom_lig, name_PDB, d_stock_neighbor):
 #             implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Pyridine", d_stock_neighbor)
         elif cn(l_atom_connectN, l_atom_lig) == 1:
             implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Primary", d_stock_neighbor)
-        elif cnc(l_atom_connectN, l_atom_lig) == 1:
+        elif cnc(l_atom_connectN, l_atom_lig, more_flex = more_flex) == 1:
             implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Secondary", d_stock_neighbor)
-        elif cncc(l_atom_connectN, l_atom_lig) == 1:
+        elif cncc(l_atom_connectN, l_atom_lig, more_flex = more_flex) == 1:
             implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Tertiary", d_stock_neighbor)
             
                

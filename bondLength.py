@@ -18,7 +18,7 @@ from os import path
 def BondCNAndCO (name_database, RX_thresold = 1.5):
     
     # directory
-    pr_result = pathManage.result(name_database + "/CNbound" +str (RX_thresold))
+    pr_result = pathManage.result(name_database + "/CNbound" + str (RX_thresold))
     pr_database = pathManage.result(name_database)
     
     # filout with distance

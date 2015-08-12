@@ -80,7 +80,6 @@ def ligandInPDB(PDBin, ligand_ID):
     out : atom in ligands
     out: list of atoms that l_atom_lig"""
 
-
     linesPDB = openPdbFile(PDBin)
     
     l_atom_lig = []
@@ -232,7 +231,7 @@ def globalPDB(PDB, ligand = ""):
 
 
 
-def loadCloseStruct (pr_result) :
+def loadCloseStruct (pr_result, control_empty_file = 1) :
     
     if not path.isdir(pr_result) : 
         return None
@@ -247,16 +246,21 @@ def loadCloseStruct (pr_result) :
         if search(".sum", name_file) : 
             if path.getsize(pr_result + name_file) != 0 : 
                 flag_file_empty = flag_file_empty + 1
-            sub_struct = name_file.split ("_")[-1].split (".")[0]
-            d_summarize[sub_struct] = loadSummary(pr_result + name_file)
+            else : 
+                sub_struct = name_file.split ("_")[-1].split (".")[0]
+                d_summarize[sub_struct] = loadSummary(pr_result + name_file)
                     
-    if flag_file_empty < 2 : # case file empty -> need control 
+    if control_empty_file == 1 and flag_file_empty < 2 : # case file empty -> need control 
             # run the extraction
             
             print "== ERROR 2 files summarize empty"
             return None
     else : 
-        return d_summarize
+        if d_summarize == {} : 
+            return None
+    
+    
+    return d_summarize
             
         
     

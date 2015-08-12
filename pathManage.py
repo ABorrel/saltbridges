@@ -266,32 +266,9 @@ def combination (pr_int, name_in = "") :
     return pr_combinatoire
 
 
-
-#############################Serine Protease###################3
-
-
-def datasetSerineProtease ():
-
-    rep = repInit + "dataset_SerineProtease/"
-    return rep
-
-
-def resultSerineProtease ():
-    
-    rep = repInit + "resultSerineProtein/"
-    try: makedirs(rep, mode=0777)
-    except: pass
-    return rep
-
-def datasetSerineProteaseType (rep):
-
-    rep = repInit + "dataset_SerineProtease/" + rep + "/"
-    return rep    
-
-
 def typeSubStructure (directory_in, element) : 
-    
-    
+     
+     
     if directory_in[-1] == "/" : 
         directory_in = directory_in[0:-1]
     else :
@@ -300,10 +277,35 @@ def typeSubStructure (directory_in, element) :
     try: makedirs(dir_out, mode=0777)
     except: pass
     return dir_out
-
+ 
 def CreatePathDir (pr_in):
-    
+     
     try : makedirs( pr_in, mode=0777 )
     except : pass
-    
+     
     return pr_in
+
+
+#############################Serine Protease###################3
+
+# # 
+# # def datasetSerineProtease ():
+# # 
+# #     rep = repInit + "dataset_SerineProtease/"
+# #     return rep
+# # 
+# # 
+# # def resultSerineProtease ():
+# #     
+# #     rep = repInit + "resultSerineProtein/"
+# #     try: makedirs(rep, mode=0777)
+# #     except: pass
+# #     return rep
+# # 
+# # def datasetSerineProteaseType (rep):
+# # 
+# #     rep = repInit + "dataset_SerineProtease/" + rep + "/"
+# #     return rep    
+# # 
+# # 
+

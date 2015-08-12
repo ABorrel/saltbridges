@@ -186,7 +186,7 @@ RFree_thresold = 0.25
 # main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0, option_stat = 1, option_stat_dataset = 0)
 
 # # PDB
-main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0)
+# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 0, option_stat_dataset = 0)
 
 # test
@@ -195,18 +195,18 @@ main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX
 
 
 ##############################
-#       Volume function      #
+#       Volume function      # -> rewrite with new criterion
 ##############################
-
-# volumeFonction.defVolumePrimary("/home/borrel/saltBridgesProject/result/", "Primary")
-# volumeFonction.defVolumeSecondary("/home/borrel/saltBridgesProject/result/", "Secondary")
-# volumeFonction.defVolumeTertiary("/home/borrel/saltBridgesProject/result/", "Tertiary")
-# volumeFonction.defVolumeImidazole("/home/borrel/saltBridgesProject/result/", "Imidazole")
-# volumeFonction.guanidium("/home/borrel/saltBridgesProject/result/Guanidium.pdb", 90, 150,1,30, "guanidium")
+pr_result = pathManage.result()
+# volumeFonction.defVolumePrimary(pr_result)
+# volumeFonction.defVolumeSecondary(pr_result)
+# volumeFonction.defVolumeTertiary(pr_result)
+# volumeFonction.defVolumeImidazole(pr_result)
+# volumeFonction.defVolumeGuanidium(pr_result)
 
 
 ###########################
-#      Bond length        #
+#      Bond length        # check with new function in the main // write again
 ###########################
 
 # bondLength.BondCNAndCO("PDB", 1.5)
@@ -215,10 +215,9 @@ main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX
 
 
 ############################
-#     Water analysis       #
+#     Water analysis       # -> +++ to look up the solvant exposition
 ############################
 
-# pb avec le dossier ou nacess tourne
 # waterGlobal ("PDB20", limit_acc = 20.0)
 # waterGlobal ("PDB50", limit_acc = 20.0)
 # waterGlobal ("PDB", limit_acc = 20.0)
@@ -230,11 +229,12 @@ main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX
 #   GPCR dock   #
 #################
 
-# pr_GPCRDock2010 = "/home/borrel/saltBridgesProject/GPCRDock2010/PDB_conserved/"
-# pr_data = "/home/borrel/saltBridgesProject/GPCRDock/data/"
-# pr_result = pathManage.result("GPCRDock")
-# 
-# # writeICMScript.ScriptConvertICBtoPDB(pr_GPCRDock2010, pr_result + "convertGPCRDock2010.txt")
-# GPCRDockAnalysis.SearchChemicalSubstruct(pr_data, pr_result, control = 1)
-# GPCRDockAnalysis.SearchSaltBridges(pr_data, pr_result)
+pr_GPCRDock2010 = "/home/borrel/saltBridgesProject/GPCRDock2010/PDB_conserved/"
+pr_data = "/home/borrel/saltBridgesProject/GPCRDock/data/"
+pr_result = pathManage.result("GPCRDock")
+
+# convertion ICM 
+# writeICMScript.ScriptConvertICBtoPDB(pr_GPCRDock2010, pr_result + "convertGPCRDock2010.txt")
+
+GPCRDockAnalysis.GlobalAnalysisGPCR (pr_data, pr_result, dist_thresold = 5.0, chemical_search = 0, option_stat = 1)
 

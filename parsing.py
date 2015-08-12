@@ -364,26 +364,26 @@ def separateByLigand (l_atom_ligand, debug = 0) :
 
 
 
-def retrieveListLigand ( path_file_PDB, option_not_ligand = 0 , debug=0 ):
+def retrieveListLigand ( p_file_PDB, option_not_ligand = 0 , debug=0 ):
     """
     Retrieve list ligand in PDB file, only ligands, remove metals
     args: - path file
     return: list ligands
     """
+    # HIE -> His modified
+    l_not_ligand = ["SO4", "FE2", "GOL", "FES", "PO4", "MSE", "DMS", "URE", "FMT", "TRS", "NCO"]
     
-    list_not_ligand = ["SO4", "FE2", "GOL", "FES", "PO4", "MSE", "DMS", "URE", "FMT", "TRS", "NCO"]
-    
-    filin = open ( path_file_PDB, "r" )
-    list_line_pdb = filin.readlines ()
+    filin = open ( p_file_PDB, "r" )
+    l_line_pdb = filin.readlines ()
     filin.close()
     list_out = []
-    for line_pdb in list_line_pdb : 
+    for line_pdb in l_line_pdb : 
         if search ( "^HETATM", line_pdb ) : 
             ligand = line_pdb[17:21].replace ( " ", "" )
             if debug : print ligand
             if not ligand in list_out and ligand != "HOH"  :
                 if len (ligand) > 2 : # remove metals just 2 letters
-                    if not ligand in list_not_ligand : 
+                    if not ligand in l_not_ligand : 
                         list_out.append ( ligand )
     return list_out 
     

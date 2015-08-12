@@ -10,94 +10,163 @@ import parsing
 import searchPDB
 import writeFile
 import writePDBfile
+import statistic
 
 # 
-from os import listdir
+from os import listdir, path
 from copy import deepcopy
- 
- 
- 
- 
-def SearchSaltBridges (pr_data, pr_result, dist_thresold = 5.0, debug = 1): 
+import pathManage
+
+
+
+def GlobalAnalysisGPCR (pr_data, pr_result, dist_thresold = 5.0, chemical_search = 0, option_stat = 0):
+
+    # search chemical substructures in docked ligand
+    if chemical_search == 1 : 
+        SearchChemicalSubstruct(pr_data, pr_result, control = 1)
+    
+    # build structure
+    struct_neighbor = SearchNeighbor (pr_data, pr_result, dist_thresold = dist_thresold, debug = 1)
+    
+    print struct_neighbor
+    ddd
     
     
-    # do same analysis that PDB 
-    l_PDB_file = listdir(pr_data)
+    for drug in struct_neighbor.keys () : 
+        pr_drug = pathManage.CreatePathDir(pr_result + str(drug) + "/")
+        if option_stat == 1: 
+            # statistic
+            print struct_neighbor[drug]
+            statistic.globalRunStatistic(struct_neighbor[drug], dist_thresold, pr_drug)
     
-    pr_summary = pr_result + "Sum/"
-    p_file_lig = pr_result + "ligInPDB"
-    file_lig = open (p_file_lig, "w")
     
 
+
+
+
+def ControlHETATOMModelFile (pr_data, pr_result):
+    
     # Write file ligand  
     
     l_ligand = listdir(pr_data)
     for ligand in l_ligand : 
-        print ligand
-    
-        l_file = listdir(pr_data + ligand + "/")
-    
-    
-        for PDB_file in l_file :
-            print PDB_file
         
-            l_lig_PDB = parsing.retrieveListLigand(pr_data + ligand + "/" + PDB_file)
-            print l_lig_PDB
-            if len (l_lig_PDB) == 0 : 
-                continue
+        # control if file exist and size
+        p_file_lig = pathManage.CreatePathDir(pr_result + str (ligand) + "/" ) + "ligInModel"
+        
+        if path.exists(p_file_lig) : 
+            return 
+        
+        else : 
+            file_lig = open (pathManage.CreatePathDir(pr_result + str (ligand) + "/" ) + "ligInModel", "w")
+            print "ligand", ligand
+        
+            l_file = listdir(pr_data + ligand + "/")
+        
+            d_temp = {}
+            for model_file in l_file :
+                print model_file
             
+                l_lig_PDB = parsing.retrieveListLigand(pr_data + ligand + "/" + model_file)
+                print l_lig_PDB
+                if len (l_lig_PDB) == 0 : 
+                    continue
+                else : 
+                    for lig in l_lig_PDB : 
+                        if not lig in d_temp.keys () : 
+                            d_temp[lig] = []
+                        d_temp[lig].append (pr_data + ligand + "/" + model_file)
+                
             # write temp control
-            file_lig.write (l_lig_PDB[0] + "\t" + pr_data + str (ligand) + "/" + PDB_file + "\n")
-    file_lig.close ()
-     
-     
+            for lig in d_temp.keys () : 
+                file_lig.write (str (lig) + "\t" + " ".join(d_temp[lig]) + "\n")
+    
+            file_lig.close ()
         
-    l_lig = loadFile.resultFilterPDBLigand(p_file_lig)
     
-    print "==>", l_lig
+ 
+ 
+def SearchNeighbor (pr_data, pr_result, dist_thresold = 5.0, debug = 1): 
     
-    nb_lig = len(l_lig)
+    # write file with HETATM in PDB -> to used same function
     
-    # ##Count Structure
-    d_neighbor = {}
-    l_neighbor_global = []
+    ControlHETATOMModelFile (pr_data, pr_result)
+    
+    
+    # to remove modified amino acid 
+    l_lig_model = ["ZMA", "UNK", "RES"]
+
+    l_drug = listdir(pr_data)
+    struc_out = {}
+    
+    for drug in l_drug :
+         
+        # pr result
+        pr_drug = pathManage.CreatePathDir(pr_result + str(drug) + "/")
+        l_lig = loadFile.resultFilterPDBLigand(pr_drug + "ligInModel")
+        
+        print l_lig
+        
+        if l_lig == [] : 
+            print "ERROR: find HET in model -> l68 GPCRDockAnalysis"
+            return {}
+        else : 
+            #file summary
+            pr_summary = pr_drug + "Sum/"
+            
+            # load structure in summary ---> if use need place option one PDB by ligand
+            d_neighbor = loadFile.loadCloseStruct (pr_summary,  control_empty_file = 0)
+            print d_neighbor
+            
+            if d_neighbor == None : 
+                
+                print "Write Sum File"
+                #file summary
+                pr_summary = pr_drug + "Sum/"
+                #write summary file
+                d_files_summary = writeFile.openFileSummary(pr_summary)
+            
+                # structure of stock
+                
+                d_neighbor = {}
+                l_neighbor_global = []
+            
+            
+                # search neighbor
+                nb_lig = len (l_lig)
+                i = 0
+                
+                while i < nb_lig : 
+                    j = 0
+                    nb_model = len (l_lig[i]["PDB"])
+                    print nb_model
+                    while j < nb_model : 
+                        
+                        l_atom_ligand = loadFile.ligandInPDB(l_lig[i]["PDB"][j], l_lig[i]["name"])
+                    
+                        # search neighbor for every atom in ligand selected
+                        searchPDB.globalNeighbors(dist_thresold, l_atom_ligand, l_lig[i]["PDB"][j], l_neighbor_global)
+                        # search neighbor for interest 
+                        searchPDB.interestGroup(dist_thresold, l_atom_ligand, l_lig[i]["PDB"][j], d_neighbor, more_flex = 1)
+                    
+                        j = j + 1
+                    i = i + 1
+                    
+            
+                writeFile.neighborStruct(d_neighbor, l_neighbor_global, d_files_summary)
+                writeFile.closeFileSummary(d_files_summary)
+            
+                # case where load directly substructure => why do not load directly in dictionnary
+                d_neighbor["global"] = l_neighbor_global
         
         
-    # ##Write summary file
-    d_files_summary = writeFile.openFileSummary(pr_summary)# sumary result
-    
-    # Creation of summary file 
-    i = 0
-    while i < nb_lig :
-        if debug: print "Ligand: " + str(l_lig[i]["name"]) + " " + str(i) + " " + str(nb_lig)
-        nb_PDB = len(l_lig[i]["PDB"])
+        #stock
+        print d_neighbor
+        if not drug in struc_out.keys () :
+            struc_out[drug] = deepcopy(d_neighbor)
+            
         
-        # take only one PDB by ligand
-            
-        j = 0
-        while j < nb_PDB : 
-            name_PDB = l_lig[i]["PDB"][j]
-            print name_PDB
-            print l_lig[i]["name"]
-            
-            l_atom_ligand = loadFile.ligandInPDB(l_lig[i]["PDB"][j], l_lig[i]["name"])
-            
-            # search neighbor for every atom in ligand selected
-            searchPDB.globalNeighbors(dist_thresold, l_atom_ligand, name_PDB, l_neighbor_global)
-            # search neighbor for interest 
-            searchPDB.interestGroup(dist_thresold, l_atom_ligand, name_PDB, d_neighbor)
-            
-            j = j + 1
-        i = i + 1
-            
-    
-    
-    writeFile.neighborStruct(d_neighbor, l_neighbor_global, d_files_summary)
-    writeFile.closeFileSummary(d_files_summary)
-    
-    # case where load directly substructure => why do not load directly in dictionnary
-    d_neighbor["global"] = l_neighbor_global
-    return d_neighbor
+    return struc_out
     
  
  
@@ -158,7 +227,7 @@ def SearchChemicalSubstruct (pr_data, pr_result, control = 0):
     
             for l_atom_lig in ll_atom_lig : 
                 
-                l_subs = searchPDB.interestStructure(l_atom_lig, more_flex = 0)
+                l_subs = searchPDB.interestStructure(l_atom_lig, more_flex = 1)
                 
                 filout.write (str (ligand) + "\t" + str (f) + "\t" + str (group) + "\t" + " ".join(l_subs) + "\n")
     

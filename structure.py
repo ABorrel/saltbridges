@@ -526,9 +526,10 @@ def criteraAngle(subs):
     angleStruct["Imidazole"]["angle"] = [110,150]
     angleStruct["Imidazole"]["distance"] = [2.2,5.0]
     
+    # change criterion because I change 11-08 the number of angle considered -> need more data
     angleStruct["Guanidium"] = {}
-    angleStruct["Guanidium"]["angle"] = [0,180]
-    angleStruct["Guanidium"]["distance"] = [3.0,4.5]
+    angleStruct["Guanidium"]["angle"] = [100,110, 30, 40, 170, 180]
+    angleStruct["Guanidium"]["distance"] = [3.0, 3.5, 2.0, 2.5, 3.5, 4.0 ] #need change distance also !!!!
     
     angleStruct["AcidCarboxylic"] = {}
     angleStruct["AcidCarboxylic"]["angle"] = [130,160]
@@ -819,7 +820,7 @@ def substructureCoord (type_substructure):
         
         atom2 = {}
         atom2["serial"] = 2
-        atom2["name"] = "C09"
+        atom2["name"] = "C01"
         atom2["resName"] = "GUA"
         atom2["x"] = -1.948
         atom2["y"] = 0.949
@@ -858,7 +859,7 @@ def substructureCoord (type_substructure):
         
         atom5 = {}
         atom5["serial"] = 5
-        atom5["name"] = "C13"
+        atom5["name"] = "C02"
         atom5["resName"] = "GUA"
         atom5["x"] = -2.668
         atom5["y"] = -0.378
