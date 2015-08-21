@@ -197,7 +197,7 @@ RFree_thresold = 0.25
 ##############################
 #       Volume function      # -> rewrite with new criterion
 ##############################
-pr_result = pathManage.result()
+# pr_result = pathManage.result()
 # volumeFonction.defVolumePrimary(pr_result)
 # volumeFonction.defVolumeSecondary(pr_result)
 # volumeFonction.defVolumeTertiary(pr_result)
@@ -236,5 +236,5 @@ pr_result = pathManage.result("GPCRDock")
 # convertion ICM 
 # writeICMScript.ScriptConvertICBtoPDB(pr_GPCRDock2010, pr_result + "convertGPCRDock2010.txt")
 
-GPCRDockAnalysis.GlobalAnalysisGPCR (pr_data, pr_result, dist_thresold = 5.0, chemical_search = 0, option_stat = 1)
+GPCRDockAnalysis.GlobalAnalysisGPCR (pr_data, pr_result, dist_thresold = 5.0, chemical_search = 0, option_stat = 0, option_model = 1)
 

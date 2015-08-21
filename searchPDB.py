@@ -559,6 +559,7 @@ def interestGroup (max_distance, l_atom_lig, name_PDB, d_stock_neighbor, more_fl
         elif cn(l_atom_connectN, l_atom_lig) == 1:
             implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Primary", d_stock_neighbor)
         elif cnc(l_atom_connectN, l_atom_lig, more_flex = more_flex) == 1:
+            print "l562 -> search PDB"
             implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Secondary", d_stock_neighbor)
         elif cncc(l_atom_connectN, l_atom_lig, more_flex = more_flex) == 1:
             implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Tertiary", d_stock_neighbor)

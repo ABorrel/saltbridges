@@ -705,6 +705,8 @@ def coordinates3DPDBbyNeighborType (l_atom_in, l_atom_subs, subs, pr_init) :
 
 def coordinates3DPDB (l_atom_in, l_atom_subs = [], subs = "", p_filout = "") : 
     
+    if p_filout == "" : 
+        return
     
     filout = open (p_filout, "w")
     

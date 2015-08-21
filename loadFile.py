@@ -244,7 +244,7 @@ def loadCloseStruct (pr_result, control_empty_file = 1) :
     
     for name_file in l_files : 
         if search(".sum", name_file) : 
-            if path.getsize(pr_result + name_file) != 0 : 
+            if path.getsize(pr_result + name_file) == 0 : 
                 flag_file_empty = flag_file_empty + 1
             else : 
                 sub_struct = name_file.split ("_")[-1].split (".")[0]

@@ -494,7 +494,7 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
          -> file with dataset
     """
     
-    
+    print st_atom.keys ()
     
     start, logFile = log.initAction("RUN Statistic")
 # # 
@@ -508,39 +508,35 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
     
 # #  
 # #     # distribution distance interest group and type atoms -> distance type
-#     distanceAnalysis(st_atom, pathManage.resultDistance(pr_result), logFile)
+    distanceAnalysis(st_atom, pathManage.resultDistance(pr_result), logFile)
 # #         
 # #     # angleSubs -> directory angles
-#     angleSubs(st_atom, pr_result, max_distance, logFile)
+    angleSubs(st_atom, pr_result, max_distance, logFile)
 # #         
 # #     # global analysis proximity -1 atom ligand // -2 aa type // -3 atom classification
-#     ligandProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
-#     atomProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "atmProx"), max_distance, logFile)
-#     resProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "resProx"), max_distance, logFile)
-#     classifResProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "classifAtmProx"), max_distance, logFile)
-#     atomByAa(st_atom, pathManage.countGlobalProx (pr_result, name_in = "byAA") ,max_distance, logFile )
+    ligandProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
+    atomProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "atmProx"), max_distance, logFile)
+    resProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "resProx"), max_distance, logFile)
+    classifResProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "classifAtmProx"), max_distance, logFile)
+    atomByAa(st_atom, pathManage.countGlobalProx (pr_result, name_in = "byAA") ,max_distance, logFile )
 # #         
 # #         
 # #     # analyse number of neighbors -> number of atom type (C, O, N)
-#     numberNeighbor (st_atom, pathManage.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
-#     neighborAtomComposition(st_atom, pathManage.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
-#     firstNeighbor (st_atom, pathManage.countNeighbor(pr_result, "firstNeighbor"), logFile)
-#     allNeighbors (st_atom, pathManage.countNeighbor(pr_result, "allNeighbor"), logFile)
+    numberNeighbor (st_atom, pathManage.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
+    neighborAtomComposition(st_atom, pathManage.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
+    firstNeighbor (st_atom, pathManage.countNeighbor(pr_result, "firstNeighbor"), logFile)
+    allNeighbors (st_atom, pathManage.countNeighbor(pr_result, "allNeighbor"), logFile)
 # #      
 # #     # with two area defintion
-#     d_area1, d_area2 = splitTwoArea (st_atom)
-#     allNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1"), logFile)
-#     allNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
+    d_area1, d_area2 = splitTwoArea (st_atom)
+    allNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1"), logFile)
+    allNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
 # # 
 # # #    # combination
-#     combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
-#     combinationNeighborsAngle (st_atom, pathManage.combination(pr_result, "angleSubs"))
-#     superimpose.SuperimposeFirstNeighbors (st_atom, pathManage.combination(pr_result, "superimposed"))
+    combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
+    combinationNeighborsAngle (st_atom, pathManage.combination(pr_result, "angleSubs"))
+    superimpose.SuperimposeFirstNeighbors (st_atom, pathManage.combination(pr_result, "superimposed"))
 # #     
-
-    
-    
-    
 
     log.endAction("END Staistic run !!!", start, logFile)
 
@@ -751,6 +747,22 @@ def planarityGuanidium (atom_interest_close, p_dir_result) :
     filout.close ()   
      
      
+
+def ListNeighborsType (l_neighbors, subs):
+    
+    l_out = []
+    d_nb_neighbor = structure.nbNeighbor ()
+    nb_neighbor = d_nb_neighbor[subs]
+    l_temp = deepcopy(l_neighbors)
+
+    for i_neighbors in range (1, nb_neighbor + 1) : 
+        if l_temp == [] : 
+            l_out.append ("empty")
+        else : 
+            type_close, d_atom_close = searchMoreClose (l_temp)
+            l_out.append (type_close)
+            
+    return l_out
 
 
 def combinationNeighbors (st_atom, pr_result, logFile):
@@ -1039,8 +1051,3 @@ def MergeDicCount (d_count1, d_count2):
     
     return d_out
     
-    
-    
-           
-        
-        

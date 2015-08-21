@@ -19,32 +19,59 @@ import pathManage
 
 
 
-def GlobalAnalysisGPCR (pr_data, pr_result, dist_thresold = 5.0, chemical_search = 0, option_stat = 0):
+def GlobalAnalysisGPCR (pr_data, pr_result, dist_thresold = 5.0, chemical_search = 0, option_stat = 0, option_model = 0):
 
     # search chemical substructures in docked ligand
     if chemical_search == 1 : 
         SearchChemicalSubstruct(pr_data, pr_result, control = 1)
-    
     # build structure
     struct_neighbor = SearchNeighbor (pr_data, pr_result, dist_thresold = dist_thresold, debug = 1)
-    
-    print struct_neighbor
-    ddd
-    
     
     for drug in struct_neighbor.keys () : 
         pr_drug = pathManage.CreatePathDir(pr_result + str(drug) + "/")
         if option_stat == 1: 
-            # statistic
-            print struct_neighbor[drug]
+            # statistic -> same statistic as global database 
             statistic.globalRunStatistic(struct_neighbor[drug], dist_thresold, pr_drug)
+        
+        if option_model == 1 :
+            SabilizationBySB(struct_neighbor[drug], pr_drug)
+            
     
     
 
 
 
+def SabilizationBySB(d_neighbors, pr_result) : 
 
-def ControlHETATOMModelFile (pr_data, pr_result):
+    for sub in d_neighbors.keys () :
+        # global
+        if sub == "global" : 
+            continue
+        pr_result = pathManage.CreatePathDir(pr_result + "StabilizeSB/" + str (sub) + "/")
+        print pr_result
+        p_filout = pr_result + "summarize"
+        filout = open (p_filout, "w")
+        filout.write ("Name file\tAtom\tStabilize restrained\tStabilize no restrained\tEnvironment\n") 
+        
+        print "*******"
+        print d_neighbors[sub][1].keys ()
+        
+        for model in d_neighbors[sub] : 
+            
+            interaction_restrained = statistic.retrieveInteraction (model["neighbors"], sub, restrained = 1)
+            interaction_norestrained = statistic.retrieveInteraction (model["neighbors"], sub, restrained = 0)
+            
+            environment = statistic.ListNeighborsType(model["neighbors"], sub)
+
+
+            filout.write (model["PDB"] + "\t" + str(model["resName"]) + "_" + str (model["serial"]) + "\t" + str (interaction_restrained) + "\t" + str (interaction_norestrained) + "\t" + "_".join(environment) + "\n")
+        filout.close () 
+            
+
+
+
+
+def ControlHETATOMModelFile (pr_data, pr_result, l_lig_control = []):
     
     # Write file ligand  
     
@@ -55,27 +82,29 @@ def ControlHETATOMModelFile (pr_data, pr_result):
         p_file_lig = pathManage.CreatePathDir(pr_result + str (ligand) + "/" ) + "ligInModel"
         
         if path.exists(p_file_lig) : 
-            return 
+            return
         
         else : 
-            file_lig = open (pathManage.CreatePathDir(pr_result + str (ligand) + "/" ) + "ligInModel", "w")
+            file_lig = open (p_file_lig, "w")
             print "ligand", ligand
         
             l_file = listdir(pr_data + ligand + "/")
         
             d_temp = {}
             for model_file in l_file :
-                print model_file
             
                 l_lig_PDB = parsing.retrieveListLigand(pr_data + ligand + "/" + model_file)
                 print l_lig_PDB
                 if len (l_lig_PDB) == 0 : 
                     continue
                 else : 
-                    for lig in l_lig_PDB : 
-                        if not lig in d_temp.keys () : 
-                            d_temp[lig] = []
-                        d_temp[lig].append (pr_data + ligand + "/" + model_file)
+                    for lig in l_lig_PDB :
+                        if not l_lig_control == [] and lig in l_lig_control :  
+                            if not lig in d_temp.keys () : 
+                                d_temp[lig] = []
+                            d_temp[lig].append (pr_data + ligand + "/" + model_file)
+                        else : 
+                            continue
                 
             # write temp control
             for lig in d_temp.keys () : 
@@ -83,21 +112,20 @@ def ControlHETATOMModelFile (pr_data, pr_result):
     
             file_lig.close ()
         
+    return 
+        
     
  
  
 def SearchNeighbor (pr_data, pr_result, dist_thresold = 5.0, debug = 1): 
     
     # write file with HETATM in PDB -> to used same function
-    
-    ControlHETATOMModelFile (pr_data, pr_result)
-    
-    
-    # to remove modified amino acid 
-    l_lig_model = ["ZMA", "UNK", "RES"]
+    l_lig_model = ["ZMA", "UNK", "RES"] # goal of this list is to remove the modified amino acid
+    ControlHETATOMModelFile (pr_data, pr_result, l_lig_control = l_lig_model)
 
     l_drug = listdir(pr_data)
-    struc_out = {}
+    #l_drug = ["ZM241385"]
+    d_out = {}
     
     for drug in l_drug :
          
@@ -105,7 +133,12 @@ def SearchNeighbor (pr_data, pr_result, dist_thresold = 5.0, debug = 1):
         pr_drug = pathManage.CreatePathDir(pr_result + str(drug) + "/")
         l_lig = loadFile.resultFilterPDBLigand(pr_drug + "ligInModel")
         
-        print l_lig
+        if debug == 1 : 
+            print "List ligand for drug->"
+            print drug
+            print len (l_lig)
+            print l_lig
+        
         
         if l_lig == [] : 
             print "ERROR: find HET in model -> l68 GPCRDockAnalysis"
@@ -116,7 +149,6 @@ def SearchNeighbor (pr_data, pr_result, dist_thresold = 5.0, debug = 1):
             
             # load structure in summary ---> if use need place option one PDB by ligand
             d_neighbor = loadFile.loadCloseStruct (pr_summary,  control_empty_file = 0)
-            print d_neighbor
             
             if d_neighbor == None : 
                 
@@ -161,18 +193,20 @@ def SearchNeighbor (pr_data, pr_result, dist_thresold = 5.0, debug = 1):
         
         
         #stock
-        print d_neighbor
-        if not drug in struc_out.keys () :
-            struc_out[drug] = deepcopy(d_neighbor)
+        print "Stock neighbor l164:", d_neighbor.keys()
+        if not drug in d_out.keys () :
+            d_out[drug] = deepcopy(d_neighbor)
             
         
-    return struc_out
+    return d_out
     
  
  
  
 def ControlPDBFormat (p_PDB):
-    
+    """
+    Rewrite model PDB file 
+    """
     
     l_res = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS"]
     l_atom_PDB = parsing.loadCoordSectionPDB(p_PDB)
@@ -235,7 +269,7 @@ def SearchChemicalSubstruct (pr_data, pr_result, control = 0):
        
 
 # best group ergomine -> 2128 (2013) && 6882 (2013)
-# best group taladegid -> 7527 (2013) 
+# best group taladegid -> 7527 (2013) Vanderblit
 # best group eticlopride -> 1285 (2010)
 # ZM241385 => mod7msp
     
