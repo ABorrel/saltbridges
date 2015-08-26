@@ -70,7 +70,6 @@ def BondCNAndCO (name_database, RX_thresold = 1.5):
     filout_CO.close ()
     filout_CN.close ()
     runScriptR.histDistance(p_CN, "CN")
-    
     runScriptR.histDistance(p_CO, "CO") 
 
 

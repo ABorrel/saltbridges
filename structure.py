@@ -385,10 +385,10 @@ def countAtLeastOneGlobalStruct(distanceMax):
 
 def countResidueGlobal():
 
-    listAminoAcid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS", "HOH"]
+    l_aa = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS", "HOH"]
 
     count = {}
-    for aa in listAminoAcid :
+    for aa in l_aa :
         count[aa] = {}
         count[aa]["main"] = 0
         count[aa]["side"] = 0
@@ -504,72 +504,66 @@ def ListSub ():
 def listGlobalStudy():
     return ['residue', 'proportionAtom', 'angleVector', 'ligand', 'ResidueAllAtom', 'distanceOx', 'byAA', 'H2O', 'atom', 'proportionType']
     
-def criteraAngle(subs):
+def criteraAngle(subs, loose = 0):
     """
     Impose angle in different structure
     """
     angleStruct = {}
     
-    angleStruct["Primary"] = {}
-    angleStruct["Primary"]["angle"] = [100,120]
-    angleStruct["Primary"]["distance"] = [2.5,3.0]
+    if loose == 0 : 
+        angleStruct["Primary"] = {}
+        angleStruct["Primary"]["angle"] = [100,120]
+        angleStruct["Primary"]["distance"] = [2.0,3.5]
+        
+        angleStruct["Secondary"] = {}
+        angleStruct["Secondary"]["angle"] = [80,120]
+        angleStruct["Secondary"]["distance"] = [2.5,3.0]
+        
+        angleStruct["Tertiary"] = {}
+        angleStruct["Tertiary"]["angle"] = [90,130]
+        angleStruct["Tertiary"]["distance"] = [2.5,3.0]
+        
+        angleStruct["Imidazole"] = {}
+        angleStruct["Imidazole"]["angle"] = [110,150]
+        angleStruct["Imidazole"]["distance"] = [2.2,5.0]
+        
+        # change criterion because I change 11-08 the number of angle considered -> need more data
+        angleStruct["Guanidium"] = {}
+        angleStruct["Guanidium"]["angle"] = [90,120, 20, 50, 160, 190]
+        angleStruct["Guanidium"]["distance"] = [3.0, 3.5, 2.0, 2.5, 3.5, 4.0 ] #need change distance also !!!!
+        
+        angleStruct["AcidCarboxylic"] = {}
+        angleStruct["AcidCarboxylic"]["angle"] = [130,160]
+        angleStruct["AcidCarboxylic"]["distance"] = [3.2,3.7]
+    else : 
+        
+        angleStruct["Primary"] = {}
+        angleStruct["Primary"]["angle"] = [90,130]
+        angleStruct["Primary"]["distance"] = [2.0,4.0]
     
-    angleStruct["Secondary"] = {}
-    angleStruct["Secondary"]["angle"] = [80,120]
-    angleStruct["Secondary"]["distance"] = [2.5,3.0]
+        angleStruct["Secondary"] = {}
+        angleStruct["Secondary"]["angle"] = [80,120]
+        angleStruct["Secondary"]["distance"] = [2.0,4.0]
     
-    angleStruct["Tertiary"] = {}
-    angleStruct["Tertiary"]["angle"] = [90,130]
-    angleStruct["Tertiary"]["distance"] = [2.5,3.0]
+        angleStruct["Tertiary"] = {}
+        angleStruct["Tertiary"]["angle"] = [90,130]
+        angleStruct["Tertiary"]["distance"] = [2.0,4.0]
     
-    angleStruct["Imidazole"] = {}
-    angleStruct["Imidazole"]["angle"] = [110,150]
-    angleStruct["Imidazole"]["distance"] = [2.2,5.0]
+        angleStruct["Imidazole"] = {}
+        angleStruct["Imidazole"]["angle"] = [110,150]
+        angleStruct["Imidazole"]["distance"] = [2.0,5.0]
     
-    # change criterion because I change 11-08 the number of angle considered -> need more data
-    angleStruct["Guanidium"] = {}
-    angleStruct["Guanidium"]["angle"] = [100,110, 30, 40, 170, 180]
-    angleStruct["Guanidium"]["distance"] = [3.0, 3.5, 2.0, 2.5, 3.5, 4.0 ] #need change distance also !!!!
+        angleStruct["Guanidium"] = {}
+        angleStruct["Guanidium"]["angle"] = [0,180]
+        angleStruct["Guanidium"]["distance"] = [2.0,5.0]
+   
+        angleStruct["AcidCarboxylic"] = {}
+        angleStruct["AcidCarboxylic"]["angle"] = [130,160]
+        angleStruct["AcidCarboxylic"]["distance"] = [2.0,4.0]
     
-    angleStruct["AcidCarboxylic"] = {}
-    angleStruct["AcidCarboxylic"]["angle"] = [130,160]
-    angleStruct["AcidCarboxylic"]["distance"] = [3.2,3.7]
-    
-    return angleStruct[subs]
-
-
-
-def criteraAngleLit(subs):
-    """
-    Impose angle in different structure
-    """
-    angleStruct = {}
-    
-    angleStruct["Primary"] = {}
-    angleStruct["Primary"]["angle"] = [100,120]
-    angleStruct["Primary"]["distance"] = [0,4.0]
-    
-    angleStruct["Secondary"] = {}
-    angleStruct["Secondary"]["angle"] = [80,120]
-    angleStruct["Secondary"]["distance"] = [0,4.0]
-    
-    angleStruct["Tertiary"] = {}
-    angleStruct["Tertiary"]["angle"] = [90,130]
-    angleStruct["Tertiary"]["distance"] = [0,4.0]
-    
-    angleStruct["Imidazole"] = {}
-    angleStruct["Imidazole"]["angle"] = [110,150]
-    angleStruct["Imidazole"]["distance"] = [0,5.0]
-    
-    angleStruct["Guanidium"] = {}
-    angleStruct["Guanidium"]["angle"] = [0,180]
-    angleStruct["Guanidium"]["distance"] = [0,5.0]
-    
-    angleStruct["AcidCarboxylic"] = {}
-    angleStruct["AcidCarboxylic"]["angle"] = [130,160]
-    angleStruct["AcidCarboxylic"]["distance"] = [0,4.0]
     
     return angleStruct[subs]
+
 
 
 def splitAreaDistance ():

@@ -385,6 +385,60 @@ def allNeighbors (st_atom, pr_result, logFile):
     for file_result in l_files_result : 
         runScriptR.AFCPieFirstNeighbor (file_result, logFile)        
     
+
+
+def ResidueNeighbors (st_atom, pr_result, logFile) : 
+    
+    st_count = {}
+    
+    
+    for subs in st_atom.keys () : 
+        st_count[subs] = {}
+        SearchResiduesComposition (st_atom[subs], st_count[subs])
+    
+    #writeFile
+    d_file = writeFile.CountNeighborRes (st_count, pr_result)
+    #run
+    l_p_count = d_file["count"]
+    for p_count in l_p_count : 
+        runScriptR.plotNbNeighbor(p_count, logFile)
+    
+    l_p_res = d_file["res"]
+    for p_res in l_p_res : 
+        runScriptR.AFCPieFirstNeighbor (p_res, logFile)
+    
+    
+    
+def SearchResiduesComposition (st_atom, d_stock):
+    """
+    Count the proportion in AA
+    -> maybe need optimization with variable distance cut off
+    """
+    
+    l_res = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS"]
+
+    # initialize structure stock
+    d_stock["res"] = {}
+    d_stock["count"] = []
+    for res in l_res : 
+        d_stock["res"][res] = 0
+    
+    for subs in st_atom :
+        l_res_temp = [] 
+        for neighbor in subs["neighbors"] : 
+            if not neighbor["resName"] in l_res : 
+                continue
+            res_temp = str(neighbor["resName"] + "_" + str (neighbor["resSeq"]))
+#             print res_temp
+            if not res_temp in l_res_temp : 
+                l_res_temp.append(res_temp)
+                d_stock["res"][neighbor["resName"]] = d_stock["res"][neighbor["resName"]] + 1
+        
+        
+                
+        d_stock["count"].append (str (len (l_res_temp)))
+        
+
     
 def searchNeighbor (st_atom, d_stock, subs):
     """
@@ -499,46 +553,47 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
     start, logFile = log.initAction("RUN Statistic")
 # # 
     # proportion salt bridges
-    saltBridges (st_atom, pathManage.resultSaltBridges(pr_result), logFile)
-    EnvironmentSaltBridges (st_atom, pathManage.resultSaltBridges (pr_result, name_in = "conditional"), logFile)
+#     saltBridges (st_atom, pathManage.resultSaltBridges(pr_result), logFile)
+#     EnvironmentSaltBridges (st_atom, pathManage.resultSaltBridges (pr_result, name_in = "conditional"), logFile)
 
     # loose    
-    saltBridges (st_atom, pathManage.resultSaltBridges(pr_result, "loose"), logFile, restrained = 0)
-    EnvironmentSaltBridges (st_atom, pathManage.resultSaltBridges (pr_result, name_in = "loose/conditional"), logFile, restrained = 0)    
+#     saltBridges (st_atom, pathManage.resultSaltBridges(pr_result, "loose"), logFile, restrained = 0)
+#     EnvironmentSaltBridges (st_atom, pathManage.resultSaltBridges (pr_result, name_in = "loose/conditional"), logFile, restrained = 0)    
     
 # #  
 # #     # distribution distance interest group and type atoms -> distance type
-    distanceAnalysis(st_atom, pathManage.resultDistance(pr_result), logFile)
+#     distanceAnalysis(st_atom, pathManage.resultDistance(pr_result), logFile)
 # #         
 # #     # angleSubs -> directory angles
-    angleSubs(st_atom, pr_result, max_distance, logFile)
+#     angleSubs(st_atom, pr_result, max_distance, logFile)
 # #         
 # #     # global analysis proximity -1 atom ligand // -2 aa type // -3 atom classification
-    ligandProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
-    atomProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "atmProx"), max_distance, logFile)
-    resProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "resProx"), max_distance, logFile)
-    classifResProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "classifAtmProx"), max_distance, logFile)
-    atomByAa(st_atom, pathManage.countGlobalProx (pr_result, name_in = "byAA") ,max_distance, logFile )
+#     ligandProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
+#     atomProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "atmProx"), max_distance, logFile)
+#     resProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "resProx"), max_distance, logFile)
+#     classifResProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "classifAtmProx"), max_distance, logFile)
+#     atomByAa(st_atom, pathManage.countGlobalProx (pr_result, name_in = "byAA") ,max_distance, logFile )
 # #         
 # #         
 # #     # analyse number of neighbors -> number of atom type (C, O, N)
-    numberNeighbor (st_atom, pathManage.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
-    neighborAtomComposition(st_atom, pathManage.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
-    firstNeighbor (st_atom, pathManage.countNeighbor(pr_result, "firstNeighbor"), logFile)
-    allNeighbors (st_atom, pathManage.countNeighbor(pr_result, "allNeighbor"), logFile)
+#     numberNeighbor (st_atom, pathManage.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
+#     neighborAtomComposition(st_atom, pathManage.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
+#     firstNeighbor (st_atom, pathManage.countNeighbor(pr_result, "firstNeighbor"), logFile)
+#     allNeighbors (st_atom, pathManage.countNeighbor(pr_result, "allNeighbor"), logFile)
+    ResidueNeighbors (st_atom, pathManage.countNeighbor(pr_result, "residuesNeighbor"), logFile)
 # #      
 # #     # with two area defintion
-    d_area1, d_area2 = splitTwoArea (st_atom)
-    allNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1"), logFile)
-    allNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
+#     d_area1, d_area2 = splitTwoArea (st_atom)
+#     allNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1"), logFile)
+#     allNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
 # # 
 # # #    # combination
-    combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
-    combinationNeighborsAngle (st_atom, pathManage.combination(pr_result, "angleSubs"))
-    superimpose.SuperimposeFirstNeighbors (st_atom, pathManage.combination(pr_result, "superimposed"))
+#     combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
+#     combinationNeighborsAngle (st_atom, pathManage.combination(pr_result, "angleSubs"))
+#     superimpose.SuperimposeFirstNeighbors (st_atom, pathManage.combination(pr_result, "superimposed"))
 # #     
 
-    log.endAction("END Staistic run !!!", start, logFile)
+    log.endAction("END Statistic run !!!", start, logFile)
 
 
 
@@ -599,7 +654,7 @@ def retrieveInteraction (l_atoms, subs, restrained = 1, debug = 1) :
     if restrained == 1 : 
         st_angle = structure.criteraAngle(subs)
     else : 
-        st_angle = structure.criteraAngleLit(subs)
+        st_angle = structure.criteraAngle(subs, loose = 1)
      
     flag_water = 0
     flag_ox = 0

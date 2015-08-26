@@ -47,9 +47,9 @@ def SabilizationBySB(d_neighbors, pr_result) :
         # global
         if sub == "global" : 
             continue
-        pr_result = pathManage.CreatePathDir(pr_result + "StabilizeSB/" + str (sub) + "/")
-        print pr_result
-        p_filout = pr_result + "summarize"
+        pr_resultPS = pathManage.CreatePathDir(pr_result + "StabilizeSB/" + str (sub) + "/")
+        print pr_resultPS
+        p_filout = pr_resultPS + "summarize"
         filout = open (p_filout, "w")
         filout.write ("Name file\tAtom\tStabilize restrained\tStabilize no restrained\tEnvironment\n") 
         
@@ -77,7 +77,6 @@ def ControlHETATOMModelFile (pr_data, pr_result, l_lig_control = []):
     
     l_ligand = listdir(pr_data)
     for ligand in l_ligand : 
-        
         # control if file exist and size
         p_file_lig = pathManage.CreatePathDir(pr_result + str (ligand) + "/" ) + "ligInModel"
         
@@ -94,7 +93,7 @@ def ControlHETATOMModelFile (pr_data, pr_result, l_lig_control = []):
             for model_file in l_file :
             
                 l_lig_PDB = parsing.retrieveListLigand(pr_data + ligand + "/" + model_file)
-                print l_lig_PDB
+                print "***", l_lig_PDB
                 if len (l_lig_PDB) == 0 : 
                     continue
                 else : 
@@ -120,11 +119,10 @@ def ControlHETATOMModelFile (pr_data, pr_result, l_lig_control = []):
 def SearchNeighbor (pr_data, pr_result, dist_thresold = 5.0, debug = 1): 
     
     # write file with HETATM in PDB -> to used same function
-    l_lig_model = ["ZMA", "UNK", "RES"] # goal of this list is to remove the modified amino acid
+    l_lig_model = ["ZMA", "UNK", "RES", "CAU", "P0G", "CY8", "1KS"] # goal of this list is to remove the modified amino acid
     ControlHETATOMModelFile (pr_data, pr_result, l_lig_control = l_lig_model)
 
     l_drug = listdir(pr_data)
-    #l_drug = ["ZM241385"]
     d_out = {}
     
     for drug in l_drug :
@@ -153,8 +151,6 @@ def SearchNeighbor (pr_data, pr_result, dist_thresold = 5.0, debug = 1):
             if d_neighbor == None : 
                 
                 print "Write Sum File"
-                #file summary
-                pr_summary = pr_drug + "Sum/"
                 #write summary file
                 d_files_summary = writeFile.openFileSummary(pr_summary)
             
@@ -243,7 +239,7 @@ def SearchChemicalSubstruct (pr_data, pr_result, control = 0):
         l_file = listdir(pr_data + ligand + "/")
         
         for f in l_file : 
-            if ligand == "ZM241385" : 
+            if ligand == "ZM241385" or ligand == "source": 
                 group = f
             else : 
                 group = f.split ("_")[-2]

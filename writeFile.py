@@ -414,6 +414,67 @@ def countNeighborsAll(stCount, pr_result):
 
 
 
+def CountNeighborRes (st_count, pr_result):
+    
+    d_file_out = {}
+    d_file_out["res"] = []
+    d_file_out["count"] = []
+    
+    p_filout_byres = pr_result + "res_count" 
+    filout_byres = open (p_filout_byres, "w")
+    
+    l_res = st_count[st_count.keys ()[0]]["res"]
+    filout_byres.write ("\t".join (l_res) + "\n")
+    
+    d_file_out["res"].append (p_filout_byres)
+    
+    for sub in st_count.keys () : 
+        p_filout_count = pr_result + "global_count_" + str (sub) 
+        
+        filout_count = open (p_filout_count, "w")
+        
+        # global
+        filout_count.write ("\n".join (st_count[sub]["count"]) + "\n")
+        filout_count.close ()
+        # by res
+        l_count = []
+        for res in l_res : 
+            l_count.append (str (st_count[sub]["res"][res]))
+        filout_byres.write (str (sub) + "\t" + "\t".join (l_count) + "\n")
+        
+        d_file_out["count"].append (p_filout_count)
+    
+    filout_byres.close ()
+    
+    return d_file_out
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+         
+         
+        
+        
+        
+    
+    
+    pr_result
+    
+    
+    return 
+    
+    
+    
+
+
         
 def resultNeighbor (countStruct, pr_result) : 
     """

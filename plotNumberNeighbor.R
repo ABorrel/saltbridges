@@ -16,12 +16,12 @@ max_count = max (hist(data[,1], plot = FALSE)$count)
 
 #horizontal
 for (i in seq (0,max_count,10)){
-	segments (0,i,max(data[,1]),i,lwd = 2)
+	segments (0,i,max(data[,1]),i,lwd = 2, lty = 2)
 }
 
 # vertical
 for (i in seq (0,max(data[,1]),5)){
-	segments (i,0,i,max_count,lwd = 2)
+	segments (i,0,i,max_count,lwd = 2, lty = 2)
 }
 
 dev.off()

@@ -38,8 +38,8 @@ def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_supe
     
     # dataset with resolution
     l_p_dataset = datasetFinal.Builder(name_database, RX, RFree, option_on_complexes_by_ligand)
- 
-    print l_p_dataset
+    # short cut to reduce
+    l_p_dataset =['/home/borrel/saltBridgesProject/result/PDB/3.0_0.25_uniquePDB/dataset_3.00.txt', '/home/borrel/saltBridgesProject/result/PDB/3.0_0.25_uniquePDB/dataset_1.50.txt']
 #
 #     ########################
 #     #   Parsing dataset   #
@@ -131,16 +131,8 @@ def waterGlobal (name_database, limit_acc = 20.0):
     
     # calcul acc with NACESS
     for PDB_ID in list_PDBID :
-        path_file_PDB = pathManage.pathDitrectoryPDB () + PDB_ID + ".pdb"
-        runOtherSoft.runNACESS(path_file_PDB)
-    
-    sleep(10)
-    try :
-        os.system("mv *.asa " +  pathManage.pathDitrectoryPDB ())
-        os.system("mv *.rsa " +  pathManage.pathDitrectoryPDB ())
-        os.system("rm *.log")
-    except : 
-        pass
+        p_PDB = pathManage.pathDitrectoryPDB () + PDB_ID + ".pdb"
+        runOtherSoft.runNACESS(p_PDB, pathManage.pathDitrectoryPDB (), multi_run = 0)
     
     path_file_result = waterAnalysis.resolutionWater(list_PDBID, path_dir_result_global, limit_acc)
 
@@ -186,7 +178,7 @@ RFree_thresold = 0.25
 # main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0, option_stat = 1, option_stat_dataset = 0)
 
 # # PDB
-# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0)
+main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 0, option_stat_dataset = 0)
 
 # test
@@ -195,14 +187,14 @@ RFree_thresold = 0.25
 
 
 ##############################
-#       Volume function      # -> rewrite with new criterion
+#       Volume function      # -> rewrite with new criterion OK
 ##############################
-# pr_result = pathManage.result()
-# volumeFonction.defVolumePrimary(pr_result)
-# volumeFonction.defVolumeSecondary(pr_result)
-# volumeFonction.defVolumeTertiary(pr_result)
-# volumeFonction.defVolumeImidazole(pr_result)
-# volumeFonction.defVolumeGuanidium(pr_result)
+#pr_result = pathManage.result()
+#volumeFonction.defVolumePrimary(pr_result)
+#volumeFonction.defVolumeSecondary(pr_result)
+#volumeFonction.defVolumeTertiary(pr_result)
+#volumeFonction.defVolumeImidazole(pr_result)
+#volumeFonction.defVolumeGuanidium(pr_result)
 
 
 ###########################
@@ -236,5 +228,5 @@ pr_result = pathManage.result("GPCRDock")
 # convertion ICM 
 # writeICMScript.ScriptConvertICBtoPDB(pr_GPCRDock2010, pr_result + "convertGPCRDock2010.txt")
 
-GPCRDockAnalysis.GlobalAnalysisGPCR (pr_data, pr_result, dist_thresold = 5.0, chemical_search = 0, option_stat = 0, option_model = 1)
+#GPCRDockAnalysis.GlobalAnalysisGPCR (pr_data, pr_result, dist_thresold = 5.0, chemical_search = 1, option_stat = 1, option_model = 1)
 

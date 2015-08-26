@@ -172,9 +172,9 @@ def globalNeighbor (atom_interest_close, subs, p_dir_result) :
         l_at_subs = retrieveAtom.substructure (subs, at_central, l_at_lig)
         
         
-        v_atom_ref = mat(array(groupAtomCoord(l_at_ref)))
+        v_atom_ref = mat(array(groupAtomCoord(l_at_ref[0:2])))
         
-        v_atom_central = mat(array(groupAtomCoord(l_at_subs)))
+        v_atom_central = mat(array(groupAtomCoord(l_at_subs[0:2])))
 
         rotation, translocation =  rigid_transform_3D(v_atom_central, v_atom_ref)
         if rotation == None or translocation == None : 

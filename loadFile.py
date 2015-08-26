@@ -250,7 +250,7 @@ def loadCloseStruct (pr_result, control_empty_file = 1) :
                 sub_struct = name_file.split ("_")[-1].split (".")[0]
                 d_summarize[sub_struct] = loadSummary(pr_result + name_file)
                     
-    if control_empty_file == 1 and flag_file_empty < 2 : # case file empty -> need control 
+    if control_empty_file == 1 and flag_file_empty > 2 : # case file empty -> need control 
             # run the extraction
             
             print "== ERROR 2 files summarize empty"

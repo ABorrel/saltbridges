@@ -92,6 +92,9 @@ AFC = function (d, path_file){
 	# descriptors
 	plot (c(r$row$coord[,1], r$col$coord[,1]), c(r$row$coord[,2], r$col$coord[,2]), type = "n", xlab = paste("DIM 1 : ", round(r$eig[1,2],1), "%", sep = ""), ylab = paste("DIM 2 : ", round(r$eig[2,2],1), "%", sep = ""), cex.lab = 2.4)
 	col_des = defColor(names(r$col$coord[,1]))
+	
+	print (col_des)	
+	
 	text (r$col$coord[,1], r$col$coord[,2], label = names(r$col$coord[,1]), col = col_des, cex = 2)
 	# data
 	text (r$row$coord[,1], r$row$coord[,2], col = "black", label = names (r$row$coord[,1]), cex = 2.5)
@@ -110,9 +113,18 @@ AFC = function (d, path_file){
 
 
 defColor = function (l_name){
+
 	out = c()
-	for (element in l_name){
+	colorCharge = "red"
+	colorPolar = "#FF6600"
+	colorAr = "#9900CC"
+	colorOther = "#808080"
+	colorApolar =  "#66FF33"
+	colorCharge2 = "#000099"
+	colorWater = "#33FFFF"
+	colorTyr = "#FFFF00"
 	
+	for (element in l_name){
 		if (attr(regexpr("OxAcid",element),"match.length") >= 1){
 			out = append (out, "red")
 		}
@@ -149,6 +161,63 @@ defColor = function (l_name){
 		else if (attr(regexpr("others",element),"match.length") >= 1){
 			out = append (out, "grey")
 		}
+		else if (is.integer0 (grep("GLU", element))== FALSE){
+			out = append (out, colorCharge)
+		}
+		else if (is.integer0 (grep("ASP", element))== FALSE){
+			out = append (out, colorCharge)
+		}	
+		else if (is.integer0 (grep("ARG", element))== FALSE){
+			out = append (out, colorCharge2)
+		}	
+		else if (is.integer0 (grep("THR", element))== FALSE){
+			out = append (out, colorPolar)
+		}	
+		else if (is.integer0 (grep("SER", element))== FALSE){
+			out = append (out, colorPolar)
+		}	
+		else if (is.integer0 (grep("CYS", element))== FALSE){
+			out = append (out, colorApolar)
+		}	
+		else if (is.integer0 (grep("ASN", element))== FALSE){
+			out = append (out, colorPolar)
+		}
+		else if (is.integer0 (grep("LYS", element))== FALSE){
+			out = append (out, colorCharge2)
+		}
+		else if (is.integer0 (grep("GLN", element))== FALSE){
+			out = append (out, colorPolar)
+		}	
+		else if (is.integer0 (grep("PHE", element))== FALSE){
+			out = append (out, colorAr)
+		}
+		else if (is.integer0 (grep("HIS", element))== FALSE){
+			out = append (out, colorTyr)
+		}
+		else if (is.integer0 (grep("TRP", element))== FALSE){
+			out = append (out, colorAr)
+		}
+		else if (is.integer0 (grep("TYR", element))== FALSE){
+			out = append (out, colorTyr)
+		}
+		else if (is.integer0 (grep("ALA", element))== FALSE){
+			out = append (out, colorApolar)
+		}
+		else if (is.integer0 (grep("ILE", element))== FALSE){
+			out = append (out, colorApolar)
+		}
+		else if (is.integer0 (grep("LEU", element))== FALSE){
+			out = append (out, colorApolar)
+		}
+		else if (is.integer0 (grep("MET", element))== FALSE){
+			out = append (out, colorApolar)
+		}
+		else if (is.integer0 (grep("PRO", element))== FALSE){
+			out = append (out, colorOther)
+		}
+		else if (is.integer0 (grep("VAL", element))== FALSE){
+			out = append (out, colorApolar)
+		}
 		else {
 			out = append (out, "black")
 		}
@@ -160,7 +229,9 @@ defColor = function (l_name){
 
 
 defColorGrep = function (l_name){
+	print (l_name)
 	out = c()
+
 	for (element in l_name){
 		#print (element)
 		if (is.integer0 (grep("OxAcid", element)) == FALSE){
@@ -206,10 +277,6 @@ defColorGrep = function (l_name){
 	names(out) = l_name
 	return (out)
 }
-
-
-
-
 
 
 defColorSubstruct = function (l_name){
