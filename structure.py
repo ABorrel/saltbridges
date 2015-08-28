@@ -398,14 +398,16 @@ def countResidueGlobal():
 def resolutionFilter():
     """
     Result of resolution filter
+    -> reduce to only two datasets
+    - RX 3.0 and 1.5
     """
     
     d_out = {}
     d_out["1.50"] = {}
-    d_out["2.00"] = {}
-    d_out["2.50"] = {}
+    #d_out["2.00"] = {}
+    #d_out["2.50"] = {}
     d_out["3.00"] = {}
-    d_out["OUT"] = {}
+    #d_out["OUT"] = {}
 
     return d_out
 

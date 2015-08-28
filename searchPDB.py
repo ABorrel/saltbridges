@@ -13,6 +13,7 @@ import writeFile
 import statistic
 import loadFile
 import managePDB
+import pathManage
 
 
 
@@ -61,7 +62,7 @@ def ligands(name_database, pr_init):
     '''search ligands in PDB database
     out : list of ligands with PDB files associated'''
     
-    
+    print "Start Search Ligand In PDB file"
     # control file exist
     if path.exists(pr_init + "resultLigandInPDB") and path.getsize(pr_init + "resultLigandInPDB") != 0: 
         return pr_init + "resultLigandInPDB"
@@ -70,29 +71,20 @@ def ligands(name_database, pr_init):
     # http://www.rcsb.org/pdb/rest/representatives?cluster=50
     l_PDB = managePDB.retriveListPDB(name_database)
     
-    start, fileLog = log.initAction("Search ligands in PDB")
+    l_d_lig = []
 
-    listPDBLigand = []
+    for PDB_ID in l_PDB:
+        d_lig_PDB = structure.ligandPDB()
+        d_lig_PDB["name"] = PDB_ID
+        l_lig_in = parsing.retrieveListLigand(pathManage.pathDitrectoryPDB() + PDB_ID.lower() + ".pdb")
+        d_lig_PDB["ligands"] = l_lig_in
+        l_d_lig.append(d_lig_PDB)
+    
+    # write result file
+    p_out = writeFile.resultLigandInPDB(l_d_lig, pr_init)
 
-    for PDBFile in l_PDB:
-        namePDB = PDBFile.split(".")[0]
-        fileLog.write(namePDB + "\n")
-        ligandInPDB = structure.ligandPDB()
-        try : linesPDB = loadFile.openPdbFile(namePDB)
-        except : continue
-        ligandInPDB["name"] = namePDB
-
-        for linePDB in linesPDB:
-            if(search ("^HETATM", linePDB)):
-                atom = parsing.lineCoords(linePDB)
-                if not atom["resName"] in ligandInPDB["ligands"]:
-                    ligandInPDB["ligands"].append(atom["resName"])
-
-        listPDBLigand.append(ligandInPDB)
-
-    path_file = writeFile.resultLigandInPDB(listPDBLigand, pr_init)
-    log.endAction("Search ligands in PDB", start, fileLog)
-    return path_file
+    print "END Search Ligand In PDB file"
+    return p_out
 
 
 

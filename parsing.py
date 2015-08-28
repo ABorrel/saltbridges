@@ -5,7 +5,7 @@ import calcul
 
 from re import search, sub
 from copy import deepcopy
-
+from os import path
 
 def lineCoords (line, remove_H = 0):
     """Parsing line of coordinate PDB File
@@ -153,15 +153,15 @@ def countH2O (path_file_PDB) :
     
 
 
-def loadCoordSectionPDB (path_PDB_file, section = "", remove_H = 0, debug = 0):
+
+def loadCoordSectionPDB (p_PDBin, section = "", remove_H = 0, debug = 0):
     """
-    Retrieve every atom in cordiante section. If it is NMR complex
+    Retrieve every atom in coordinate section. If it is NMR complex
     retrieve only first model
-    
     """
     
-    list_atom = []
-    filin = open (path_PDB_file, "r")
+    l_atom = []
+    filin = open (p_PDBin, "r")
     list_line_PDB = filin.readlines()
     filin.close ()
     
@@ -174,18 +174,18 @@ def loadCoordSectionPDB (path_PDB_file, section = "", remove_H = 0, debug = 0):
             if search ("^ATOM", line_PDB) or search ("^HETATM", line_PDB) : 
                 atom = lineCoords(line_PDB, remove_H)
                 if atom != None : 
-                    list_atom.append (atom)
+                    l_atom.append (atom)
         else : 
             if search ("^" + section, line_PDB)  : 
                 atom = lineCoords(line_PDB, remove_H)
                 if atom != None : 
-                    list_atom.append (atom)
+                    l_atom.append (atom)
                 
 #    if debug : 
 #        print "TEST"            
-#        print len (list_atom)
+#        print len (l_atom)
 #    
-    return list_atom
+    return l_atom
     
 
 
@@ -291,7 +291,7 @@ def retrieveSerialLigand (list_atom):
 
 
 
-def checkLigandHooked (l_atom_complex, l_atom_lig, thresold = 1.9):
+def checkLigandHooked (l_atom_complex, l_atom_lig, thresold = 1.65):
     
     l_atom_prot = deepcopy(l_atom_complex)
     
@@ -301,13 +301,15 @@ def checkLigandHooked (l_atom_complex, l_atom_lig, thresold = 1.9):
         while i < nb_atom : 
             d = calcul.distanceTwoatoms(l_atom_prot[i], atom_lig)
             if d < thresold : 
+                print d
                 return 1
             # reduce combination with atom away
             elif d > (thresold * len (l_atom_lig)) : 
                 del l_atom_prot[i]
                 nb_atom = nb_atom - 1
-            else : 
-                i = i + 1
+
+            i = i + 1
+            
     return 0
 
 
@@ -364,28 +366,30 @@ def separateByLigand (l_atom_ligand, debug = 0) :
 
 
 
-def retrieveListLigand ( p_file_PDB, option_not_ligand = 0 , debug=0 ):
+def retrieveListLigand ( p_file_PDB, debug = 0 ):
     """
-    Retrieve list ligand in PDB file, only ligands, remove metals
+    Retrieve list name_lig in PDB file, only ligands, remove metals
     args: - path file
     return: list ligands
     """
-    # HIE -> His modified
-    l_not_ligand = ["SO4", "FE2", "GOL", "FES", "PO4", "MSE", "DMS", "URE", "FMT", "TRS", "NCO"]
     
+    if not path.exists(p_file_PDB) : 
+        return []
+
     filin = open ( p_file_PDB, "r" )
     l_line_pdb = filin.readlines ()
     filin.close()
-    list_out = []
+    
+    l_out = []
     for line_pdb in l_line_pdb : 
         if search ( "^HETATM", line_pdb ) : 
-            ligand = line_pdb[17:21].replace ( " ", "" )
-            if debug : print ligand
-            if not ligand in list_out and ligand != "HOH"  :
-                if len (ligand) > 2 : # remove metals just 2 letters
-                    if not ligand in l_not_ligand : 
-                        list_out.append ( ligand )
-    return list_out 
+            name_lig = line_pdb[17:21].replace ( " ", "" )
+            if debug : print name_lig
+            if not name_lig in l_out and name_lig != "HOH"  : # remove water
+                if len (name_lig) > 2 : # remove metals just 2 letters
+                    l_out.append ( name_lig )
+                    
+    return l_out 
     
 
 

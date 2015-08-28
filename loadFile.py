@@ -2,10 +2,8 @@ from re import search, sub
 from os import path, listdir
 
 import calcul
-import formatCharacter
 import parsing
 import pathManage
-import structure
 import checkPDBfile
 
 
@@ -120,24 +118,24 @@ def checkOnlyOneLigand(groupAtom):
             i = i + 1
 
 
-def ligandInPDBConnectMatrixLigand(pdbName, nameLigands):
+def ligandInPDBConnectMatrixLigand(PDB_ID, ligand):
     """load ligand in structure in PDB file
     out : list atom in ligands with connect matrix calculated"""
 
-    linesPDB = openPdbFile(pdbName)
-    ligand = []
-    listSerial = []
-    for line in linesPDB:
+    l_lines = openPdbFile(PDB_ID)
+    l_atom = []
+    l_serial = []
+    for line in l_lines:
         if search ("^HETATM", line):
             atom = parsing.lineCoords(line)
-            if atom["resName"] == nameLigands and atom["element"] != "H":
-                if not atom["serial"] in listSerial : 
-                    ligand.append(atom)
-                    listSerial.append(atom["serial"])
-    checkOnlyOneLigand(ligand)  ####retrieve only first ligand
-    calcul.buildConnectMatrix(ligand, pdbName)
+            if atom["resName"] == ligand and atom["element"] != "H":
+                if not atom["serial"] in l_serial : 
+                    l_atom.append(atom)
+                    l_serial.append(atom["serial"])
+    checkOnlyOneLigand(l_atom)  ####retrieve only first ligand
+    calcul.buildConnectMatrix(l_atom, PDB_ID)
 
-    return ligand
+    return l_atom
 
 
 
@@ -208,26 +206,6 @@ def LigandInPDB(p_file_lig):
 
     return d_out
 
-
-
-
-def globalPDB(PDB, ligand = ""):
-    """Retrieve every lines coordinates in PDB file
-    in: name PDB
-    out: list with line PDB  """
-    
-    file = openPdbFile(PDB)
-    out = []
-    for line in file:
-        if search("^ATOM", line) or search("^HETATM", line):
-            atom = parsing.lineCoords(line)
-            out.append(atom)
-
-    connectMatrix = connectMatrixInPDB(PDB)
-    connectAtom(connectMatrix, out)
-        # calcul.buildConnectMatrix(ligand, PDB) # why ????
-
-    return out
 
 
 
@@ -368,4 +346,67 @@ def loadOnePDBbyLigand (st_all, p_filout, debug = 0):
 
 
 
+def ExtractInfoPDBID(PDB_ID) : 
 
+    # control PDB exist in the folder where the PDB is included
+    p_PDBfile = pathManage.pathDitrectoryPDB() + PDB_ID.lower() + ".pdb"
+    if not path.exists(p_PDBfile) :
+        print "ERROR load PDB ID -> ", PDB_ID
+        return {} 
+    
+    # initialisation of the output
+    d_out = {}
+    d_out["protein"] = []
+    d_out["RX"] = 100.0
+    d_out["RFree"] = 100.0
+    
+    
+    filin = open (p_PDBfile, "r")
+    l_linesPDB = filin.readlines ()
+    filin.close ()
+    
+    d_out["Header"] = l_linesPDB[0][6:].lower().strip ()
+    
+    for linePDB in l_linesPDB : 
+        # Resolution
+        if search("^REMARK   2 RESOLUTION", linePDB):
+            
+            lineRX = sub('[ ]{2,}', ' ', linePDB)
+            try : d_out["RX"] = float (lineRX.split(" ")[3].replace (" ", ""))
+            except : pass
+            
+        # Rfree
+        elif search ("REMARK   3   R VALUE", linePDB) : 
+            rfactor = linePDB.strip ().split (":")[-1].replace (" ", "")
+            if rfactor == "NULL" : 
+                rfactor = 0.0
+            else : 
+                rfactor =  float (rfactor)
+            d_out["RFree"] =  rfactor
+        
+        # protein
+        elif search ("^ATOM", linePDB) :
+            atom_prot = parsing.lineCoords (linePDB, remove_H = 1)
+            if atom_prot != None : 
+                d_out["protein"].append (atom_prot)
+        
+        elif search ("^HETATM", linePDB) : 
+            atom_HET = parsing.lineCoords (linePDB, remove_H = 1)
+            if atom_HET != None : 
+                name_lig = atom_HET["resName"]
+                if not name_lig in d_out.keys () : 
+                    d_out[name_lig] = []
+                d_out[name_lig].append (atom_HET)
+        
+        # kept only first model in the protein in case of RMN structure
+        elif search ("^ENDMDL", linePDB) : 
+            break
+        
+        
+    # separate the ligand in double
+    for k in d_out.keys() : 
+        if k != "protein" and k != "RX" and k != "RFree" and k != "Header" : 
+            d_out[k] = parsing.separateByLigand (d_out[k], debug = 0)
+            
+    return d_out
+                
