@@ -2,12 +2,12 @@ import retrieveAtom
 import calcul
 
 
-def checkConectOnlyC(atom, listAtom) :
+def checkConectOnlyC(atom, l_atom_lig) :
     """Check if atom is connect N is only H and C 
     in: atom checked, list of atom
     out: 0 or 1"""
 
-    connectMatrixElement = connectMatrixSerialToConnectMatrixElement(atom["connect"], listAtom)
+    connectMatrixElement = connectMatrixSerialToConnectMatrixElement(atom["connect"], l_atom_lig)
     flag = 0    
     
     for element in connectMatrixElement [1:]: 
@@ -38,7 +38,6 @@ def checkSingleBond(atom1, atom2, d_min = 1.42):
     out: 0 or 1"""
     
     distance = calcul.distanceTwoatoms(atom1, atom2)
-#     print distance
     if distance >= d_min:
         return 1
     else:
@@ -73,13 +72,13 @@ def retrieveAtomConnected(atom, listAtom):
         listAtom.append(retrieveAtom.serial(i, listAtom))
     return listAtom
 
-def matrixElement(listAtom):
+def matrixElement(l_atom):
     """For list of atom retrieve list element
     in: list Atom
     out: list Element"""
     
     out = []
-    for atom in listAtom : 
+    for atom in l_atom : 
         try :
             out.append(atom["element"])
         except :

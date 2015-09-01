@@ -4,7 +4,7 @@ from copy import deepcopy
 
 import loadFile
 import parsing
-
+import searchPDB
 
 
 def retrieveFirstSeq(pdb):
@@ -86,6 +86,15 @@ def CheckComplexQuality(l_in, name_lig, limit_RX, limit_RFree, one_PDB_out, debu
         RFree = d_PDB_load["RFree"]
         if float (RX) > limit_RX or float (RFree) > limit_RFree : 
             if debug == 1 : print "Exit => Quality structure", l_PDB[i], RX, RFree
+            del l_PDB[i]
+            nb_PDB = nb_PDB - 1
+            continue
+         
+        # check if the structure contain the substructure
+        # -> because when we improve the resolution the ligand change and the search PDB -> ERROR
+        l_interest_sub = searchPDB.interestStructure(d_PDB_load[name_lig][0])
+        if l_interest_sub == [] : 
+            if debug == 1 : print "Exit => No Sub found", l_PDB[i], RX, RFree
             del l_PDB[i]
             nb_PDB = nb_PDB - 1
             continue

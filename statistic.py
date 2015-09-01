@@ -21,58 +21,66 @@ from re import search
 
 def ParseDataSet(p_dataset, debug = 0):
     """Statistic of dataset, repetition ligand in PDB file or in PDB
-    out : file with count of repetition in file or files"""
+    out : file with d_count of repetition in file or files"""
 
     # log 
     if debug : print p_dataset, "==path dataset=="
-    start, logFile = log.initAction("Parsing dataset, ligand representation " + str(path.splitext(path.basename(p_dataset))[0]))
     
-    l_lig_dataset = loadFile.resultFilterPDBLigand(p_dataset)
-    if debug : print l_lig_dataset, "dico loaded"
+    l_d_lig = loadFile.resultFilterPDBLigand(p_dataset)
+    if debug : print l_d_lig, "dico loaded"
 
-    d_count = structure.countGroupDataset()
+    d_sub = structure.countGroupDataset()
     l_count = []
-    l_PDB = []
-    for lig_dataset in l_lig_dataset:
-        if debug : print '**', lig_dataset
-        count = structure.countInstanceDataSet()
-        # print lig_dataset["name"]
-        logFile.write(lig_dataset["name"] + "\n")
-        count["name"] = lig_dataset["name"]
-        count["Number PDB"] = len(lig_dataset["PDB"])
+    l_PDB_global = []
+    for d_lig in l_d_lig:
+        if debug : print '**', d_lig
+        d_count = {}
+        # print d_lig["name"]
+        d_count["name"] = d_lig["name"]
+        d_count["Number PDB"] = len(d_lig["PDB"])
         
-        for PDB in lig_dataset["PDB"] : 
-            if not PDB in l_PDB : 
-                l_PDB.append(PDB)
+        for PDB in d_lig["PDB"] : 
+            if not PDB in l_PDB_global : 
+                l_PDB_global.append (PDB)
         
-        try : l_at_ligand = loadFile.ligandInPDB(lig_dataset["PDB"][0], lig_dataset["name"])
-        except : continue
+        l_at_ligand = loadFile.ligandInPDB(d_lig["PDB"][0], d_lig["name"])
+        
         l_sub_found = searchPDB.interestStructure(l_at_ligand)
+        
+        
+        if l_sub_found == [] : 
+            print d_lig["PDB"], d_lig["name"]
+            gggg
+        
         if debug : print l_sub_found, "==l48-statistic=="
         
-        # global count -> unique list => no unique because pb with multisub in the ligand
+        # global d_count -> unique list => no unique because pb with multisub in the ligand
         l_sub_unique = sorted(set(l_sub_found),key=l_sub_found.index) 
         
         for sub_unique in l_sub_unique:
-            d_count[sub_unique]["PDB"] = d_count[sub_unique]["PDB"] + count["Number PDB"]
-            d_count[sub_unique]["ligand"] = d_count[sub_unique]["ligand"] + 1
-        
+            d_sub[sub_unique]["PDB"] = d_sub[sub_unique]["PDB"] + d_count["Number PDB"]
+            d_sub[sub_unique]["ligand"] = d_sub[sub_unique]["ligand"] + 1
         
         for sub_found in l_sub_found:
-            d_count[sub_found][sub_found] = d_count[sub_found][sub_found] + count["Number PDB"]
-        l_count.append(count)
+            
+            if sub_found == "Imidazole" : print l_sub_found, d_lig["name"], d_lig["PDB"][0]
+            
+            d_sub[sub_found][sub_found] = d_sub[sub_found][sub_found] + d_count["Number PDB"]
+            
+        l_count.append(d_count)
         
 
     # divise number for complexe queries
-    for sub in d_count.keys () : 
+    for sub in d_sub.keys () : 
         if sub == "Imidazole" or sub == "AcidCarboxylic" : 
-            d_count[sub][sub] = d_count[sub][sub] / 2
+            print d_sub[sub][sub]
+            d_sub[sub][sub] = d_sub[sub][sub] / 2
         elif sub == "Guanidium" : 
-            d_count[sub][sub] = d_count[sub][sub] / 3
+            d_sub[sub][sub] = d_sub[sub][sub] / 3
             
-    n_PDB = len(l_PDB)
-    writeFile.AnalysisDataSet(l_count, d_count, n_PDB, p_dataset)
-    log.endAction("Parsing dataset, ligand representation", start, logFile)
+    n_PDB = len(l_PDB_global)
+    writeFile.AnalysisDataSet(l_count, d_sub, n_PDB, p_dataset)
+    print d_sub["Imidazole"]
 
 
 def distanceAnalysis(stAtm, dir_out, logfile):

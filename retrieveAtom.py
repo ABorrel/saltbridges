@@ -17,31 +17,32 @@ def serial(at_serial, list_atom) :
 
 
 
-def atomConnect (list_atom_ligand, serial_atom):
+def atomConnect (l_atom_lig, serial_atom):
     """For a serial atom found the connect atoms
     in: list atom ligand, serial atom
     out: list atoms connect and connect matrix element"""
 
-    atomN = serial(serial_atom, list_atom_ligand)
+    atomN = serial(serial_atom, l_atom_lig)
     conect = []
-    listAtom = []
+    l_atom_out = []
 
     if atomN == 0:
-        return listAtom, conect
+        return l_atom_out, conect
 
     matrixConect = atomN["connect"]
        
 
     for elementMatrixConect in matrixConect:
-        atom = (serial(int(elementMatrixConect), list_atom_ligand))
+        atom = (serial(int(elementMatrixConect), l_atom_lig))
         if atom != 0:
-            listAtom.append(atom)
+            l_atom_out.append(atom)
             conect.append(atom["element"])
-        else :
-            conect.append("out")  ########################################### case out ligand
+        # remove else condition because H are removed before and give -> out
+#         else :
+#             conect.append("out")
             
     tool.dellH(conect)
-    return listAtom, conect
+    return l_atom_out, conect
 
 ###################serine protease################
 

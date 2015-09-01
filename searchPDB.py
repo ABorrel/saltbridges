@@ -263,23 +263,22 @@ def acidCarboxylic(l_conect_ox, l_atom_lig) :
     connect_element = toolSubstructure.matrixElement(l_conect_ox)
     if connect_element != ["O", "C"] : 
         return [0, []]
-    else : 
+    else :
+        l_out.append (l_conect_ox[0]["serial"]) 
+        
         l_atom_connect_C, connect_matrix_C = retrieveAtom.atomConnect(l_atom_lig, l_conect_ox[1]["serial"])
-        if connect_matrix_C == ["C", "O", "O", "C"] or connect_matrix_C == ["C", "O", "C", "O"] or  connect_matrix_C == ["C", "C", "O", "O"] : 
-            l_out.append (l_conect_ox[1]["serial"])
+        connect_matrix_C.sort()
+        if connect_matrix_C == ["C", "C", "O", "O"] :  
+            l_out.append (l_atom_connect_C[0]["serial"])
+            
             for atom_connect_C in l_atom_connect_C[1:] :
-                if atom_connect_C["element"] == "O" : 
-                    l_atom_connect_ox, connect_matrix_ox = retrieveAtom.atomConnect(l_atom_lig, atom_connect_C["serial"])
-                    if connect_matrix_ox != ["O", "C"] :
-                        return [0, []]
-                    else : 
-                        l_out.append (l_conect_ox[0]["serial"])
-                        
-            return [1,l_out]
-        else : 
-            return [0, []]
-    
-    return [0, []]
+                if atom_connect_C["element"] == "O" and not atom_connect_C["serial"] in l_out: 
+                        l_atom_connect_ox, connect_matrix_ox = retrieveAtom.atomConnect(l_atom_lig, atom_connect_C["serial"])
+                        if connect_matrix_ox == ["O", "C"] :
+                            l_out.append (l_conect_ox[0]["serial"])   
+                        else : 
+                            return [0, []]
+    return [1, l_out]
 
 
     
@@ -371,91 +370,100 @@ def riboseFromADPRiboseAtom4 (serial, listAtomLigand, serialInit, serialPrevious
     
 ##########Search Imidazole###############
 
-def imidazole(l_atom_connect_N, l_atom_lig):
+def imidazole(l_atom2, l_atom_lig):
     """search imidazole global
     in: list atom connected of nitrogen, list atom ligand
     out: boolean"""
     
-    stAtom = toolSubstructure.matrixElement(l_atom_connect_N)
     
-    if stAtom == ["N", "C", "C"]:
-        l_atom_check = [l_atom_connect_N[0]["serial"]]
-        groupAtomC1, conect_C1 = retrieveAtom.atomConnect(l_atom_lig, int (l_atom_connect_N[0]["connect"][1]))
-        groupAtomC2, conect_C2 = retrieveAtom.atomConnect(l_atom_lig, int (l_atom_connect_N[0]["connect"][2]))
-#         print conect_C1, "C1"
-#         print conect_C2, "C2"
-        if conect_C1 == ["C", "C", "N", "N"] or conect_C1 == ["C", "N", "N", "C"] or conect_C1 == ["C", "N", "C", "N"] or conect_C1 == ["C", "N", "N"]:
-            l_atom_check.append (groupAtomC1[0]["serial"])
-            if imidazoleATOM3(groupAtomC1, l_atom_check, l_atom_lig)[0] == 1:
-#                 print "l344"
-                return [1, l_atom_check]
+    connect1 = toolSubstructure.matrixElement(l_atom2)
+#     print connect1
+    # append first atom
+    
+    if connect1 == ["N", "C", "C"]:
+        l_atom3, conect2 = retrieveAtom.atomConnect(l_atom_lig, l_atom2[1]["serial"])
+        l_atom32, conect22 = retrieveAtom.atomConnect(l_atom_lig, l_atom2[2]["serial"])
 
-        elif conect_C2 == ["C", "C", "N", "N"] or conect_C2 == ["C", "N", "N", "C"] or conect_C2 == ["C", "N", "C", "N"] or conect_C2 == ["C", "N", "N"]:
-#             print "IN C2"
-#             print l_atom_check, "l348"
-            l_atom_check.append (groupAtomC2[0]["serial"])
-            if imidazoleATOM3(groupAtomC2, l_atom_check, l_atom_lig)[0] == 1:
+        # sort list to reduce if condition
+        conect2.sort ()
+        conect22.sort ()
+        
+        if conect2 == ["C", "C", "N", "N"] or conect2 == ["C", "N", "N"]:
+            l_serial_check = [l_atom2[0]["serial"], l_atom3[0]["serial"]]
+            if imidazoleATOM3(l_atom3, l_serial_check, l_atom_lig)[0] == 1:
+#                 print "l344"
+                return [1, l_serial_check]
+
+        elif conect22 == ["C", "C", "N", "N"] or conect22 == ["C", "N", "N"]:
+            l_serial_check = [l_atom2[0]["serial"], l_atom32[0]["serial"]]
+            if imidazoleATOM3(l_atom32, l_serial_check, l_atom_lig)[0] == 1:
 #                 print "l350"
-                return [1, l_atom_check]
+                return [1, l_serial_check]
 
     return [0, []]
 
 
-def imidazoleATOM3(listAtom, l_atom_check, listAtomLigand):
-    """Check the atom 3 in circle of imidazole
+def imidazoleATOM3(l_atom3, l_serial_check, l_atom_lig):
+    """Check the atom3 3 in circle of imidazole
     in : atoms ligand in list, serial of first nitrogen, name of ligand
     out : boolean"""
 
-    for atom in listAtom:
-        if atom["element"] == "N":
-            if not atom["serial"] in l_atom_check : 
-                groupAtomN1, conect_N1 = retrieveAtom.atomConnect(listAtomLigand, atom["serial"])
+    for atom3 in l_atom3:
+        if atom3["element"] == "N":
+            if not atom3["serial"] in l_serial_check : 
+                l_atom4, conect3 = retrieveAtom.atomConnect(l_atom_lig, atom3["serial"])
+                break
+
+#     print conect3, "CN1, l367"
+    if conect3 == ['N', 'C', 'C']:
+        l_serial_check.append (l_atom4[0]["serial"])
+#         print l_serial_check, "l370"
+        if imidazoleATOM4(l_atom4, l_serial_check, l_atom_lig)[0] == 1:
+            return [1, l_serial_check]
+
+    return [0, l_serial_check]
 
 
-
-#     print conect_N1, "CN1, l367"
-    if conect_N1 == ['N', 'C', 'C']:
-        l_atom_check.append (groupAtomN1[0]["serial"])
-#         print l_atom_check, "l370"
-        if imidazoleATOM4(groupAtomN1, l_atom_check, listAtomLigand)[0] == 1:
-            return [1, l_atom_check]
-
-    return [0, l_atom_check]
-
-
-def imidazoleATOM4(listAtomNitrogen, l_atom_check, listAtomLigand):
-    """Check the atom 4 in cercle of imidazole
+def imidazoleATOM4(l_atom4, l_serial_check, l_atom_lig):
+    """Check the atom4 4 in cercle of imidazole
     in : atoms ligand in list, serial of first nitrogen, name of ligand
     out : boolean"""
     
-#     print l_atom_check, "l387"
-    for atom in listAtomNitrogen:
-        if atom["element"] == "C":
-            if not atom["serial"] in l_atom_check : 
-                groupAtomC3, conect_C3 = retrieveAtom.atomConnect(listAtomLigand, atom["serial"])
-                l_atom_check.append (groupAtomC3[0]["serial"])
-#                 print l_atom_check, "l392"
-                if  imidazoleATOM5(groupAtomC3, l_atom_check, listAtomLigand)[0] == 1:
-                    return [1, l_atom_check]
+#     print l_serial_check, "l387"
+    for atom4 in l_atom4:
+        if atom4["element"] == "C":
+            if not atom4["serial"] in l_serial_check : 
+                l_atom5, conect4 = retrieveAtom.atomConnect(l_atom_lig, atom4["serial"])
+                conect4.sort ()
+                if conect4 == ["C", "C", "C", "N"] or conect4 == ["C", "C", "N"] : 
+                    l_serial_check.append (l_atom5[0]["serial"])
+                    imd, l_serial_check = imidazoleATOM5(l_atom5, l_serial_check, l_atom_lig)
+#                     print l_serial_check, imd
+                    if  imd == 1:
+                        return [1, l_serial_check]
+                    else :
+                        l_serial_check.remove(l_atom5[0]["serial"])
 
-    return [0, l_atom_check]
+    return [0, l_serial_check]
             
 
-def imidazoleATOM5(l_at_c4, l_atom_check, listAtomLigand):
+def imidazoleATOM5(l_atom5, l_serial_check, l_atom_lig):
     """Check the atom 5 in cercle of imidazole
     in : atoms ligand in list, serial of first nitrogen, name of ligand
     out : boolean"""
     
     
-    for at_c4 in l_at_c4 : 
-        if at_c4["element"] == "C" and not at_c4["serial"] in l_atom_check:
-            l_conect_c4, conect_c4 =  retrieveAtom.atomConnect(listAtomLigand, at_c4["serial"])
-            
-            for at_connect in l_conect_c4 : 
-                if at_connect["element"] == "N" and at_connect["serial"] in l_atom_check :
-                    l_atom_check.append (at_c4["serial"])
-                    return [1, l_atom_check]
-    return [0, l_atom_check]
+    for atom5 in l_atom5 : 
+        if atom5["element"] == "C" and not atom5["serial"] in l_serial_check:
+            l_atom6, conect5 =  retrieveAtom.atomConnect(l_atom_lig, atom5["serial"])
+            # check connect atom4 IMD
+            conect5.sort()
+            if conect5 == ["C","C", "C", "N"] or conect5 == ["C","C", "N"] : 
+                for atom6 in l_atom6 : 
+                    if atom6["element"] == "N" and atom6["serial"] in l_serial_check :
+                        l_serial_check.append (atom6["serial"])
+                        return [1, l_serial_check]
+    return [0, l_serial_check]
     
 
 ######################################################################################################################

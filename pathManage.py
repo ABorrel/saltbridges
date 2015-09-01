@@ -180,7 +180,7 @@ def retriveDataSetFile (directory_in) :
     l_out = []
     list_files = listdir(directory_in)
     for filin in list_files : 
-        if search("dataset", filin) and search (".txt", filin) and not search ("RMN", filin) and not search ("NMR", filin) and not search ("OUT", filin): 
+        if search("dataset", filin) and search (".txt", filin) and not search ("RMN", filin) and not search ("NMR", filin) and not search ("OUT", filin) and not search ("~", filin): 
             if path.getsize(directory_in + filin) > 5 : 
                 l_out.append (directory_in + filin)
     

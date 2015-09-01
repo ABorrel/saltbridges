@@ -407,6 +407,8 @@ def ExtractInfoPDBID(PDB_ID) :
     for k in d_out.keys() : 
         if k != "protein" and k != "RX" and k != "RFree" and k != "Header" : 
             d_out[k] = parsing.separateByLigand (d_out[k], debug = 0)
+            for l_atom_lig in d_out[k] :
+                l_atom_lig = calcul.buildConnectMatrix(l_atom_lig) 
             
     return d_out
                 

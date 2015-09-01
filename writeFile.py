@@ -47,13 +47,14 @@ def listFloat (l_value, p_filin):
     
     
 
-def AnalysisDataSet(l_count, d_count_sub, numberPDB, path_file_dataset):
+def AnalysisDataSet(l_d_lig, d_count_sub, numberPDB, path_file_dataset):
+
 
     filout = open(path_file_dataset[0:-4]  + ".stat", "w")
     maxRepetition = 0
     SumPDB = 0.0
     
-    for count in l_count:
+    for count in l_d_lig:
         filout.write(str(count["name"]) + "\t")
         filout.write(str(count["Number PDB"]))
         filout.write("\n")
@@ -61,13 +62,13 @@ def AnalysisDataSet(l_count, d_count_sub, numberPDB, path_file_dataset):
         if count["Number PDB"] > maxRepetition : 
             maxRepetition = count["Number PDB"] 
     
-    nbCount = len(l_count) 
+    nb_lig = len(l_d_lig) 
     filout.write("----------------------------------------\n")
-    filout.write("Number ligand: " + str(nbCount) + "\n")
+    filout.write("Number ligand: " + str(nb_lig) + "\n")
     filout.write("Number different PDB files: " + str(numberPDB) + "\n")
     filout.write("Repetition maximun ligand: " + str(maxRepetition) + "\n")
     filout.write("Average PDB by ligand: ")
-    try : average = SumPDB / nbCount
+    try : average = SumPDB / nb_lig
     except : average = 0
     filout.write("%.3f\n" % average)
     filout.write("----------------------------------------\n")
