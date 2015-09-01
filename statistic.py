@@ -751,7 +751,7 @@ def planarityImidazole (atom_interest_close, p_dir_result) :
         name_ligand =  l_imidazole_atom_central[i]["resName"]
          
         # load ligand
-        l_at_lig = loadFile.ligandInPDB(PDB_ID, name_ligand)
+        l_at_lig = loadFile.ExtractInfoPDBID(PDB_ID)[name_ligand][0] # change not tested
          
         # load structure
         l_at_subs = retrieveAtom.substructure ("Imidazole", l_imidazole_atom_central[i], l_at_lig)
@@ -790,7 +790,7 @@ def planarityGuanidium (atom_interest_close, p_dir_result) :
         name_ligand =  l_guanidium_atom_central[i]["resName"]
          
         # load ligand
-        l_at_lig = loadFile.ligandInPDB(PDB_ID, name_ligand)
+        l_at_lig = loadFile.ExtractInfoPDBID(PDB_ID)[name_ligand][0] # change not tested
          
         # load structure
         l_at_subs = retrieveAtom.substructure ("Guanidium", l_guanidium_atom_central[i], l_at_lig)
@@ -905,7 +905,7 @@ def lenBondAnalysis (struct_neighbor, substruct, p_dir_result ):
         name_ligand =  at_central["resName"] 
          
         # all atom ligand
-        l_at_lig = loadFile.ligandInPDB(PDB_ID, name_ligand)
+        l_at_lig = loadFile.ExtractInfoPDBID(PDB_ID)[name_ligand][0] # change not tested
         l_at_subs = retrieveAtom.substructure (substruct, at_central, l_at_lig)
          
         # first neighbor

@@ -531,7 +531,7 @@ def globalSearch (dist_thresold, p_file_dataset,  pr_result, debug = 1):
         j = 0
         while j < nb_PDB : 
             name_PDB = l_lig[i]["PDB"][j]
-            l_atom_ligand = loadFile.ligandInPDB(l_lig[i]["PDB"][j], l_lig[i]["name"])
+            l_atom_ligand = loadFile.ExtractInfoPDBID(l_lig[i]["PDB"][j])[l_lig[i]["name"]][0] # change not tested
             
             # search neighbor for every atom in ligand selected
             globalNeighbors(dist_thresold, l_atom_ligand, name_PDB, l_neighbor_global)
@@ -668,7 +668,7 @@ def repetitionInPDB(ligand, pdb):
     in : name of ligand, name of pdb file
     out : number of ligand in pdb"""
 
-    groupAtom = loadFile.ligandInPDB(pdb, ligand)
+    groupAtom = loadFile.ExtractInfoPDBID(pdb)[ligand][0] # change not tested
 
     listLigand = []
     for atom in groupAtom:

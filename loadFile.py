@@ -72,28 +72,28 @@ def resultFilterPDBLigand (path_file):
 
 
 
-
-def ligandInPDB(PDBin, ligand_ID):
-    """load l_atom_lig in structure in PDB file on single l_atom_lig by pdb and remove H
-    out : atom in ligands
-    out: list of atoms that l_atom_lig"""
-
-    linesPDB = openPdbFile(PDBin)
-    
-    l_atom_lig = []
-    for line in linesPDB:
-        if search ("^HETATM", line):
-            atom = parsing.lineCoords(line)
-            if atom["resName"] == ligand_ID and atom["element"] != "H":
-                l_atom_lig.append(atom)
-    checkOnlyOneLigand(l_atom_lig)
-    connectMatrix = connectMatrixInPDB(PDBin)
-
-    if connectAtom(connectMatrix, l_atom_lig) == "False":
-        print "Construt Matrix"
-        calcul.buildConnectMatrix(l_atom_lig, PDBin)
-
-    return l_atom_lig
+# # # # # # # # # # # #  -> del
+# # # # # # # # # # # # def ligandInPDB(PDBin, ligand_ID):
+# # # # # # # # # # # #     """load l_atom_lig in structure in PDB file on single l_atom_lig by pdb and remove H
+# # # # # # # # # # # #     out : atom in ligands
+# # # # # # # # # # # #     out: list of atoms that l_atom_lig"""
+# # # # # # # # # # # # 
+# # # # # # # # # # # #     linesPDB = openPdbFile(PDBin)
+# # # # # # # # # # # #     
+# # # # # # # # # # # #     l_atom_lig = []
+# # # # # # # # # # # #     for line in linesPDB:
+# # # # # # # # # # # #         if search ("^HETATM", line):
+# # # # # # # # # # # #             atom = parsing.lineCoords(line)
+# # # # # # # # # # # #             if atom["resName"] == ligand_ID and atom["element"] != "H":
+# # # # # # # # # # # #                 l_atom_lig.append(atom)
+# # # # # # # # # # # #     checkOnlyOneLigand(l_atom_lig)
+# # # # # # # # # # # #     connectMatrix = connectMatrixInPDB(PDBin)
+# # # # # # # # # # # # 
+# # # # # # # # # # # #     if connectAtom(connectMatrix, l_atom_lig) == "False":
+# # # # # # # # # # # #         print "Construt Matrix"
+# # # # # # # # # # # #         calcul.buildConnectMatrix(l_atom_lig, PDBin)
+# # # # # # # # # # # # 
+# # # # # # # # # # # #     return l_atom_lig
 
 
 def checkOnlyOneLigand(groupAtom):

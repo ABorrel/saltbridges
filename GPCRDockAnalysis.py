@@ -170,7 +170,7 @@ def SearchNeighbor (pr_data, pr_result, dist_thresold = 5.0, debug = 1):
                     print nb_model
                     while j < nb_model : 
                         
-                        l_atom_ligand = loadFile.ligandInPDB(l_lig[i]["PDB"][j], l_lig[i]["name"])
+                        l_atom_ligand = loadFile.ExtractInfoPDBID(l_lig[i]["PDB"][j])[l_lig[i]["name"]][0] # change not tested
                     
                         # search neighbor for every atom in ligand selected
                         searchPDB.globalNeighbors(dist_thresold, l_atom_ligand, l_lig[i]["PDB"][j], l_neighbor_global)
