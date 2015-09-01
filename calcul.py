@@ -55,7 +55,6 @@ def coplanar (atom, l_atom_ligand):
         atom2 = retrieveAtom.serial(matrix[2], l_atom_ligand)
         atom3 = retrieveAtom.serial(matrix[3], l_atom_ligand)
         
-        
         point1 = [float(atom1["x"]), float(atom1["y"]), float(atom1["z"])]
         point2 = [float(atom2["x"]), float(atom2["y"]), float(atom2["z"])]
         point3 = [float(atom3["x"]), float(atom3["y"]), float(atom3["z"])]
@@ -413,6 +412,7 @@ def angleSubs(central_atom, atom_found, l_atom_lig, subs):
 def angleAcidCarboxylic(central_atom, atom_check, l_atom_lig) : 
     
     l_atom_connect, matrix_connect = retrieveAtom.atomConnect(l_atom_lig, central_atom["serial"])
+    print matrix_connect
     l_O_temp = []
     
     for atom_connect in l_atom_connect[1:] : 

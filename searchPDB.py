@@ -131,8 +131,9 @@ def cncc(l_atom_connectN, l_atom_lig, more_flex = 0):
     """
 
     connect_element = toolSubstructure.matrixElement(l_atom_connectN)
-
+    
     if connect_element == ["N", "C", "C", "C"]:
+        
         if more_flex == 1 : 
             #if toolSubstructure.checkCoplanar(l_atom_connectN[0], l_atom_lig) == 1:
             #    if toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[1], d_min = 1.34) == 1 and toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[2], d_min = 1.34) == 1 and toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[3], d_min = 1.34) == 1:
@@ -257,28 +258,46 @@ def guanidium(l_at_connect_N, l_atom_lig):
             
 
 
-def acidCarboxylic(l_conect_ox, l_atom_lig) : 
+def acidCarboxylic(l_C2, l_atom_lig) : 
     
-    l_out = []
-    connect_element = toolSubstructure.matrixElement(l_conect_ox)
-    if connect_element != ["O", "C"] : 
+    l_serial = []
+    connectO1 = toolSubstructure.matrixElement(l_C2)
+    if connectO1 != ["O", "C"] : 
         return [0, []]
     else :
-        l_out.append (l_conect_ox[0]["serial"]) 
+        l_serial.append (l_C2[0]["serial"]) 
         
-        l_atom_connect_C, connect_matrix_C = retrieveAtom.atomConnect(l_atom_lig, l_conect_ox[1]["serial"])
-        connect_matrix_C.sort()
-        if connect_matrix_C == ["C", "C", "O", "O"] :  
-            l_out.append (l_atom_connect_C[0]["serial"])
+        l_connect3, connectC2 = retrieveAtom.atomConnect(l_atom_lig, l_C2[1]["serial"])
+        connectC2.sort()
+        if connectC2 == ["C", "C", "O", "O"] :  
+            l_serial.append (l_connect3[0]["serial"])
             
-            for atom_connect_C in l_atom_connect_C[1:] :
-                if atom_connect_C["element"] == "O" and not atom_connect_C["serial"] in l_out: 
-                        l_atom_connect_ox, connect_matrix_ox = retrieveAtom.atomConnect(l_atom_lig, atom_connect_C["serial"])
-                        if connect_matrix_ox == ["O", "C"] :
-                            l_out.append (l_conect_ox[0]["serial"])   
+            for atom3 in l_connect3[1:] :
+                if atom3["element"] == "O" and not atom3["serial"] in l_serial: 
+                        l_O2, connectO2 = retrieveAtom.atomConnect(l_atom_lig, atom3["serial"])
+                        if connectO2 == ["O", "C"] :
+                            l_serial.append (l_C2[0]["serial"])
                         else : 
                             return [0, []]
-    return [1, l_out]
+                elif atom3["element"] == "C" and not atom3["serial"] in l_serial : 
+                    l_atomC4, connectC4 = retrieveAtom.atomConnect(l_atom_lig, atom3["serial"])
+#                     print connectC4, "Check"
+                    connectC4_unique = sorted(set(connectC4),key=connectC4.index)
+#                     print connectC4_unique
+                    if connectC4_unique != ["C"] : 
+                        return [0, []]
+                    else :
+                        for atom_conex in l_atomC4[1:] : 
+                            if toolSubstructure.checkSingleBond(l_atomC4[0], atom_conex) == 0 : 
+                                return [0, []]
+                    
+                    
+                        
+    # check 3 atom and not a hydroxyl group
+    if len (l_serial) == 3 :
+        return [1, l_serial]
+    
+    return [0, []]
 
 
     
@@ -469,7 +488,7 @@ def imidazoleATOM5(l_atom5, l_serial_check, l_atom_lig):
 ######################################################################################################################
 
 
-def globalSearch (dist_thresold, p_file_dataset,  pr_result, debug = 0):
+def globalSearch (dist_thresold, p_file_dataset,  pr_result, debug = 1):
     
     
     pr_summary = pr_result + "Sum/"
@@ -478,7 +497,9 @@ def globalSearch (dist_thresold, p_file_dataset,  pr_result, debug = 0):
     
     
     # load structure in summary ---> if use need place option one PDB by ligand
-    d_neighbor = loadFile.loadCloseStruct (pr_summary)
+#     d_neighbor = loadFile.loadCloseStruct (pr_summary)
+    
+    d_neighbor = None  
     
     if d_neighbor != None : 
         if debug : 

@@ -43,9 +43,13 @@ def ParseDataSet(p_dataset, debug = 0):
             if not PDB in l_PDB_global : 
                 l_PDB_global.append (PDB)
         
-        l_at_ligand = loadFile.ligandInPDB(d_lig["PDB"][0], d_lig["name"])
+        l_at_ligand = loadFile.ExtractInfoPDBID(PDB)[d_lig["name"]][0]
+        
+        
+        print d_lig["name"]
         
         l_sub_found = searchPDB.interestStructure(l_at_ligand)
+        print l_sub_found
         
         
         if l_sub_found == [] : 

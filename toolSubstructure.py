@@ -44,15 +44,15 @@ def checkSingleBond(atom1, atom2, d_min = 1.42):
         return 0
 
 
-def checkCoplanar (NAtom, l_atom):
+def checkCoplanar (Natom, l_atom, debug = 0):
     """Check if tertiary amine is coplanar
     in: atom nitrogen
     out: list atom"""
     
-    try: distance = calcul.coplanar(NAtom, l_atom)
+    try: distance = calcul.coplanar(Natom, l_atom)
     except: return 0
     
-#     print distance
+    if debug == 1 : print distance, "planarity"
 
     if distance >= 1.0:
         return 1
