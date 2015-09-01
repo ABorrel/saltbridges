@@ -65,10 +65,6 @@ def CheckComplexQuality(l_in, name_lig, limit_RX, limit_RFree, one_PDB_out, debu
         
         # load PDB
         d_PDB_load = loadFile.ExtractInfoPDBID(l_PDB[i])
-        print l_PDB[i]
-        
-        print d_PDB_load.keys ()
-        print d_PDB_load["HSO"]
         
         # case PDB not found => often difference between list and database
         if d_PDB_load == {} :

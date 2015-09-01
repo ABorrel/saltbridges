@@ -16,7 +16,9 @@ def removeNeighborIron (st_atom, p_summary):
             d_count[subs] = {}
             d_count[subs]["Ions"] = 0
             d_count[subs]["DNA"] = 0
+            # other ligand that stabilize the interation
             d_count[subs]["other"] = 0
+            d_count[subs]["Origin"] = len (st_atom[subs] )
             
         nb_central_atom = len (st_atom[subs] )
         if nb_central_atom == 0 : 
@@ -44,14 +46,14 @@ def removeNeighborIron (st_atom, p_summary):
             else : 
                 i = i + 1
     
-    
-    
     filout.close ()   
     
     filout_resume = open (p_summary[0:-4] + ".res","w")
     
     for sub in d_count.keys () : 
         filout_resume.write ("===== " + str (sub) + " =====\n")
+        filout_resume.write ("Origin subs: " + str (d_count[sub]["Origin"]) + "\n")
+        filout_resume.write ("Final subs: " + str (len (st_atom[subs])) + "\n")
         filout_resume.write ("DNA close: " + str (d_count[sub]["DNA"]) + "\n")
         filout_resume.write ("Ions close: " + str (d_count[sub]["Ions"]) + "\n")
         filout_resume.write ("Other ligands: " + str (d_count[sub]["other"]) + "\n\n")

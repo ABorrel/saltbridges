@@ -74,7 +74,10 @@ def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_supe
     
         # remove iron close -> statistic before 
         # Becarful because the dictionnary change
+        print "control-1", len(d_sub_neighbor["Primary"])
         d_close_het = hetCloseAnalysis.removeNeighborIron (d_sub_neighbor, pr_hetion + "ionSummarySubstruct.txt")
+        print "control-2", len(d_sub_neighbor["Primary"])
+        
         
         
         if option_superimpose == 1 : 
@@ -112,7 +115,7 @@ def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_supe
  
 
 
-def waterGlobal (name_database, limit_acc = 20.0):
+def waterGlobal (name_database, limit_acc = 00.0):
     """
     Number of water molecules in PDB
     arg: -> Path folder database
@@ -121,20 +124,19 @@ def waterGlobal (name_database, limit_acc = 20.0):
     return: NONE
     """
     
-    path_dir_result_global = pathManage.result (name_database)
+    pr_result = pathManage.result (name_database + "/water")
     
     # retrieve list PDB file
-    list_PDBID = managePDB.retriveListPDB(name_database)
-    print len (list_PDBID)
-    
+    l_PDBID = managePDB.retriveListPDB(name_database)
     # calcul acc with NACESS
-    for PDB_ID in list_PDBID :
-        p_PDB = pathManage.pathDitrectoryPDB () + PDB_ID + ".pdb"
-        runOtherSoft.runNACESS(p_PDB, pathManage.pathDitrectoryPDB (), multi_run = 0)
-    
-    path_file_result = waterAnalysis.resolutionWater(list_PDBID, path_dir_result_global, limit_acc)
+    if limit_acc != 0.0 : 
+        for PDB_ID in l_PDBID :
+            p_PDB = pathManage.pathDitrectoryPDB () + PDB_ID + ".pdb"
+            runOtherSoft.runNACESS(p_PDB, pathManage.pathDitrectoryPDB (), multi_run = 0)
+        
+    p_filout = waterAnalysis.resolutionWater(l_PDBID, pr_result, limit_acc)
 
-    runScriptR.waterPlotResolution (path_file_result)
+    runScriptR.waterPlotResolution (p_filout)
     
 
 
@@ -175,7 +177,7 @@ RFree_thresold = 0.25
 # main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0, option_stat = 0, option_stat_dataset = 1)
 
 # # PDB
-main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 0, option_stat_dataset = 1)
+main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 0, option_stat_dataset = 0)
 
 # test
@@ -209,6 +211,7 @@ main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX
 
 # waterGlobal ("PDB20", limit_acc = 20.0)
 # waterGlobal ("PDB50", limit_acc = 20.0)
+# waterGlobal ("PDB50", limit_acc = 0.0)
 # waterGlobal ("PDB", limit_acc = 20.0)
 # waterFamily("PDB")
 # waterFamily("PDB50")

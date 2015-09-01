@@ -562,7 +562,7 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
     
 # #  
 # #     # distribution distance interest group and type atoms -> distance type
-#     distanceAnalysis(st_atom, pathManage.resultDistance(pr_result), logFile)
+    distanceAnalysis(st_atom, pathManage.resultDistance(pr_result), logFile)
 # #         
 # #     # angleSubs -> directory angles
 #     angleSubs(st_atom, pr_result, max_distance, logFile)

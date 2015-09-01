@@ -90,19 +90,19 @@ def retrievePDB (path_folder_database, path_file_withPDBid):
 def retriveListPDB (name_database):
     
     if name_database == "PDB" : 
-        directory_PDB = pathManage.pathDitrectoryPDB()
-        list_files = listdir(directory_PDB)
+        pr_PDB = pathManage.pathDitrectoryPDB()
+        l_filesPDB = listdir(pr_PDB)
         
         list_pdb = []
-        for file_PDB in list_files : 
+        for file_PDB in l_filesPDB : 
             if file_PDB[-4:] == ".pdb" : 
                 list_pdb.append (file_PDB[-8:-4])
         
         return formatCharacter.lowerList(list_pdb)
     
     else : 
-        path_file_database = pathManage.repInit + name_database + ".xml"
-        file_database = open (path_file_database, "r")
+        p_file_database = pathManage.repInit + name_database + ".xml"
+        file_database = open (p_file_database, "r")
         file_read = file_database.read()
         file_database.close ()
         
@@ -110,7 +110,6 @@ def retriveListPDB (name_database):
         list_pdb = regex.findall (file_read)
         list_pdb = list(set(list_pdb))
         
-        print len (list_pdb)
         
         return formatCharacter.lowerList(list_pdb) 
 

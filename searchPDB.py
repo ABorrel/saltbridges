@@ -479,7 +479,6 @@ def globalSearch (dist_thresold, p_file_dataset,  pr_result, debug = 0):
      
     
     #start, logFile = log.initAction("search neighbors in " +path.basename(p_file_dataset))
-     
     l_lig = loadFile.resultFilterPDBLigand(p_file_dataset)
     nb_lig = len(l_lig)
     
@@ -589,105 +588,6 @@ def implementNeighborStruct (max_distance, l_atom_connect_central, name_PDB, l_a
         st_neighbor[subs].append(atom_neighbors)
 
 
-# # # # # # # def regroupAtomNeighborGuanidium(listAtomRegroup, stAtom, listAtomLigand):  # #A revoir tres tres lourds en temps -> BUG
-# # # # # # #     """Regroup neighbors for 3 nitrogen atoms guanidium
-# # # # # # #     in: list atom finds in search neighbors, count structure stAtom, list atom of ligand in pdb
-# # # # # # #     out: modification stAtom structure"""
-# # # # # # #     
-# # # # # # #     
-# # # # # # #     for atomRegroup in listAtomRegroup : 
-# # # # # # #         atomRegroupConnect, connectAtomRegroup = retrieveAtom.atomConnect(listAtomLigand, atomRegroup["serial"])
-# # # # # # #         if connectAtomRegroup == ["N", "C"] : 
-# # # # # # #             atom1 = atomRegroup 
-# # # # # # #             
-# # # # # # #     outAtom = {}
-# # # # # # #     outAtom["PDB"] = atom1["PDB"]
-# # # # # # #     outAtom["resName"] = atom1["resName"]
-# # # # # # #     outAtom["serial"] = atom1["serial"]
-# # # # # # #     outAtom["x"] = atom1["x"]
-# # # # # # #     outAtom["y"] = atom1["y"]
-# # # # # # #     outAtom["z"] = atom1["z"]
-# # # # # # #     outAtom["neighbors"] = deepcopy(atom1["neighbors"]) 
-# # # # # # #     
-# # # # # # #     listAtomConnectN, connectMatrixN = retrieveAtom.atomConnect(listAtomLigand, atom1["serial"])
-# # # # # # #     listAtomConnectC, connectMatrixC = retrieveAtom.atomConnect(listAtomLigand, listAtomConnectN[1]["serial"])
-# # # # # # #     
-# # # # # # #     for atomConnectC in listAtomConnectC : 
-# # # # # # #         for atom in listAtomRegroup :
-# # # # # # #             if atom["serial"] == atomConnectC["serial"] : 
-# # # # # # #                 for neighbor in atom["neighbors"] : 
-# # # # # # #                     if not neighbor in outAtom["neighbors"] : 
-# # # # # # #                         outAtom["neighbors"].append(neighbor)
-# # # # # # #     
-# # # # # # #     stAtom.append(outAtom)
-# # # # # # #     
-# # # # # # # 
-# # # # # # # 
-# # # # # # # 
-# # # # # # # def regroupAtomNeighbor (atomRegroup, struct_neighbor, listAtomLigand):
-# # # # # # #     """regroup equivalent atom
-# # # # # # #     in: atom no regroup, struct_neighbor structure neighbor, list atom ligand
-# # # # # # #     out: struct_neighbor modified"""
-# # # # # # #     
-# # # # # # #     
-# # # # # # #     if len(atomRegroup) == 2 : 
-# # # # # # #         struct_neighbor.append(regroupNeighbor(atomRegroup[0]["serial"], atomRegroup[1]["serial"], atomRegroup))
-# # # # # # #         
-# # # # # # #         
-# # # # # # #     else : 
-# # # # # # #         l_atom_serial = []
-# # # # # # #         for atom in atomRegroup : 
-# # # # # # #             l_atom_serial.append(atom["serial"])
-# # # # # # #         nbSerial = len(l_atom_serial)
-# # # # # # #       
-# # # # # # #         i = 0
-# # # # # # #         while i < nbSerial : 
-# # # # # # #             l_atom_bond, conect = retrieveAtom.atomConnect(listAtomLigand, l_atom_serial[i])
-# # # # # # #             
-# # # # # # #             for atom_bond in l_atom_bond[1:] : 
-# # # # # # #                 l_intersect = list(set(l_atom_serial) & set(atom_bond["connect"]))# intersect list
-# # # # # # #                 if len(l_intersect) > 2 : 
-# # # # # # #                     print "ERROR regroup (searchPDB line 625)"
-# # # # # # #                 elif len(l_intersect) == 2 : 
-# # # # # # #                     struct_neighbor.append(regroupNeighbor(atomRegroup[0]["serial"], atomRegroup[1]["serial"], atomRegroup))
-# # # # # # #                     l_atom_serial.remove (l_intersect[0])
-# # # # # # #                     l_atom_serial.remove (l_intersect[1])
-# # # # # # #                     nbSerial = nbSerial -2
-# # # # # # #                     continue
-# # # # # # #                 else : 
-# # # # # # #                     pass
-# # # # # # #             i = i + 1
-# # # # # # #     
-# # # # # # #                     
-# # # # # # # def regroupNeighbor(serial1, serial2, l_atom_lig):
-# # # # # # #     """Regroup list neighbor that 2 atom
-# # # # # # #     in: atom serial 1, atom serial 2, list atoms
-# # # # # # #     out: list neighbors global"""
-# # # # # # #     
-# # # # # # #     for atom in l_atom_lig : 
-# # # # # # #         if atom["serial"] == serial1 : 
-# # # # # # #             atom1 = atom
-# # # # # # #             
-# # # # # # #         if atom["serial"] == serial2 : 
-# # # # # # #             atom2 = atom
-# # # # # # # 
-# # # # # # # #    print len(atom1["neighbors"]), len(atom2["neighbors"])    
-# # # # # # #     outAtom = {}
-# # # # # # #     outAtom["PDB"] = atom1["PDB"]
-# # # # # # #     outAtom["resName"] = atom1["resName"]
-# # # # # # #     outAtom["serial"] = atom1["serial"]
-# # # # # # #     outAtom["x"] = atom1["x"]
-# # # # # # #     outAtom["y"] = atom1["y"]
-# # # # # # #     outAtom["z"] = atom1["z"]
-# # # # # # #     
-# # # # # # #     outAtom["neighbors"] = deepcopy(atom1["neighbors"])
-# # # # # # #     
-# # # # # # #     for neighbor in atom2["neighbors"] : 
-# # # # # # #         outAtom["neighbors"].append(neighbor)
-# # # # # # #     
-# # # # # # # #    print len(outAtom["neighbors"])
-# # # # # # #     return outAtom
-# # # # # # #     
 
 ######################################################################################
 
@@ -1003,7 +903,6 @@ def Nclose (atom, l_at_lig) :
                 atom_temp = deepcopy(at_lig)
     
     if "atom_temp" in locals() : 
-        print d_min
         return atom_temp
     else : 
         return {}

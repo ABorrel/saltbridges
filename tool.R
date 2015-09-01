@@ -111,11 +111,34 @@ AFC = function (d, path_file){
 # color #
 #########
 
+addTrans <- function(color,trans)
+{
+  # This function adds transparancy to a color.
+  # Define transparancy with an integer between 0 and 255
+  # 0 being fully transparant and 255 being fully visable
+  # Works with either color and trans a vector of equal length,
+  # or one of the two of length 1.
+
+  if (length(color)!=length(trans)&!any(c(length(color),length(trans))==1)) stop("Vector lengths not correct")
+  if (length(color)==1 & length(trans)>1) color <- rep(color,length(trans))
+  if (length(trans)==1 & length(color)>1) trans <- rep(trans,length(color))
+
+  num2hex <- function(x)
+  {
+    hex <- unlist(strsplit("0123456789ABCDEF",split=""))
+    return(paste(hex[(x-x%%16)/16+1],hex[x%%16+1],sep=""))
+  }
+  rgb <- rbind(col2rgb(color),trans)
+  res <- paste("#",apply(apply(rgb,2,num2hex),2,paste,collapse=""),sep="")
+  return(res)
+}
+
+
 
 defColor = function (l_name){
 
 	out = c()
-	colorCharge = "red"
+	colorCharge = "#FF0000"
 	colorPolar = "#FF6600"
 	colorAr = "#9900CC"
 	colorOther = "#808080"
@@ -126,40 +149,40 @@ defColor = function (l_name){
 	
 	for (element in l_name){
 		if (attr(regexpr("OxAcid",element),"match.length") >= 1){
-			out = append (out, "red")
+			out = append (out, "#FF0000")
 		}
 		else if (attr(regexpr("ODonAcc",element),"match.length") >= 1){
-			out = append (out, "orange")
+			out = append (out, "#FF6600")
 		}
 		else if (attr(regexpr("Sulfur",element),"match.length") >= 1){
-			out = append (out, "gold")
+			out = append (out, "#FFD700")
 		}
 		else if (attr(regexpr("Nhis",element),"match.length") >= 1){
-			out = append (out, "darkblue")
+			out = append (out, "#000080")
 		}
 		else if (attr(regexpr("Nbasic",element),"match.length") >= 1){
-			out = append (out, "blue")
+			out = append (out, "#0000FF")
 		}
 		else if (attr(regexpr("Carom",element),"match.length") >= 1){
-			out = append (out, "purple")
+			out = append (out, "#9900CC")
 		}
 		else if (attr(regexpr("OxPep",element),"match.length") >= 1){
-			out = append (out, "coral")
+			out = append (out, "#FF7F50")
 		}
 		else if (attr(regexpr("Ndonnor",element),"match.length") >= 1){
-			out = append (out, "green")
+			out = append (out, "#00b200")
 		}
 		else if (attr(regexpr("OxAccept",element),"match.length") >= 1){
-			out = append (out, "bisque3")
+			out = append (out, "#CDB79E")
 		}
 		else if (attr(regexpr("H2O",element),"match.length") >= 1){
-			out = append (out, "cyan")
+			out = append (out, "#33FFFF")
 		}
 		else if (attr(regexpr("CPep",element),"match.length") >= 1){
-			out = append (out, "brown")
+			out = append (out, "#663300")
 		}
 		else if (attr(regexpr("others",element),"match.length") >= 1){
-			out = append (out, "grey")
+			out = append (out, "#D3D3D3")
 		}
 		else if (is.integer0 (grep("GLU", element))== FALSE){
 			out = append (out, colorCharge)
@@ -219,7 +242,7 @@ defColor = function (l_name){
 			out = append (out, colorApolar)
 		}
 		else {
-			out = append (out, "black")
+			out = append (out, "#000000")
 		}
 	}
 	names(out) = l_name

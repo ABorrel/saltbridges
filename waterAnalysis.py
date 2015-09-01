@@ -11,33 +11,49 @@ import structure
 import loadFile
 
 
-def resolutionWater (list_PDB, path_folder_result, limit_acc = 20.0):
+def resolutionWater (l_PDB, pr_result, limit_acc = 00.0):
     
-    path_folder_database = pathManage.pathDitrectoryPDB()
-    path_filout = path_folder_result + "statwater_" + str (limit_acc) + ".dat"
-    if path.isfile(path_filout) and path.getsize(path_filout) > 0 : 
-        pass
-    else : 
-        filout = open (path_filout, "w")
+    pr_PDB = pathManage.pathDitrectoryPDB()
+    p_filout = pr_result + "statwater_" + str (limit_acc) + ".dat"
+    #if path.isfile(p_filout) and path.getsize(p_filout) > 0 : 
+    #    return p_filout
+    
+    filout = open (p_filout, "w")
+    filout.write("PDB ID\tResolution\tNumber of exposed residues\tNumber of residue\tNumber of water\n")
         
-        for PDB_ID in list_PDB : 
-            path_file_PDB = path_folder_database + PDB_ID + ".pdb"
-            path_file_asa = path_folder_database + PDB_ID + ".asa"
-            path_file_rsa = path_folder_database + PDB_ID + ".rsa"
-                    
-            if not path.isfile(path_file_asa) or not path.isfile(path_file_rsa) : 
-                print "Error NACCESS", path_file_asa
+    for PDB_ID in l_PDB : 
+        print PDB_ID
+        d_PDB = loadFile.ExtractInfoPDBID(PDB_ID)
+        if d_PDB == {} : 
+            continue
+            
+        if limit_acc == 0.0 : 
+            number_residue_exposed = 0
+        else : 
+            p_fileasa = pr_PDB + PDB_ID + ".asa"
+            p_filersa = pr_PDB + PDB_ID + ".rsa"
+                
+            if not path.isfile(p_fileasa) or not path.isfile(p_filersa) : 
+                print "Error NACCESS", p_fileasa
                 continue
-                    
-            Quality = parsing.Quality(PDB_ID)
-            if Quality == 1000.0 : 
-                continue
-            number_residue_exposed, number_residue = parseNACCESS.numberResExposed(path_file_rsa, limit_acc)
-            number_water = parsing.countH2O (path_file_PDB) 
-                    
-            filout.write (str (PDB_ID) + "\t" + str (Quality) + "\t" + str (number_residue_exposed) + "\t" + str (number_residue) + "\t" + str (number_water) + "\n")
-        filout.close ()
-    return path_filout
+            else : 
+                number_residue_exposed, number_residue = parseNACCESS.numberResExposed(p_filersa, limit_acc)
+               
+        RX = d_PDB["RX"]
+        # case where resolution is not presented in the PDB file
+        if RX == 100.0 : 
+            continue
+        if not "HOH" in d_PDB.keys () : 
+            continue
+            
+        number_residue = len(d_PDB["protein"])
+        number_water = len(d_PDB["HOH"])
+            
+               
+        filout.write (str (PDB_ID) + "\t" + str (RX) + "\t" + str (number_residue_exposed) + "\t" + str (number_residue) + "\t" + str (number_water) + "\n")
+    filout.close ()
+        
+    return p_filout
 
 
 
@@ -77,10 +93,10 @@ def searchCountH2O (atom_interest):
     
     
         
-def nbH2O (neigbor):
+def nbH2O (l_atom):
     
     out = 0
-    for d_neighbor in neigbor : 
+    for d_neighbor in l_atom : 
         if d_neighbor["resName"] == "HOH" : 
             out = out + 1
     return out
