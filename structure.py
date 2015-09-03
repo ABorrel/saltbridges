@@ -534,15 +534,15 @@ def criteraAngle(subs = "", loose = 0):
         d_criteria["Primary"]["distance"] = [3.0,4.0]
         
         d_criteria["Secondary"] = {}
-        d_criteria["Secondary"]["angle"] = [80,120]
+        d_criteria["Secondary"]["angle"] = [85,135]
         d_criteria["Secondary"]["distance"] = [3.0,4.0]
         
         d_criteria["Tertiary"] = {}
-        d_criteria["Tertiary"]["angle"] = [90,130]
-        d_criteria["Tertiary"]["distance"] = [2.5,3.0]
+        d_criteria["Tertiary"]["angle"] = [70,140]
+        d_criteria["Tertiary"]["distance"] = [3.0,4.0]
         
         d_criteria["Imidazole"] = {}
-        d_criteria["Imidazole"]["angle"] = [110,150]
+        d_criteria["Imidazole"]["angle"] = [0,30]
         d_criteria["Imidazole"]["distance"] = [2.2,5.0]
         
         # change criterion because I change 11-08 the number of angle considered -> need more data

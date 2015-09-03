@@ -110,11 +110,11 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
     
 # #  
 # #     # distribution distance interest group and type atoms -> distance type
-#     distanceAnalysis(st_atom, pathManage.resultDistance(pr_result), logFile)
+    distanceAnalysis(st_atom, pathManage.resultDistance(pr_result), logFile)
 # #         
 # #     # angleSubs -> directory angles
     AngleSubs(st_atom, pr_result, max_distance)
-#     AngleSelect (st_atom, pr_result)
+    AngleSelect (st_atom, pr_result)
 # #         
 # #     # global analysis proximity -1 atom ligand // -2 aa type // -3 atom classification
 #     ligandProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)

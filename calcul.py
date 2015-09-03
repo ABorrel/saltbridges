@@ -319,17 +319,22 @@ def anglePrimaryAmine(atomNitrogen, atomCounterIon, atomLigands):
 
 
 
-def angleImidazole(atom_central, atom_check, l_atom_lig, debug = 0):
+def AngleNImd(atom_center, atom_check, l_atom_lig, debug = 0):
     """
     based one central atom, take C between the two N
     """
     
-    for atom_lig in l_atom_lig : 
-        if atom_lig["element"] == "C" :
-            d_temp = distanceTwoatoms(atom_central, atom_lig)
-            if d_temp < 2.0 : 
-                d_Cconsidered = deepcopy(atom_lig)
-                return [angleVector(d_Cconsidered, atom_central, atom_check)]
+    for atom_lig in l_atom_lig :
+        l_atom2, connect1 = retrieveAtom.atomConnect(l_atom_lig, atom_lig["serial"])
+        
+        if connect1 == ["N", "C", "C"] : 
+            dist_N_center = distanceTwoatoms(l_atom2[0], atom_center) 
+            
+            if dist_N_center < 2.0 : 
+                angle = Angle3Atoms(atom_check, atom_center, l_atom2[0])
+                
+                return [angle]
+        
     return ["NA"]
     
 
@@ -348,7 +353,7 @@ def angleSubs(central_atom, atom_found, l_atom_lig, subs):
     elif subs == "Tertiary" :
         return angleTertiaryAmine(central_atom, atom_found, l_atom_lig)
     elif subs == "Imidazole" :
-        return angleImidazole(central_atom, atom_found, l_atom_lig)
+        return AngleNImd(central_atom, atom_found, l_atom_lig)
 #     elif subs == "Diamine" :
 #         return anglePrimaryAmine(central_atom, atom_found, l_atom_lig)
 #     elif subs == "Pyridine" :
@@ -488,19 +493,21 @@ def angleImidazoleCalculVol(atomN1, atomN3, atom_test):
     
   
     
-def CenterImidazole (l_atom_connectN, l_atom_lig) : 
+def CenterImidazole (l_atom_in, l_atom_lig) : 
     
-    atomN1 = l_atom_connectN[0]
+    atomN1 = deepcopy(l_atom_in[0])
     
     
-    for atom_connectN in l_atom_connectN[1:] :
-        l_atom_connect2, l_serial = retrieveAtom.atomConnect(l_atom_lig, atom_connectN["serial"])
+    for atom2 in l_atom_in[1:] :
         
-        for atom_connect2 in l_atom_connect2[1:] : 
-            if atom_connect2["element"] == "N" : 
-                d_N = distanceTwoatoms(atomN1, atom_connect2)
-                if d_N < 2.4 : 
-                    return CenterPoint(atomN1, atom_connect2)
+        l_atom3, connect2 = retrieveAtom.atomConnect(l_atom_lig, atom2["serial"])
+        connect2.sort ()
+        
+        if connect2 == ["C", "C", "N", "N"] or connect2 == ["C", "N", "N"] :         
+            for atom3 in l_atom3[1:] :
+                if atom3["element"] == "N" and atom3["serial"] != atomN1["serial"] : 
+                    center_atom = CenterPoint(atomN1, atom3)
+                    return center_atom
                 
     print "ERROR"            
     return "ERROR"   
@@ -519,7 +526,7 @@ def CenterPoint (atom1, atom2):
     try : a_out["resSeq"] = atom1["resSeq"]
     except : a_out["resSeq"] = "1"
     try : a_out["iCode"] = atom1["iCode"]
-    except : a_out["iCode"] = ""
+    except : a_out["iCode"] = "0"
     a_out["element"] = "Z"
     
     a_out["x"] = (atom1["x"] + atom2["x"])/2
