@@ -497,9 +497,7 @@ def globalSearch (dist_thresold, p_file_dataset,  pr_result, debug = 1):
     
     
     # load structure in summary ---> if use need place option one PDB by ligand
-#     d_neighbor = loadFile.loadCloseStruct (pr_summary)
-    
-    d_neighbor = None  
+    d_neighbor = loadFile.loadCloseStruct (pr_summary)
     
     if d_neighbor != None : 
         if debug : 
@@ -640,7 +638,7 @@ def buildAtom(rayon, at_central, PDB, subs, l_atom_lig):
 
 
 
-def neighbors(rayon, atom_central, pdb, subs = "global", l_atom_lig = [] ):
+def neighbors(rayon, atom_central, pdb, subs = "global", l_atom_lig = [] ): # change the name because in the same time function and variable
     """Search neighbors for all ligand
     in : rayon where is atoms, central atom, pdb file
     out : list atoms found"""

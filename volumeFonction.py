@@ -37,9 +37,9 @@ def defVolumePrimary (pr_init):
             atomC = atom_sub
 
     serial = 0
-    for x_test in [atomN["x"] + x * 0.1 for x in range (-50,60)] : 
-        for y_test in [atomN["y"] + y * 0.1 for y in range (-50,60)] : 
-            for z_test in [atomN["z"] + z * 0.1 for z in range (-50,60)] :  
+    for x_test in [atomN["x"] + x * 0.2 for x in range (-50,60)] : 
+        for y_test in [atomN["y"] + y * 0.3 for y in range (-50,60)] : 
+            for z_test in [atomN["z"] + z * 0.2 for z in range (-50,60)] :  
                 atom_test = structure.genericAtom(x_test, y_test, z_test)
                 distance = calcul.distanceTwoatoms(atom_test, atomN)
                 if distance < d_sup and distance > d_inf: 
@@ -60,7 +60,7 @@ def defVolumePrimary (pr_init):
     
     
     
-def defVolumeSecondary (pr_init):
+def DefVolumeSecondary (pr_init):
     """calculation of volume around nitrogen of primary amine
     in: filePDB with only primary amine, extreme value of l_angle, structure subs
     out: file format filePDB with water"""
@@ -90,15 +90,17 @@ def defVolumeSecondary (pr_init):
                 atomC1 = atom_sub
 
     serial = 0
-    for x_test in [atomN["x"] + x * 0.1 for x in range (-50,60)] : 
-        for y_test in [atomN["y"] + y * 0.1 for y in range (-50,60)] : 
-            for z_test in [atomN["z"] + z * 0.1 for z in range (-50,60)] :  
+    for x_test in [atomN["x"] + x * 0.2 for x in range (-50,60)] : 
+        for y_test in [atomN["y"] + y * 0.2 for y in range (-50,60)] : 
+            for z_test in [atomN["z"] + z * 0.2 for z in range (-50,60)] :  
                 atom_test = structure.genericAtom(x_test, y_test, z_test)
-                distance = calcul.distanceTwoatoms(atom_test, atomN)
-                if distance < d_sup and distance > d_inf: 
-                    l_angle = calcul.angleSecondaryAmineCalculVol(atomN, atomC1, atomC2, atom_test)
-                    if l_angle[0] > angle_inf and l_angle[1] > angle_inf:
-                        if l_angle[0] < angle_sup and l_angle[1] < angle_sup: 
+                dist = calcul.distanceTwoatoms(atom_test, atomN)
+                if dist < d_sup and dist > d_inf: 
+                    angle1 = calcul.Angle3Atoms(atomC1, atomN, atom_test)
+                    angle2 = calcul.Angle3Atoms(atomC2, atomN, atom_test)
+#                     if angle1 >= angle_inf and angle2 >= angle_inf:
+#                         if angle1 <= angle_sup and angle2 <= angle_sup : 
+                    if min([angle1, angle2]) >= angle_inf and min([angle1, angle2])<= angle_sup : 
                             serial = serial + 1
                             atom_test["serial"] = serial
                             atom_test["resSeq"] = serial

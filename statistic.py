@@ -17,6 +17,7 @@ from os import path
 from copy import deepcopy
 from numpy import sum
 from re import search
+from _ast import Sub
 
 
 def ParseDataSet(p_dataset, debug = 0):
@@ -52,9 +53,9 @@ def ParseDataSet(p_dataset, debug = 0):
         print l_sub_found
         
         
-        if l_sub_found == [] : 
-            print d_lig["PDB"], d_lig["name"]
-            gggg
+# # #         if l_sub_found == [] : 
+# # #             print d_lig["PDB"], d_lig["name"]
+# # #             gggg
         
         if debug : print l_sub_found, "==l48-statistic=="
         
@@ -87,6 +88,66 @@ def ParseDataSet(p_dataset, debug = 0):
     print d_sub["Imidazole"]
 
 
+
+def globalRunStatistic(st_atom, max_distance, pr_result):
+    """
+    Search close environment of different amines
+    arg: -> distance max 
+         -> file with dataset
+    """
+    
+    print st_atom.keys ()
+    
+    start, logFile = log.initAction("RUN Statistic")
+# # 
+    # proportion salt bridges
+#     saltBridges (st_atom, pathManage.resultSaltBridges(pr_result), logFile)
+#     EnvironmentSaltBridges (st_atom, pathManage.resultSaltBridges (pr_result, name_in = "conditional"), logFile)
+
+    # loose    
+#     saltBridges (st_atom, pathManage.resultSaltBridges(pr_result, "loose"), logFile, restrained = 0)
+#     EnvironmentSaltBridges (st_atom, pathManage.resultSaltBridges (pr_result, name_in = "loose/conditional"), logFile, restrained = 0)    
+    
+# #  
+# #     # distribution distance interest group and type atoms -> distance type
+#     distanceAnalysis(st_atom, pathManage.resultDistance(pr_result), logFile)
+# #         
+# #     # angleSubs -> directory angles
+    AngleSubs(st_atom, pr_result, max_distance)
+#     AngleSelect (st_atom, pr_result)
+# #         
+# #     # global analysis proximity -1 atom ligand // -2 aa type // -3 atom classification
+#     ligandProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
+#     atomProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "atmProx"), max_distance, logFile)
+#     resProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "resProx"), max_distance, logFile)
+#     classifResProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "classifAtmProx"), max_distance, logFile)
+#     atomByAa(st_atom, pathManage.countGlobalProx (pr_result, name_in = "byAA") ,max_distance, logFile )
+# #         
+# #         
+# #     # analyse number of neighbors -> number of atom type (C, O, N)
+#     numberNeighbor (st_atom, pathManage.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
+#     neighborAtomComposition(st_atom, pathManage.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
+#     firstNeighbor (st_atom, pathManage.countNeighbor(pr_result, "firstNeighbor"), logFile)
+#     allNeighbors (st_atom, pathManage.countNeighbor(pr_result, "allNeighbor"), logFile)
+#     ResidueNeighbors (st_atom, pathManage.countNeighbor(pr_result, "residuesNeighbor"), logFile)
+# #      
+# #     # with two area defintion
+#     d_area1, d_area2 = splitTwoArea (st_atom)
+#     allNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1"), logFile)
+#     allNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
+# # 
+# # #    # combination
+#     combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
+#     combinationNeighborsAngle (st_atom, pathManage.combination(pr_result, "angleSubs"))
+#     superimpose.SuperimposeFirstNeighbors (st_atom, pathManage.combination(pr_result, "superimposed"))
+# #     
+
+    log.endAction("END Statistic run !!!", start, logFile)
+
+
+
+
+
 def distanceAnalysis(stAtm, dir_out, logfile):
 
     d_file = structure.DFile2K(dir_out)
@@ -112,10 +173,9 @@ def distanceAnalysis(stAtm, dir_out, logfile):
             runScriptR.plotDistance(p_file, logfile)
 
 
-def angleSubs(st_atom, pr_result, d_max, log_file):
+def AngleSubs(st_atom, pr_result, d_max):
 
     d_count_global = {}
-    log_file.write ("[ANGLE] - count structure implementation\n")
 
     for subs in st_atom.keys():
         if subs == "global" : continue
@@ -143,8 +203,46 @@ def angleSubs(st_atom, pr_result, d_max, log_file):
     writeFile.dAngleType(d_count_angle, pr_result)
     
     # plot angleSubs
-    runScriptR.plotAngle(l_p_angle, log_file)
+    runScriptR.plotAngle(l_p_angle)
     
+
+def AngleSelect (st_atom, pr_result) : 
+    
+    criteria = structure.criteraAngle()
+    
+    for sub in st_atom.keys () : 
+        # do not need global
+        if sub == "global" : 
+            continue
+        l_distlimit = criteria[sub]["distance"]
+        nb_test = len (l_distlimit) / 2
+        d_file = {}
+        d_file[sub] = {}
+        i = 0
+        while i < nb_test : 
+            min_dist = l_distlimit[i]
+            max_dist = l_distlimit[i + 1]
+            name_folder = str (sub) + str (min_dist) + "-" + str (max_dist)
+            
+            for atom_central in st_atom[sub] : 
+                for neighbor in atom_central["neighbors"] : 
+                    if neighbor ["distance"] >= min_dist and neighbor["distance"] <= max_dist : 
+                        type_atom = structure.classificationATOM(neighbor)
+                        if not type_atom in d_file[sub].keys () : 
+                            p_filetype = pathManage.ResultAngleCriteria(pr_result, name_folder) + "angle_" + str (type_atom)
+                            d_file[sub][type_atom] = open (p_filetype, "w")
+                        for angle in neighbor["angleSubs"] : 
+                            d_file[sub][type_atom].write(str (angle) + "\t" + str(neighbor["distance"]) + "\t" + str (type_atom) + "\t" + str(atom_central["resName"]) + "\t" + str (atom_central["PDB"]) + "\n")
+            i = i + 2
+        
+        for k in d_file[sub].keys () : 
+            d_file[sub][k].close ()
+            
+            # run plot
+            runScriptR.HistAngle (d_file[sub][k].name)
+    
+
+
 
 def atomProx(st_atom, pr_result, max_distance, logFile):
     
@@ -552,63 +650,6 @@ def searchMoreClose (l_neighbors, option_lcopy = 0) :
     del l_neighbors_use[i_out]
     return classe_out, atom_out    
      
-
-def globalRunStatistic(st_atom, max_distance, pr_result):
-    """
-    Search close environment of different amines
-    arg: -> distance max 
-         -> file with dataset
-    """
-    
-    print st_atom.keys ()
-    
-    start, logFile = log.initAction("RUN Statistic")
-# # 
-    # proportion salt bridges
-#     saltBridges (st_atom, pathManage.resultSaltBridges(pr_result), logFile)
-#     EnvironmentSaltBridges (st_atom, pathManage.resultSaltBridges (pr_result, name_in = "conditional"), logFile)
-
-    # loose    
-#     saltBridges (st_atom, pathManage.resultSaltBridges(pr_result, "loose"), logFile, restrained = 0)
-#     EnvironmentSaltBridges (st_atom, pathManage.resultSaltBridges (pr_result, name_in = "loose/conditional"), logFile, restrained = 0)    
-    
-# #  
-# #     # distribution distance interest group and type atoms -> distance type
-    distanceAnalysis(st_atom, pathManage.resultDistance(pr_result), logFile)
-# #         
-# #     # angleSubs -> directory angles
-#     angleSubs(st_atom, pr_result, max_distance, logFile)
-# #         
-# #     # global analysis proximity -1 atom ligand // -2 aa type // -3 atom classification
-#     ligandProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
-#     atomProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "atmProx"), max_distance, logFile)
-#     resProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "resProx"), max_distance, logFile)
-#     classifResProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "classifAtmProx"), max_distance, logFile)
-#     atomByAa(st_atom, pathManage.countGlobalProx (pr_result, name_in = "byAA") ,max_distance, logFile )
-# #         
-# #         
-# #     # analyse number of neighbors -> number of atom type (C, O, N)
-#     numberNeighbor (st_atom, pathManage.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
-#     neighborAtomComposition(st_atom, pathManage.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
-#     firstNeighbor (st_atom, pathManage.countNeighbor(pr_result, "firstNeighbor"), logFile)
-#     allNeighbors (st_atom, pathManage.countNeighbor(pr_result, "allNeighbor"), logFile)
-    ResidueNeighbors (st_atom, pathManage.countNeighbor(pr_result, "residuesNeighbor"), logFile)
-# #      
-# #     # with two area defintion
-#     d_area1, d_area2 = splitTwoArea (st_atom)
-#     allNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1"), logFile)
-#     allNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
-# # 
-# # #    # combination
-#     combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
-#     combinationNeighborsAngle (st_atom, pathManage.combination(pr_result, "angleSubs"))
-#     superimpose.SuperimposeFirstNeighbors (st_atom, pathManage.combination(pr_result, "superimposed"))
-# #     
-
-    log.endAction("END Statistic run !!!", start, logFile)
-
-
-
 
 
 

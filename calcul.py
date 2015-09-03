@@ -263,34 +263,37 @@ def angleTertiaryAmine (atomNitrogen, atomCounterIon, listAtomLigand):
         return [angle1, angle2, angle3]
 
 
-def angleSecondaryAmine(atomNitrogen, atomCounterIon, listAtomLigand):
-    """Calcul for nitrogen and counter ion angles
-    in: atom nitrogen, atom Counter Ions
-    out: list of 2 angles"""
+def AngleSecondaryFromLig(atomN, atom_neighbor, l_atom_lig):
+    """Calcul for nitrogen and neighbor
+    in: atom nitrogen, atom neighbor
+    out: angle between muddle of 2 cabones and N and neigbbor"""
     
-    matrix = atomNitrogen["connect"]
-    if len(matrix) < 3:
+    l_connect = atomN["connect"]
+    if len(l_connect) < 3:
         print "Atom does not 2 bonds !!"
         return
 
     else:
 
-        carbon1 = retrieveAtom.serial(matrix[1], listAtomLigand)
-        carbon2 = retrieveAtom.serial(matrix[2], listAtomLigand)
-
-        distanceNitrogenCounterIon = distanceTwoatoms(atomNitrogen, atomCounterIon)
-
-        distanceCarbon1CounterIon = distanceTwoatoms(atomCounterIon, carbon1)
-        distanceCarbon2CounterIon = distanceTwoatoms(atomCounterIon, carbon2)
-
-        distanceNitrogenCarbon1 = distanceTwoatoms(atomNitrogen, carbon1)
-        distanceNitrogenCarbon2 = distanceTwoatoms(atomNitrogen, carbon2)
-
-        angle1 = degrees(acos((distanceNitrogenCarbon1 * distanceNitrogenCarbon1 + distanceNitrogenCounterIon * distanceNitrogenCounterIon - distanceCarbon1CounterIon * distanceCarbon1CounterIon) / (2 * distanceNitrogenCarbon1 * distanceNitrogenCounterIon)))
-        angle2 = degrees(acos((distanceNitrogenCarbon2 * distanceNitrogenCarbon2 + distanceNitrogenCounterIon * distanceNitrogenCounterIon - distanceCarbon2CounterIon * distanceCarbon2CounterIon) / (2 * distanceNitrogenCarbon2 * distanceNitrogenCounterIon)))
-
-
+        atomC1 = retrieveAtom.serial(l_connect[1], l_atom_lig)
+        atomC2 = retrieveAtom.serial(l_connect[2], l_atom_lig)
+        
+        angle1 = Angle3Atoms (atomC1, atomN, atom_neighbor)
+        angle2 = Angle3Atoms (atomC2, atomN, atom_neighbor)
+        
         return [angle1, angle2]
+
+
+def Angle3Atoms (atom1, atom_center, atom3):
+    
+    dist_central_atom3 = distanceTwoatoms(atom_center, atom3)
+    dist_central_atom1 = distanceTwoatoms(atom_center, atom1)
+    dist_atom1_atom3 = distanceTwoatoms(atom3, atom1)
+        
+    angle_out = degrees(acos((dist_central_atom1 * dist_central_atom1 + dist_central_atom3 * dist_central_atom3 - dist_atom1_atom3 * dist_atom1_atom3) / (2 * dist_central_atom1 * dist_central_atom3)))
+        
+    return angle_out
+    
 
 
 def anglePrimaryAmine(atomNitrogen, atomCounterIon, atomLigands):
@@ -332,54 +335,6 @@ def angleImidazole(atom_central, atom_check, l_atom_lig, debug = 0):
 
 
 
-# def angleImidazolePyridine(atomNitrogen, atomFound, listAtomLigand):
-#     """
-#     OLD VERSION based on nitrogen
-#     """
-#     matrix = atomNitrogen["connect"]
-#     atomC1 = retrieveAtom.serial(matrix[1], listAtomLigand)
-#     atomC2 = retrieveAtom.serial(matrix[2], listAtomLigand)
-#     
-#     if len (matrix) == 4 : 
-#         if atomC1 == 0 : 
-#             atomC1 = retrieveAtom.serial(matrix[-1], listAtomLigand)
-#         if atomC2 == 0 : 
-#             atomC2 = retrieveAtom.serial(matrix[-1], listAtomLigand)
-#             
-# #     print "c1", atomC1
-# #     print "c2", atomC2
-# #     print "c3", atomNitrogen
-# 
-#     plan = equationPlan(atomC1, atomNitrogen, atomC2)    
-#     
-#     xN = atomNitrogen["x"]
-#     yN = atomNitrogen["y"]
-#     zN = atomNitrogen["z"]
-# 
-#     minDiff = 100
-#     pointTest = {}
-#     pointTest["x"] = xN
-#     pointTest["y"] = yN
-#     pointTest["z"] = zN
-#     pointTest["element"] = "O"
-# 
-#     alpha = angleVector(atomC1, atomNitrogen, atomC2)
-# 
-#     for x in range (-5, 5) :
-#         pointTest["x"] = xN + x * 0.2
-#         for y in range (-5, 5) :
-#             pointTest["y"] = yN + y * 0.2
-#             for z in range (-5, 5) :
-#                 pointTest["z"] = zN + z * 0.2
-#                 Diff = checkPoint(pointTest, atomNitrogen, atomC1, atomC2, plan, alpha)
-#                 if Diff < minDiff :
-#                     pointRef = deepcopy(pointTest)
-#                     minDiff = Diff
-# 
-#     try : return [angleVector(atomFound, atomNitrogen, pointRef)]
-#     except : return []
-
-
 
 def angleSubs(central_atom, atom_found, l_atom_lig, subs):
     """calcul angleSubs for each structure study
@@ -389,7 +344,7 @@ def angleSubs(central_atom, atom_found, l_atom_lig, subs):
     if subs == "Primary" :
         return anglePrimaryAmine(central_atom, atom_found, l_atom_lig)
     elif subs == "Secondary" :
-        return angleSecondaryAmine(central_atom, atom_found, l_atom_lig)
+        return AngleSecondaryFromLig(central_atom, atom_found, l_atom_lig)
     elif subs == "Tertiary" :
         return angleTertiaryAmine(central_atom, atom_found, l_atom_lig)
     elif subs == "Imidazole" :
@@ -397,7 +352,7 @@ def angleSubs(central_atom, atom_found, l_atom_lig, subs):
 #     elif subs == "Diamine" :
 #         return anglePrimaryAmine(central_atom, atom_found, l_atom_lig)
 #     elif subs == "Pyridine" :
-#         return angleSecondaryAmine(central_atom, atom_found, l_atom_lig)
+#         return AngleSecondaryFromLig(central_atom, atom_found, l_atom_lig)
     elif subs == "Guanidium" :
         return angleGuanidium(central_atom, atom_found, l_atom_lig)
     elif subs == "AcidCarboxylic" :
@@ -412,7 +367,6 @@ def angleSubs(central_atom, atom_found, l_atom_lig, subs):
 def angleAcidCarboxylic(central_atom, atom_check, l_atom_lig) : 
     
     l_atom_connect, matrix_connect = retrieveAtom.atomConnect(l_atom_lig, central_atom["serial"])
-    print matrix_connect
     l_O_temp = []
     
     for atom_connect in l_atom_connect[1:] : 
@@ -437,7 +391,6 @@ def angleGuanidium(central_atom, atom_check, l_atom_lig) :
     for atom_N in l_atom_connect_central[1:] : 
         l_atom_connect_N, l_element_N = retrieveAtom.atomConnect(l_atom_lig, atom_N["serial"])
         
-        print l_element_N
         
         if l_element_N == ["N", "C"] : 
             if not l_atom_connect_N[0] in l_N_temp : 
@@ -477,24 +430,24 @@ def anglePrimaryAmineCalculVol(atomN, atomC, atomTest):
     except : return [0.00]
 
 
-def angleSecondaryAmineCalculVol(atomN, atomC1, atomC2, atom_test):
-    """calcul for three atoms angleVector for secondary amine
-    in: atom nitrogen, atoms carbons and atom test
-    out: list angles"""
-
-    distanceNitrogenTest = distanceTwoatoms(atomN, atom_test)
-
-    distanceCarbon1Test = distanceTwoatoms(atom_test, atomC1)
-    distanceCarbon2Test = distanceTwoatoms(atom_test, atomC2)
-
-    distanceNitrogenCarbon1 = distanceTwoatoms(atomN, atomC1)
-    distanceNitrogenCarbon2 = distanceTwoatoms(atomN, atomC2)
-
-    angle1 = degrees(acos((distanceNitrogenCarbon1 * distanceNitrogenCarbon1 + distanceNitrogenTest * distanceNitrogenTest - distanceCarbon1Test * distanceCarbon1Test) / (2 * distanceNitrogenCarbon1 * distanceNitrogenTest)))
-    angle2 = degrees(acos((distanceNitrogenCarbon2 * distanceNitrogenCarbon2 + distanceNitrogenTest * distanceNitrogenTest - distanceCarbon2Test * distanceCarbon2Test) / (2 * distanceNitrogenCarbon2 * distanceNitrogenTest)))
-
-
-    return [angle1, angle2]    
+# def angleSecondaryAmineCalculVol(atomN, atomC1, atomC2, atom_test):
+#     """calcul for three atoms angleVector for secondary amine
+#     in: atom nitrogen, atoms carbons and atom test
+#     out: list angles"""
+# 
+#     distanceNitrogenTest = distanceTwoatoms(atomN, atom_test)
+# 
+#     distanceCarbon1Test = distanceTwoatoms(atom_test, atomC1)
+#     distanceCarbon2Test = distanceTwoatoms(atom_test, atomC2)
+# 
+#     distanceNitrogenCarbon1 = distanceTwoatoms(atomN, atomC1)
+#     distanceNitrogenCarbon2 = distanceTwoatoms(atomN, atomC2)
+# 
+#     angle1 = degrees(acos((distanceNitrogenCarbon1 * distanceNitrogenCarbon1 + distanceNitrogenTest * distanceNitrogenTest - distanceCarbon1Test * distanceCarbon1Test) / (2 * distanceNitrogenCarbon1 * distanceNitrogenTest)))
+#     angle2 = degrees(acos((distanceNitrogenCarbon2 * distanceNitrogenCarbon2 + distanceNitrogenTest * distanceNitrogenTest - distanceCarbon2Test * distanceCarbon2Test) / (2 * distanceNitrogenCarbon2 * distanceNitrogenTest)))
+# 
+# 
+#     return [angle1, angle2]    
     
     
     
@@ -546,7 +499,6 @@ def CenterImidazole (l_atom_connectN, l_atom_lig) :
         for atom_connect2 in l_atom_connect2[1:] : 
             if atom_connect2["element"] == "N" : 
                 d_N = distanceTwoatoms(atomN1, atom_connect2)
-                print d_N
                 if d_N < 2.4 : 
                     return CenterPoint(atomN1, atom_connect2)
                 
@@ -562,9 +514,12 @@ def CenterPoint (atom1, atom2):
     a_out["name"] = atom1["name"]
     a_out["char"] = atom1["char"]
     a_out["resName"] = atom1["resName"]
-    a_out["chainID"] = atom1["chainID"]
-    a_out["resSeq"] = atom1["resSeq"]
-    a_out["iCode"] = atom1["iCode"]
+    try : a_out["chainID"] = atom1["chainID"]
+    except : a_out["chainID"] = ""
+    try : a_out["resSeq"] = atom1["resSeq"]
+    except : a_out["resSeq"] = "1"
+    try : a_out["iCode"] = atom1["iCode"]
+    except : a_out["iCode"] = ""
     a_out["element"] = "Z"
     
     a_out["x"] = (atom1["x"] + atom2["x"])/2

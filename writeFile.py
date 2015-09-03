@@ -614,30 +614,26 @@ def resultResProx(stCount, distance_max, pr_result):
 def resultAngle(d_count, pr_out):
     
     l_p_file = []
-    for type_substruct in d_count.keys():
-        pr_final = pathManage.resultAngle(pr_out, type_substruct)
-        p_filout = pr_final + "angle_" + str(type_substruct)
+    for subs in d_count.keys():
+        pr_final = pathManage.resultAngle(pr_out, subs)
+        p_filout = pr_final + "angle_" + str(subs)
         l_p_file.append (p_filout)
-        filoutGlobal = open(p_filout, "w")
-        for classe in  d_count[type_substruct].keys():
-            nbDistance = len(d_count[type_substruct][classe]["distance"])
-            for i in range(0, nbDistance) : 
-                distanceAt = d_count[type_substruct][classe]["distance"][i]
-                l_element = [str("%.2f" % distanceAt)]
-                #filoutGlobal.write("%.2f" % distanceAt)
+        filout = open(p_filout, "w")
+        for type_atom in  d_count[subs].keys():
+            nb_dist = len(d_count[subs][type_atom]["distance"])
+            for i in range(0, nb_dist) : 
+                dist = d_count[subs][type_atom]["distance"][i]
+                #filout.write("%.2f" % dist)
                 
-                for angleSubs in d_count[type_substruct][classe]["angles"][i] : 
-                    if angleSubs == "NA" : 
-                        a = "NA"
+                for angle in d_count[subs][type_atom]["angles"][i] : 
+                    if angle == "NA" :
+                        continue
                     else : 
-                        a = "%.2f" % angleSubs
-                    #filoutGlobal.write("\t%.2f" % angleSubs)
-                    l_element.append (str(a))
-                l_element.append (classe)
-                if len (l_element) >= 3 : 
-                    print l_element
-                    filoutGlobal.write("\t".join (l_element) + "\n")
-        filoutGlobal.close()
+                        angle = "%.2f" % angle
+                        filout.write (str (dist) + "\t" + str (angle) + "\t" + str (type_atom) + "\n")
+                        
+        filout.close()
+        
     return l_p_file
  
 

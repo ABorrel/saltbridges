@@ -199,41 +199,40 @@ def histAtleastOne(dir_out, logFile):
             system(cmd)
 
 
-def plotAngle(l_p_filin, logFile, debug = 1):
+def plotAngle(l_p_filin, debug = 1):
     """Excecute commande for draw angle plot
     in: distance MAX and log file
     out: Execute CMD -> draw plot
     """
     for p_filin in l_p_filin : 
-        substruct = p_filin.split ("_")[-1]
+# # # #         substruct = p_filin.split ("_")[-1]
         
-        if substruct == "Imidazole" or substruct == "Pyridine" or substruct == "Secondary" : 
-            cmd_3d = pathManage.scriptR() + "angle3D_Secondary.R " + p_filin
-        elif substruct == "Tertiary" : 
-            cmd_3d = pathManage.scriptR() + "angle3D_Tertiary.R " + p_filin    
+        # do not need with the new criterion
+# #         if substruct == "Imidazole" or substruct == "Pyridine" or substruct == "Secondary" : 
+# #             cmd_3d = pathManage.scriptR() + "angle3D_Secondary.R " + p_filin
+# #         elif substruct == "Tertiary" : 
+# #             cmd_3d = pathManage.scriptR() + "angle3D_Tertiary.R " + p_filin    
 
         # every structure  
         cmd_density = pathManage.scriptR() + "angle_density.R " +  p_filin + "&" 
         cmd_distribution = pathManage.scriptR() + "angle_distribution.R " + p_filin + "&"
         cmdBarplot = pathManage.scriptR() + "angle_barplot.R " + p_filin + " 5"
         
-        logFile.write(cmdBarplot + "\n")
-        logFile.write(cmd_density + "\n")
-        logFile.write(cmd_distribution + "\n")
-        
-        system(cmdBarplot)
-        system(cmd_density)
-        system(cmd_distribution)
-        
         if debug == 1: 
             print cmd_density
             print cmdBarplot
             print cmd_distribution
         
-        if "cmd_3d" in locals() : 
-            logFile.write(cmd_3d + "\n")
-            system(cmd_3d)
-            if debug ==1 : print cmd_3d
+        system(cmdBarplot)
+        system(cmd_density)
+        system(cmd_distribution)
+        
+
+        
+# # # # # # # # # # # #         if "cmd_3d" in locals() : 
+# # # # # # # # # # # #             print cmd_3d
+# # # # # # # # # # # #             system(cmd_3d)
+# # # # # # # # # # # #             if debug ==1 : print cmd_3d
 
         
 def waterPlotResolution (path_filin, verbose = 1) : 
@@ -366,4 +365,15 @@ def DistVSAngleNeighbor (p_filin):
     print cmd_area
     
     system (cmd_area)
+
+
+def HistAngle (p_filin):
     
+    cmd_hist = pathManage.scriptR() + "plotAngleCriteria.R " + p_filin
+    print cmd_hist
+    
+    system (cmd_hist)
+    
+     
+    
+        

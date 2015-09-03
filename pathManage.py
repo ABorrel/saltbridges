@@ -137,29 +137,29 @@ def resultAngle(pr_int, name_in = ""):
 def countGlobalProx (pr_int, name_in = ""):
 
     if name_in == "" : 
-        pr_angle = pr_int + "countProx/"
+        pr_count = pr_int + "countProx/"
     else :
-        pr_angle = pr_int + "countProx/" + name_in + "/"
+        pr_count = pr_int + "countProx/" + name_in + "/"
         
-    if not path.isdir(pr_angle) : 
-        makedirs(pr_angle, mode=0777)
+    if not path.isdir(pr_count) : 
+        makedirs(pr_count, mode=0777)
     else : 
         pass
-    return pr_angle
+    return pr_count
 
 
 def countNeighbor(pr_int, name_in = ""):
 
     if name_in == "" : 
-        pr_angle = pr_int + "neighbor/"
+        pr_count_neighbor = pr_int + "neighbor/"
     else :
-        pr_angle = pr_int + "neighbor/" + name_in + "/"
+        pr_count_neighbor = pr_int + "neighbor/" + name_in + "/"
         
-    if not path.isdir(pr_angle) : 
-        makedirs(pr_angle, mode=0777)
+    if not path.isdir(pr_count_neighbor) : 
+        makedirs(pr_count_neighbor, mode=0777)
     else : 
         pass
-    return pr_angle
+    return pr_count_neighbor
 
 
 
@@ -286,26 +286,22 @@ def CreatePathDir (pr_in):
     return pr_in
 
 
-#############################Serine Protease###################3
-
-# # 
-# # def datasetSerineProtease ():
-# # 
-# #     rep = repInit + "dataset_SerineProtease/"
-# #     return rep
-# # 
-# # 
-# # def resultSerineProtease ():
-# #     
-# #     rep = repInit + "resultSerineProtein/"
-# #     try: makedirs(rep, mode=0777)
-# #     except: pass
-# #     return rep
-# # 
-# # def datasetSerineProteaseType (rep):
-# # 
-# #     rep = repInit + "dataset_SerineProtease/" + rep + "/"
-# #     return rep    
-# # 
-# # 
+def ResultAngleCriteria (pr_in, name_in) : 
+    
+    
+    if name_in == "" : 
+        pr_out = pr_in + "AngleSelect/"
+    else :
+        pr_out = pr_in + "AngleSelect/" + name_in + "/"
+        
+    if not path.isdir(pr_out) : 
+        makedirs(pr_out, mode=0777)
+    else : 
+        pass
+    return pr_out
+    
+    
+    
+    
+    
 

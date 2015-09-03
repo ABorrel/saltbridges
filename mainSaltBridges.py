@@ -90,11 +90,11 @@ def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_supe
             superimpose.globalNeighbor (d_sub_neighbor, "AcidCarboxylic", pr_result)
             
             # superimpose neighbors -> with het first stabilization 
-            superimpose.globalNeighbor (d_close_het, "Primary", pr_hetion)
-            superimpose.globalNeighbor (d_close_het, "Secondary", pr_hetion)
-            superimpose.globalNeighbor (d_close_het, "Tertiary", pr_hetion)
-            superimpose.globalNeighbor (d_close_het, "Imidazole", pr_hetion)
-            superimpose.globalNeighbor (d_close_het, "Guanidium", pr_hetion)
+#             superimpose.globalNeighbor (d_close_het, "Primary", pr_hetion)
+#             superimpose.globalNeighbor (d_close_het, "Secondary", pr_hetion)
+#             superimpose.globalNeighbor (d_close_het, "Tertiary", pr_hetion)
+#             superimpose.globalNeighbor (d_close_het, "Imidazole", pr_hetion)
+#             superimpose.globalNeighbor (d_close_het, "Guanidium", pr_hetion)
         
         if option_bond == 1 : 
         
@@ -109,7 +109,7 @@ def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_supe
         if option_stat == 1: 
             # statistic
             statistic.globalRunStatistic(d_sub_neighbor, max_distance, pr_result)
-            statistic.globalRunStatistic(d_close_het, max_distance, pr_hetion)
+#             statistic.globalRunStatistic(d_close_het, max_distance, pr_hetion)
     
  
  
@@ -177,20 +177,20 @@ RFree_thresold = 0.25
 # main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0, option_stat = 0, option_stat_dataset = 1)
 
 # # PDB
-# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 0, option_stat_dataset = 1)
+main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 0, option_stat_dataset = 0)
 
 # test
-main ("test", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0, option_stat = 0, option_stat_dataset = 1)
+# main ("test", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0, option_stat = 0, option_stat_dataset = 0)
 
 
 
 ##############################
 #       Volume function      # -> rewrite with new criterion OK
 ##############################
-#pr_result = pathManage.result()
-#volumeFonction.defVolumePrimary(pr_result)
-#volumeFonction.defVolumeSecondary(pr_result)
+pr_result = pathManage.result()
+# volumeFonction.defVolumePrimary(pr_result)
+# volumeFonction.DefVolumeSecondary(pr_result)
 #volumeFonction.defVolumeTertiary(pr_result)
 #volumeFonction.defVolumeImidazole(pr_result)
 #volumeFonction.defVolumeGuanidium(pr_result)

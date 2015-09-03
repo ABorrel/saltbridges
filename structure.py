@@ -22,7 +22,7 @@ def classificationATOM (atom="", out_list = 0):
     in: atom
     out: classification (string)"""
     
-    l_classif = ["OxAcid", "ODonAcc", "Sulfur", "Nhis", "Nbasic", "Carom", "OxPep", "Ndonnor","OxAccept" , "H2O", "CPep", "others"]
+    l_classif = ["OxAcid", "COxAcid", "ODonAcc", "Sulfur", "Nhis", "Nbasic", "Carom", "OxPep", "Ndonnor","OxAccept" , "H2O", "CPep", "others"]
     if out_list : 
         return l_classif
     
@@ -32,6 +32,18 @@ def classificationATOM (atom="", out_list = 0):
     if atom["resName"] == "GLU" or atom["resName"] == "ASP":
         if atom["name"] == "OE1" or atom["name"] == "OE2" or atom["name"] == "OD1" or atom["name"] == "OD2":
             return "OxAcid"
+
+
+    # cabone of COO
+    if atom["resName"] == "GLU" : 
+        if atom["name"] == "CD"  : 
+            return "COxAcid"
+        
+    if atom["resName"] == "ASP" :
+        if atom["name"] == "CG"  : 
+            return "COxAcid"
+        
+    
 
     # Oxygen Donnor/acceptor
     if atom["resName"] == "TYR":
@@ -116,6 +128,10 @@ def classificationATOM (atom="", out_list = 0):
         if atom["name"] == "C" :
             return "CPep"     
     
+    
+
+    
+#     print atom["resName"], atom["name"]
     
     return "others"
 
@@ -506,65 +522,68 @@ def ListSub ():
 def listGlobalStudy():
     return ['residue', 'proportionAtom', 'angleVector', 'ligand', 'ResidueAllAtom', 'distanceOx', 'byAA', 'H2O', 'atom', 'proportionType']
     
-def criteraAngle(subs, loose = 0):
+def criteraAngle(subs = "", loose = 0):
     """
     Impose angle in different structure
     """
-    angleStruct = {}
+    d_criteria = {}
     
     if loose == 0 : 
-        angleStruct["Primary"] = {}
-        angleStruct["Primary"]["angle"] = [100,120]
-        angleStruct["Primary"]["distance"] = [2.0,3.5]
+        d_criteria["Primary"] = {}
+        d_criteria["Primary"]["angle"] = [90,130]
+        d_criteria["Primary"]["distance"] = [3.0,4.0]
         
-        angleStruct["Secondary"] = {}
-        angleStruct["Secondary"]["angle"] = [80,120]
-        angleStruct["Secondary"]["distance"] = [2.5,3.0]
+        d_criteria["Secondary"] = {}
+        d_criteria["Secondary"]["angle"] = [80,120]
+        d_criteria["Secondary"]["distance"] = [3.0,4.0]
         
-        angleStruct["Tertiary"] = {}
-        angleStruct["Tertiary"]["angle"] = [90,130]
-        angleStruct["Tertiary"]["distance"] = [2.5,3.0]
+        d_criteria["Tertiary"] = {}
+        d_criteria["Tertiary"]["angle"] = [90,130]
+        d_criteria["Tertiary"]["distance"] = [2.5,3.0]
         
-        angleStruct["Imidazole"] = {}
-        angleStruct["Imidazole"]["angle"] = [110,150]
-        angleStruct["Imidazole"]["distance"] = [2.2,5.0]
+        d_criteria["Imidazole"] = {}
+        d_criteria["Imidazole"]["angle"] = [110,150]
+        d_criteria["Imidazole"]["distance"] = [2.2,5.0]
         
         # change criterion because I change 11-08 the number of angle considered -> need more data
-        angleStruct["Guanidium"] = {}
-        angleStruct["Guanidium"]["angle"] = [90,120, 20, 50, 160, 190]
-        angleStruct["Guanidium"]["distance"] = [3.0, 3.5, 2.0, 2.5, 3.5, 4.0 ] #need change distance also !!!!
+        d_criteria["Guanidium"] = {}
+        d_criteria["Guanidium"]["angle"] = [90,120, 20, 50, 160, 190]
+        d_criteria["Guanidium"]["distance"] = [3.0, 3.5, 2.0, 2.5, 3.5, 4.0 ] #need change distance also !!!!
         
-        angleStruct["AcidCarboxylic"] = {}
-        angleStruct["AcidCarboxylic"]["angle"] = [130,160]
-        angleStruct["AcidCarboxylic"]["distance"] = [3.2,3.7]
+        d_criteria["AcidCarboxylic"] = {}
+        d_criteria["AcidCarboxylic"]["angle"] = [130,160]
+        d_criteria["AcidCarboxylic"]["distance"] = [3.2,3.7]
     else : 
         
-        angleStruct["Primary"] = {}
-        angleStruct["Primary"]["angle"] = [90,130]
-        angleStruct["Primary"]["distance"] = [2.0,4.0]
+        d_criteria["Primary"] = {}
+        d_criteria["Primary"]["angle"] = [90,130]
+        d_criteria["Primary"]["distance"] = [2.0,4.0]
     
-        angleStruct["Secondary"] = {}
-        angleStruct["Secondary"]["angle"] = [80,120]
-        angleStruct["Secondary"]["distance"] = [2.0,4.0]
+        d_criteria["Secondary"] = {}
+        d_criteria["Secondary"]["angle"] = [80,120]
+        d_criteria["Secondary"]["distance"] = [2.0,4.0]
     
-        angleStruct["Tertiary"] = {}
-        angleStruct["Tertiary"]["angle"] = [90,130]
-        angleStruct["Tertiary"]["distance"] = [2.0,4.0]
+        d_criteria["Tertiary"] = {}
+        d_criteria["Tertiary"]["angle"] = [90,130]
+        d_criteria["Tertiary"]["distance"] = [2.0,4.0]
     
-        angleStruct["Imidazole"] = {}
-        angleStruct["Imidazole"]["angle"] = [110,150]
-        angleStruct["Imidazole"]["distance"] = [2.0,5.0]
+        d_criteria["Imidazole"] = {}
+        d_criteria["Imidazole"]["angle"] = [110,150]
+        d_criteria["Imidazole"]["distance"] = [2.0,5.0]
     
-        angleStruct["Guanidium"] = {}
-        angleStruct["Guanidium"]["angle"] = [0,180]
-        angleStruct["Guanidium"]["distance"] = [2.0,5.0]
+        d_criteria["Guanidium"] = {}
+        d_criteria["Guanidium"]["angle"] = [0,180]
+        d_criteria["Guanidium"]["distance"] = [2.0,5.0]
    
-        angleStruct["AcidCarboxylic"] = {}
-        angleStruct["AcidCarboxylic"]["angle"] = [130,160]
-        angleStruct["AcidCarboxylic"]["distance"] = [2.0,4.0]
+        d_criteria["AcidCarboxylic"] = {}
+        d_criteria["AcidCarboxylic"]["angle"] = [130,160]
+        d_criteria["AcidCarboxylic"]["distance"] = [2.0,4.0]
     
     
-    return angleStruct[subs]
+    if subs == "" : 
+        return d_criteria
+    else : 
+        return d_criteria[subs]
 
 
 
@@ -611,6 +630,7 @@ def substructureCoord (type_substructure):
         atom1["occupancy"] = "1"
         atom1["tempFactor"] = "0"
         atom1["connect"] = []  
+        atom1["char"] = ""
     
         
         atom2 = {}
@@ -625,6 +645,7 @@ def substructureCoord (type_substructure):
         atom2["occupancy"] = "1"
         atom2["tempFactor"] = "0"
         atom2["connect"] = [] 
+        atom2["char"] = ""
         return [atom1, atom2]
     
     
@@ -642,6 +663,7 @@ def substructureCoord (type_substructure):
         atom1["occupancy"] = "1"
         atom1["tempFactor"] = "0"
         atom1["connect"] = []  
+        atom1["char"] = ""
         
         atom2 = {}
         atom2["serial"] = 2
@@ -655,6 +677,7 @@ def substructureCoord (type_substructure):
         atom2["occupancy"] = "1"
         atom2["tempFactor"] = "0"
         atom2["connect"] = [] 
+        atom2["char"] = ""
         
         atom3 = {}
         atom3["serial"] = 3
@@ -667,7 +690,8 @@ def substructureCoord (type_substructure):
         atom3["charge"] = "0"
         atom3["occupancy"] = "1"
         atom3["tempFactor"] = "0"
-        atom3["connect"] = []        
+        atom3["connect"] = []   
+        atom3["char"] = ""     
         
         return [atom1, atom2, atom3]    
     
@@ -687,6 +711,7 @@ def substructureCoord (type_substructure):
         atom1["occupancy"] = "1"
         atom1["tempFactor"] = "0"
         atom1["connect"] = []  
+        atom1["char"] = ""
         
         atom2 = {}
         atom2["serial"] = 2
@@ -700,6 +725,7 @@ def substructureCoord (type_substructure):
         atom2["occupancy"] = "1"
         atom2["tempFactor"] = "0"
         atom2["connect"] = [] 
+        atom2["char"] = ""
         
         atom3 = {}
         atom3["serial"] = 3
@@ -712,7 +738,8 @@ def substructureCoord (type_substructure):
         atom3["charge"] = "0"
         atom3["occupancy"] = "1"
         atom3["tempFactor"] = "0"
-        atom3["connect"] = []        
+        atom3["connect"] = [] 
+        atom3["char"] = ""       
         
         atom4 = {}
         atom4["serial"] = 4
@@ -726,6 +753,7 @@ def substructureCoord (type_substructure):
         atom4["occupancy"] = "1"
         atom4["tempFactor"] = "0"
         atom4["connect"] = [] 
+        atom4["char"] = ""
         
         return [atom1, atom2, atom3, atom4]    
     
@@ -743,6 +771,7 @@ def substructureCoord (type_substructure):
         atom1["occupancy"] = "1"
         atom1["tempFactor"] = "0"
         atom1["connect"] = []  
+        atom1["char"] = ""
         
         atom2 = {}
         atom2["serial"] = 2
@@ -756,6 +785,7 @@ def substructureCoord (type_substructure):
         atom2["occupancy"] = "1"
         atom2["tempFactor"] = "0"
         atom2["connect"] = [] 
+        atom2["char"] = ""
         
         atom3 = {}
         atom3["serial"] = 3
@@ -768,7 +798,8 @@ def substructureCoord (type_substructure):
         atom3["charge"] = "0"
         atom3["occupancy"] = "1"
         atom3["tempFactor"] = "0"
-        atom3["connect"] = []        
+        atom3["connect"] = [] 
+        atom3["char"] = ""       
         
         atom4 = {}
         atom4["serial"] = 4
@@ -782,6 +813,7 @@ def substructureCoord (type_substructure):
         atom4["occupancy"] = "1"
         atom4["tempFactor"] = "0"
         atom4["connect"] = [] 
+        atom4["char"] = ""
         
         atom5 = {}
         atom5["serial"] = 5
@@ -795,6 +827,7 @@ def substructureCoord (type_substructure):
         atom5["occupancy"] = "1"
         atom5["tempFactor"] = "0"
         atom5["connect"] = [] 
+        atom5["char"] = ""
         
         return [atom1, atom2, atom3, atom4, atom5] 
         
@@ -975,7 +1008,7 @@ def nbNeighbor () :
         
  
  
-def genericAtom (x, y, z, serialAtom = 2, nameAtom = "O", char = "", resName = "HOH", ChainID = "A", resSeq = 2, iCode = "", occupancy = 1.0, tempFactor = 10.0, element = "O", charge = 0):
+def genericAtom (x, y, z, serialAtom = 2, nameAtom = "O", char = "", resName = "XXX", ChainID = "A", resSeq = 2, iCode = "", occupancy = 1.0, tempFactor = 10.0, element = "O", charge = 0):
      
     
     out = {}
