@@ -12,10 +12,6 @@ d = read.csv(p_density , sep = "\t", header = FALSE)
 
 l_class = unique (d[,2])
 l_color = defColor (l_class)
-print (l_class)
-print (l_color)
-
-
 
 dist_temp = d[which (d[,2] == l_class[1]),1]
 

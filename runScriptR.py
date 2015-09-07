@@ -217,15 +217,19 @@ def plotAngle(l_p_filin, debug = 1):
         cmd_density = pathManage.scriptR() + "angle_density.R " +  p_filin + "&" 
         cmd_distribution = pathManage.scriptR() + "angle_distribution.R " + p_filin + "&"
         cmdBarplot = pathManage.scriptR() + "angle_barplot.R " + p_filin + " 5"
+        cmd_densityandhist = pathManage.scriptR() + "angleVSDistance.R " + p_filin
         
         if debug == 1: 
             print cmd_density
             print cmdBarplot
             print cmd_distribution
+            print cmd_densityandhist
         
         system(cmdBarplot)
         system(cmd_density)
         system(cmd_distribution)
+        system (cmd_densityandhist)
+        
         
 
         

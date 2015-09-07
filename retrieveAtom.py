@@ -115,14 +115,14 @@ def substructure (subs, at_central, l_at_lig) :
         l_out = []
         l_atomC, connectC = atomConnect(l_at_lig, at_central["serial"])
         l_atom_N, connectN = atomConnect(l_at_lig, l_atomC[1]["serial"])
-        out_gua = searchPDB.guanidium(l_atom_N, l_at_lig)
+        out_gua = searchPDB.Guanidium(l_atom_N, l_at_lig)
         
         if out_gua[0] == 0 : 
             print "ERROR"
             return []
-        l_serial = out_gua[1]
+        out_search = out_gua[1]
         
-        for serial_at in l_serial : 
+        for serial_at in out_search : 
 #             print serial_at
             l_out.append (serial(serial_at, l_at_lig))
         return l_out
@@ -136,17 +136,15 @@ def substructure (subs, at_central, l_at_lig) :
             l_atom_O, connectO = atomConnect(l_at_lig, l_atomC[2]["serial"])  
          
         l_out = []
-        out_coo = searchPDB.acidCarboxylic(l_atom_O, l_at_lig)
+        out_search = searchPDB.acidCarboxylic(l_atom_O, l_at_lig)
         
-        
-#         print out_coo[0], len (out_coo[1])
-        if out_coo[0] == 0 : 
+#         print out_search[0], len (out_search[1])
+        if out_search[0] == 0 : 
             print "ERROR"
             return []
-        l_serial = out_coo[1]
+        l_serial = out_search[1]
         
         for serial_at in l_serial : 
-#             print serial_at
             l_out.append (serial(serial_at, l_at_lig))
         return l_out
     

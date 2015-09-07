@@ -740,7 +740,7 @@ def coordinates3D (l_atom, p_filout, type_substruct) :
         
         
         
-def coordinates3DPDBbyNeighborType (l_atom_in, l_atom_subs, subs, pr_init) : 
+def coordinates3DPDBbyNeighborType (l_atom_in, ll_atom_subs, subs, pr_init) : 
     
     d_file = {}
     l_type_neighbors = structure.classificationATOM (out_list = 1)
@@ -748,7 +748,8 @@ def coordinates3DPDBbyNeighborType (l_atom_in, l_atom_subs, subs, pr_init) :
     for type_neighbors in l_type_neighbors : 
         d_file[type_neighbors] = open (pr_init + subs + "_" + type_neighbors + ".pdb", "w")
         writePDBfile.coordinateSection(d_file [type_neighbors], l_atom_sub_ref , "HETATM") 
-        writePDBfile.coordinateSection(d_file [type_neighbors], l_atom_subs , "HETATM")
+        for l_atom_subs in ll_atom_subs : 
+            writePDBfile.coordinateSection(d_file [type_neighbors], l_atom_subs , "HETATM")
         
     
     

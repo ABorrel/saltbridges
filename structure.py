@@ -542,13 +542,13 @@ def criteraAngle(subs = "", loose = 0):
         d_criteria["Tertiary"]["distance"] = [3.0,4.0]
         
         d_criteria["Imidazole"] = {}
-        d_criteria["Imidazole"]["angle"] = [0,30]
-        d_criteria["Imidazole"]["distance"] = [2.2,5.0]
+        d_criteria["Imidazole"]["angle"] = [0,40]
+        d_criteria["Imidazole"]["distance"] = [3.0,5.0]
         
         # change criterion because I change 11-08 the number of angle considered -> need more data
         d_criteria["Guanidium"] = {}
-        d_criteria["Guanidium"]["angle"] = [90,120, 20, 50, 160, 190]
-        d_criteria["Guanidium"]["distance"] = [3.0, 3.5, 2.0, 2.5, 3.5, 4.0 ] #need change distance also !!!!
+        d_criteria["Guanidium"]["angle"] = [0, 180]#[40, 80, 120, 180]
+        d_criteria["Guanidium"]["distance"] = [2,6]#[3.5, 5.5, 3.5, 5.5] #need change distance also !!!!
         
         d_criteria["AcidCarboxylic"] = {}
         d_criteria["AcidCarboxylic"]["angle"] = [130,160]
@@ -693,7 +693,7 @@ def substructureCoord (type_substructure):
         atom3["connect"] = []   
         atom3["char"] = ""     
         
-        return [atom1, atom2, atom3]    
+        return [atom2, atom1, atom3]    
     
     
     elif type_substructure == "Tertiary" : 
@@ -755,7 +755,7 @@ def substructureCoord (type_substructure):
         atom4["connect"] = [] 
         atom4["char"] = ""
         
-        return [atom1, atom2, atom3, atom4]    
+        return [atom4, atom1, atom2, atom3]    
     
     elif type_substructure == "Imidazole" : 
         
@@ -829,7 +829,7 @@ def substructureCoord (type_substructure):
         atom5["connect"] = [] 
         atom5["char"] = ""
         
-        return [atom1, atom2, atom3, atom4, atom5] 
+        return [atom2, atom1, atom4, atom3, atom5] 
         
         
     elif type_substructure == "Guanidium" : 
@@ -838,9 +838,9 @@ def substructureCoord (type_substructure):
         atom1["serial"] = 1
         atom1["name"] = "N01"
         atom1["resName"] = "GUA"
-        atom1["x"] = -1.801
-        atom1["y"] = 0.216
-        atom1["z"] = 1.495
+        atom1["x"] = -2.547
+        atom1["y"] = 0.166
+        atom1["z"] = 1.501
         atom1["element"] = "N"
         atom1["charge"] = "0"
         atom1["occupancy"] = "1"
@@ -851,9 +851,9 @@ def substructureCoord (type_substructure):
         atom2["serial"] = 2
         atom2["name"] = "C01"
         atom2["resName"] = "GUA"
-        atom2["x"] = -1.948
-        atom2["y"] = 0.949
-        atom2["z"] = 0.398
+        atom2["x"] = -2.102
+        atom2["y"] = 1.011
+        atom2["z"] = 0.362
         atom2["element"] = "C"
         atom2["charge"] = "0"
         atom2["occupancy"] = "1"
@@ -864,9 +864,9 @@ def substructureCoord (type_substructure):
         atom3["serial"] = 3
         atom3["name"] = "N02"
         atom3["resName"] = "GUA"
-        atom3["x"] = -0.870
-        atom3["y"] = 1.546
-        atom3["z"] = -0.403
+        atom3["x"] = -0.810
+        atom3["y"] = 1.366
+        atom3["z"] = -0.160
         atom3["element"] = "N"
         atom3["charge"] = "0"
         atom3["occupancy"] = "1"
@@ -877,9 +877,9 @@ def substructureCoord (type_substructure):
         atom4["serial"] = 4
         atom4["name"] = "N03"
         atom4["resName"] = "GUA"
-        atom4["x"] = -3.251
-        atom4["y"] = 1.042
-        atom4["z"] = 0.159
+        atom4["x"] = -3.233
+        atom4["y"] = 1.358
+        atom4["z"] = -0.327
         atom4["element"] = "N"
         atom4["charge"] = "0"
         atom4["occupancy"] = "1"
@@ -890,16 +890,16 @@ def substructureCoord (type_substructure):
         atom5["serial"] = 5
         atom5["name"] = "C02"
         atom5["resName"] = "GUA"
-        atom5["x"] = -2.668
-        atom5["y"] = -0.378
-        atom5["z"] = 2.306
+        atom5["x"] = -1.845
+        atom5["y"] = -0.525
+        atom5["z"] = 2.579
         atom5["element"] = "C"
         atom5["charge"] = "0"
         atom5["occupancy"] = "1"
         atom5["tempFactor"] = "0"
         atom5["connect"] = [] 
         
-        return [atom1, atom2, atom3, atom4, atom5] 
+        return [atom5, atom2, atom1, atom3, atom4] 
     
     elif type_substructure == "AcidCarboxylic" :
     
@@ -956,7 +956,7 @@ def substructureCoord (type_substructure):
         atom4["connect"] = [] 
         
        
-        return [atom1, atom2, atom3, atom4] 
+        return [atom1, atom3, atom2, atom4] 
         
         
 def DFile2K (pr_result):

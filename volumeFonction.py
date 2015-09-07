@@ -173,7 +173,8 @@ def AeraTertiary (pr_init):
 def AreaImidazole (pr_init):
     """calculation of volume around nitrogen of primary amine
     in: filePDB with only primary amine, extreme value of l_angle, structure subs
-    out: file format filePDB with water"""
+    out: file format filePDB with water
+    only one half of imidazole are inspected"""
     
     subs = "Imidazole"
     pr_volume = pathManage.CreatePathDir(pr_init + "Volume/")
@@ -189,18 +190,13 @@ def AreaImidazole (pr_init):
     d_inf = def_volume["distance"][0]
     d_sup = def_volume["distance"][1]
     
-    
     for atom_sub in l_atom_sub : 
         if atom_sub["name"] == "N1" : 
             atomN1 = atom_sub
         if atom_sub["name"] == "N3" : 
             atomN3 = atom_sub
         
-    atom_center = {}
-    atom_center["x"] = (atomN1["x"] + atomN3["x"]) / 2
-    atom_center["y"] = (atomN1["y"] + atomN3["y"]) / 2
-    atom_center["z"] = (atomN1["z"] + atomN3["z"]) / 2
-        
+    atom_center = calcul.CenterPoint(atomN1, atomN3)
     
     serial = 0
     for x_test in [atom_center["x"] + x * 0.2 for x in range (-50,60)] : 
@@ -210,29 +206,15 @@ def AreaImidazole (pr_init):
                 atom_test = structure.genericAtom(x_test, y_test, z_test)
                 dist = calcul.distanceTwoatoms(atom_test, atom_center)
                 
-                try :
-                    angle1 = calcul.Angle3Atoms(atomN1, atom_center, atom_test)
-                    angle2 = calcul.Angle3Atoms(atomN3, atom_center, atom_test)
-                except  : continue
-                
-                
+                # case where the calculation of angle is impossible
+                try : angle = calcul.Angle3Atoms(atomN1, atom_center, atom_test)
+                except : continue
                 
                 if dist <= d_sup and dist >= d_inf: 
-                    if angle1 >= angle_inf and angle1 <= angle_sup :
+                    if angle >= angle_inf and angle <= angle_sup :
                         serial = serial + 1
                         atom_test["serial"] = serial
                         atom_test["resSeq"] = serial
-                        
-                        print "!1111", angle1, angle2
-                        
-                        writePDBfile.coordinateStructure(atom_test, "HETATM", filout)
-                            
-                    elif angle2 > angle_inf and angle2 < angle_sup :
-                        serial = serial + 1
-                        atom_test["serial"] = serial
-                        atom_test["resSeq"] = serial
-                        
-                        print "!222", angle1, angle2
                         
                         writePDBfile.coordinateStructure(atom_test, "HETATM", filout)
                     
@@ -308,7 +290,7 @@ def AreaImidazole (pr_init):
 
 
   
-def defVolumeGuanidium (pr_init):
+def AreaGuanidium (pr_init):
     """calculation of volume around nitrogen of primary amine
     in: filePDB with only primary amine, extreme value of l_angle, structure subs
     out: file format filePDB with water"""
@@ -327,8 +309,8 @@ def defVolumeGuanidium (pr_init):
     angle1_sup = def_volume["angle"][1]
     angle2_inf = def_volume["angle"][2]
     angle2_sup = def_volume["angle"][3]
-    angle3_inf = def_volume["angle"][4]
-    angle3_sup = def_volume["angle"][5]
+#     angle3_inf = def_volume["angle"][4]
+#     angle3_sup = def_volume["angle"][5]
     
     
     
@@ -336,8 +318,8 @@ def defVolumeGuanidium (pr_init):
     d_sup1 = def_volume["distance"][1]
     d_inf2 = def_volume["distance"][2]
     d_sup2 = def_volume["distance"][3]
-    d_inf3 = def_volume["distance"][4]
-    d_sup3 = def_volume["distance"][5]
+#     d_inf3 = def_volume["distance"][4]
+#     d_sup3 = def_volume["distance"][5]
     
     
     for atom_sub in l_atom_sub : 
@@ -370,12 +352,12 @@ def defVolumeGuanidium (pr_init):
                         atom_test["resSeq"] = count
                         writePDBfile.coordinateStructure(atom_test, "HETATM", filout)
                         
-                if distance < d_sup3 and distance > d_inf3:   
-                    if l_angleC1[0] > angle3_inf and l_angleC1[0] < angle3_sup :
-                        count = count + 1
-                        atom_test["count"] = count
-                        atom_test["resSeq"] = count
-                        writePDBfile.coordinateStructure(atom_test, "HETATM", filout)
+#                 if distance < d_sup3 and distance > d_inf3:   
+#                     if l_angleC1[0] > angle3_inf and l_angleC1[0] < angle3_sup :
+#                         count = count + 1
+#                         atom_test["count"] = count
+#                         atom_test["resSeq"] = count
+#                         writePDBfile.coordinateStructure(atom_test, "HETATM", filout)
                     
                     
                         

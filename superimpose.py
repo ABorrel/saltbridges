@@ -16,8 +16,6 @@ from copy import deepcopy
 
 def groupAtomCoord (l_atom):
     
-    print "--- l-19", l_atom
-    
     l_out = []
     for atom in l_atom :
         l_out.append ([float(atom["x"]), float(atom["y"]), float(atom["z"])])
@@ -164,7 +162,6 @@ def globalNeighbor (atom_interest_close, subs, p_dir_result) :
         serial_at_central = at_central["serial"]
         name_ligand =  at_central["resName"] 
         
-        print PDB_ID, serial_at_central
         # all atom ligand
         l_at_lig = loadFile.ExtractInfoPDBID(PDB_ID)[name_ligand][0] # change not tested
 #         for at_ligand in l_at_lig : 
@@ -172,10 +169,16 @@ def globalNeighbor (atom_interest_close, subs, p_dir_result) :
         l_at_subs = retrieveAtom.substructure (subs, at_central, l_at_lig)
         
         
-        v_atom_ref = mat(array(groupAtomCoord(l_at_ref[0:2])))
-        
-        v_atom_central = mat(array(groupAtomCoord(l_at_subs[0:2])))
-
+        if subs == "Guanidium" : 
+            v_atom_central = mat(array(groupAtomCoord(l_at_subs)))
+            v_atom_ref = mat(array(groupAtomCoord(l_at_ref)))
+        elif subs == "AcidCarboxylic" : 
+            v_atom_central = mat(array(groupAtomCoord(l_at_subs)))
+            v_atom_ref = mat(array(groupAtomCoord(l_at_ref[1:])))            
+        else : 
+            v_atom_central = mat(array(groupAtomCoord(l_at_subs)))
+            v_atom_ref = mat(array(groupAtomCoord(l_at_ref))) 
+            
         rotation, translocation =  rigid_transform_3D(v_atom_central, v_atom_ref)
         if rotation == None or translocation == None : 
             continue
@@ -199,7 +202,7 @@ def globalNeighbor (atom_interest_close, subs, p_dir_result) :
         try : 
             l_atom_neighbor_rotated = applyTranformation(rotation, translocation, l_atom_in=l_atom_neighbors)
             l_superimpose_neighbor = l_superimpose_neighbor + l_atom_neighbor_rotated
-            l_superimpose_subs = l_superimpose_subs + l_subs_rotated
+            l_superimpose_subs.append (l_subs_rotated)
         except : 
             continue
     
@@ -207,10 +210,10 @@ def globalNeighbor (atom_interest_close, subs, p_dir_result) :
     tool.colorAtomType (l_superimpose_neighbor)
     
     # write gif
-    pr_init_gif = p_dir_result + "/gif/" + subs + "/"
-    pathManage.CreatePathDir(pr_init_gif)
-    p_file_coord = writeFile.coordinates3D (l_superimpose_neighbor + l_superimpose_subs, pr_init_gif + subs + "_neigbor.coord", subs) 
-    runScriptR.plot3D (p_file_coord)
+#     pr_init_gif = p_dir_result + "/gif/" + subs + "/"
+#     pathManage.CreatePathDir(pr_init_gif)
+#     p_file_coord = writeFile.coordinates3D (l_superimpose_neighbor + l_superimpose_subs, pr_init_gif + subs + "_neigbor.coord", subs) 
+#     runScriptR.plot3D (p_file_coord)
     
     # write one PDB by atom close type 
     pr_init_PDB = p_dir_result + "/PDB/" + subs + "/" 

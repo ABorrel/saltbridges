@@ -55,7 +55,7 @@ def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_supe
 #
     # run for every dataset -> with diffrent resolution
     # short cut
-#     l_p_dataset = ["/home/borrel/saltBridgesProject/result/PDB/3.0_0.25_uniquePDB/dataset_3.00.txt" ]
+#     l_p_dataset = ["/home/borrel/saltBridgesProject/result/test/3.0_0.25_uniquePDB/dataset_3.00.txt" ]
 # #     
     for p_dataset in l_p_dataset : 
         
@@ -77,8 +77,6 @@ def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_supe
         print "control-1", len(d_sub_neighbor["Primary"])
         d_close_het = hetCloseAnalysis.removeNeighborIron (d_sub_neighbor, pr_hetion + "ionSummarySubstruct.txt")
         print "control-2", len(d_sub_neighbor["Primary"])
-        
-        
         
         if option_superimpose == 1 : 
             # superimpose neighbors -> refaire a Helsinki car MAJ de de la PDB
@@ -177,23 +175,23 @@ RFree_thresold = 0.25
 # main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0, option_stat = 0, option_stat_dataset = 1)
 
 # # PDB
-# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0)
+main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 0, option_stat_dataset = 0)
 
 # test
-main ("test", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0, option_stat = 0, option_stat_dataset = 0)
+# main ("test", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 1, option_bond = 0, option_stat = 0, option_stat_dataset = 0)
 
 
 
 ##############################
 #       Volume function      # -> rewrite with new criterion OK
 ##############################
-pr_result = pathManage.result()
+# pr_result = pathManage.result()
 # volumeFonction.AreaPrimary(pr_result)
 # volumeFonction.AreaSecondary(pr_result)
 # volumeFonction.AeraTertiary(pr_result)
 # volumeFonction.AreaImidazole(pr_result)
-#volumeFonction.defVolumeGuanidium(pr_result)
+# volumeFonction.AreaGuanidium(pr_result)
 
 
 ###########################

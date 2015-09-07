@@ -26,11 +26,11 @@ mapFig = function (main_plot, data, filin){
 
 	svg(filename = paste(file, "_", main_plot, "_density.svg" , sep = ""), width = 10, height = 10)
 	par (mar = c(6,6,2,2))
-	smoothScatter(data_bis, colramp = Lab.palette , main = "", xlim =c(1,max(data_bis[,1])), cex = 2, cex.lab = 2, cex.axis = 1.5, xlab = "Distance (Å)", ylab = "Angle (degree)")
+	smoothScatter(data_bis, colramp = Lab.palette , main = "", xlim =c(1,max(data_bis[,1])), ylim = c(0,180), cex = 2, cex.lab = 2, cex.axis = 1.5, xlab = "Distance (Å)", ylab = "Angle (degree)")
 	for (x in seq (1, max (data_bis[,1]), 0.5)){
-		segments (x, min(data_bis[,2]),x, max (data_bis[,2]), lty = 2, col = "black", lwd = 1.5 )
+		segments (x, 0,x, 180, lty = 2, col = "black", lwd = 1.5 )
 	}
-	for (y in seq (0,max(data_bis[,2]),10)){
+	for (y in seq (0,180, 10)){
 		segments (1, y, max (data_bis[,1]),y,lty = 2, col = "black", lwd = 1.5)
 	}
 	dev.off()
@@ -39,12 +39,12 @@ mapFig = function (main_plot, data, filin){
 	svg(filename = paste(file, "_", main_plot, "_point.svg" , sep = ""), width=10, height = 10)
 	par (mar = c(6,6,2,2))
 
-	plot(data_bis[,1], data_bis[,2], xlim = c(1,max(data_bis[,1])), main = "", cex = 2, cex.lab = 2, cex.axis = 1.5, xlab = "Distance (Å)", ylab = "Angle (degree)", col = color_element[element], pch = 19)
+	plot(data_bis[,1], data_bis[,2], xlim = c(1,max(data_bis[,1])), ylim = c(0,180), main = "", cex = 2, cex.lab = 2, cex.axis = 1.5, xlab = "Distance (Å)", ylab = "Angle (degree)", col = color_element[element], pch = 19)
 	
 	for (x in seq (1, max (data_bis[,1]), 0.5)){
-		segments (x, min(data_bis[,2]),x, max (data_bis[,2]), lty = 2, col = "black", lwd = 1.5 )
+		segments (x, 0, x, 180, lty = 2, col = "black", lwd = 1.5 )
 	}
-	for (y in seq (0,max(data_bis[,2]),10)){
+	for (y in seq (0,180,10)){
 		segments (1, y, max (data_bis[,1]),y,lty = 2, col = "black", lwd = 1.5)
 	}
 	dev.off()
