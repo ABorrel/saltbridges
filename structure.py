@@ -22,7 +22,7 @@ def classificationATOM (atom="", out_list = 0):
     in: atom
     out: classification (string)"""
     
-    l_classif = ["OxAcid", "COxAcid", "ODonAcc", "Sulfur", "Nhis", "Nbasic", "Carom", "OxPep", "Ndonnor","OxAccept" , "H2O", "CPep", "others"]
+    l_classif = ["OxAcid", "COxAcid", "Carg", "ODonAcc", "Sulfur", "Nhis", "Nbasic", "Carom", "OxPep", "Ndonnor","OxAccept" , "H2O", "CPep", "others"]
     if out_list : 
         return l_classif
     
@@ -77,8 +77,12 @@ def classificationATOM (atom="", out_list = 0):
             return "Nbasic"
         
     if atom["resName"] == "ARG" : 
-        if atom["name"] != "NH1" or  atom["name"] != "NH2" or atom["name"] != "NHE": 
+        if atom["name"] == "NH1" or  atom["name"] == "NH2" or atom["name"] == "NHE" or  atom["name"] == "NE": 
             return "Nbasic"
+      
+    if atom["resName"] == "ARG" : 
+        if atom["name"] == "CZ" : 
+            return "Carg"
         
 #     if atom["resName"] in listAminoAcid :  ?????
 #         if atom["name"] == "NXT" : 

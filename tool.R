@@ -148,7 +148,11 @@ defColor = function (l_name){
 	colorTyr = "#FFFF00"
 	
 	for (element in l_name){
-		if (attr(regexpr("OxAcid",element),"match.length") >= 1){
+	
+		if (attr(regexpr("COxAcid",element),"match.length") >= 1){
+			out = append (out, "#5F021F")
+		}
+		else if (attr(regexpr("OxAcid",element),"match.length") >= 1){
 			out = append (out, "#FF0000")
 		}
 		else if (attr(regexpr("ODonAcc",element),"match.length") >= 1){
@@ -183,6 +187,9 @@ defColor = function (l_name){
 		}
 		else if (attr(regexpr("others",element),"match.length") >= 1){
 			out = append (out, "#D3D3D3")
+		}
+		else if (attr(regexpr("Carg",element),"match.length") >= 1){
+			out = append (out, "#003366")
 		}
 		else if (is.integer0 (grep("GLU", element))== FALSE){
 			out = append (out, colorCharge)
