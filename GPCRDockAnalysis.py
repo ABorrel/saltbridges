@@ -58,8 +58,8 @@ def SabilizationBySB(d_neighbors, pr_result) :
         
         for model in d_neighbors[sub] : 
             
-            interaction_restrained = statistic.retrieveInteraction (model["neighbors"], sub, restrained = 1)
-            interaction_norestrained = statistic.retrieveInteraction (model["neighbors"], sub, restrained = 0)
+            interaction_restrained = statistic.GetInteractions (model["neighbors"], sub, restrained = 1)
+            interaction_norestrained = statistic.GetInteractions (model["neighbors"], sub, restrained = 0)
             
             environment = statistic.ListNeighborsType(model["neighbors"], sub)
 

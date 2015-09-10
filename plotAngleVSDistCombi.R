@@ -6,7 +6,7 @@ mapFig = function (d, name, p_file){
 
 	l_combi = unique (d[,3])
 
-	l_col = defColorGrep (l_combi)
+	l_col = defColor (l_combi)
 
 	print (p_file)
 

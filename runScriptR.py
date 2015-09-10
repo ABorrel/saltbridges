@@ -182,23 +182,6 @@ def histDistance(p_filin, type_distance):
     system(cmd)
 
 
-def histAtleastOne(dir_out, logFile):
-    """Draw at least one plot
-    in: distance max, log file
-    out: Excecute CMD -> draw all at least one plot
-    """
-    repResult = dir_out + "AtLeastOne/"
-    l_file = listdir(repResult)
-    
-    for name_file in l_file:
-        if search(".dat", name_file) :
-            type_atleastne = name_file.split(".")[0]
-            cmd = pathManage.scriptR() + "barplotAtLeastOne.R " + repResult + name_file + " " + type_atleastne
-            logFile.write(cmd + "\n")
-            print cmd
-            system(cmd)
-
-
 def plotAngle(l_p_filin, debug = 1):
     """Excecute commande for draw angle plot
     in: distance MAX and log file
@@ -350,17 +333,25 @@ def multiHist (pr_filin):
     
     
 
-def saltBridgesProportion (p_filin):
+def InteractionProportion (p_filin):
     
     
-    cmd_pie =  pathManage.scriptR() + "pieProportion.R " + p_filin
-    print cmd_pie
-    system (cmd_pie)
+    cmd_by_sub =  pathManage.scriptR() + "proportionBySub.R " + p_filin
+    print cmd_by_sub
+    system (cmd_by_sub)
+    
+    cmd_all =  pathManage.scriptR() + "proportionAllSubs.R " + p_filin
+    print cmd_all
+    system (cmd_all)
+
+
+def MergeProportionInteractAtLeasNotAtLeast (p_atleast, p_notatleast):
+    
+    cmd_R = "mergeBarplot.R " + str (p_notatleast) + " " + str (p_atleast)
+    print cmd_R
+    system (cmd_R)
     
     
-    cmd_barplot =  pathManage.scriptR() + "barplotProportion.R " + p_filin
-    print cmd_barplot
-    system (cmd_barplot)
 
 
 def DistVSAngleNeighbor (p_filin):

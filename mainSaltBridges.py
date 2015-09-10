@@ -55,7 +55,7 @@ def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_supe
 #
     # run for every dataset -> with diffrent resolution
     # short cut
-#     l_p_dataset = ["/home/borrel/saltBridgesProject/result/test/3.0_0.25_uniquePDB/dataset_3.00.txt" ]
+#     l_p_dataset = ["/home/borrel/saltBridgesProject/result/PDB/3.0_0.25_uniquePDB/dataset_3.00.txt" ]
 # #     
     for p_dataset in l_p_dataset : 
         
@@ -219,9 +219,9 @@ main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX
 #   GPCR dock   #
 #################
 
-pr_GPCRDock2010 = "/home/borrel/saltBridgesProject/GPCRDock2010/PDB_conserved/"
-pr_data = "/home/borrel/saltBridgesProject/GPCRDock/data/"
-pr_result = pathManage.result("GPCRDock")
+# pr_GPCRDock2010 = "/home/borrel/saltBridgesProject/GPCRDock2010/PDB_conserved/"
+# pr_data = "/home/borrel/saltBridgesProject/GPCRDock/data/"
+# pr_result = pathManage.result("GPCRDock")
 
 # convertion ICM 
 # writeICMScript.ScriptConvertICBtoPDB(pr_GPCRDock2010, pr_result + "convertGPCRDock2010.txt")

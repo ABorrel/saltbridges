@@ -173,7 +173,7 @@ defColor = function (l_name){
 		else if (attr(regexpr("OxPep",element),"match.length") >= 1){
 			out = append (out, "#FF7F50")
 		}
-		else if (attr(regexpr("Ndonnor",element),"match.length") >= 1){
+		else if (attr(regexpr("Ndonor",element),"match.length") >= 1){
 			out = append (out, "#00b200")
 		}
 		else if (attr(regexpr("OxAccept",element),"match.length") >= 1){
@@ -248,6 +248,24 @@ defColor = function (l_name){
 		else if (is.integer0 (grep("VAL", element))== FALSE){
 			out = append (out, colorApolar)
 		}
+		else if (is.integer0 (grep("COO", element))== FALSE){
+			out = append (out, "#FF0000")
+		}
+		else if (is.integer0 (grep("OH", element))== FALSE){
+			out = append (out, "#FF6600")
+		}
+		else if (is.integer0 (grep("NH", element))== FALSE){
+			out = append (out, "#00b200")
+		}
+		else if (is.integer0 (grep("H2O", element))== FALSE){
+			out = append (out, "#33FFFF")
+		}
+		else if (is.integer0 (grep("N", element))== FALSE){
+			out = append (out, "#0000FF")
+		}
+		else if (is.integer0 (grep("Other", element))== FALSE){
+			out = append (out, "#D3D3D3")
+		}
 		else {
 			out = append (out, "#000000")
 		}
@@ -285,7 +303,7 @@ defColorGrep = function (l_name){
 		else if (is.integer0 (grep("OxPep", element))== FALSE){
 			out = append (out, "coral")
 		}
-		else if (is.integer0 (grep("Ndonnor", element))== FALSE){
+		else if (is.integer0 (grep("Ndonor", element))== FALSE){
 			out = append (out, "green")
 		}
 		else if (is.integer0 (grep("OxAccept", element))== FALSE){

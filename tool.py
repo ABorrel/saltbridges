@@ -226,7 +226,7 @@ def colorAtomType (l_superimpose) :
             atom ["tempFactor"] = 100 - (6* 8.33)
         elif c_atom == "Carom"  : 
             atom ["tempFactor"] = 100 - (7* 8.33)  
-        elif c_atom == "Ndonnor"  : 
+        elif c_atom == "Ndonor"  : 
             atom ["tempFactor"] = 100 - (8* 8.33)
         elif c_atom == "Nhis"  : 
             atom ["tempFactor"] = 100 - (9* 8.33)

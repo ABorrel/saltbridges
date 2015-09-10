@@ -22,7 +22,7 @@ def classificationATOM (atom="", out_list = 0):
     in: atom
     out: classification (string)"""
     
-    l_classif = ["OxAcid", "COxAcid", "Carg", "ODonAcc", "Sulfur", "Nhis", "Nbasic", "Carom", "OxPep", "Ndonnor","OxAccept" , "H2O", "CPep", "others"]
+    l_classif = ["OxAcid", "COxAcid", "Carg", "ODonAcc", "Sulfur", "Nhis", "Nbasic", "Carom", "OxPep", "Ndonor","OxAccept" , "H2O", "CPep", "others"]
     if out_list : 
         return l_classif
     
@@ -88,18 +88,18 @@ def classificationATOM (atom="", out_list = 0):
 #         if atom["name"] == "NXT" : 
 #             return "Nbasic"
 
-    # Nitrogen donnor
+    # Nitrogen donor
     if atom["resName"] == "ASN" : 
         if atom["name"] == "ND2" : 
-            return "Ndonnor"
+            return "Ndonor"
         
     if atom["resName"] == "GLN" : 
         if atom["name"] == "NE2" : 
-            return "Ndonnor"
+            return "Ndonor"
             
     if atom["resName"] in listAminoAcid : 
         if atom["name"] == "N" : 
-            return "Ndonnor"
+            return "Ndonor"
     
     # Caromatic
     if atom["resName"] == "PHE" or atom["resName"] == "TYR": 
@@ -521,7 +521,7 @@ def ListSub ():
 #     return ["counterIon", "Carom", "amphiprotic", "H2O"]
 
 # def listTypeStudy ():
-#     return ["OxAcid", "amphiprotic", "Nbasic", "Ndonnor", "Carom"]
+#     return ["OxAcid", "amphiprotic", "Nbasic", "Ndonor", "Carom"]
 
 def listGlobalStudy():
     return ['residue', 'proportionAtom', 'angleVector', 'ligand', 'ResidueAllAtom', 'distanceOx', 'byAA', 'H2O', 'atom', 'proportionType']
@@ -534,29 +534,29 @@ def criteraAngle(subs = "", loose = 0):
     
     if loose == 0 : 
         d_criteria["Primary"] = {}
-        d_criteria["Primary"]["angle"] = [90,130]
-        d_criteria["Primary"]["distance"] = [3.0,4.0]
+        d_criteria["Primary"]["angle"] = [0, 180]
+        d_criteria["Primary"]["distance"] = [2.0,4.0]
         
         d_criteria["Secondary"] = {}
-        d_criteria["Secondary"]["angle"] = [85,135]
-        d_criteria["Secondary"]["distance"] = [3.0,4.0]
+        d_criteria["Secondary"]["angle"] = [0, 180]
+        d_criteria["Secondary"]["distance"] = [2.0,4.0]
         
         d_criteria["Tertiary"] = {}
-        d_criteria["Tertiary"]["angle"] = [70,140]
-        d_criteria["Tertiary"]["distance"] = [3.0,4.0]
+        d_criteria["Tertiary"]["angle"] = [0, 180]
+        d_criteria["Tertiary"]["distance"] = [2.0,4.0]
         
         d_criteria["Imidazole"] = {}
-        d_criteria["Imidazole"]["angle"] = [0,40]
-        d_criteria["Imidazole"]["distance"] = [3.0,5.0]
+        d_criteria["Imidazole"]["angle"] = [0, 180]
+        d_criteria["Imidazole"]["distance"] = [2.0,5.5]
         
         # change criterion because I change 11-08 the number of angle considered -> need more data
         d_criteria["Guanidium"] = {}
         d_criteria["Guanidium"]["angle"] = [0, 180]#[40, 80, 120, 180]
-        d_criteria["Guanidium"]["distance"] = [2,6]#[3.5, 5.5, 3.5, 5.5] #need change distance also !!!!
+        d_criteria["Guanidium"]["distance"] = [2.0,6]#[3.5, 5.5, 3.5, 5.5] #need change distance also !!!!
         
         d_criteria["AcidCarboxylic"] = {}
-        d_criteria["AcidCarboxylic"]["angle"] = [130,160]
-        d_criteria["AcidCarboxylic"]["distance"] = [3.2,3.7]
+        d_criteria["AcidCarboxylic"]["angle"] = [0, 180]
+        d_criteria["AcidCarboxylic"]["distance"] = [2.0,4.5]
     else : 
         
         d_criteria["Primary"] = {}

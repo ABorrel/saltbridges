@@ -102,16 +102,16 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
     start, logFile = log.initAction("RUN Statistic")
 # # 
     # proportion salt bridges
-#     saltBridges (st_atom, pathManage.resultSaltBridges(pr_result), logFile)
+    CountInteraction (st_atom, pathManage.resultSaltBridges(pr_result), logFile)
 #     EnvironmentSaltBridges (st_atom, pathManage.resultSaltBridges (pr_result, name_in = "conditional"), logFile)
 
     # loose    
-#     saltBridges (st_atom, pathManage.resultSaltBridges(pr_result, "loose"), logFile, restrained = 0)
+#     CountInteraction (st_atom, pathManage.resultSaltBridges(pr_result, "loose"), logFile, restrained = 0)
 #     EnvironmentSaltBridges (st_atom, pathManage.resultSaltBridges (pr_result, name_in = "loose/conditional"), logFile, restrained = 0)    
     
 # #  
 # #     # distribution distance interest group and type atoms -> distance type
-    DistTypeAtom(st_atom, pathManage.resultDistance(pr_result), logFile)
+#     DistTypeAtom(st_atom, pathManage.resultDistance(pr_result), logFile)
 # #         
 # #     # angleSubs -> directory angles
 #     AngleSubs(st_atom, pr_result, max_distance)
@@ -663,12 +663,10 @@ def searchMoreClose (l_neighbors, option_lcopy = 0) :
 
 
 
-def saltBridges (st_atom, pr_result, logFile, restrained = 1, debug = 1):
+def CountInteraction (st_atom, pr_result, logFile, restrained = 1, debug = 1):
     
-    filout = open (pr_result + "proportionSaltBridges", "w")
-    filout_sum = open (pr_result + "proportionSaltBridges.sum", "w")
     st_count = {}
-    l_interaction = ["salt-bridges","H-bond","water","other"]
+    l_interactions_search = ["COO", "H2O", "OH", "NH", "N", "Other"]
     
     for type_subs in st_atom.keys ():
         # remove global
@@ -677,112 +675,152 @@ def saltBridges (st_atom, pr_result, logFile, restrained = 1, debug = 1):
         if debug : print "=> control l574 statistic.py", type_subs
         if not type_subs in st_count.keys ():
             st_count[type_subs] = {}
-            st_count[type_subs]["salt-bridges"] = 0
-            st_count[type_subs]["H-bond"] = 0
-            st_count[type_subs]["water"] = 0
-            st_count[type_subs]["other"] = 0
-            st_count[type_subs]["out_distance"] = 0
-            st_count[type_subs]["out_angle"] = 0
+            st_count[type_subs]["dependant"] = {}
+            st_count[type_subs]["independant"] = {}
+            #initialisation
+            for interact in l_interactions_search : 
+                st_count[type_subs]["independant"][interact] = 0
+                st_count[type_subs]["dependant"][interact] = 0
             
-        
+            print st_count
+            
+            
         for atom_central in st_atom[type_subs] : 
-            type_stabilisation = retrieveInteraction (atom_central["neighbors"], type_subs, restrained)
-            st_count[type_subs][type_stabilisation] = st_count[type_subs][type_stabilisation] + 1
-            if type_stabilisation == "out_angle" or type_stabilisation == "out_distance": 
-                st_count[type_subs]["other"] = st_count[type_subs]["other"] + 1
+            l_interact_found = GetInteractions (atom_central["neighbors"], type_subs, restrained)
+            
+            CountIndependant (l_interact_found, st_count[type_subs]["independant"])
+            CountDependant(l_interact_found, st_count[type_subs]["dependant"], type_subs)
+            
+
+    p_filout_dependant = pr_result + "interact_dependant"
+    p_filout_independant = pr_result + "interact_independant"
     
-    filout.write ("\t".join (l_interaction) + "\n")
+    filout_dependant = open (p_filout_dependant, "w")
+    filout_independant = open (p_filout_independant, "w")
+    
+    # header
+    filout_dependant.write ("\t".join (l_interactions_search) + "\n")
+    filout_independant.write ("\t".join (l_interactions_search[:-1]) + "\n") 
+    
     for sub in st_count.keys () :
-        filout_sum.write ("== " + str (sub) + " ==\n")
-        filout.write (sub)
-        for interaction in l_interaction : 
-            filout.write ("\t" + str(st_count[sub][interaction]))
-            filout_sum.write (interaction + ": " + str (st_count[sub][interaction]) + "\n")
+        filout_dependant.write (sub + "\t")
+        filout_independant.write (sub + "\t")
         
-        filout_sum.write (">-< Out distance: " + str (st_count[sub]["out_distance"]) + "\n")
-        filout_sum.write (">-< Out angleSubs: " + str (st_count[sub]["out_angle"]) + "\n")
-        filout_sum.write ("Global: " + str (st_count[sub]["salt-bridges"] + st_count[sub]["H-bond"] + st_count[sub]["water"] + st_count[sub]["other"]) + "\n")
-        filout.write ("\n")
+        filout_dependant.write ("\t".join([str (st_count[sub]["dependant"][k]) for k in l_interactions_search]) + "\n")
+        filout_independant.write ("\t".join([str (st_count[sub]["independant"][k]) for k in l_interactions_search[:-1]]) + "\n")                       
+                                
+
+    filout_dependant.close ()
+    filout_independant.close ()
     
-    filout.close ()
-    filout_sum.close ()
-    # write summary
     
-    runScriptR.saltBridgesProportion(pr_result + "proportionSaltBridges")
+    runScriptR.InteractionProportion(p_filout_dependant)
+    runScriptR.InteractionProportion(p_filout_independant)
+
+    # merge plot 
+    runScriptR.MergeProportionInteractAtLeasNotAtLeast (p_filout_dependant, p_filout_independant)
+    
+
+
+def CountIndependant (l_interaction_found, d_count):
+    
+    
+    for interact in l_interaction_found : 
+        d_count[interact] = d_count[interact] + 1
+
+def CountDependant (l_interaction_found, d_count, type_subs):
+    
+    print l_interaction_found, type_subs
+    
+    # for group COO
+    if type_subs == "AcidCarboxylic" : 
+        if "N" in l_interaction_found : 
+            d_count["N"] = d_count["N"] + 1
+        elif "NH" in l_interaction_found : 
+            d_count["NH"] = d_count["NH"] + 1
+        elif "H2O" in l_interaction_found : 
+            d_count["H2O"] = d_count["H2O"] + 1
+        elif "OH" in l_interaction_found : 
+            d_count["OH"] = d_count["OH"] + 1
+        elif "COO" in l_interaction_found : 
+            d_count["COO"] = d_count["COO"] + 1
+        else : 
+            d_count["Other"] = d_count["Other"] + 1
+    else : 
+        if "COO" in l_interaction_found : 
+            d_count["COO"] = d_count["COO"] + 1
+        elif "H2O" in l_interaction_found : 
+            d_count["H2O"] = d_count["H2O"] + 1    
+        elif "OH" in l_interaction_found : 
+            d_count["OH"] = d_count["OH"] + 1        
+        elif "NH" in l_interaction_found : 
+            d_count["NH"] = d_count["NH"] + 1
+        elif "N" in l_interaction_found : 
+            d_count["N"] = d_count["N"] + 1
+        else : 
+            d_count["Other"] = d_count["Other"] + 1       
+        
+        
+        
+        
+        
+    
+    
+    
+    
       
         
-def retrieveInteraction (l_atoms, subs, restrained = 1, debug = 1) : 
+def GetInteractions (l_atoms, subs, restrained = 1, debug = 1) : 
      
     if restrained == 1 : 
         st_angle = structure.criteraAngle(subs)
     else : 
         st_angle = structure.criteraAngle(subs, loose = 1)
-     
-    flag_water = 0
-    flag_ox = 0
-    flag_hbond = 0
-    flag_out_distance = 0
-    flag_out_angle = 0
+    
+    l_interact = []
+    
      
     for atom in l_atoms : 
+        flag_temp_dist = 0
+        flag_temp_angle = 0
         type_atom = structure.classificationATOM(atom)
         #print atom.keys ()
-        # print atom
-        for angle in atom["angleSubs"] :
-            if debug == 1 : 
-                if subs == "Imidazole" : print angle, subs 
-            if angle == "NA" : 
-                continue
-        if atom["distance"] >= st_angle["distance"][0] and atom["distance"] <= st_angle["distance"][1] : 
-            if atom["angleSubs"] != [] and atom["angleSubs"][0] >= st_angle["angle"][0] and atom["angleSubs"][0] <= st_angle["angle"][1] : 
-                
-#                 if debug == 1 : print atom["angleSubs"], atom["distance"], "****----***** OK", subs
-                
-                if subs == "AcidCarboxylic" : 
-                    if type_atom == "Nbasic" : 
-                        flag_ox = 1
-                    elif type_atom == "Ndonnor" or type_atom == "Nhis" : 
-                        flag_hbond = 1
-                    elif  type_atom == "H2O" : 
-                        flag_water = 1
-                else : 
-                
-                    if type_atom == "OxAcid" : 
-                        flag_ox = 1
-                    elif type_atom == "OxPep" or type_atom == "OxAccept" or type_atom == "ODonAcc" : 
-                        flag_hbond = 1
-                    elif  type_atom == "H2O" : 
-                        flag_water = 1
-            else : 
-                if subs == "AcidCarboxylic" :
-                    if type_atom == "Nbasic" : 
-                        flag_out_angle = 1
-                else : 
-                    if type_atom == "OxAcid" : 
-                        flag_out_angle = 1
+        # print atom    
+        l_angle = atom["angleSubs"]
+        dist = atom["distance"]
+        # chech distance
+        if not dist >= st_angle["distance"][0] or not dist <= st_angle["distance"][1] :
+            flag_temp_dist = 1
+        # check angle
         else : 
-            if subs == "AcidCarboxylic" :
-                if type_atom == "Nbasic" : 
-                    flag_out_distance = 1
-            else : 
-                if type_atom == "OxAcid" : 
-                    flag_out_distance = 1
-                        
-                        
+            for angle in l_angle : 
+                if not angle >= st_angle["angle"][0] or not angle <= st_angle["angle"][1] :
+                    flag_temp_angle = 1
                     
+            if l_angle == [] : 
+                flag_temp_angle = 1 
+        
+        # in the criteria    
+        if flag_temp_dist == 0 and flag_temp_angle == 0  : # angle and distance OK
+            if type_atom == "Carg" or type_atom == "Nhis":
+                if not "N" in l_interact : 
+                    l_interact.append ("N")
+            elif type_atom == "COxAcid" : 
+                if not "COO" in l_interact : 
+                    l_interact.append ("COO")
+            elif type_atom == "H2O" : 
+                if not "H2O" in l_interact : 
+                    l_interact.append ("H2O")
+            elif type_atom == "ODonAcc" : 
+                if not "OH" in l_interact : 
+                    l_interact.append ("OH")
+            elif type_atom == "Ndonor" : 
+                if not "NH" in l_interact : 
+                    l_interact.append ("NH")
+            else : 
+                l_interact.append ("Other")
     
-    if flag_ox == 1 : 
-        return "salt-bridges"
-    if flag_hbond == 1 : 
-        return "H-bond"
-    if flag_water == 1 : 
-        return "water"
-    if flag_out_angle == 1 :
-        return "out_angle"
-    if flag_out_distance == 1 : 
-        return "out_distance"
-    
-    return "other"
+    return l_interact
      
      
 def planarityImidazole (atom_interest_close, p_dir_result) : 
@@ -1059,7 +1097,7 @@ def EnvironmentSaltBridges (st_atom, pr_result, file_log, restrained = 1) :
         d_angle = {}
         
         for atom_central in st_atom[type_subs] : 
-            type_stabilisation = retrieveInteraction (atom_central["neighbors"], type_subs, restrained)
+            type_stabilisation = GetInteractions (atom_central["neighbors"], type_subs, restrained)
             
             # case -> stabilization by salt bridges
             nb_neighbor = d_neighbor_considered[type_subs]
