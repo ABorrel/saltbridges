@@ -365,12 +365,6 @@ defColorSubstruct = function (l_name){
 }
 
 
-
-
-
-
-
-
 deviationAngle = function(matrixAngle){
 	nbLine = dim(matrixAngle)[1]
 	nb_col = dim(matrixAngle)[2]
@@ -388,5 +382,25 @@ deviationAngle = function(matrixAngle){
 		}
 	return (as.matrix(matrix_out))
 
+}
+
+###############################
+# significiance of the pvalue #
+###############################
+
+
+signifPvalue = function (a){
+	if (a < 0.001){
+		return ("***")
+	}
+	else if (a < 0.01){
+		return ("**")
+	}
+	else if (a < 0.05){
+		return ("*")
+	}
+	else {
+		return ("-")
+	}	
 }
 

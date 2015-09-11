@@ -102,7 +102,7 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
     start, logFile = log.initAction("RUN Statistic")
 # # 
     # proportion salt bridges
-    CountInteraction (st_atom, pathManage.resultSaltBridges(pr_result), logFile)
+#     CountInteraction (st_atom, pathManage.resultSaltBridges(pr_result), logFile)
 #     EnvironmentSaltBridges (st_atom, pathManage.resultSaltBridges (pr_result, name_in = "conditional"), logFile)
 
     # loose    
@@ -146,6 +146,13 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
     log.endAction("END Statistic run !!!", start, logFile)
 
 
+
+def MergeDataSet (pr_result):
+    
+    
+    # merge proportion interaction
+    pr_merged_portion = pathManage.CreatePathDir(pr_result + "MergeInteractProportion/")
+    
 
 
 

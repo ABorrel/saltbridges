@@ -2,11 +2,13 @@
 source("tool.R")
 
 
-GetPercent = function (d_in){
+GetPercent = function (d_in, sum_subs){
 
-	nb_sub = sum (d_in)
+	if (sum_subs == 0){
+		sum_subs = sum (d_in)
+	}
 	for (j in seq (1, dim(d_in)[2])){
-		d_in[sub, j] = d_in[sub, j] / nb_sub
+		d_in[sub, j] = d_in[sub, j] / sum_subs
 	}
 
 	return (d_in)
@@ -14,11 +16,11 @@ GetPercent = function (d_in){
 
 
 
-barplotCum = function (d_in, l_color){
+barplotCum = function (d_in, l_color, main_plot){
 	# transfom %
-	d_percent = GetPercent(d_in)
+	d_percent = GetPercent(d_in, 0)
 
-	barplot (t(d_percent), col = l_color, axes = FALSE, axisnames = FALSE)
+	barplot (t(d_percent), col = l_color, axes = FALSE, axisnames = FALSE, main = main_plot, cex.main = 2)
 	
 	#axis 
 	cum = 0
@@ -26,6 +28,15 @@ barplotCum = function (d_in, l_color){
 		axis (2, (cum + y / 2), paste (round(y*100), "%", sep = ""), las = 2, cex.axis = 2.0)
 		cum = cum + y
 	}
+}
+
+
+testX2 = function (d1, d2){
+
+	d_x2 = rbind (d1, d2)
+	out_X2 = chisq.test(as.matrix(d_x2))
+
+	return (out_X2$p.value)
 }
 
 #######################
@@ -50,29 +61,37 @@ d_notatleast2 = read.table (p_noatleast2, header = TRUE)
 
 l_color = defColor(colnames (d_atleast1))
 for (sub in rownames(d_atleast1)){
-	svg (paste(pr_out, sub, "_combine.svg", sep = ""), 15, 8)
+	svg (paste(pr_out, sub, "_combine.svg", sep = ""), 15, 9)
 	nf <- layout(matrix(c(0,0,0,1,2,3),2,3,byrow=TRUE), c(1,1,4), c(0,3), TRUE)
-	par (mar=c(2,6,1,3))
+	par (mar=c(1,6,2,3))
 
-	barplotCum (d_atleast1[sub,], l_color)
-	barplotCum (d_atleast2[sub,], l_color)
+	# X2
+	pval_atleast = testX2 (GetPercent(d_atleast1[sub,], 0) * 100, GetPercent(d_atleast2[sub,],0) * 100)
+
+	barplotCum (d_atleast1[sub,], l_color, "PDB1.5")
+	barplotCum (d_atleast2[sub,], l_color, paste("PDB3.0 ", signifPvalue (pval_atleast), sep = ""))
 	
-	d_percent1 = GetPercent (d_notatleast1[sub,])
-	d_percent2 = GetPercent (d_notatleast2[sub,])
+	nb_sub1 = sum (d_atleast1[sub,])
+	nb_sub2 = sum (d_atleast2[sub,])
+
+	d_percent1 = GetPercent (d_notatleast1[sub,], nb_sub1)
+	d_percent2 = GetPercent (d_notatleast2[sub,], nb_sub2)
+	
+	pval_notatleast = testX2 (d_percent1*100, d_percent2*100)
 	
 
 	d_plot = matrix(c(as.double(d_percent1), as.double(d_percent2)), 2, length (d_percent1),byrow=TRUE )
-	#d_plot = t(d_plot)
 
-	#colnames (d_plot) = 
-
+	# barplot
+	colnames (d_plot) = colnames (d_notatleast1)
 	color_all = NULL
 	for (colors in l_color){
 		color_all = append (color_all, rep (colors,2)) 
 	}
+	barplot (d_plot, col = color_all, cex.lab = 2, ylab = "Frequencies", ylim = c(0,1), cex.names = 2.0, cex.axis = 1.8, beside=TRUE, cex.main = 3)
+	text (13,0.96, paste("PDB1.5; n = ", nb_sub1, sep = ""), cex = 2.2)
+	text (13,0.92, paste("PDB3.0; n = ", nb_sub2, sep = ""), cex = 2.2)
 
-	barplot (d_plot, col = color_all, cex.lab = 2, ylab = "Frequencies", ylim = c(0,1), cex.names = 2.0, cex.axis = 1.8, beside=TRUE)
-	
 	# grid
 	# horizontal
 	y_grid = seq(0, 1, 0.1)
