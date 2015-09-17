@@ -84,7 +84,7 @@ pathData = args[1]
 ####Retrieve list distance####
 
 #listType = c("Primary", "Secondary", "Tertiary", "Diamine", "Guanidium","Imidazole","Pyridine", "AcidCarboxylic", "Global")
-listType = c("Primary", "Secondary", "Tertiary", "Guanidium", "Imidazole", "AcidCarboxylic", "Global")
+listType = c("I", "II", "III", "GAI", "IMD", "COO", "Global")
 
 
 list_distance = rownames(read.table(paste(pathData, "proportionType", listType[1], sep = "")))

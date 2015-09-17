@@ -61,12 +61,12 @@ def resultDistance(rep_int):
     return rep
 
 
-def resultSaltBridges (pr_int, name_in = ""):
+def resultInteraction (pr_int, name_in = ""):
     
     if name_in == "" : 
-        pr_salt_bridges = pr_int + "saltBridges/"
+        pr_salt_bridges = pr_int + "CountInteraction/"
     else :
-        pr_salt_bridges = pr_int + "saltBridges/" + name_in + "/"
+        pr_salt_bridges = pr_int + "CountInteraction/" + name_in + "/"
         
     if not path.isdir(pr_salt_bridges) : 
         makedirs(pr_salt_bridges, mode=0777)

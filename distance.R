@@ -3,11 +3,12 @@
 
 
 
-grapheCN = function(file, type_bond){
-	data = read.table(file)
-	brk = seq(0,max(data[,1])+0.01,0.01)
-	png(filename=paste(file,".png",sep = ""))
-	hist(data[,1], xlab = paste("Length of bond ", type_bond, " (Å)", sep = ""), ylab = "Number of occurences", xlim=c(1,2), breaks = brk, main="", las=1, freq=T)
+grapheBond = function(file, type_bond){
+	d = read.table(file)
+	brk = 20
+	svg(filename=paste(file,".svg",sep = ""), 10, 8)
+	par (mar = c(5,5,2,2))
+	hist(d[,1], xlab = "Length of bond (Å)", ylab = "Number of occurences", breaks = 100, main="", las=1, cex = 0.6, cex.lab = 2, xlim = c(0,max (d[,1])), col = "grey")
 	dev.off()
 
 }
@@ -19,13 +20,9 @@ graphePolar = function(file){
 
 	data = read.table(file)
 	data = data[!is.na(data)]
-	brk = seq(0,10+0.05,0.05)
-	print (brk)
 
-	png(filename=paste(file, ".png", sep = ""))
-
-	hist(data, xlab ="orthogonal distances (Å)", ylab = "Number of occurences", breaks=brk, xlim=c(0,3), right=F, main=paste("Distribution of distances to orthogonal plane","\n", "tertiary amines",sep = ""),las=1, freq=T)
-
+	svg(filename=paste(file, ".svg", sep = ""))
+	hist(data, xlab ="Orthogonal distances (Å)", ylab = "Number of occurences", breaks=20, xlim=c(0,3), right=F, las=1, freq=T, cex = 0.6, cex.lab = 2)
 	dev.off()
 }
 
@@ -58,12 +55,12 @@ type = args[2]
 print (file)
 print (type)
 
-if (type == "CN" | type == "CO"){
-	grapheCN(file, type)
-}
+
 if(type == "coplar"){
 	graphePolar(file)
-
+}
+if (type == "CN" | type == "CO" | type == "CC"){
+  grapheBond(file, type)
 }else{
 	grapheOther (file, type)
 }

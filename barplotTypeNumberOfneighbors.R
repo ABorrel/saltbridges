@@ -19,13 +19,13 @@ if(type == "GlobalAmine"){
 flag = 1
 }
 
-if(type == "Imidazole"){
-	nameGraphe = paste ("Surronding of all Nref","\n", "Imidazoles (",distance, " Å)", sep = "")
+if(type == "IMD"){
+	nameGraphe = paste ("Surronding of all Nref","\n", "IMD (",distance, " Å)", sep = "")
 	flag = 1
 }
 
-if(type == "AcidCarboxylic"){
-	nameGraphe = paste ("Surronding of all Oref","\n", "AcidCarboxylic (",distance, " Å)", sep = "")
+if(type == "COO"){
+	nameGraphe = paste ("Surronding of all Oref","\n", "COO (",distance, " Å)", sep = "")
 	flag = 1
 }
 

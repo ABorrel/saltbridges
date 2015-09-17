@@ -168,7 +168,7 @@ def controlCoplanarTertiaryAmine(listAtomLigand, listDistanceCoplanar) :
     in: list atom in ligand, list distance coplar retrieve
     out: append distance in list distance coplanar"""
     
-    listSerialNitrogen = searchPDB.listAtomType(listAtomLigand, "N")
+    listSerialNitrogen = searchPDB.ListSerialElement(listAtomLigand, "N")
     for serialNitrogen in listSerialNitrogen:
         listAtomConnectNitrogen, conect = retrieveAtom.atomConnect(listAtomLigand, serialNitrogen)
         

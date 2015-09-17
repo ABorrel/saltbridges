@@ -82,25 +82,37 @@ factorAFC = function (xplot, yplot, xplotdata, yplotdata ){
 
 AFC = function (d, path_file){
 
-	print (dim(d))
-
+  # genere afc coords
 	r = CA (d, graph = FALSE)
-
-	svg (file = paste (path_file, "_AFC.svg", sep = ""), 15, 15)
-	par(mar=c(8,8,8,8))
-
-	# descriptors
-	plot (c(r$row$coord[,1], r$col$coord[,1]), c(r$row$coord[,2], r$col$coord[,2]), type = "n", xlab = paste("DIM 1 : ", round(r$eig[1,2],1), "%", sep = ""), ylab = paste("DIM 2 : ", round(r$eig[2,2],1), "%", sep = ""), cex.lab = 2.4)
-	col_des = defColor(names(r$col$coord[,1]))
+  
+	# plot
+	xplot = c(r$row$coord[,1], r$col$coord[,1])
+	yplot = c(r$row$coord[,2], r$col$coord[,2])
+	lim_x = max (abs (xplot))
+	lim_y = max (abs (yplot))
 	
-	print (col_des)	
+	l_col = defColor(names(r$col$coord[,1]))
 	
-	text (r$col$coord[,1], r$col$coord[,2], label = names(r$col$coord[,1]), col = col_des, cex = 2)
-	# data
-	text (r$row$coord[,1], r$row$coord[,2], col = "black", label = names (r$row$coord[,1]), cex = 2.5)
+	svg (file = paste (path_file, "_AFC_text.svg", sep = ""), 15, 12)
+	par(mar=c(8,8,3,3))
+	plot (xplot, yplot, type = "n", xlab = paste("DIM 1 : ", round(r$eig[1,2],1), "%", sep = ""), ylab = paste("DIM 2 : ", round(r$eig[2,2],1), "%", sep = ""), cex.lab = 1.8, cex.axis = 1.6, xlim = c(-lim_x, lim_x), ylim = c(-lim_y, lim_y))
+	text (r$col$coord[,1], r$col$coord[,2], label = names(r$col$coord[,1]), col = l_col, cex = 2, pos = 4)
+	text (r$row$coord[,1], r$row$coord[,2], col = "black", label = names (r$row$coord[,1]), cex = 2.5, pos = 4)
 	abline(h=0,v=0)
 
 	dev.off()
+	
+	svg (file = paste (path_file, "_AFC_point.svg", sep = ""), 15, 12)
+	par(mar=c(8,8,3,3))
+	plot (xplot, yplot, type = "n", xlab = paste("DIM 1 : ", round(r$eig[1,2],1), "%", sep = ""), ylab = paste("DIM 2 : ", round(r$eig[2,2],1), "%", sep = ""), cex.lab = 1.8, cex.axis = 1.6, xlim = c(-lim_x, lim_x), ylim = c(-lim_y, lim_y))
+	points (r$col$coord[,1], r$col$coord[,2], col = l_col, cex = 4, pch = 16)
+	text (r$row$coord[,1], r$row$coord[,2], col = "black", label = names (r$row$coord[,1]), cex = 2.5, pos = 4)
+	abline(h=0,v=0)
+	
+	dev.off()
+	
+	
+	
 }
 
 
@@ -248,6 +260,9 @@ defColor = function (l_name){
 		else if (is.integer0 (grep("VAL", element))== FALSE){
 			out = append (out, colorApolar)
 		}
+	  else if (is.integer0 (grep("GLY", element))== FALSE){
+	    out = append (out, colorOther)
+	  }	  
 		else if (is.integer0 (grep("COO", element))== FALSE){
 			out = append (out, "#FF0000")
 		}
@@ -332,28 +347,28 @@ defColorSubstruct = function (l_name){
 	out = c()
 	for (element in l_name){
 		#print (element)
-		if (element == "Primary"){
+		if (element == "I"){
 			out = append (out, "red")
 		}
-		else if (element == "Secondary"){
+		else if (element == "II"){
 			out = append (out, "orange")
 		}
-		else if (element == "Tertiary"){
+		else if (element == "III"){
 			out = append (out, "yellow")
 		}
 		else if (element =="Diamine"){
 			out = append (out, "cyan")
 		}
-		else if (element == "Guanidium"){
+		else if (element == "GAI"){
 			out = append (out, "blue")
 		}
-		else if (element == "Imidazole"){
+		else if (element == "IMD"){
 			out = append (out, "green")
 		}
 		else if (element == "Pyridine"){
 			out = append (out, "purple")
 		}
-		else if (element == "AcidCarboxylic"){
+		else if (element == "COO"){
 			out = append (out, "black")
 		}
 		else {
@@ -403,4 +418,24 @@ signifPvalue = function (a){
 		return ("-")
 	}	
 }
+
+
+#####################
+# useful function   #
+#####################
+
+
+GetPercent = function (d_in, sum_subs){
+  
+  if (sum_subs == 0){
+    sum_subs = sum (d_in)
+  }
+  for (j in seq (1, dim(d_in)[2])){
+    d_in[sub, j] = d_in[sub, j] / sum_subs
+  }
+  
+  return (d_in)
+}
+
+
 

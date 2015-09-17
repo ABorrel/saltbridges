@@ -92,12 +92,12 @@ def cycle(serialAtomInit, listAtomLigand):
 
 def substructure (subs, at_central, l_at_lig) : 
     
-    if subs == "Primary" or subs == "Secondary" or subs == "Tertiary" : 
+    if subs == "I" or subs == "II" or subs == "III" : 
         serial_atom = at_central["serial"]
         l_sub = atomConnect(l_at_lig, serial_atom)
         return l_sub[0]
     
-    elif subs == "Imidazole" : 
+    elif subs == "IMD" : 
         atom_N = searchPDB.Nclose (at_central, l_at_lig)
         l_connectN, conect = atomConnect(l_at_lig, atom_N["serial"])
         out_imd = searchPDB.imidazole(l_connectN, l_at_lig)
@@ -111,7 +111,7 @@ def substructure (subs, at_central, l_at_lig) :
                 l_atom_IMD.append (serial(serial_atom, l_at_lig))
             return l_atom_IMD
     
-    elif subs == "Guanidium" : 
+    elif subs == "GAI" : 
         l_out = []
         l_atomC, connectC = atomConnect(l_at_lig, at_central["serial"])
         l_atom_N, connectN = atomConnect(l_at_lig, l_atomC[1]["serial"])
@@ -127,7 +127,7 @@ def substructure (subs, at_central, l_at_lig) :
             l_out.append (serial(serial_at, l_at_lig))
         return l_out
     
-    elif subs == "AcidCarboxylic" : 
+    elif subs == "COO" : 
          
         l_atomC, connectC = atomConnect(l_at_lig, at_central["serial"])
         if connectC[1] == "O" : 

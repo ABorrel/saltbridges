@@ -250,7 +250,7 @@ def proportionAtomClassNeighbor (p_filin, logFile, verbose = 1):
 
 
 
-def AFCPieFirstNeighbor (p_filin, logFile, verbose = 1):
+def AFCBarplot (p_filin, logFile, verbose = 1):
     
     cmd = pathManage.scriptR() + "AFCNeighbor.R " + p_filin
     system (cmd)
@@ -347,12 +347,17 @@ def InteractionProportion (p_filin):
 
 def MergeProportionInteractAtLeasNotAtLeast (p_atleast, p_notatleast):
     
-    cmd_R = "mergeBarplot.R " + str (p_notatleast) + " " + str (p_atleast)
+    cmd_R = pathManage.scriptR() + "mergeBarplot.R " + str (p_notatleast) + " " + str (p_atleast)
     print cmd_R
     system (cmd_R)
     
     
-
+def MergeProportionAndDataset (p_atleast1, p_notatleast1, p_atleast2, p_notatleast2, pr_out):
+    
+    
+    cmd_R = pathManage.scriptR() + "mergeBarplotAndDataset.R " + str (p_atleast1) + " " + str (p_notatleast1) + " " + str (p_atleast2) + " " + str (p_notatleast2) + " " + str (pr_out)
+    print cmd_R
+    system (cmd_R)
 
 def DistVSAngleNeighbor (p_filin):
     
@@ -370,5 +375,12 @@ def HistAngle (p_filin):
     system (cmd_hist)
     
      
+def MeansNumberNeighbors (p_filout) : 
     
+    cmd_run = pathManage.scriptR() + "barplotMeans.R " + str (p_filout)
+    print cmd_run
+    system(cmd_run)
+    
+    
+        
         

@@ -24,7 +24,7 @@ from time import sleep
 
 
 
-def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_superimpose = 0, option_on_complexes_by_ligand = 0, option_bond = 0, option_stat = 0, option_stat_dataset = 0,  verbose = 1):
+def main (name_database, max_distance = 5.0, RX = 3.00, RFree = 0.25, option_superimpose = 0, option_on_complexes_by_ligand = 0, option_bond = 0, option_stat = 0, option_stat_dataset = 0, option_merge = 0, verbose = 1):
     
     
     #format input
@@ -38,7 +38,7 @@ def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_supe
     
     # dataset with resolution
     l_p_dataset = datasetFinal.Builder(name_database, RX, RFree, option_on_complexes_by_ligand)
-#
+    
 #     ########################
 #     #   Parsing dataset   #
 #     ########################
@@ -74,25 +74,25 @@ def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_supe
     
         # remove iron close -> statistic before 
         # Becarful because the dictionnary change
-        print "control-1", len(d_sub_neighbor["Primary"])
+        print "control-1", len(d_sub_neighbor["I"])
         d_close_het = hetCloseAnalysis.removeNeighborIron (d_sub_neighbor, pr_hetion + "ionSummarySubstruct.txt")
-        print "control-2", len(d_sub_neighbor["Primary"])
+        print "control-2", len(d_sub_neighbor["I"])
         
         if option_superimpose == 1 : 
             # superimpose neighbors -> refaire a Helsinki car MAJ de de la PDB
-            superimpose.globalNeighbor (d_sub_neighbor, "Primary", pr_result)
-            superimpose.globalNeighbor (d_sub_neighbor, "Secondary", pr_result)
-            superimpose.globalNeighbor (d_sub_neighbor, "Tertiary", pr_result)
-            superimpose.globalNeighbor (d_sub_neighbor, "Imidazole", pr_result)
-            superimpose.globalNeighbor (d_sub_neighbor, "Guanidium", pr_result)
-            superimpose.globalNeighbor (d_sub_neighbor, "AcidCarboxylic", pr_result)
+            superimpose.globalNeighbor (d_sub_neighbor, "I", pr_result)
+            superimpose.globalNeighbor (d_sub_neighbor, "II", pr_result)
+            superimpose.globalNeighbor (d_sub_neighbor, "III", pr_result)
+            superimpose.globalNeighbor (d_sub_neighbor, "IMD", pr_result)
+            superimpose.globalNeighbor (d_sub_neighbor, "GAI", pr_result)
+            superimpose.globalNeighbor (d_sub_neighbor, "COO", pr_result)
             
             # superimpose neighbors -> with het first stabilization 
-#             superimpose.globalNeighbor (d_close_het, "Primary", pr_hetion)
-#             superimpose.globalNeighbor (d_close_het, "Secondary", pr_hetion)
-#             superimpose.globalNeighbor (d_close_het, "Tertiary", pr_hetion)
-#             superimpose.globalNeighbor (d_close_het, "Imidazole", pr_hetion)
-#             superimpose.globalNeighbor (d_close_het, "Guanidium", pr_hetion)
+#             superimpose.globalNeighbor (d_close_het, "I", pr_hetion)
+#             superimpose.globalNeighbor (d_close_het, "II", pr_hetion)
+#             superimpose.globalNeighbor (d_close_het, "III", pr_hetion)
+#             superimpose.globalNeighbor (d_close_het, "IMD", pr_hetion)
+#             superimpose.globalNeighbor (d_close_het, "GAI", pr_hetion)
         
         if option_bond == 1 : 
         
@@ -100,16 +100,21 @@ def main (name_database, max_distance = 5.0, RX = 3.0, RFree = 0.25, option_supe
             statistic.planarityImidazole (d_sub_neighbor, pr_result)
             statistic.planarityGuanidium (d_sub_neighbor, pr_result)
             
-            statistic.lenBondAnalysis(d_sub_neighbor, "Primary", pr_result)
-            statistic.lenBondAnalysis(d_sub_neighbor, "Secondary", pr_result)
-            statistic.lenBondAnalysis(d_sub_neighbor, "Tertiary", pr_result)
-
+            statistic.lenBondAnalysis(d_sub_neighbor, "I", pr_result)
+            statistic.lenBondAnalysis(d_sub_neighbor, "II", pr_result)
+            statistic.lenBondAnalysis(d_sub_neighbor, "III", pr_result)
+            
         if option_stat == 1: 
             # statistic
             statistic.globalRunStatistic(d_sub_neighbor, max_distance, pr_result)
 #             statistic.globalRunStatistic(d_close_het, max_distance, pr_hetion)
-    
- 
+
+    if option_merge == 1: 
+        if option_on_complexes_by_ligand == 1: 
+            statistic.MergeDataSet(pathManage.result (name_database + "/" + str (RX) + "_" + str (RFree) + "_uniquePDB"), "dataset_3.00", "dataset_1.50")
+        else : 
+            statistic.MergeDataSet(pathManage.result (name_database + "/" + str (RX) + "_" + str (RFree)), "dataset_1.50", "dataset_3.00")
+        
  
 
 
@@ -175,8 +180,8 @@ RFree_thresold = 0.25
 # main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0, option_stat = 0, option_stat_dataset = 1)
 
 # # PDB
-main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0)
-# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 0, option_stat_dataset = 0)
+main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 1,  option_stat = 1, option_stat_dataset = 0, option_merge = 0)
+# main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 0, option_stat_dataset = 0, option_merge = 0)
 
 # test
 # main ("test", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 1, option_bond = 0, option_stat = 0, option_stat_dataset = 0)
@@ -194,12 +199,12 @@ main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX
 # volumeFonction.AreaGuanidium(pr_result)
 
 
-###########################
-#      Bond length        # check with new function in the main // write again
-###########################
+#######################################
+#      Bond length -> criteria        #
+#######################################
 
-# bondLength.BondCNAndCO("PDB", 1.5)
-
+# bondLength.GlobalBondLength("PDB", 1.5)
+# bondLength.GlobalBondLength("PDB", 3.0)
 
 
 
@@ -210,7 +215,7 @@ main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX
 # waterGlobal ("PDB20", limit_acc = 20.0)
 # waterGlobal ("PDB50", limit_acc = 20.0)
 # waterGlobal ("PDB50", limit_acc = 0.0)
-# waterGlobal ("PDB", limit_acc = 20.0)
+# waterGlobal ("PDB", limit_acc = 0.0)
 # waterFamily("PDB")
 # waterFamily("PDB50")
 

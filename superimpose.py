@@ -169,10 +169,10 @@ def globalNeighbor (atom_interest_close, subs, p_dir_result) :
         l_at_subs = retrieveAtom.substructure (subs, at_central, l_at_lig)
         
         
-        if subs == "Guanidium" : 
+        if subs == "GAI" : 
             v_atom_central = mat(array(groupAtomCoord(l_at_subs)))
             v_atom_ref = mat(array(groupAtomCoord(l_at_ref)))
-        elif subs == "AcidCarboxylic" : 
+        elif subs == "COO" : 
             v_atom_central = mat(array(groupAtomCoord(l_at_subs)))
             v_atom_ref = mat(array(groupAtomCoord(l_at_ref[1:])))            
         else : 

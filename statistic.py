@@ -15,10 +15,8 @@ import structure
 
 from os import path 
 from copy import deepcopy
-from numpy import sum
+from numpy import sum, mean, std
 from re import search
-from _ast import Sub
-from Bio.SubsMat import SUBS
 
 
 def ParseDataSet(p_dataset, debug = 0):
@@ -69,7 +67,7 @@ def ParseDataSet(p_dataset, debug = 0):
         
         for sub_found in l_sub_found:
             
-            if sub_found == "Imidazole" : print l_sub_found, d_lig["name"], d_lig["PDB"][0]
+            if sub_found == "IMD" : print l_sub_found, d_lig["name"], d_lig["PDB"][0]
             
             d_sub[sub_found][sub_found] = d_sub[sub_found][sub_found] + d_count["Number PDB"]
             
@@ -78,15 +76,15 @@ def ParseDataSet(p_dataset, debug = 0):
 
     # divise number for complexe queries
     for sub in d_sub.keys () : 
-        if sub == "Imidazole" or sub == "AcidCarboxylic" : 
+        if sub == "IMD" or sub == "COO" : 
             print d_sub[sub][sub]
             d_sub[sub][sub] = d_sub[sub][sub] / 2
-        elif sub == "Guanidium" : 
+        elif sub == "GAI" : 
             d_sub[sub][sub] = d_sub[sub][sub] / 3
             
     n_PDB = len(l_PDB_global)
     writeFile.AnalysisDataSet(l_count, d_sub, n_PDB, p_dataset)
-    print d_sub["Imidazole"]
+    print d_sub["IMD"]
 
 
 
@@ -102,20 +100,20 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
     start, logFile = log.initAction("RUN Statistic")
 # # 
     # proportion salt bridges
-#     CountInteraction (st_atom, pathManage.resultSaltBridges(pr_result), logFile)
-#     EnvironmentSaltBridges (st_atom, pathManage.resultSaltBridges (pr_result, name_in = "conditional"), logFile)
+    CountInteraction (st_atom, pathManage.resultInteraction(pr_result), logFile)
+    EnvironmentInteraction (st_atom, pathManage.resultInteraction (pr_result, name_in = "conditional"), logFile)
 
     # loose    
-#     CountInteraction (st_atom, pathManage.resultSaltBridges(pr_result, "loose"), logFile, restrained = 0)
-#     EnvironmentSaltBridges (st_atom, pathManage.resultSaltBridges (pr_result, name_in = "loose/conditional"), logFile, restrained = 0)    
+#     CountInteraction (st_atom, pathManage.resultInteraction(pr_result, "loose"), logFile, restrained = 0)
+#     EnvironmentInteraction (st_atom, pathManage.resultInteraction (pr_result, name_in = "loose/conditional"), logFile, restrained = 0)    
     
 # #  
 # #     # distribution distance interest group and type atoms -> distance type
-#     DistTypeAtom(st_atom, pathManage.resultDistance(pr_result), logFile)
+    DistTypeAtom(st_atom, pathManage.resultDistance(pr_result), logFile)
 # #         
 # #     # angleSubs -> directory angles
-#     AngleSubs(st_atom, pr_result, max_distance)
-#     AngleSelect (st_atom, pr_result)
+    AngleSubs(st_atom, pr_result, max_distance)
+    AngleSelect (st_atom, pr_result)
 # #         
 # #     # global analysis proximity -1 atom ligand // -2 aa type // -3 atom classification
 #     ligandProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
@@ -126,11 +124,13 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 # #         
 # #         
 # #     # analyse number of neighbors -> number of atom type (C, O, N)
+    MeansNumberNeighbors (st_atom, pathManage.countNeighbor(pr_result, "MeansNumberNeighbor"))
+    ResidueClose (st_atom, pathManage.countNeighbor(pr_result, "residuesNeighbor"), logFile)
 #     numberNeighbor (st_atom, pathManage.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
 #     neighborAtomComposition(st_atom, pathManage.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
 #     firstNeighbor (st_atom, pathManage.countNeighbor(pr_result, "firstNeighbor"), logFile)
 #     allNeighbors (st_atom, pathManage.countNeighbor(pr_result, "allNeighbor"), logFile)
-#     ResidueNeighbors (st_atom, pathManage.countNeighbor(pr_result, "residuesNeighbor"), logFile)
+    
 # #      
 # #     # with two area defintion
 #     d_area1, d_area2 = splitTwoArea (st_atom)
@@ -146,15 +146,31 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
     log.endAction("END Statistic run !!!", start, logFile)
 
 
-
-def MergeDataSet (pr_result):
-    
+def MergeDataSet (pr_result, name_dataset1, name_dataset2):
     
     # merge proportion interaction
     pr_merged_portion = pathManage.CreatePathDir(pr_result + "MergeInteractProportion/")
     
+    # path file dataset 1
+    p_atleastone1 = pathManage.resultInteraction(pr_result + name_dataset1 + "/") + "interact_dependant"
+    p_atleastonecum1 = pathManage.resultInteraction(pr_result + name_dataset1 + "/") + "interact_independant"
+    
+    # path file dataset 2
+    p_atleastone2 = pathManage.resultInteraction(pr_result + name_dataset2 + "/") + "interact_dependant"
+    p_atleastonecum2 = pathManage.resultInteraction(pr_result + name_dataset2 + "/") + "interact_independant"
+    
 
+    if not path.exists(p_atleastone1) or not path.exists(p_atleastonecum1) or not path.exists(p_atleastonecum2) or not path.exists(p_atleastone2) : 
+        print p_atleastone1
+        print p_atleastone2
+        print p_atleastonecum1
+        print p_atleastonecum2
+        print pr_merged_portion
+        print "ERROR-file, l165 statistic"
+        return 
 
+    else : 
+        runScriptR.MergeProportionAndDataset(p_atleastone1, p_atleastonecum1, p_atleastone2, p_atleastonecum2, pr_merged_portion)
 
 def DistTypeAtom(stAtm, dir_out, logfile):
 
@@ -199,7 +215,7 @@ def AngleSubs(st_atom, pr_result, d_max):
                     d_count_global[subs][classif_neighbor]["angles"] = [central_atom["neighbors"][i]["angleSubs"]]
                 else : 
                     d_count_global[subs][classif_neighbor]["distance"].append(central_atom["neighbors"][i]["distance"])
-                    if subs == "Imidazole" :
+                    if subs == "IMD" :
                         angle =  central_atom["neighbors"][i]["angleSubs"][0]
                         if angle >= 90.0 : 
                             angle = 180.0 - angle
@@ -246,7 +262,7 @@ def AngleSelect (st_atom, pr_result) :
                             p_filetype = pathManage.ResultAngleCriteria(pr_result, name_folder) + "angle_" + str (type_atom)
                             d_file[sub][type_atom] = open (p_filetype, "w")
                         for angle in neighbor["angleSubs"] : 
-                            if sub == "Imidazole" and angle >= 90 : 
+                            if sub == "IMD" and angle >= 90 : 
                                 angle = 180 - angle
                             d_file[sub][type_atom].write(str (angle) + "\t" + str(neighbor["distance"]) + "\t" + str (type_atom) + "\t" + str(atom_central["resName"]) + "\t" + str (atom_central["PDB"]) + "\n")
             i = i + 2
@@ -427,6 +443,65 @@ def atomByAa(st_atom, pr_result ,max_distance, logFile ):
         runScriptR.barplotQuantityByAA(max_distance, p_file.split ("/")[-1], p_file, logFile)
 
 
+
+
+def MeansNumberNeighbors (st_atom, pr_result) : 
+    
+    criteria = structure.criteraAngle()
+    l_atom_type = structure.classificationATOM(out_list = 1)
+    
+    d_list = {}
+    
+    for subs in st_atom.keys () :
+        if not subs in d_list.keys (): 
+            d_list[subs] = {} 
+        for atom_sub in st_atom[subs] : 
+            if not "Nb" in d_list[subs].keys () : 
+                d_list[subs]["Nb"] = []
+                
+            d_count = {} # temp count by subs
+            d_count["Nb"] = 0
+            for type_atom in l_atom_type : 
+                if not type_atom in d_list[subs].keys () : 
+                    d_list[subs][type_atom] = []
+                if not type_atom in d_count : 
+                    d_count[type_atom] = 0
+            
+            
+            for atom_neighbor in atom_sub["neighbors"] :
+                if atom_neighbor["distance"] >= criteria[subs]["distance"][0] and atom_neighbor["distance"] <= criteria[subs]["distance"][1] : 
+                    type_atom = structure.classificationATOM(atom_neighbor)
+                    d_count[type_atom] = d_count[type_atom] + 1
+                    d_count["Nb"] = d_count["Nb"] + 1
+                      
+            for type_atom in l_atom_type : 
+                d_list[subs][type_atom].append (d_count[type_atom])
+            d_list[subs]["Nb"].append (d_count["Nb"])
+    
+    
+    
+    p_filout = pr_result + "meanNumberofNeighbors"
+    filout = open (p_filout, "w")
+
+    # header
+    filout.write ("M\tSD")
+    for type_atom in l_atom_type : 
+        filout.write ("\t" + str (type_atom) + "\t" + str (type_atom) + "SD")
+    filout.write ("\n")
+    
+    # result
+    l_sub = structure.ListSub()
+    l_sub.append ("global")
+    for subs in l_sub : 
+        filout.write (str(subs) + "\t" + str (mean (d_list[subs]["Nb"])) + "\t" + str (std (d_list[subs]["Nb"])))
+        for type_atom in l_atom_type : 
+            filout.write ("\t" + str (mean (d_list[subs][type_atom])) + "\t" + str (std (d_list[subs][type_atom])))
+        filout.write ("\n")
+    filout.close ()
+        
+    runScriptR.MeansNumberNeighbors (p_filout)
+    
+    
 def numberNeighbor (st_atom, pr_result, max_distance, logFile) : 
     
     
@@ -492,7 +567,7 @@ def firstNeighbor (st_atom, pr_result, logFile):
     
     
     for file_result in l_files_count : 
-        runScriptR.AFCPieFirstNeighbor (file_result, logFile)      
+        runScriptR.AFCBarplot (file_result, logFile)      
     
     for files_dist in l_files_dist : 
         runScriptR.multiHist(files_dist)  
@@ -509,21 +584,26 @@ def allNeighbors (st_atom, pr_result, logFile):
     l_files_result = writeFile.countNeighborsAll(st_count, pr_result)
     
     for file_result in l_files_result : 
-        runScriptR.AFCPieFirstNeighbor (file_result, logFile)        
+        runScriptR.AFCBarplot (file_result, logFile)        
     
 
 
-def ResidueNeighbors (st_atom, pr_result, logFile) : 
+def ResidueClose (st_atom, pr_result, logFile) : 
     
-    st_count = {}
-    
+    d_count = {}
+    d_list = {}
     
     for subs in st_atom.keys () : 
-        st_count[subs] = {}
-        SearchResiduesComposition (st_atom[subs], st_count[subs])
+        d_count[subs] = {}
+        d_list[subs] = {}
+        SearchResiduesComposition (st_atom[subs], d_count[subs], d_list[subs], subs)
+    
+    ################
+    # global Count #
+    ################
     
     #writeFile
-    d_file = writeFile.CountNeighborRes (st_count, pr_result)
+    d_file = writeFile.CountNeighborRes (d_count, pr_result)
     #run
     l_p_count = d_file["count"]
     for p_count in l_p_count : 
@@ -531,40 +611,73 @@ def ResidueNeighbors (st_atom, pr_result, logFile) :
     
     l_p_res = d_file["res"]
     for p_res in l_p_res : 
-        runScriptR.AFCPieFirstNeighbor (p_res, logFile)
+        runScriptR.AFCBarplot (p_res, logFile)
+        
+
+    ################
+    # Means and SD #
+    ################
+    
+    p_filout = pr_result + "meanNumberResNeighbors"
+    filout = open (p_filout, "w")
+
+    l_res = structure.l_res
+    # header
+    filout.write ("M\tSD")
+    for res in l_res : 
+        filout.write ("\t" + str (res) + "\t" + str (res) + "SD")
+    filout.write ("\n")
+    
+    # result
+    l_sub = structure.ListSub()
+    l_sub.append ("global")
+    for subs in l_sub : 
+        filout.write (str(subs) + "\t" + str (mean (d_count[subs]["count"])) + "\t" + str (std (d_count[subs]["count"])))
+        for res in l_res : 
+            filout.write ("\t" + str (mean (d_list[subs][res])) + "\t" + str (std (d_list[subs][res])))
+        filout.write ("\n")
+    filout.close ()
+    
+    runScriptR.MeansNumberNeighbors (p_filout)
     
     
-    
-def SearchResiduesComposition (st_atom, d_stock):
+def SearchResiduesComposition (st_atom, d_count, d_list, subs):
     """
     Count the proportion in AA
     -> maybe need optimization with variable distance cut off
     """
+    criteria = structure.criteraAngle()
     
-    l_res = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS"]
+    l_res = structure.l_res
 
     # initialize structure stock
-    d_stock["res"] = {}
-    d_stock["count"] = []
+    d_count["res"] = {}
+    d_count["count"] = []
     for res in l_res : 
-        d_stock["res"][res] = 0
+        d_count["res"][res] = 0
+        d_list[res] = []
     
-    for subs in st_atom :
+    for atom_subs in st_atom :
         l_res_temp = [] 
-        for neighbor in subs["neighbors"] : 
-            if not neighbor["resName"] in l_res : 
-                continue
-            res_temp = str(neighbor["resName"] + "_" + str (neighbor["resSeq"]))
-#             print res_temp
-            if not res_temp in l_res_temp : 
-                l_res_temp.append(res_temp)
-                d_stock["res"][neighbor["resName"]] = d_stock["res"][neighbor["resName"]] + 1
+        d_temp = {}
+        for res in l_res : 
+            d_temp[res] = 0
+        for neighbor in atom_subs["neighbors"] : 
+            if neighbor ["distance"] >= criteria[subs]["distance"][0] and neighbor ["distance"] <= criteria[subs]["distance"][1] : 
+                if not neighbor["resName"] in l_res : 
+                    continue
+                res_temp = str(neighbor["resName"] + "_" + str (neighbor["resSeq"]))
+    #             print res_temp
+                if not res_temp in l_res_temp : 
+                    l_res_temp.append(res_temp)
+                    d_temp[neighbor["resName"]] =  d_temp[neighbor["resName"]] + 1
         
+        d_count["count"].append (len (l_res_temp))
         
-                
-        d_stock["count"].append (str (len (l_res_temp)))
+        for res in l_res : 
+            d_list[res].append (d_temp[res])
+            d_count["res"][res] = d_count["res"][res] + d_temp[res]
         
-
     
 def searchNeighbor (st_atom, d_stock, subs):
     """
@@ -740,7 +853,7 @@ def CountDependant (l_interaction_found, d_count, type_subs):
     print l_interaction_found, type_subs
     
     # for group COO
-    if type_subs == "AcidCarboxylic" : 
+    if type_subs == "COO" : 
         if "N" in l_interaction_found : 
             d_count["N"] = d_count["N"] + 1
         elif "NH" in l_interaction_found : 
@@ -768,12 +881,6 @@ def CountDependant (l_interaction_found, d_count, type_subs):
             d_count["Other"] = d_count["Other"] + 1       
         
         
-        
-        
-        
-    
-    
-    
     
       
         
@@ -832,7 +939,7 @@ def GetInteractions (l_atoms, subs, restrained = 1, debug = 1) :
      
 def planarityImidazole (atom_interest_close, p_dir_result) : 
      
-    l_imidazole_atom_central = atom_interest_close["Imidazole"]
+    l_imidazole_atom_central = atom_interest_close["IMD"]
      
      
     p_dir_result = pathManage.coplorIMD (p_dir_result)
@@ -849,7 +956,7 @@ def planarityImidazole (atom_interest_close, p_dir_result) :
         l_at_lig = loadFile.ExtractInfoPDBID(PDB_ID)[name_ligand][0] # change not tested
          
         # load structure
-        l_at_subs = retrieveAtom.substructure ("Imidazole", l_imidazole_atom_central[i], l_at_lig)
+        l_at_subs = retrieveAtom.substructure ("IMD", l_imidazole_atom_central[i], l_at_lig)
          
         # coplar
         try : d_coplar = calcul.coplanarPoint(l_at_subs[3], [l_at_subs[0],l_at_subs[1], l_at_subs[2]])
@@ -871,7 +978,7 @@ def planarityImidazole (atom_interest_close, p_dir_result) :
 
 def planarityGuanidium (atom_interest_close, p_dir_result) : 
      
-    l_guanidium_atom_central = atom_interest_close["Guanidium"]
+    l_guanidium_atom_central = atom_interest_close["GAI"]
      
      
     p_dir_result = pathManage.coplorGUA (p_dir_result)
@@ -888,7 +995,7 @@ def planarityGuanidium (atom_interest_close, p_dir_result) :
         l_at_lig = loadFile.ExtractInfoPDBID(PDB_ID)[name_ligand][0] # change not tested
          
         # load structure
-        l_at_subs = retrieveAtom.substructure ("Guanidium", l_guanidium_atom_central[i], l_at_lig)
+        l_at_subs = retrieveAtom.substructure ("GAI", l_guanidium_atom_central[i], l_at_lig)
 #         print len (l_at_subs)
 #         print l_at_subs[0]["element"], l_at_subs[1]["element"], l_at_subs[2]["element"], l_at_subs[3]["element"], l_at_subs[4]["element"]
          
@@ -1083,15 +1190,12 @@ def splitTwoArea (st_atom_sub) :
             
 
 
-def EnvironmentSaltBridges (st_atom, pr_result, file_log, restrained = 1) : 
+def EnvironmentInteraction (st_atom, pr_result, file_log, restrained = 1) : 
     
     d_neighbor_considered = structure.nbNeighbor()
     
     # first step fix if there are a salt bridges i.e. counter ion close to the substructure
     for type_subs in st_atom.keys () : 
-        if type_subs == "global" : 
-            continue
-    
         # create directory
         pr_count = pathManage.CreatePathDir(pr_result + str(type_subs) + "/Count/")
         pr_dist = pathManage.CreatePathDir(pr_result + str(type_subs) + "/Dist/")
@@ -1104,14 +1208,12 @@ def EnvironmentSaltBridges (st_atom, pr_result, file_log, restrained = 1) :
         d_angle = {}
         
         for atom_central in st_atom[type_subs] : 
-            type_stabilisation = GetInteractions (atom_central["neighbors"], type_subs, restrained)
+            l_interact = GetInteractions (atom_central["neighbors"], type_subs, restrained)
             
             # case -> stabilization by salt bridges
             nb_neighbor = d_neighbor_considered[type_subs]
-            if type_stabilisation == "salt-bridges" : 
+            if type_subs == "COO" and "N" in l_interact or type_subs != "global" and "COO" in l_interact : 
                 l_neighbors = deepcopy(atom_central["neighbors"])
-                
-                
                 i = 1
                 while i <= nb_neighbor :  
                     type_neighbor, atom_neighbor = searchMoreClose(l_neighbors, option_lcopy = 0)

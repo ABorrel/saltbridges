@@ -23,8 +23,8 @@ def interestStructure (l_atom_lig, more_flex = 0, debug = 0):
     in : list atom ligand
     out : list of substructures found (list string)"""
 
-    l_serial_N = listAtomType (l_atom_lig, "N")
-    l_serial_O = listAtomType (l_atom_lig, "O")
+    l_serial_N = ListSerialElement (l_atom_lig, "N")
+    l_serial_O = ListSerialElement (l_atom_lig, "O")
     
     if debug : 
         print l_serial_O
@@ -35,25 +35,25 @@ def interestStructure (l_atom_lig, more_flex = 0, debug = 0):
     for serial_nitrogen in l_serial_N:
         l_atom_connectN, connect = retrieveAtom.atomConnect(l_atom_lig, serial_nitrogen)
         if imidazole(l_atom_connectN, l_atom_lig)[0] == 1:
-            l_substruct.append("Imidazole")
+            l_substruct.append("IMD")
         elif Guanidium(l_atom_connectN, l_atom_lig)[0] == 1 : 
-            l_substruct.append("Guanidium")    
+            l_substruct.append("GAI")    
 #         elif diAmine(l_atom_connectN, l_atom_lig) == 1 : 
 #             l_substruct.append("Diamine")     
 #         elif pyridine(l_atom_connectN, l_atom_lig) == 1 : 
 #             l_substruct.append("Pyridine")    
         elif cn (l_atom_connectN, l_atom_lig) == 1:
-            l_substruct.append("Primary")
+            l_substruct.append("I")
         elif cnc(l_atom_connectN, l_atom_lig, more_flex = more_flex) == 1:
-            l_substruct.append("Secondary")
+            l_substruct.append("II")
         elif cncc(l_atom_connectN, l_atom_lig, more_flex = more_flex) == 1:
-            l_substruct.append("Tertiary")
+            l_substruct.append("III")
        
 
     for serial_oxygen in l_serial_O:
         l_atom_connectO, connect = retrieveAtom.atomConnect(l_atom_lig, serial_oxygen)
         if acidCarboxylic(l_atom_connectO, l_atom_lig)[0] == 1:
-            l_substruct.append("AcidCarboxylic")
+            l_substruct.append("COO")
     
     return l_substruct
 
@@ -592,8 +592,8 @@ def interestGroup (max_distance, l_atom_lig, name_PDB, d_stock_neighbor, more_fl
     and acid carboxylic + 1.3
     append more flex to GPCR study"""
     
-    l_serialN = listAtomType(l_atom_lig, "N")
-    l_serialO = listAtomType(l_atom_lig, "O")
+    l_serialN = ListSerialElement(l_atom_lig, "N")
+    l_serialO = ListSerialElement(l_atom_lig, "O")
     
     
     # different d_stock_neighbor
@@ -629,11 +629,11 @@ def interestGroup (max_distance, l_atom_lig, name_PDB, d_stock_neighbor, more_fl
 def implementNeighborStruct (max_distance, l_atom_connect_central, name_PDB, l_atom_lig, subs, st_neighbor):
     
 
-    if subs == "Imidazole" : 
+    if subs == "IMD" : 
         atom_central = calcul.CenterImidazole (l_atom_connect_central, l_atom_lig)
-    elif subs == "Guanidium" : 
+    elif subs == "GAI" : 
         atom_central = calcul.CenterGuanidium (l_atom_connect_central, l_atom_lig)
-    elif subs == "AcidCarboxylic" : 
+    elif subs == "COO" : 
         atom_central = calcul.CenterAcidCarboxylic (l_atom_connect_central, l_atom_lig)
     else : 
         atom_central = l_atom_connect_central[0]
@@ -722,17 +722,17 @@ def globalNeighbors(distance, l_atom_ligand, pdb, struct_global_neighbor):
 
 
 
-def listAtomType(l_atom, type_atom):
+def ListSerialElement(l_atom, element):
     """Search N in the atoms list
     return a list of number atom"""
 
-    list_out = []
+    l_out = []
     for atom in l_atom:
-        if atom["element"] == type_atom:
+        if atom["element"] == element:
             serial = atom["serial"]
-            if not serial in list_out:
-                list_out.append(atom["serial"])
-    return  list_out
+            if not serial in l_out:
+                l_out.append(atom["serial"])
+    return  l_out
 
 
 
@@ -969,49 +969,5 @@ def Nclose (atom, l_at_lig) :
 
 
 
-
-def BondLengthCN (l_atom_lig) : 
-    
-    l_distance = []
-    l_serialN = listAtomType(l_atom_lig, "N")
-    
-    for serialN in l_serialN : 
-#         print serialN
-        l_atom_connectN, connect = retrieveAtom.atomConnect(l_atom_lig, serialN)
-        
-        i = 0
-        nb_connect = len (connect)
-        while i < nb_connect : 
-            if connect[i] == "C" : 
-                distance = calcul.distanceTwoatoms(l_atom_connectN[0], l_atom_connectN[1])
-#                 print distance
-                if distance != 1000.0 : 
-                    l_distance.append (str(distance))
-            i = i + 1
-    
-    return l_distance
-                
-        
- 
-def BondLengthCO (l_atom_lig) : 
-    
-    l_distance = []
-    l_serialN = listAtomType(l_atom_lig, "O")
-    
-    for serialN in l_serialN : 
-#         print serialN
-        l_atom_connectO, connect = retrieveAtom.atomConnect(l_atom_lig, serialN)
-        
-        i = 0
-        nb_connect = len (connect)
-        while i < nb_connect : 
-            if connect[i] == "C" :
-                distance = calcul.distanceTwoatoms(l_atom_connectO[0], l_atom_connectO[1])
-#                 print distance
-                if distance != 1000.0 : 
-                    l_distance.append (str(distance))
-            i = i + 1
-    
-    return l_distance       
-        
+       
             

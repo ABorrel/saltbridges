@@ -16,6 +16,8 @@
 # dico_atom_Cgln = {"Q":["CG"], "N":["CB"]}
 # dico_atom_Hyd = {"R":["CZ"], "M":["SD"], "F":["CG", "CZ"], "L":["CG"], "W":["CE3", "CG", "CZ2"], "H":["CG"], "V":["CB"], "P":["CG"], "C":["SG"], "Y":["CG", "CZ"]}
 
+l_res = ["ALA", "ILE", "LEU", "VAL", "MET", "CYS", "PHE", "TRP", "TYR", "HIS", "THR", "SER", "ASN", "GLN", "ASP", "GLU", "ARG", "LYS", "PRO", "GLY"]
+
 
 def classificationATOM (atom="", out_list = 0):
     """Classification atoms 
@@ -161,15 +163,6 @@ def countInstanceDataSet():
     return count
 
 
-# # # # # def neighborStruct():
-# # # # # 
-# # # # #     d_neighbor = {}
-# # # # #     
-# # # # #     for element in ListSub(): 
-# # # # #         d_neighbor[element] = []
-# # # # # 
-# # # # #     return d_neighbor
-
 
 def dAngleType () :
 
@@ -277,11 +270,11 @@ def countThreeNeigbors () :
     # MAJ 29-11-2013 -> nb_neighbor considering alway 8
     for sub_struct in l_subs : 
         
-        if sub_struct == "Primary" : 
+        if sub_struct == "I" : 
             nb_n = 8
-        elif sub_struct == "Tertiary" : 
+        elif sub_struct == "III" : 
             nb_n = 8
-        elif sub_struct == "Imidazole" or sub_struct == "Secondary": 
+        elif sub_struct == "IMD" or sub_struct == "II": 
             nb_n = 8
         else : 
             nb_n = 8
@@ -391,17 +384,6 @@ def countAtLeastOneGlobalStruct(distanceMax):
     
     
     
-# def countAtLeastOne():
-# 
-#     listStudy = ListSub()
-#     struct_count = {}
-# 
-#     for studyStruct in listStudy : 
-#         struct_count[studyStruct] = {}
-#         
-#     return struct_count
-
-
 
 def countResidueGlobal():
 
@@ -514,7 +496,7 @@ def listDistance (distanceMax):
 
 def ListSub ():
     
-    return ["Primary", "Secondary", "Tertiary", "Guanidium", "Imidazole", "AcidCarboxylic"]
+    return ["I", "II", "III",  "IMD", "GAI", "COO"]
     
 
 # def listAtLeastOneStudy(): 
@@ -533,55 +515,60 @@ def criteraAngle(subs = "", loose = 0):
     d_criteria = {}
     
     if loose == 0 : 
-        d_criteria["Primary"] = {}
-        d_criteria["Primary"]["angle"] = [0, 180]
-        d_criteria["Primary"]["distance"] = [2.0,4.0]
+        d_criteria["I"] = {}
+        d_criteria["I"]["angle"] = [0, 180]
+        d_criteria["I"]["distance"] = [2.0,4.0]
         
-        d_criteria["Secondary"] = {}
-        d_criteria["Secondary"]["angle"] = [0, 180]
-        d_criteria["Secondary"]["distance"] = [2.0,4.0]
+        d_criteria["II"] = {}
+        d_criteria["II"]["angle"] = [0, 180]
+        d_criteria["II"]["distance"] = [2.0,4.0]
         
-        d_criteria["Tertiary"] = {}
-        d_criteria["Tertiary"]["angle"] = [0, 180]
-        d_criteria["Tertiary"]["distance"] = [2.0,4.0]
+        d_criteria["III"] = {}
+        d_criteria["III"]["angle"] = [0, 180]
+        d_criteria["III"]["distance"] = [2.0,4.0]
         
-        d_criteria["Imidazole"] = {}
-        d_criteria["Imidazole"]["angle"] = [0, 180]
-        d_criteria["Imidazole"]["distance"] = [2.0,5.5]
+        d_criteria["IMD"] = {}
+        d_criteria["IMD"]["angle"] = [0, 180]
+        d_criteria["IMD"]["distance"] = [2.0,5.5]
         
         # change criterion because I change 11-08 the number of angle considered -> need more data
-        d_criteria["Guanidium"] = {}
-        d_criteria["Guanidium"]["angle"] = [0, 180]#[40, 80, 120, 180]
-        d_criteria["Guanidium"]["distance"] = [2.0,6]#[3.5, 5.5, 3.5, 5.5] #need change distance also !!!!
+        d_criteria["GAI"] = {}
+        d_criteria["GAI"]["angle"] = [0, 180]#[40, 80, 120, 180]
+        d_criteria["GAI"]["distance"] = [2.0,6]#[3.5, 5.5, 3.5, 5.5] #need change distance also !!!!
         
-        d_criteria["AcidCarboxylic"] = {}
-        d_criteria["AcidCarboxylic"]["angle"] = [0, 180]
-        d_criteria["AcidCarboxylic"]["distance"] = [2.0,4.5]
+        d_criteria["COO"] = {}
+        d_criteria["COO"]["angle"] = [0, 180]
+        d_criteria["COO"]["distance"] = [2.0,4.5]
+        
+        d_criteria["global"] = {}
+        d_criteria["global"]["angle"] = [0, 180]
+        d_criteria["global"]["distance"] = [2.0,4.0]
+        
     else : 
         
-        d_criteria["Primary"] = {}
-        d_criteria["Primary"]["angle"] = [90,130]
-        d_criteria["Primary"]["distance"] = [2.0,4.0]
+        d_criteria["I"] = {}
+        d_criteria["I"]["angle"] = [90,130]
+        d_criteria["I"]["distance"] = [2.0,4.0]
     
-        d_criteria["Secondary"] = {}
-        d_criteria["Secondary"]["angle"] = [80,120]
-        d_criteria["Secondary"]["distance"] = [2.0,4.0]
+        d_criteria["II"] = {}
+        d_criteria["II"]["angle"] = [80,120]
+        d_criteria["II"]["distance"] = [2.0,4.0]
     
-        d_criteria["Tertiary"] = {}
-        d_criteria["Tertiary"]["angle"] = [90,130]
-        d_criteria["Tertiary"]["distance"] = [2.0,4.0]
+        d_criteria["III"] = {}
+        d_criteria["III"]["angle"] = [90,130]
+        d_criteria["III"]["distance"] = [2.0,4.0]
     
-        d_criteria["Imidazole"] = {}
-        d_criteria["Imidazole"]["angle"] = [110,150]
-        d_criteria["Imidazole"]["distance"] = [2.0,5.0]
+        d_criteria["IMD"] = {}
+        d_criteria["IMD"]["angle"] = [110,150]
+        d_criteria["IMD"]["distance"] = [2.0,5.0]
     
-        d_criteria["Guanidium"] = {}
-        d_criteria["Guanidium"]["angle"] = [0,180]
-        d_criteria["Guanidium"]["distance"] = [2.0,5.0]
+        d_criteria["GAI"] = {}
+        d_criteria["GAI"]["angle"] = [0,180]
+        d_criteria["GAI"]["distance"] = [2.0,5.0]
    
-        d_criteria["AcidCarboxylic"] = {}
-        d_criteria["AcidCarboxylic"]["angle"] = [130,160]
-        d_criteria["AcidCarboxylic"]["distance"] = [2.0,4.0]
+        d_criteria["COO"] = {}
+        d_criteria["COO"]["angle"] = [130,160]
+        d_criteria["COO"]["distance"] = [2.0,4.0]
     
     
     if subs == "" : 
@@ -595,23 +582,23 @@ def splitAreaDistance ():
 
     distStruct = {}
     
-    distStruct["Primary"] = {}
-    distStruct["Primary"]["distance"] = 3.5
+    distStruct["I"] = {}
+    distStruct["I"]["distance"] = 3.5
     
-    distStruct["Secondary"] = {}
-    distStruct["Secondary"]["distance"] = 3.5
+    distStruct["II"] = {}
+    distStruct["II"]["distance"] = 3.5
     
-    distStruct["Tertiary"] = {}
-    distStruct["Tertiary"]["distance"] = 3.5
+    distStruct["III"] = {}
+    distStruct["III"]["distance"] = 3.5
     
-    distStruct["Imidazole"] = {}
-    distStruct["Imidazole"]["distance"] = 3.5
+    distStruct["IMD"] = {}
+    distStruct["IMD"]["distance"] = 3.5
     
-    distStruct["Guanidium"] = {}
-    distStruct["Guanidium"]["distance"] = 4.5
+    distStruct["GAI"] = {}
+    distStruct["GAI"]["distance"] = 4.5
     
-    distStruct["AcidCarboxylic"] = {}
-    distStruct["AcidCarboxylic"]["distance"] = 4.25
+    distStruct["COO"] = {}
+    distStruct["COO"]["distance"] = 4.25
     
     distStruct["global"] = {}
     distStruct["global"]["distance"] = 3.5
@@ -620,7 +607,7 @@ def splitAreaDistance ():
 
 def substructureCoord (type_substructure):
     
-    if type_substructure == "Primary" : 
+    if type_substructure == "I" : 
         
         atom1 = {}
         atom1["serial"] = 1
@@ -653,7 +640,7 @@ def substructureCoord (type_substructure):
         return [atom1, atom2]
     
     
-    elif type_substructure == "Secondary" : 
+    elif type_substructure == "II" : 
         
         atom1 = {}
         atom1["serial"] = 1
@@ -700,7 +687,7 @@ def substructureCoord (type_substructure):
         return [atom2, atom1, atom3]    
     
     
-    elif type_substructure == "Tertiary" : 
+    elif type_substructure == "III" : 
         
         
         atom1 = {}
@@ -761,7 +748,7 @@ def substructureCoord (type_substructure):
         
         return [atom4, atom1, atom2, atom3]    
     
-    elif type_substructure == "Imidazole" : 
+    elif type_substructure == "IMD" : 
         
         atom1 = {}
         atom1["serial"] = 1
@@ -836,7 +823,7 @@ def substructureCoord (type_substructure):
         return [atom2, atom1, atom4, atom3, atom5] 
         
         
-    elif type_substructure == "Guanidium" : 
+    elif type_substructure == "GAI" : 
 
         atom1 = {}
         atom1["serial"] = 1
@@ -905,7 +892,7 @@ def substructureCoord (type_substructure):
         
         return [atom5, atom2, atom1, atom3, atom4] 
     
-    elif type_substructure == "AcidCarboxylic" :
+    elif type_substructure == "COO" :
     
         atom1 = {}
         atom1["serial"] = 1
@@ -998,12 +985,12 @@ def nbNeighbor () :
      
     nbNeighborStruct = {}
     
-    nbNeighborStruct["Primary"] = 4
-    nbNeighborStruct["Secondary"] = 3
-    nbNeighborStruct["Tertiary"] = 3
-    nbNeighborStruct["Imidazole"] = 5
-    nbNeighborStruct["Guanidium"] = 8
-    nbNeighborStruct["AcidCarboxylic"] = 5
+    nbNeighborStruct["I"] = 4
+    nbNeighborStruct["II"] = 3
+    nbNeighborStruct["III"] = 3
+    nbNeighborStruct["IMD"] = 5
+    nbNeighborStruct["GAI"] = 8
+    nbNeighborStruct["COO"] = 5
     nbNeighborStruct["global"] = 8
 
     return nbNeighborStruct

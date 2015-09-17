@@ -346,21 +346,21 @@ def angleSubs(central_atom, atom_found, l_atom_lig, subs):
     in: atom nitrogen, list atoms ligand, structure study
     out: list of angles"""
     
-    if subs == "Primary" :
+    if subs == "I" :
         return anglePrimaryAmine(central_atom, atom_found, l_atom_lig)
-    elif subs == "Secondary" :
+    elif subs == "II" :
         return AngleSecondaryFromLig(central_atom, atom_found, l_atom_lig)
-    elif subs == "Tertiary" :
+    elif subs == "III" :
         return angleTertiaryAmine(central_atom, atom_found, l_atom_lig)
-    elif subs == "Imidazole" :
+    elif subs == "IMD" :
         return AngleNImd(central_atom, atom_found, l_atom_lig)
 #     elif subs == "Diamine" :
 #         return anglePrimaryAmine(central_atom, atom_found, l_atom_lig)
 #     elif subs == "Pyridine" :
 #         return AngleSecondaryFromLig(central_atom, atom_found, l_atom_lig)
-    elif subs == "Guanidium" :
+    elif subs == "GAI" :
         return angleGuanidium(central_atom, atom_found, l_atom_lig)
-    elif subs == "AcidCarboxylic" :
+    elif subs == "COO" :
         return angleAcidCarboxylic(central_atom, atom_found, l_atom_lig)
     
     else :

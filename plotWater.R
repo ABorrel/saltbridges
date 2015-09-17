@@ -40,42 +40,28 @@ path_file = args[1]
 data = read.table (path_file, sep = "\t", header = TRUE)
 
 data = cbind (data, data[,5]/data[,4])
-data = cbind (data, data[,5]/data[,3])
+data = data[-(which(data[,6] == "Inf")),]
+#data = cbind (data, data[,5]/data[,3]) -> exposed residues not used now
 #data = data[-(which(data[,6] == "Inf")),]
 #data = data[-(which(data[,7] == "Inf")),]
 #data = data[-(which(data[,2] >= 6)),]
 
-
 # global
-svg (paste(path_file, "RXfunctionNbH2O.svg", sep = ""), 10, 10)
-par (mar = c(5,5,5,5))
-plot(data[,2], data[,6], xlim = c(0.5,4), ylim = c(0,0.4), pch = 19, xlab = "Resolution (Å)", ylab = "Mean of water molecules by residue", cex = 0.6, cex.lab = 2)
+svg (paste(path_file, "RXVSH2O.svg", sep = ""), 10, 10)
+par (mar = c(5,5,2,2))
+plot(data[,2], data[,6], xlim = c(0.5,4), ylim = c(0,0.4), pch = 19, xlab = "Resolution (Å)", ylab = "Mean of water molecules by amino acid", cex = 0.6, cex.lab = 2)
 
 m = c(mean (data[which (data[,2] < 0.5),6]), mean (data[which (data[,2] < 1 & data[,2] > 0.5),6]), mean (data[which (data[,2] < 1.5 & data[,2] > 1),6]), mean (data[which (data[,2] < 2 & data[,2] > 1.5),6]), mean (data[which (data[,2] < 2.5 & data[,2] > 2),6]), mean (data[which (data[,2] < 3 & data[,2] > 2.5),6]), mean (data[which (data[,2] < 3.5 & data[,2] > 3.0),6]), mean (data[which (data[,2] < 4 & data[,2] > 3.5),6]))
 print (m)
 points (c(0.5,1,1.5,2,2.5,3,3.5,4), m, lwd = 4, type = "l", col = "red")
 dev.off()
 
-mean_data = meanWater (data)
-png(filename=paste(path_file,"mean.png",sep = ""), 600, 1200)
-par(mfrow = c(2,1))
-plot (mean_data[,1], mean_data[,2], xlim = c(0,6) , ylim = c(0,5), main = "Ratio number of proton by exposed residues \n function of resolution", xlab = "Resolution Å", ylab = "Number of proton by exposed residues", col = "black", type = "l")
-plot (mean_data[,1], mean_data[,3], xlim = c(0,6) , ylim = c(0,5), main = "Ratio number of proton by residues \n function of resolution", xlab = "Resolution Å", ylab = "Number of proton by residues", col = "black", type = "l")
+# global
+png (paste(path_file, "RXVSH2O.png", sep = ""), 800, 800)
+par (mar = c(5,5,2,2))
+plot(data[,2], data[,6], xlim = c(0.5,4), ylim = c(0,0.4), pch = 19, xlab = "Resolution (Å)", ylab = "Mean of water molecules by amino acid", cex = 0.6, cex.lab = 2)
+
+m = c(mean (data[which (data[,2] < 0.5),6]), mean (data[which (data[,2] < 1 & data[,2] > 0.5),6]), mean (data[which (data[,2] < 1.5 & data[,2] > 1),6]), mean (data[which (data[,2] < 2 & data[,2] > 1.5),6]), mean (data[which (data[,2] < 2.5 & data[,2] > 2),6]), mean (data[which (data[,2] < 3 & data[,2] > 2.5),6]), mean (data[which (data[,2] < 3.5 & data[,2] > 3.0),6]), mean (data[which (data[,2] < 4 & data[,2] > 3.5),6]))
+print (m)
+points (c(0.25,0.75,1.25,1.75,2.25,2.75,3.25,3.75), m, lwd = 4, type = "l", col = "red")
 dev.off()
-
-if ((sum (data[,3])) != 0){
-	png(filename=paste(path_file,"exposed.png",sep = ""), 600, 1200)
-	par(mfrow = c(2,1))
-	hist(data[,2], main = "Distribution function of resolution", xlab = "Resolution Å", ylab = "Number of PDB", col = "gray", xlim =c(0,6))
-	plot (data[,2], data[,6], xlim = c(0,6) , ylim = c(0,10), main = "Ratio number of proton by exposed residues \n function of resolution", xlab = "Resolution Å", ylab = "Number of proton by exposed residues", col = "gray")
-	dev.off()
-}
-
-png(filename=paste(path_file,".png",sep = ""), 600, 1200)
-par(mfrow = c(2,1))
-hist(as.vector(data[,2]), main = "Distribution function of resolution", xlab = "Resolution Å", ylab = "Number of PDB", col = "gray")
-plot(data[,2], data[,7], xlim = c(0,6),ylim = c(0,10), main = "Ratio number of proton by residues\n function of resolution", xlab = "Resolution Å", ylab = "Number of proton by exposed residues", col = "gray")
-dev.off()
-
-
-

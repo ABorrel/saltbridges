@@ -2,20 +2,6 @@
 source("tool.R")
 
 
-GetPercent = function (d_in, sum_subs){
-
-	if (sum_subs == 0){
-		sum_subs = sum (d_in)
-	}
-	for (j in seq (1, dim(d_in)[2])){
-		d_in[sub, j] = d_in[sub, j] / sum_subs
-	}
-
-	return (d_in)
-}
-
-
-
 barplotCum = function (d_in, l_color, main_plot){
 	# transfom %
 	d_percent = GetPercent(d_in, 0)

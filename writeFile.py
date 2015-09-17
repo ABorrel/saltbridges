@@ -417,6 +417,10 @@ def countNeighborsAll(stCount, pr_result):
 
 def CountNeighborRes (st_count, pr_result):
     
+    l_res = structure.l_res
+    l_sub = structure.ListSub()
+    l_sub.append ("global")
+    
     d_file_out = {}
     d_file_out["res"] = []
     d_file_out["count"] = []
@@ -424,18 +428,17 @@ def CountNeighborRes (st_count, pr_result):
     p_filout_byres = pr_result + "res_count" 
     filout_byres = open (p_filout_byres, "w")
     
-    l_res = st_count[st_count.keys ()[0]]["res"]
     filout_byres.write ("\t".join (l_res) + "\n")
     
     d_file_out["res"].append (p_filout_byres)
     
-    for sub in st_count.keys () : 
+    for sub in l_sub : 
         p_filout_count = pr_result + "global_count_" + str (sub) 
         
         filout_count = open (p_filout_count, "w")
         
         # global
-        filout_count.write ("\n".join (st_count[sub]["count"]) + "\n")
+        filout_count.write ("\n".join ([str (i) for i in st_count[sub]["count"]]) + "\n")
         filout_count.close ()
         # by res
         l_count = []

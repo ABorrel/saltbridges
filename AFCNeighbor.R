@@ -1,5 +1,4 @@
 #!/usr/bin/env Rscript
-
 source("tool.R")
 
 #######################
@@ -23,8 +22,24 @@ l_sub = rownames (d_count)
 
 AFC (d_count, p_filin)
 
+# barplot by proportion res
+l_color = defColor (colnames (d_count))
+
 for (sub in l_sub){
-	d_pie = d_count[sub,]
-	pieType  (d_pie, paste(p_filin, "_", sub , sep = ""))
+  d_count[sub,] = GetPercent (d_count[sub,], 0)
 }
 
+svg(paste(p_filin, ".svg", sep = ""), 16, 10)
+par (mar=c(4,5,1,2))
+barplot (as.matrix(t(d_count)), col = l_color, cex.lab = 2, ylab = "Frequencies", ylim = c(0,1), cex.names = 1.7, cex.axis = 1.8, beside=FALSE, cex.main = 2.5)
+  
+# grid
+# horizontal
+y_grid = seq(0, 1, 0.1)
+for (y in y_grid){
+  segments (0, y, length(d_count)*5 , y, lty = 2, col = "black", lwd = 1.5)
+}
+
+legend ("topright",legend = names(l_color), fill = l_color )
+dev.off()
+  
