@@ -25,9 +25,11 @@ def GlobalBondLength (name_database, RX_thresold = 1.5):
     p_CN = pr_result + "distanceCN"
     p_CO = pr_result + "distanceCO"
     p_CC = pr_result + "distanceCO"
-    filout_CN = open (pr_result + "distanceCN", "w")
-    filout_CO = open (pr_result + "distanceCO", "w")
-    filout_CC = open (pr_result + "distanceCC", "w")
+    p_coplar = pr_result + "distanceCoplar"
+    filout_CN = open (p_CN, "w")
+    filout_CO = open (p_CO, "w")
+    filout_CC = open (p_CC, "w")
+    filout_coplar = open (p_coplar, "w")
     
     # load PDB with logand
     if not path.exists(pr_database + "resultLigandInPDB") : 
@@ -57,6 +59,8 @@ def GlobalBondLength (name_database, RX_thresold = 1.5):
                 l_distCN = BondLengthCandX (l_atom_lig, "N")
                 l_distCO = BondLengthCandX (l_atom_lig, "O")
                 l_distCC = BondLengthCandX (l_atom_lig, "C")
+                l_coplarIII = CoplanarityIII(l_atom_lig)
+                
                 if l_distCN != [] : 
                     filout_CN.write ("\n".join (l_distCN) + "\n")
                 
@@ -65,22 +69,24 @@ def GlobalBondLength (name_database, RX_thresold = 1.5):
                 
                 if l_distCC != [] : 
                     filout_CC.write ("\n".join (l_distCC) + "\n")                
-                    
+                
+                if l_coplarIII != [] : 
+                    filout_coplar.write ("\n".join (l_coplarIII) + "\n")  
                 
                 # take only one PDB by ligand not more
                 i = i + 1
                 continue
             i = i + 1
         
-
-
     filout_CO.close ()
     filout_CN.close ()
     filout_CC.close ()
+    filout_coplar.close ()
     
     runScriptR.histDistance(p_CN, "CN")
     runScriptR.histDistance(p_CO, "CO") 
     runScriptR.histDistance(p_CC, "CC") 
+    runScriptR.histDistance(p_coplar, "coplar") 
 
 
 
@@ -106,4 +112,24 @@ def BondLengthCandX (l_atom_lig, X_element) :
     return l_dist
                 
         
+ 
+def CoplanarityIII (l_atom_lig) : 
+    """For each matrix connect N, C, C, C the coplanar distance
+    in: list atom in ligand, list distance coplar retrieve
+    out: append distance in list distance coplanar"""
+    
+    l_out = []
+    l_serialN = searchPDB.ListSerialElement(l_atom_lig, "N")
+    for serialN in l_serialN:
+        l_atom_connect, conect_matrix = retrieveAtom.atomConnect(l_atom_lig, serialN)
+        
+        if conect_matrix == ["N", "C", "C", "C"]:
+            dist = calcul.coplanar(l_atom_connect[0], l_atom_lig)
+            if dist != None :
+                l_out.append (str(dist))
+
+    return l_out
+
+
+
  

@@ -163,26 +163,6 @@ def controlLenCNBond (listAtomLigand, listDistance):
 
 
 
-def controlCoplanarTertiaryAmine(listAtomLigand, listDistanceCoplanar) : 
-    """For each matrix connect N, C, C, C the coplanar distance
-    in: list atom in ligand, list distance coplar retrieve
-    out: append distance in list distance coplanar"""
-    
-    listSerialNitrogen = searchPDB.ListSerialElement(listAtomLigand, "N")
-    for serialNitrogen in listSerialNitrogen:
-        listAtomConnectNitrogen, conect = retrieveAtom.atomConnect(listAtomLigand, serialNitrogen)
-        
-        connectMatrixElement = toolSubstructure.matrixElement(listAtomConnectNitrogen)
-        if connectMatrixElement == ["N", "C", "C", "C"]:
-            if toolSubstructure.checkConectOnlyC(listAtomConnectNitrogen[1], listAtomLigand) == 1 and toolSubstructure.checkConectOnlyC(listAtomConnectNitrogen[2], listAtomLigand) == 1 and toolSubstructure.checkConectOnlyC(listAtomConnectNitrogen[3], listAtomLigand) == 1:
-                try :
-                    distance = calcul.coplanar(listAtomConnectNitrogen[0], listAtomLigand)
-                    if distance != None :
-                        listDistanceCoplanar.append(distance)
-                except :
-                    pass
-        
-        
 def BuilderDatasetDict(PDB_ID, name_lig, RX, d_dataset, debug = 1):
     """Append name PDB_ID in structure dataset
     in: PDB_ID, name ligand, structure save dataset

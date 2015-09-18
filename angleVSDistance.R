@@ -79,7 +79,7 @@ l_element = unique(d[,nb_col])
 for (element in l_element){
 	
 	data_plot = d[which(d[,nb_col] == element),]
-	plotCombined (data_plot, paste(file, element, "combined", sep = ""))
+	plotCombined (data_plot, paste(file, element, "combined", sep = "_"))
 }
 
 

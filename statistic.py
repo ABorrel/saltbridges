@@ -252,7 +252,7 @@ def AngleSelect (st_atom, pr_result) :
         while i < nb_test : 
             min_dist = l_distlimit[i]
             max_dist = l_distlimit[i + 1]
-            name_folder = str (sub) + str (min_dist) + "-" + str (max_dist)
+            name_folder = str (sub) + "_" + str (min_dist) + "-" + str (max_dist)
             
             for atom_central in st_atom[sub] : 
                 for neighbor in atom_central["neighbors"] : 
@@ -786,7 +786,7 @@ def searchMoreClose (l_neighbors, option_lcopy = 0) :
 def CountInteraction (st_atom, pr_result, logFile, restrained = 1, debug = 1):
     
     st_count = {}
-    l_interactions_search = ["COO", "H2O", "OH", "NH", "N", "Other"]
+    l_interactions_search = ["COO", "HOH", "OH", "NH", "N", "Other"]
     
     for type_subs in st_atom.keys ():
         # remove global
@@ -858,8 +858,8 @@ def CountDependant (l_interaction_found, d_count, type_subs):
             d_count["N"] = d_count["N"] + 1
         elif "NH" in l_interaction_found : 
             d_count["NH"] = d_count["NH"] + 1
-        elif "H2O" in l_interaction_found : 
-            d_count["H2O"] = d_count["H2O"] + 1
+        elif "HOH" in l_interaction_found : 
+            d_count["HOH"] = d_count["HOH"] + 1
         elif "OH" in l_interaction_found : 
             d_count["OH"] = d_count["OH"] + 1
         elif "COO" in l_interaction_found : 
@@ -869,8 +869,8 @@ def CountDependant (l_interaction_found, d_count, type_subs):
     else : 
         if "COO" in l_interaction_found : 
             d_count["COO"] = d_count["COO"] + 1
-        elif "H2O" in l_interaction_found : 
-            d_count["H2O"] = d_count["H2O"] + 1    
+        elif "HOH" in l_interaction_found : 
+            d_count["HOH"] = d_count["HOH"] + 1    
         elif "OH" in l_interaction_found : 
             d_count["OH"] = d_count["OH"] + 1        
         elif "NH" in l_interaction_found : 
@@ -916,23 +916,24 @@ def GetInteractions (l_atoms, subs, restrained = 1, debug = 1) :
         
         # in the criteria    
         if flag_temp_dist == 0 and flag_temp_angle == 0  : # angle and distance OK
-            if type_atom == "Carg" or type_atom == "Nhis":
+            if type_atom == "Nim" or type_atom == "Ngu" or type_atom == "Cgu" or type_atom == "NaI":
                 if not "N" in l_interact : 
                     l_interact.append ("N")
-            elif type_atom == "COxAcid" : 
+            elif type_atom == "Oox" or type_atom == "Cox" : 
                 if not "COO" in l_interact : 
                     l_interact.append ("COO")
-            elif type_atom == "H2O" : 
-                if not "H2O" in l_interact : 
-                    l_interact.append ("H2O")
-            elif type_atom == "ODonAcc" : 
+            elif type_atom == "Ow" : 
+                if not "HOH" in l_interact : 
+                    l_interact.append ("HOH")
+            elif type_atom == "Oh" : 
                 if not "OH" in l_interact : 
                     l_interact.append ("OH")
-            elif type_atom == "Ndonor" : 
+            elif type_atom == "Nam" : 
                 if not "NH" in l_interact : 
                     l_interact.append ("NH")
             else : 
-                l_interact.append ("Other")
+                if not "Other" in l_interact : 
+                    l_interact.append ("Other")
     
     return l_interact
      
@@ -943,7 +944,7 @@ def planarityImidazole (atom_interest_close, p_dir_result) :
      
      
     p_dir_result = pathManage.coplorIMD (p_dir_result)
-    p_filout = p_dir_result + "coplarRing.txt"
+    p_filout = p_dir_result + "coplarRing"
     filout = open (p_filout, "w")
  
     nb_imd = len (l_imidazole_atom_central)
@@ -974,6 +975,7 @@ def planarityImidazole (atom_interest_close, p_dir_result) :
      
         filout.write (str(d_coplar) + "\n")
     filout.close ()
+    runScriptR.histDistance(p_filout, "coplar")
 
 
 def planarityGuanidium (atom_interest_close, p_dir_result) : 
@@ -982,7 +984,7 @@ def planarityGuanidium (atom_interest_close, p_dir_result) :
      
      
     p_dir_result = pathManage.coplorGUA (p_dir_result)
-    p_filout = p_dir_result + "coplarRing.txt"
+    p_filout = p_dir_result + "coplarRing"
     filout = open (p_filout, "w")
  
     nb_gua = len (l_guanidium_atom_central)
@@ -1014,7 +1016,7 @@ def planarityGuanidium (atom_interest_close, p_dir_result) :
          
         filout.write (str(d_coplar) + "\n")
     filout.close ()   
-     
+    runScriptR.histDistance(p_filout, "coplar")
      
 
 def ListNeighborsType (l_neighbors, subs):
@@ -1220,12 +1222,12 @@ def EnvironmentInteraction (st_atom, pr_result, file_log, restrained = 1) :
                     
                     if not i in d_count_SB.keys () : 
                         d_count_SB[i] = structure.countClassificationAtoms()
-                        d_count_SB[i]["out"] = 0 # case where there is not enough neighbor
                     if not i in d_dist.keys () : 
                         d_dist[i] = structure.EmptyListClassifAtom()
                     
                     if type_neighbor == None : 
-                        d_count_SB[i]["out"] = d_count_SB[i]["out"] + 1
+                        i = i + 1
+                        continue
                     else : 
                         d_count_SB[i][type_neighbor] = d_count_SB[i][type_neighbor] + 1
                         d_dist[i][type_neighbor].append (atom_neighbor["distance"])
@@ -1256,13 +1258,13 @@ def EnvironmentInteraction (st_atom, pr_result, file_log, restrained = 1) :
                 while i <= nb_neighbor :  
                     type_neighbor, atom_neighbor = searchMoreClose(l_neighbors, option_lcopy = 0)
                     
-                    k_in = str (i) + "-no"
+                    k_in = str (i) + "'"
                     if not k_in in d_count_noSB.keys () : 
                         d_count_noSB[k_in] = structure.countClassificationAtoms()
-                        d_count_noSB[k_in]["out"] = 0 # case where there is not enough neighbor
                     
                     if type_neighbor == None : 
-                        d_count_noSB[k_in]["out"] = d_count_noSB[k_in]["out"] + 1
+                        i = i + 1
+                        continue
                     else : 
                         d_count_noSB[k_in][type_neighbor] = d_count_noSB[k_in][type_neighbor] + 1
                         

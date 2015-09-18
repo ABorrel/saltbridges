@@ -24,122 +24,109 @@ def classificationATOM (atom="", out_list = 0):
     in: atom
     out: classification (string)"""
     
-    l_classif = ["OxAcid", "COxAcid", "Carg", "ODonAcc", "Sulfur", "Nhis", "Nbasic", "Carom", "OxPep", "Ndonor","OxAccept" , "H2O", "CPep", "others"]
+    l_classif = ["Oox", "Cox", "Oh", "Oc", "Ow", "Nam", "Nim", "Ngu", "Cgu", "NaI", "Car", "Xot"]
     if out_list : 
         return l_classif
     
-    
-    listAminoAcid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS"]
     # Oxygen acid
     if atom["resName"] == "GLU" or atom["resName"] == "ASP":
         if atom["name"] == "OE1" or atom["name"] == "OE2" or atom["name"] == "OD1" or atom["name"] == "OD2":
-            return "OxAcid"
+            return "Oox"
 
 
     # cabone of COO
     if atom["resName"] == "GLU" : 
         if atom["name"] == "CD"  : 
-            return "COxAcid"
+            return "Cox"
         
     if atom["resName"] == "ASP" :
         if atom["name"] == "CG"  : 
-            return "COxAcid"
+            return "Cox"
         
-    
 
     # Oxygen Donnor/acceptor
     if atom["resName"] == "TYR":
         if atom["name"] == "OH":
-            return "ODonAcc"
+            return "Oh"
 
     if atom["resName"] == "THR":
         if atom["name"] == "OG1":
-            return "ODonAcc"
+            return "Oh"
 
 
     if atom["resName"] == "SER":
         if atom["name"] == "OG":
-            return "ODonAcc"
-
-
-    # Sulfure
-    if atom["resName"] == "CYS":
-        if atom["name"] == "SG":
-            return "Sulfur"
+            return "Oh"
 
 
     # Nitrogen histidine
     if atom["resName"] == "HIS" : 
         if atom["name"] == "NE2" or atom["name"] == "ND1" : 
-            return "Nhis"
+            return "Nim"
         
     # Nitrogen basic        
     if atom["resName"] == "LYS" : 
         if atom["name"] == "NZ" : 
-            return "Nbasic"
+            return "NaI"
         
     if atom["resName"] == "ARG" : 
         if atom["name"] == "NH1" or  atom["name"] == "NH2" or atom["name"] == "NHE" or  atom["name"] == "NE": 
-            return "Nbasic"
+            return "Ngu"
       
     if atom["resName"] == "ARG" : 
         if atom["name"] == "CZ" : 
-            return "Carg"
+            return "Cgu"
         
-#     if atom["resName"] in listAminoAcid :  ?????
-#         if atom["name"] == "NXT" : 
-#             return "Nbasic"
-
     # Nitrogen donor
     if atom["resName"] == "ASN" : 
         if atom["name"] == "ND2" : 
-            return "Ndonor"
+            return "Nam"
         
     if atom["resName"] == "GLN" : 
         if atom["name"] == "NE2" : 
-            return "Ndonor"
+            return "Nam"
             
-    if atom["resName"] in listAminoAcid : 
+    if atom["resName"] in l_res : 
         if atom["name"] == "N" : 
-            return "Ndonor"
+            return "Nam"
     
     # Caromatic
     if atom["resName"] == "PHE" or atom["resName"] == "TYR": 
         if atom["name"] != "CA" : 
             if atom["name"] != "C" :
-                return "Carom"
+                return "Car"
             
     if atom["resName"] == "TRP" : 
         if atom["name"] != "CA" : 
             if atom["name"] != "CB" : 
-                return "Carom"
+                return "Car"
     
     # O peptitique
-    if atom["resName"] in listAminoAcid :
+    if atom["resName"] in l_res :
         if atom["name"] == "O" :
-            return "OxPep" 
+            return "Oc" 
     
     # O acid carboxylic
     if atom["resName"] == "ASN" or atom["resName"] == "GLN":
         if atom["name"] == "OD1" or atom["name"] == "OE1" :
-            return "OxAccept"
+            return "Oc"
         
     # water
     if atom["resName"] == "HOH":
         if atom["name"] == "O" : 
-            return "H2O" 
+            return "Ow" 
     
     # C peptidique
-    if atom["resName"] in listAminoAcid :
+    if atom["resName"] in l_res :
         if atom["name"] == "C" :
-            return "CPep"     
+            return "Oc"     
     
     
 
     
 #     print atom["resName"], atom["name"]
     
-    return "others"
+    return "Xot"
 
 
 
@@ -291,12 +278,6 @@ def countThreeNeigbors () :
         for classe in l_classe : 
             for i in range(1,nb_n +1) : 
                 d_out[sub_struct][i][classe] = 0.0
-    
-#     print d_out["Primary"].keys ()
-#     print d_out["Secondary"].keys ()
-#     print d_out["Imidazole"].keys ()
-#     print d_out["Tertiary"].keys ()
-    
     
     return d_out
 
@@ -498,12 +479,6 @@ def ListSub ():
     
     return ["I", "II", "III",  "IMD", "GAI", "COO"]
     
-
-# def listAtLeastOneStudy(): 
-#     return ["counterIon", "Carom", "amphiprotic", "H2O"]
-
-# def listTypeStudy ():
-#     return ["OxAcid", "amphiprotic", "Nbasic", "Ndonor", "Carom"]
 
 def listGlobalStudy():
     return ['residue', 'proportionAtom', 'angleVector', 'ligand', 'ResidueAllAtom', 'distanceOx', 'byAA', 'H2O', 'atom', 'proportionType']

@@ -210,33 +210,27 @@ def sumDict(dict_count) :
 
 def colorAtomType (l_superimpose) : 
     
+    ["Oox", "Cox", "Oh", "Oc", "Ow", "Nam", "Nim", "Ngu", "Cgu", "NaI", "Car", "Xot"]
+    
     for atom in l_superimpose : 
-        c_atom = structure.classificationATOM(atom)
-        if c_atom == "OxAcid" : 
+        type_atom = structure.classificationATOM(atom)
+        if type_atom == "Oox" or type_atom == "Cox": 
             atom ["tempFactor"] = 100 - 8.33
-        elif c_atom == "ODonAcc" : 
+        elif type_atom == "Oh" : 
             atom ["tempFactor"] = 100 - (2* 8.33)
-        elif c_atom ==  "OxAccept": 
+        elif type_atom ==  "Oc": 
             atom ["tempFactor"] = 100 - (3* 8.33) 
-        elif c_atom == "OxPep"  : 
-            atom ["tempFactor"] = 100 - (4* 8.33)  
-        elif c_atom == "Sulfur"  : 
-            atom ["tempFactor"] = 100 - (5* 8.33)
-        elif c_atom == "Carom"  : 
-            atom ["tempFactor"] = 100 - (6* 8.33)
-        elif c_atom == "Carom"  : 
+        elif type_atom == "Car"  : 
             atom ["tempFactor"] = 100 - (7* 8.33)  
-        elif c_atom == "Ndonor"  : 
+        elif type_atom == "Nam"  : 
             atom ["tempFactor"] = 100 - (8* 8.33)
-        elif c_atom == "Nhis"  : 
+        elif type_atom == "Nim"  : 
             atom ["tempFactor"] = 100 - (9* 8.33)
-        elif c_atom == "Nbasic"  : 
+        elif type_atom == "Ngu" or type_atom == "NaI" or type_atom == "Cgu"  : 
             atom ["tempFactor"] = 100 - (9* 8.33)   
-        elif c_atom == "CPep"  : 
-            atom ["tempFactor"] = 100 - (10* 8.33) 
-        elif c_atom == "others"  : 
+        elif type_atom == "Xot"  : 
             atom ["tempFactor"] = 100 - (11* 8.33) 
-        elif c_atom == "H2O"  : 
+        elif type_atom == "Ow"  : 
             atom ["tempFactor"] = 100 - (12* 8.33)    
 
     

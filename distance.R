@@ -18,11 +18,11 @@ grapheBond = function(file, type_bond){
 graphePolar = function(file){
 
 
-	data = read.table(file)
-	data = data[!is.na(data)]
+	d = read.table(file)
 
-	svg(filename=paste(file, ".svg", sep = ""))
-	hist(data, xlab ="Orthogonal distances (Å)", ylab = "Number of occurences", breaks=20, xlim=c(0,3), right=F, las=1, freq=T, cex = 0.6, cex.lab = 2)
+	svg(filename=paste(file, ".svg", sep = ""), 10, 8)
+	par (mar = c(5,5,2,2))
+	hist(d[,1], xlab ="Orthogonal distances (Å)", ylab = "Number of occurences", breaks = 100, main="", las=1, cex = 0.6, cex.lab = 2, xlim = c(0,max (d[,1])), col = "grey")
 	dev.off()
 }
 

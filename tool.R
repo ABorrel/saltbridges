@@ -161,46 +161,46 @@ defColor = function (l_name){
 	
 	for (element in l_name){
 	
-		if (attr(regexpr("COxAcid",element),"match.length") >= 1){
+		if (attr(regexpr("Cox",element),"match.length") >= 1){
 			out = append (out, "#5F021F")
 		}
-		else if (attr(regexpr("OxAcid",element),"match.length") >= 1){
+		else if (attr(regexpr("Oox",element),"match.length") >= 1){
 			out = append (out, "#FF0000")
 		}
-		else if (attr(regexpr("ODonAcc",element),"match.length") >= 1){
+		else if (attr(regexpr("Oh",element),"match.length") >= 1){
 			out = append (out, "#FF6600")
 		}
 		else if (attr(regexpr("Sulfur",element),"match.length") >= 1){
 			out = append (out, "#FFD700")
 		}
-		else if (attr(regexpr("Nhis",element),"match.length") >= 1){
+		else if (attr(regexpr("Nim",element),"match.length") >= 1){
 			out = append (out, "#000080")
 		}
-		else if (attr(regexpr("Nbasic",element),"match.length") >= 1){
+		else if (attr(regexpr("Ngu",element),"match.length") >= 1){
 			out = append (out, "#0000FF")
 		}
-		else if (attr(regexpr("Carom",element),"match.length") >= 1){
+	  else if (attr(regexpr("NaI",element),"match.length") >= 1){
+	    out = append (out, "#0000FF")
+		}
+		else if (attr(regexpr("Car",element),"match.length") >= 1){
 			out = append (out, "#9900CC")
 		}
-		else if (attr(regexpr("OxPep",element),"match.length") >= 1){
+		else if (attr(regexpr("Oc",element),"match.length") >= 1){
 			out = append (out, "#FF7F50")
 		}
-		else if (attr(regexpr("Ndonor",element),"match.length") >= 1){
+		else if (attr(regexpr("Nam",element),"match.length") >= 1){
 			out = append (out, "#00b200")
 		}
-		else if (attr(regexpr("OxAccept",element),"match.length") >= 1){
+		else if (attr(regexpr("Oc",element),"match.length") >= 1){
 			out = append (out, "#CDB79E")
 		}
-		else if (attr(regexpr("H2O",element),"match.length") >= 1){
+		else if (attr(regexpr("Ow",element),"match.length") >= 1){
 			out = append (out, "#33FFFF")
 		}
-		else if (attr(regexpr("CPep",element),"match.length") >= 1){
-			out = append (out, "#663300")
-		}
-		else if (attr(regexpr("others",element),"match.length") >= 1){
+		else if (attr(regexpr("Xot",element),"match.length") >= 1){
 			out = append (out, "#D3D3D3")
 		}
-		else if (attr(regexpr("Carg",element),"match.length") >= 1){
+		else if (attr(regexpr("Cgu",element),"match.length") >= 1){
 			out = append (out, "#003366")
 		}
 		else if (is.integer0 (grep("GLU", element))== FALSE){
@@ -266,14 +266,14 @@ defColor = function (l_name){
 		else if (is.integer0 (grep("COO", element))== FALSE){
 			out = append (out, "#FF0000")
 		}
+	  else if (is.integer0 (grep("HOH", element))== FALSE){
+	    out = append (out, "#33FFFF")
+	  }
 		else if (is.integer0 (grep("OH", element))== FALSE){
 			out = append (out, "#FF6600")
 		}
 		else if (is.integer0 (grep("NH", element))== FALSE){
 			out = append (out, "#00b200")
-		}
-		else if (is.integer0 (grep("H2O", element))== FALSE){
-			out = append (out, "#33FFFF")
 		}
 		else if (is.integer0 (grep("N", element))== FALSE){
 			out = append (out, "#0000FF")
@@ -289,57 +289,6 @@ defColor = function (l_name){
 	return (out)
 }
 
-
-
-defColorGrep = function (l_name){
-	print (l_name)
-	out = c()
-
-	for (element in l_name){
-		#print (element)
-		if (is.integer0 (grep("OxAcid", element)) == FALSE){
-			out = append (out, "red")
-		}
-		else if (is.integer0 ( grep("ODonAcc", element))== FALSE){
-			out = append (out, "orange")
-		}
-		else if (is.integer0 (grep("Sulfur", element))== FALSE){
-			out = append (out, "gold")
-		}
-		else if (is.integer0 (grep("Nhis", element))== FALSE){
-			out = append (out, "darkblue")
-		}
-		else if (is.integer0 (grep("Nbasic", element))== FALSE){
-			out = append (out, "blue")
-		}
-		else if (is.integer0 ( grep("Carom", element))== FALSE){
-			out = append (out, "purple")
-		}
-		else if (is.integer0 (grep("OxPep", element))== FALSE){
-			out = append (out, "coral")
-		}
-		else if (is.integer0 (grep("Ndonor", element))== FALSE){
-			out = append (out, "green")
-		}
-		else if (is.integer0 (grep("OxAccept", element))== FALSE){
-			out = append (out, "bisque3")
-		}
-		else if (is.integer0 (grep("H2O", element))== FALSE){
-			out = append (out, "cyan")
-		}
-		else if (is.integer0 (grep("CPep", element))== FALSE){
-			out = append (out, "brown")
-		}
-		else if (is.integer0 (grep("others", element))== FALSE){
-			out = append (out, "grey")
-		}
-		else {
-			out = append (out, "black")
-		}
-	}
-	names(out) = l_name
-	return (out)
-}
 
 
 defColorSubstruct = function (l_name){
