@@ -24,7 +24,8 @@ def classificationATOM (atom="", out_list = 0):
     in: atom
     out: classification (string)"""
     
-    l_classif = ["Oox", "Cox", "Oh", "Oc", "Ow", "Nam", "Nim", "Ngu", "Cgu", "NaI", "Car", "Xot"]
+#     l_classif = ["Oox", "Cox", "Oh", "Oc", "Ow", "Nam", "Nim", "Ngu", "Cgu", "NaI", "Car", "Xot"]
+    l_classif = ["Oox", "Oh", "Oc", "Ow", "Nam", "Nim", "Ngu", "NaI", "Car", "Xot"]
     if out_list : 
         return l_classif
     
@@ -34,14 +35,14 @@ def classificationATOM (atom="", out_list = 0):
             return "Oox"
 
 
-    # cabone of COO
-    if atom["resName"] == "GLU" : 
-        if atom["name"] == "CD"  : 
-            return "Cox"
+#     # cabone of COO
+#     if atom["resName"] == "GLU" : 
+#         if atom["name"] == "CD"  : 
+#             return "Cox"
         
-    if atom["resName"] == "ASP" :
-        if atom["name"] == "CG"  : 
-            return "Cox"
+#     if atom["resName"] == "ASP" :
+#         if atom["name"] == "CG"  : 
+#             return "Cox"
         
 
     # Oxygen Donnor/acceptor
@@ -73,9 +74,9 @@ def classificationATOM (atom="", out_list = 0):
         if atom["name"] == "NH1" or  atom["name"] == "NH2" or atom["name"] == "NHE" or  atom["name"] == "NE": 
             return "Ngu"
       
-    if atom["resName"] == "ARG" : 
-        if atom["name"] == "CZ" : 
-            return "Cgu"
+#     if atom["resName"] == "ARG" : 
+#         if atom["name"] == "CZ" : 
+#             return "Cgu"
         
     # Nitrogen donor
     if atom["resName"] == "ASN" : 

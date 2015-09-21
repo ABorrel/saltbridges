@@ -8,7 +8,7 @@ grapheBond = function(file, type_bond){
 	brk = 20
 	svg(filename=paste(file,".svg",sep = ""), 10, 8)
 	par (mar = c(5,5,2,2))
-	hist(d[,1], xlab = "Length of bond (Å)", ylab = "Number of occurences", breaks = 100, main="", las=1, cex = 0.6, cex.lab = 2, xlim = c(0,max (d[,1])), col = "grey")
+	hist(d[,1], xlab = paste (type_bond, "bonds (Å)", sep = ""), ylab = "Number of occurences", breaks = 100, main="", las=1, cex = 0.6, cex.lab = 2, xlim = c(0,max (d[,1])), col = "grey")
 	dev.off()
 
 }
@@ -22,7 +22,7 @@ graphePolar = function(file){
 
 	svg(filename=paste(file, ".svg", sep = ""), 10, 8)
 	par (mar = c(5,5,2,2))
-	hist(d[,1], xlab ="Orthogonal distances (Å)", ylab = "Number of occurences", breaks = 100, main="", las=1, cex = 0.6, cex.lab = 2, xlim = c(0,max (d[,1])), col = "grey")
+	hist(d[,1], xlab ="Distances to plane (Å)", ylab = "Number of occurences", breaks = 100, main="", las=1, cex = 0.6, cex.lab = 2, xlim = c(0,max (d[,1])), col = "grey")
 	dev.off()
 }
 

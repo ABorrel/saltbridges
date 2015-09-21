@@ -24,8 +24,10 @@ def GlobalBondLength (name_database, RX_thresold = 1.5):
     # filout with distance
     p_CN = pr_result + "distanceCN"
     p_CO = pr_result + "distanceCO"
-    p_CC = pr_result + "distanceCO"
+    p_CC = pr_result + "distanceCC"
     p_coplar = pr_result + "distanceCoplar"
+    
+    
     filout_CN = open (p_CN, "w")
     filout_CO = open (p_CO, "w")
     filout_CC = open (p_CC, "w")

@@ -111,7 +111,7 @@ def main (name_database, max_distance = 5.0, RX = 3.00, RFree = 0.25, option_sup
 
     if option_merge == 1: 
         if option_on_complexes_by_ligand == 1: 
-            statistic.MergeDataSet(pathManage.result (name_database + "/" + str (RX) + "_" + str (RFree) + "_uniquePDB"), "dataset_3.00", "dataset_1.50")
+            statistic.MergeDataSet(pathManage.result (name_database + "/" + str (RX) + "_" + str (RFree) + "_uniquePDB"), "dataset_1.50", "dataset_3.00")
         else : 
             statistic.MergeDataSet(pathManage.result (name_database + "/" + str (RX) + "_" + str (RFree)), "dataset_1.50", "dataset_3.00")
         
@@ -180,7 +180,7 @@ RFree_thresold = 0.25
 # main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0, option_stat = 0, option_stat_dataset = 1)
 
 # # PDB
-main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0, option_merge = 0)
+main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 1, option_bond = 0,  option_stat = 0, option_stat_dataset = 0, option_merge = 0)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 0, option_stat_dataset = 0, option_merge = 0)
 
 # test

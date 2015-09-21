@@ -75,7 +75,7 @@ for (i in 1:lenData){
 png(filename=paste(file,".png",sep = ""), width=as.integer(large))
 barplot(t(data), main=nameGraphe, ylab="Quantity", xlab = "Distance", col=color, space=0.6, cex.axis=0.9, las=1, cex=0.6, axes = TRUE, names.arg=distance)
 
-legend(2,0.75 * maxY,legend=c("Oox", "Cox", "Oh", "Oc", "Ow", "Nam", "Nim", "Ngu", "Cgu", "NaI", "Car", "Xot"), cex=0.8, fill=color)
+legend(2,0.75 * maxY,legend=c("Oox", "Oh", "Oc", "Ow", "Nam", "Nim", "Ngu", "NaI", "Car", "Xot"), cex=0.8, fill=color)
 
 dev.off()
 

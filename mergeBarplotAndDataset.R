@@ -66,7 +66,7 @@ for (sub in rownames(d_atleast1)){
 	pval_notatleast = testX2 (d_percent1*100, d_percent2*100)
 	
 
-	d_plot = matrix(c(as.double(d_percent1), as.double(d_percent2)), 2, length (d_percent1),byrow=TRUE )
+	d_plot = matrix(c(as.double(d_percent1*100), as.double(d_percent2*100)), 2, length (d_percent1),byrow=TRUE )
 
 	# barplot
 	colnames (d_plot) = colnames (d_notatleast1)
@@ -74,13 +74,13 @@ for (sub in rownames(d_atleast1)){
 	for (colors in l_color){
 		color_all = append (color_all, rep (colors,2)) 
 	}
-	barplot (d_plot, col = color_all, cex.lab = 2, ylab = "Frequencies", ylim = c(0,1), cex.names = 2.0, cex.axis = 1.8, beside=TRUE, cex.main = 3)
-	text (13,0.96, paste("PDB1.5; n = ", nb_sub1, sep = ""), cex = 2.2)
-	text (13,0.92, paste("PDB3.0; n = ", nb_sub2, sep = ""), cex = 2.2)
+	barplot (d_plot, col = color_all, cex.lab = 2, ylab = "Frequencies", ylim = c(0,100), cex.names = 2.0, cex.axis = 1.8, beside=TRUE, cex.main = 3)
+	text (13,96, paste("PDB1.5; n = ", nb_sub1, sep = ""), cex = 3)
+	text (13,92, paste("PDB3.0; n = ", nb_sub2, sep = ""), cex = 3)
 
 	# grid
 	# horizontal
-	y_grid = seq(0, 1, 0.1)
+	y_grid = seq(0, 100, 10)
 	for (y in y_grid){
 		segments (0, y, length(d_percent1)*5 , y, lty = 2, col = "black", lwd = 1.5)
 	}

@@ -147,7 +147,7 @@ def rmse (m_points1, m_points2):
 
 
 
-def globalNeighbor (atom_interest_close, subs, p_dir_result) : 
+def globalNeighbor (atom_interest_close, subs, p_dir_result, option_filter = 1) : 
     
     p_dir_result = pathManage.imposeNeighbors (p_dir_result)
     # extract from ideal position
@@ -198,7 +198,22 @@ def globalNeighbor (atom_interest_close, subs, p_dir_result) :
 #         print l_subs_rotated
 #         print "/////////////////////////////"
         
-        l_atom_neighbors = at_central["neighbors"]
+        l_atom_neighbors = deepcopy(at_central["neighbors"])
+        
+        if option_filter == 1 : 
+            # reduce the list of neighbor
+            criteria = structure.criteraAngle(subs)
+            d_min = criteria["distance"][0]
+            d_max = criteria["distance"][1]
+            n_neighbor = len (l_atom_neighbors)
+            i = 0
+            while i < n_neighbor : 
+                if l_atom_neighbors[i]["distance"] < d_min or l_atom_neighbors[i]["distance"] > d_max : 
+                    del l_atom_neighbors[i]
+                    n_neighbor = n_neighbor - 1
+                else : 
+                    i = i +1
+        
         try : 
             l_atom_neighbor_rotated = applyTranformation(rotation, translocation, l_atom_in=l_atom_neighbors)
             l_superimpose_neighbor = l_superimpose_neighbor + l_atom_neighbor_rotated
@@ -223,10 +238,6 @@ def globalNeighbor (atom_interest_close, subs, p_dir_result) :
     file_RMSE.close ()
     writeFile.coordinates3DPDBbyNeighborType (l_superimpose_neighbor, l_superimpose_subs, subs, pr_init_PDB)
     
-    
-    
-        
-            
         
     
     

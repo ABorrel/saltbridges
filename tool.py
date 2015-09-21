@@ -210,8 +210,6 @@ def sumDict(dict_count) :
 
 def colorAtomType (l_superimpose) : 
     
-    ["Oox", "Cox", "Oh", "Oc", "Ow", "Nam", "Nim", "Ngu", "Cgu", "NaI", "Car", "Xot"]
-    
     for atom in l_superimpose : 
         type_atom = structure.classificationATOM(atom)
         if type_atom == "Oox" or type_atom == "Cox": 

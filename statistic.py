@@ -129,13 +129,13 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 #     numberNeighbor (st_atom, pathManage.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
 #     neighborAtomComposition(st_atom, pathManage.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
 #     firstNeighbor (st_atom, pathManage.countNeighbor(pr_result, "firstNeighbor"), logFile)
-#     allNeighbors (st_atom, pathManage.countNeighbor(pr_result, "allNeighbor"), logFile)
+    TypeOfNeighbors (st_atom, pathManage.countNeighbor(pr_result, "AtomType"), logFile)
     
 # #      
 # #     # with two area defintion
 #     d_area1, d_area2 = splitTwoArea (st_atom)
-#     allNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1"), logFile)
-#     allNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
+#     TypeOfNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1"), logFile)
+#     TypeOfNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
 # # 
 # # #    # combination
 #     combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
@@ -573,7 +573,7 @@ def firstNeighbor (st_atom, pr_result, logFile):
         runScriptR.multiHist(files_dist)  
 
 
-def allNeighbors (st_atom, pr_result, logFile):
+def TypeOfNeighbors (st_atom, pr_result, logFile):
 
     st_count = {}
     for subs in st_atom.keys () : 
@@ -838,7 +838,7 @@ def CountInteraction (st_atom, pr_result, logFile, restrained = 1, debug = 1):
     runScriptR.InteractionProportion(p_filout_independant)
 
     # merge plot 
-    runScriptR.MergeProportionInteractAtLeasNotAtLeast (p_filout_dependant, p_filout_independant)
+    runScriptR.MergeProportionInteractAtLeasNotAtLeast (p_filout_dependant, p_filout_independant, pr_result)
     
 
 

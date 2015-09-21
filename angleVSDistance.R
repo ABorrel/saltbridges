@@ -76,10 +76,18 @@ nb_col = dim(d)[2]
 
 l_element = unique(d[,nb_col])
 
+# merge N basic
+l_temp = c("Nim", "NaI", "Ngu")
+data_plot_merged = NULL
+
 for (element in l_element){
-	
+	if (element == "Nim" | element == "NaI" | element == "Ngu"){
+	  data_plot_merged = rbind (data_plot_merged, d[which(d[,nb_col] == element),])  
+	}
 	data_plot = d[which(d[,nb_col] == element),]
 	plotCombined (data_plot, paste(file, element, "combined", sep = "_"))
 }
+
+plotCombined (data_plot_merged , paste(file, "NimNaINgu_combined", sep = "_"))
 
 

@@ -49,7 +49,7 @@ data = data[-(which(data[,6] == "Inf")),]
 # global
 svg (paste(path_file, "RXVSH2O.svg", sep = ""), 10, 10)
 par (mar = c(5,5,2,2))
-plot(data[,2], data[,6], xlim = c(0.5,4), ylim = c(0,0.4), pch = 19, xlab = "Resolution (Å)", ylab = "Mean of water molecules by amino acid", cex = 0.6, cex.lab = 2)
+plot(data[,2], data[,6], xlim = c(0.5,4), ylim = c(0,0.4), pch = 19, xlab = "Resolution (Å)", ylab = "Mean number of water molecules by amino acid", cex = 0.6, cex.lab = 2)
 
 m = c(mean (data[which (data[,2] < 0.5),6]), mean (data[which (data[,2] < 1 & data[,2] > 0.5),6]), mean (data[which (data[,2] < 1.5 & data[,2] > 1),6]), mean (data[which (data[,2] < 2 & data[,2] > 1.5),6]), mean (data[which (data[,2] < 2.5 & data[,2] > 2),6]), mean (data[which (data[,2] < 3 & data[,2] > 2.5),6]), mean (data[which (data[,2] < 3.5 & data[,2] > 3.0),6]), mean (data[which (data[,2] < 4 & data[,2] > 3.5),6]))
 print (m)
@@ -59,7 +59,7 @@ dev.off()
 # global
 png (paste(path_file, "RXVSH2O.png", sep = ""), 800, 800)
 par (mar = c(5,5,2,2))
-plot(data[,2], data[,6], xlim = c(0.5,4), ylim = c(0,0.4), pch = 19, xlab = "Resolution (Å)", ylab = "Mean of water molecules by amino acid", cex = 0.6, cex.lab = 2)
+plot(data[,2], data[,6], xlim = c(0.5,4), ylim = c(0,0.4), pch = 19, xlab = "Resolution (Å)", ylab = "Mean number of water molecules by amino acid", cex = 0.6, cex.lab = 2)
 
 m = c(mean (data[which (data[,2] < 0.5),6]), mean (data[which (data[,2] < 1 & data[,2] > 0.5),6]), mean (data[which (data[,2] < 1.5 & data[,2] > 1),6]), mean (data[which (data[,2] < 2 & data[,2] > 1.5),6]), mean (data[which (data[,2] < 2.5 & data[,2] > 2),6]), mean (data[which (data[,2] < 3 & data[,2] > 2.5),6]), mean (data[which (data[,2] < 3.5 & data[,2] > 3.0),6]), mean (data[which (data[,2] < 4 & data[,2] > 3.5),6]))
 print (m)
