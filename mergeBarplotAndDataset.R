@@ -11,7 +11,7 @@ barplotCum = function (d_in, l_color, main_plot){
 	#axis 
 	cum = 0
 	for (y in d_percent){
-		axis (2, (cum + y / 2), paste (round(y*100), "%", sep = ""), las = 2, cex.axis = 2.0)
+		axis (2, (cum + y / 2), paste (round(y), "%", sep = ""), las = 2, cex.axis = 2.0)
 		cum = cum + y
 	}
 }
@@ -52,7 +52,7 @@ for (sub in rownames(d_atleast1)){
 	par (mar=c(1,6,2,3))
 
 	# X2
-	pval_atleast = testX2 (GetPercent(d_atleast1[sub,], 0) * 100, GetPercent(d_atleast2[sub,],0) * 100)
+	pval_atleast = testX2 (GetPercent(d_atleast1[sub,], 0), GetPercent(d_atleast2[sub,],0))
 
 	barplotCum (d_atleast1[sub,], l_color, "PDB1.5")
 	barplotCum (d_atleast2[sub,], l_color, paste("PDB3.0 ", signifPvalue (pval_atleast), sep = ""))
@@ -63,10 +63,10 @@ for (sub in rownames(d_atleast1)){
 	d_percent1 = GetPercent (d_notatleast1[sub,], nb_sub1)
 	d_percent2 = GetPercent (d_notatleast2[sub,], nb_sub2)
 	
-	pval_notatleast = testX2 (d_percent1*100, d_percent2*100)
+	pval_notatleast = testX2 (d_percent1, d_percent2)
 	
 
-	d_plot = matrix(c(as.double(d_percent1*100), as.double(d_percent2*100)), 2, length (d_percent1),byrow=TRUE )
+	d_plot = matrix(c(as.double(d_percent1), as.double(d_percent2)), 2, length (d_percent1),byrow=TRUE )
 
 	# barplot
 	colnames (d_plot) = colnames (d_notatleast1)

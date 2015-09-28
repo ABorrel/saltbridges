@@ -383,4 +383,22 @@ def MeansNumberNeighbors (p_filout) :
     
     
         
-        
+def CorInteractionVSNbNeighbours (p_file_interact, p_file_nb_neighbor, pr_result) : 
+    
+    cmd_run = pathManage.scriptR() + "CorInteractVSneighbour.R " + p_file_interact + " " + p_file_nb_neighbor + " " + pr_result
+    print cmd_run
+    system (cmd_run)
+    
+def CorpKaVSCI (p_file_pka) : 
+    
+    cmd_run = pathManage.scriptR() + "corCIVSPKA.R " + p_file_pka
+    
+    print cmd_run
+    system (cmd_run)
+    
+def CorpKaVSNb (p_file_pka):
+    
+    cmd_run = pathManage.scriptR() + "corNbVSPKA.R " + p_file_pka
+    
+    print cmd_run
+    system (cmd_run)        

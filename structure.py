@@ -1000,5 +1000,21 @@ def genericAtom (x, y, z, serialAtom = 2, nameAtom = "O", char = "", resName = "
     return out
     
            
- 
-
+def Pka (subs = ""):
+    
+    d_pka = {}
+    
+    d_pka["I"] = [7.75, 10.63]
+    d_pka["II"] = [9.29, 11.01]
+    d_pka["III"] = [8.31,10.65]
+    d_pka["IMD"] = [5.1, 7.75]
+    d_pka["GAI"] = [8.33, 13.71]
+    d_pka["COO"] = [1.84, 4.40]
+    d_pka["global"] = [0.0, 0.1]
+    
+    if subs != "" : 
+        return d_pka[subs]
+    else : 
+        return d_pka
+    
+    

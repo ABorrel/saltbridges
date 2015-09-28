@@ -20,6 +20,17 @@ def result(rep_add = ""):
     except: pass
     return rep
 
+def CorrelationNbVSInteraction(pr_result) : 
+    
+    pr_corr = pr_result + "nbNeighbourVSInteract/"
+    
+    if not path.isdir(pr_corr) : 
+        makedirs(pr_corr, mode=0777)
+    else : 
+        pass
+    return pr_corr
+    
+
 def withoutAtLeastOneSummary(dir_in):
 
     rep = dir_in + "withoutAtLeastOne/"

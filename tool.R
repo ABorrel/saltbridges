@@ -374,17 +374,31 @@ signifPvalue = function (a){
 #####################
 
 
-GetPercent = function (d_in, sum_subs){
+GetPercent = function (d_in, sum_in){
   
-  if (sum_subs == 0){
-    sum_subs = sum (d_in)
+  print (d_in)
+  d_out = data.frame()
+  for (i in seq (1, dim(d_in)[1])){
+    if (sum_in == 0){
+      sum_subs = sum (d_in [i,])
+      print (sum_subs)
+    }else{
+      sum_subs = sum_in
+    }
+    for (j in seq (1, dim(d_in)[2])){
+      d_out[i, j] = (d_in[i, j] / sum_subs)*100
+    }
   }
-  for (j in seq (1, dim(d_in)[2])){
-    d_in[sub, j] = d_in[sub, j] / sum_subs
-  }
-  
-  return (d_in)
+  return (d_out)
 }
 
+
+MiddlePoint = function (v1, v2){
+  
+  difference = v2-v1
+  
+  return (v1 + (difference/2))
+  
+}
 
 

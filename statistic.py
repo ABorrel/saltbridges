@@ -101,7 +101,7 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 # # 
     # proportion salt bridges
     CountInteraction (st_atom, pathManage.resultInteraction(pr_result), logFile)
-    EnvironmentInteraction (st_atom, pathManage.resultInteraction (pr_result, name_in = "conditional"), logFile)
+#     EnvironmentInteraction (st_atom, pathManage.resultInteraction (pr_result, name_in = "conditional"), logFile)
 
     # loose    
 #     CountInteraction (st_atom, pathManage.resultInteraction(pr_result, "loose"), logFile, restrained = 0)
@@ -109,11 +109,11 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
     
 # #  
 # #     # distribution distance interest group and type atoms -> distance type
-    DistTypeAtom(st_atom, pathManage.resultDistance(pr_result), logFile)
+#     DistTypeAtom(st_atom, pathManage.resultDistance(pr_result), logFile)
 # #         
 # #     # angleSubs -> directory angles
-    AngleSubs(st_atom, pr_result, max_distance)
-    AngleSelect (st_atom, pr_result)
+#     AngleSubs(st_atom, pr_result, max_distance)
+#     AngleSelect (st_atom, pr_result)
 # #         
 # #     # global analysis proximity -1 atom ligand // -2 aa type // -3 atom classification
 #     ligandProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
@@ -124,12 +124,12 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 # #         
 # #         
 # #     # analyse number of neighbors -> number of atom type (C, O, N)
-    MeansNumberNeighbors (st_atom, pathManage.countNeighbor(pr_result, "MeansNumberNeighbor"))
-    ResidueClose (st_atom, pathManage.countNeighbor(pr_result, "residuesNeighbor"), logFile)
+#     MeansNumberNeighbors (st_atom, pathManage.countNeighbor(pr_result, "MeansNumberNeighbor"))
+#     ResidueClose (st_atom, pathManage.countNeighbor(pr_result, "residuesNeighbor"), logFile)
 #     numberNeighbor (st_atom, pathManage.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
 #     neighborAtomComposition(st_atom, pathManage.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
 #     firstNeighbor (st_atom, pathManage.countNeighbor(pr_result, "firstNeighbor"), logFile)
-    TypeOfNeighbors (st_atom, pathManage.countNeighbor(pr_result, "AtomType"), logFile)
+#     TypeOfNeighbors (st_atom, pathManage.countNeighbor(pr_result, "AtomType"), logFile)
     
 # #      
 # #     # with two area defintion
@@ -142,6 +142,9 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 #     combinationNeighborsAngle (st_atom, pathManage.combination(pr_result, "angleSubs"))
 #     superimpose.SuperimposeFirstNeighbors (st_atom, pathManage.combination(pr_result, "superimposed"))
 # #     
+    # combination nb neighbor and counter ion
+#     CombineNbNeigborInteraction (pathManage.resultInteraction(pr_result), pathManage.countNeighbor(pr_result, "MeansNumberNeighbor"), pr_result)
+
 
     log.endAction("END Statistic run !!!", start, logFile)
 
@@ -449,6 +452,7 @@ def MeansNumberNeighbors (st_atom, pr_result) :
     
     criteria = structure.criteraAngle()
     l_atom_type = structure.classificationATOM(out_list = 1)
+    d_pka = structure.Pka()
     
     d_list = {}
     
@@ -481,7 +485,9 @@ def MeansNumberNeighbors (st_atom, pr_result) :
     
     
     p_filout = pr_result + "meanNumberofNeighbors"
+    p_filout_pka = pathManage.CreatePathDir(pr_result + "pKa/") + "pKaVSnumberNeighbor"
     filout = open (p_filout, "w")
+    filout_pka = open (p_filout_pka, "w")
 
     # header
     filout.write ("M\tSD")
@@ -489,17 +495,26 @@ def MeansNumberNeighbors (st_atom, pr_result) :
         filout.write ("\t" + str (type_atom) + "\t" + str (type_atom) + "SD")
     filout.write ("\n")
     
+    filout_pka.write ("M\tSD\tpka1\tpka2\n")
+    
+    
     # result
     l_sub = structure.ListSub()
     l_sub.append ("global")
     for subs in l_sub : 
         filout.write (str(subs) + "\t" + str (mean (d_list[subs]["Nb"])) + "\t" + str (std (d_list[subs]["Nb"])))
+
+        # pKa
+        filout_pka.write (str (subs) + "\t" + str (mean (d_list[subs]["Nb"])) + "\t" + str (std (d_list[subs]["Nb"])) + "\t" + str(d_pka[subs][0]) + "\t" + str(d_pka[subs][1]) + "\n" )
+        
         for type_atom in l_atom_type : 
             filout.write ("\t" + str (mean (d_list[subs][type_atom])) + "\t" + str (std (d_list[subs][type_atom])))
         filout.write ("\n")
     filout.close ()
-        
+    filout_pka.close ()
+    
     runScriptR.MeansNumberNeighbors (p_filout)
+    runScriptR.CorpKaVSNb (p_filout_pka)
     
     
 def numberNeighbor (st_atom, pr_result, max_distance, logFile) : 
@@ -787,11 +802,12 @@ def CountInteraction (st_atom, pr_result, logFile, restrained = 1, debug = 1):
     
     st_count = {}
     l_interactions_search = ["COO", "HOH", "OH", "NH", "N", "Other"]
+    d_pka = structure.Pka()
     
     for type_subs in st_atom.keys ():
         # remove global
-        if type_subs == "global" : 
-            continue
+        #if type_subs == "global" : 
+        #    continue
         if debug : print "=> control l574 statistic.py", type_subs
         if not type_subs in st_count.keys ():
             st_count[type_subs] = {}
@@ -814,28 +830,45 @@ def CountInteraction (st_atom, pr_result, logFile, restrained = 1, debug = 1):
 
     p_filout_dependant = pr_result + "interact_dependant"
     p_filout_independant = pr_result + "interact_independant"
+    p_filout_pka = pathManage.CreatePathDir(pr_result + "pKa/") + "pKaVSCounterIon"
     
     filout_dependant = open (p_filout_dependant, "w")
     filout_independant = open (p_filout_independant, "w")
+    filout_pka = open (p_filout_pka, "w")
     
     # header
     filout_dependant.write ("\t".join (l_interactions_search) + "\n")
     filout_independant.write ("\t".join (l_interactions_search[:-1]) + "\n") 
+    filout_pka.write ("percentCounterIon\tWater\tCIandWater\tpKa1\tpKa2\n")
     
     for sub in st_count.keys () :
         filout_dependant.write (sub + "\t")
         filout_independant.write (sub + "\t")
+        filout_pka.write (sub + "\t")
         
         filout_dependant.write ("\t".join([str (st_count[sub]["dependant"][k]) for k in l_interactions_search]) + "\n")
         filout_independant.write ("\t".join([str (st_count[sub]["independant"][k]) for k in l_interactions_search[:-1]]) + "\n")                       
-                                
+        # proportion
+        if sub == "COO" : 
+            filout_pka.write (str((float(st_count[sub]["dependant"]["N"]) / sum ([st_count[sub]["dependant"][k] for k in l_interactions_search])) * 100)+ "\t")
+            filout_pka.write (str((float(st_count[sub]["independant"]["HOH"]) / sum ([st_count[sub]["dependant"][k] for k in l_interactions_search])) * 100)+ "\t")
+            filout_pka.write (str((float(st_count[sub]["dependant"]["HOH"] + st_count[sub]["dependant"]["N"]) / sum ([st_count[sub]["dependant"][k] for k in l_interactions_search])) * 100)+ "\t")
+        else : 
+            filout_pka.write (str((float(st_count[sub]["dependant"]["COO"]) / sum ([st_count[sub]["dependant"][k] for k in l_interactions_search])) * 100)+ "\t")
+            filout_pka.write (str((float(st_count[sub]["independant"]["HOH"]) / sum ([st_count[sub]["dependant"][k] for k in l_interactions_search])) * 100)+ "\t")
+            filout_pka.write (str((float(st_count[sub]["dependant"]["HOH"] + st_count[sub]["dependant"]["COO"]) / sum ([st_count[sub]["dependant"][k] for k in l_interactions_search])) * 100)+ "\t")
+            
+        filout_pka.write (str(d_pka[sub][0]) + "\t" + str (d_pka[sub][1]) + "\n")
+                                                  
 
     filout_dependant.close ()
     filout_independant.close ()
+    filout_pka.close ()
     
     
     runScriptR.InteractionProportion(p_filout_dependant)
     runScriptR.InteractionProportion(p_filout_independant)
+    runScriptR.CorpKaVSCI(p_filout_pka)
 
     # merge plot 
     runScriptR.MergeProportionInteractAtLeasNotAtLeast (p_filout_dependant, p_filout_independant, pr_result)
@@ -898,7 +931,7 @@ def GetInteractions (l_atoms, subs, restrained = 1, debug = 1) :
         flag_temp_dist = 0
         flag_temp_angle = 0
         type_atom = structure.classificationATOM(atom)
-        #print atom.keys ()
+#         print subs, type_atom, atom["distance"], atom["angleSubs"]
         # print atom    
         l_angle = atom["angleSubs"]
         dist = atom["distance"]
@@ -912,7 +945,7 @@ def GetInteractions (l_atoms, subs, restrained = 1, debug = 1) :
                     flag_temp_angle = 1
                     
             if l_angle == [] : 
-                flag_temp_angle = 1 
+                flag_temp_angle = 0 
         
         # in the criteria    
         if flag_temp_dist == 0 and flag_temp_angle == 0  : # angle and distance OK
@@ -1317,3 +1350,23 @@ def MergeDicCount (d_count1, d_count2):
     
     return d_out
     
+
+def CombineNbNeigborInteraction (pr_interaction, pr_nb_neighbours, pr_result):
+    
+    p_file_interact = pr_interaction + "interact_dependant"
+    p_file_nb_neighbor = pr_nb_neighbours + "meanNumberofNeighbors"
+    
+    print p_file_interact
+    print p_file_nb_neighbor
+    
+    
+    runScriptR.CorInteractionVSNbNeighbours (p_file_interact, p_file_nb_neighbor, pr_result)
+    
+    
+    
+    
+    
+    
+    
+
+

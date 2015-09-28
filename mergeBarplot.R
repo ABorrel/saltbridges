@@ -39,7 +39,7 @@ for (sub in rownames(d_atleast)){
 	#axis 
 	cum = 0
 	for (y in d_atleast[sub,]){
-		axis (2, (cum + y / 2), paste (round(y*100), "%", sep = ""), las = 2, cex.axis = 2.0)
+		axis (2, (cum + y / 2), paste (round(y), "%", sep = ""), las = 2, cex.axis = 2.0)
 		cum = cum + y
 	}
 
