@@ -751,11 +751,14 @@ def coordinates3DPDBbyNeighborType (l_atom_in, ll_atom_subs, subs, pr_init) :
     for type_neighbors in l_type_neighbors : 
         d_file[type_neighbors] = open (pr_init + subs + "_" + type_neighbors + ".pdb", "w")
         writePDBfile.coordinateSection(d_file [type_neighbors], l_atom_sub_ref , "HETATM") 
-        l_write = []
-        for l_atom_subs in ll_atom_subs : 
+        
+        #writePDBfile.coordinateSection(d_file [type_neighbors], ll_atom_subs[0] , "HETATM")
+        
+        #l_write = []
+        #for l_atom_subs in ll_atom_subs : 
         #    writePDBfile.coordinateSection(d_file [type_neighbors], l_atom_subs , "HETATM")
-            l_write = l_write + l_atom_subs
-        writePDBfile.coordinateSection(d_file [type_neighbors], l_write , "HETATM")
+#             l_write = l_write + l_atom_subs
+#         writePDBfile.coordinateSection(d_file [type_neighbors], l_write , "HETATM")
     
     
     for atom in l_atom_in : 

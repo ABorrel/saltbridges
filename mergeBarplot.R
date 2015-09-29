@@ -28,11 +28,9 @@ for (sub in rownames(d_atleast)){
 	par (mar=c(3,8,1,3))
 
 	# transfom %
-	nb_sub = sum (d_atleast[sub,])
-	for (j in seq (1, dim(d_atleast)[2])){
-		d_atleast[sub, j] = d_atleast[sub, j] / nb_sub
-	}
+	d_atleast[sub,] = GetPercent (d_atleast[sub,], 0)
 
+	print (d_atleast)
 
 	barplot (t(d_atleast[sub,]), col = l_color, axes = FALSE, axisnames = FALSE)
 	
@@ -47,20 +45,16 @@ for (sub in rownames(d_atleast)){
 	# transfom %
 	nb_sub = sum (d_notatleast[sub,])
 	
-	for (j in seq (1, dim(d_notatleast)[2])){
-		d_notatleast[sub, j] = d_notatleast[sub, j] / nb_sub
-	}
-
-	d_temp = as.double(d_notatleast[sub,])
+	d_temp = as.double(GetPercent (d_notatleast[sub,], nb_sub))
 	names(d_temp) = colnames(d_notatleast)
 
 	par (mar = c(5,5,2,2))
 
-	barplot (d_temp, col = l_color, cex.lab = 2, ylab = "Frequencies", ylim = c(0,1), cex.names = 2.0, cex.axis = 1.8)
+	barplot (d_temp, col = l_color, cex.lab = 2, ylab = "Frequencies", ylim = c(0,100), cex.names = 2.0, cex.axis = 1.8)
 	
 	# grid
 	# horizontal
-	y_grid = seq(0, 1, 0.1)
+	y_grid = seq(0, 100, 10)
 	for (y in y_grid){
 		segments (0, y, length(d_temp) + 1.2, y, lty = 2, col = "black", lwd = 1.5)
 	}

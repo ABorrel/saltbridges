@@ -27,23 +27,21 @@ for (sub in rownames (d)){
 	dev.off()
 	
 	# transfom %
-	nb_sub = sum (d[sub,])
+	d_temp = GetPercent (d[sub,], 0)
+	print (d_temp)
+
+	d_temp = as.double (d_temp)
 	
-	for (j in seq (1, dim(d)[2])){
-		d[sub, j] = d[sub, j] / nb_sub
-	}
-
-	d_temp = as.double(d[sub,])
 	names(d_temp) = colnames(d)
-
+	
 	svg(filename=paste(p_file, "_", sub, "_barplot.svg", sep = ""), 8, 10)
 	par (mar = c(5,5,2,2))
 
-	barplot (d_temp, col = l_color, cex.lab = 2, ylab = "Frequencies", ylim = c(0,1), cex.axis = 1.6)
+	barplot (d_temp, col = l_color, cex.lab = 2, ylab = "Frequencies", ylim = c(0,100), cex.axis = 1.6)
 	
 	# grid
 	# horizontal
-	y_grid = seq(0, 1, 0.1)
+	y_grid = seq(0, 100, 10)
 	for (y in y_grid){
 		segments (0, y, length(d_temp) + 1.2, y, lty = 2, col = "black", lwd = 1.5)
 	}

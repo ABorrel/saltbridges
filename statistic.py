@@ -100,7 +100,7 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
     start, logFile = log.initAction("RUN Statistic")
 # # 
     # proportion salt bridges
-    CountInteraction (st_atom, pathManage.resultInteraction(pr_result), logFile)
+#     CountInteraction (st_atom, pathManage.resultInteraction(pr_result), logFile)
 #     EnvironmentInteraction (st_atom, pathManage.resultInteraction (pr_result, name_in = "conditional"), logFile)
 
     # loose    
@@ -143,7 +143,7 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 #     superimpose.SuperimposeFirstNeighbors (st_atom, pathManage.combination(pr_result, "superimposed"))
 # #     
     # combination nb neighbor and counter ion
-#     CombineNbNeigborInteraction (pathManage.resultInteraction(pr_result), pathManage.countNeighbor(pr_result, "MeansNumberNeighbor"), pr_result)
+    CombineNbNeigborInteraction (pathManage.resultInteraction(pr_result), pathManage.countNeighbor(pr_result, "MeansNumberNeighbor"), pr_result)
 
 
     log.endAction("END Statistic run !!!", start, logFile)
@@ -839,7 +839,7 @@ def CountInteraction (st_atom, pr_result, logFile, restrained = 1, debug = 1):
     # header
     filout_dependant.write ("\t".join (l_interactions_search) + "\n")
     filout_independant.write ("\t".join (l_interactions_search[:-1]) + "\n") 
-    filout_pka.write ("percentCounterIon\tWater\tCIandWater\tpKa1\tpKa2\n")
+    filout_pka.write ("percentCounterIon\tWater\tCIandWater\tCIOHHOH\tpKa1\tpKa2\n")
     
     for sub in st_count.keys () :
         filout_dependant.write (sub + "\t")
@@ -853,10 +853,12 @@ def CountInteraction (st_atom, pr_result, logFile, restrained = 1, debug = 1):
             filout_pka.write (str((float(st_count[sub]["dependant"]["N"]) / sum ([st_count[sub]["dependant"][k] for k in l_interactions_search])) * 100)+ "\t")
             filout_pka.write (str((float(st_count[sub]["independant"]["HOH"]) / sum ([st_count[sub]["dependant"][k] for k in l_interactions_search])) * 100)+ "\t")
             filout_pka.write (str((float(st_count[sub]["dependant"]["HOH"] + st_count[sub]["dependant"]["N"]) / sum ([st_count[sub]["dependant"][k] for k in l_interactions_search])) * 100)+ "\t")
+            filout_pka.write (str((float(st_count[sub]["dependant"]["HOH"] + st_count[sub]["dependant"]["N"] + st_count[sub]["dependant"]["NH"]) / sum ([st_count[sub]["dependant"][k] for k in l_interactions_search])) * 100)+ "\t")
         else : 
             filout_pka.write (str((float(st_count[sub]["dependant"]["COO"]) / sum ([st_count[sub]["dependant"][k] for k in l_interactions_search])) * 100)+ "\t")
             filout_pka.write (str((float(st_count[sub]["independant"]["HOH"]) / sum ([st_count[sub]["dependant"][k] for k in l_interactions_search])) * 100)+ "\t")
             filout_pka.write (str((float(st_count[sub]["dependant"]["HOH"] + st_count[sub]["dependant"]["COO"]) / sum ([st_count[sub]["dependant"][k] for k in l_interactions_search])) * 100)+ "\t")
+            filout_pka.write (str((float(st_count[sub]["dependant"]["HOH"] + st_count[sub]["dependant"]["COO"] + st_count[sub]["dependant"]["OH"]) / sum ([st_count[sub]["dependant"][k] for k in l_interactions_search])) * 100)+ "\t")
             
         filout_pka.write (str(d_pka[sub][0]) + "\t" + str (d_pka[sub][1]) + "\n")
                                                   

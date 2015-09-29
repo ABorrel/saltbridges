@@ -15,15 +15,16 @@ pr_result = args[3]
 d_interact = read.table(p_interact, header = TRUE)
 d_neighbor = read.table(p_nb_neighbor, header = TRUE)
 
+print (d_interact)
+print (d_neighbor)
+
 
 d_percentage = GetPercent (d_interact, 0)
 rownames(d_percentage) = rownames(d_interact)
 colnames(d_percentage) = colnames(d_interact)
-print (d_percentage)
-print (d_neighbor[,2])
 
 yplot = NULL
-for (sub in rownames(d_percentage)){
+for (sub in rownames(d_neighbor)){
   if (sub == "COO"){
     yplot = append (yplot, d_percentage[sub,"N"])
   }else{
@@ -34,16 +35,40 @@ for (sub in rownames(d_percentage)){
 names(yplot) = rownames(d_percentage)
 
 
-svg (paste(pr_result, "NbneighbourVSInteract.svg", sep = ""), 16, 10)
+svg (paste(pr_result, "NbVSCI.svg", sep = ""), bg = "transparent", 12, 10)
 par (mar=c(4,5,1,2))
-
-
-plot (d_neighbor[,1], yplot, pch = 8, xlim = c(min(d_neighbor[,1] - d_neighbor[,2]), max (d_neighbor[,1] + d_neighbor[,2])), ylim = c(0,100), cex = 3, cex.lab = 2, ylab = "% of counter ion", xlab = "Number of neighbours", cex.axis = 1.5)
-text (d_neighbor[,1] + 1, yplot + 1, labels = names(yplot), cex = 1.6)
+plot ( yplot, d_neighbor[,1], pch = 8, ylim = c(min(d_neighbor[,1] - d_neighbor[,2]), max (d_neighbor[,1] + d_neighbor[,2])), xlim = c(0,100), cex = 3, cex.lab = 2, xlab = "% of charged groups", ylab = "Number of neighbours", cex.axis = 1.5)
+text (yplot + 1,d_neighbor[,1] + 1, labels = rownames(d_neighbor), cex = 1.6)
 
 #error bar
-arrows(d_neighbor[,1] - d_neighbor[,2], yplot, d_neighbor[,1] + d_neighbor[,2], yplot, angle=90, lwd = 2)
-arrows(d_neighbor[,1] + d_neighbor[,2], yplot, d_neighbor[,1] - d_neighbor[,2], yplot, angle=90, lwd = 2)
+arrows(yplot, d_neighbor[,1] - d_neighbor[,2], yplot, d_neighbor[,1] + d_neighbor[,2], angle=90, lwd = 2)
+arrows(yplot, d_neighbor[,1] + d_neighbor[,2], yplot, d_neighbor[,1] - d_neighbor[,2], angle=90, lwd = 2)
+
+#arrows(d[,3], d[,1], d[,4], d[,1], angle=90, lwd = 2)
+#arrows(d[,4], d[,1], d[,3], d[,1], angle=90, lwd = 2)
+
+dev.off()
+
+
+yplot = NULL
+for (sub in rownames(d_neighbor)){
+  if (sub == "COO"){
+    yplot = append (yplot, d_percentage[sub,"N"] + d_percentage[sub,"HOH"] + d_percentage[sub,"NH"])
+  }else{
+    yplot = append (yplot, d_percentage[sub,"COO"] + d_percentage[sub,"HOH"] + d_percentage[sub,"OH"])
+  }
+}
+
+names(yplot) = rownames(d_percentage)
+
+svg (paste(pr_result, "NbVSCIALL.svg", sep = ""), bg = "transparent", 12, 10)
+par (mar=c(4,5,1,2))
+plot ( yplot, d_neighbor[,1], pch = 8, ylim = c(min(d_neighbor[,1] - d_neighbor[,2]), max (d_neighbor[,1] + d_neighbor[,2])), xlim = c(0,100), cex = 3, cex.lab = 2, xlab = "% of all ionizable groups", ylab = "Number of neighbours", cex.axis = 1.5)
+text (yplot + 1,d_neighbor[,1] + 1, labels = rownames(d_neighbor), cex = 1.6)
+
+#error bar
+arrows(yplot, d_neighbor[,1] - d_neighbor[,2], yplot, d_neighbor[,1] + d_neighbor[,2], angle=90, lwd = 2)
+arrows(yplot, d_neighbor[,1] + d_neighbor[,2], yplot, d_neighbor[,1] - d_neighbor[,2], angle=90, lwd = 2)
 
 #arrows(d[,3], d[,1], d[,4], d[,1], angle=90, lwd = 2)
 #arrows(d[,4], d[,1], d[,3], d[,1], angle=90, lwd = 2)
