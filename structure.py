@@ -492,28 +492,28 @@ def criteraAngle(subs = "", loose = 0):
     
     if loose == 0 : 
         d_criteria["I"] = {}
-        d_criteria["I"]["angle"] = [0, 180]
+        d_criteria["I"]["angle"] = [50, 180]
         d_criteria["I"]["distance"] = [2.0,4.0]
         
         d_criteria["II"] = {}
-        d_criteria["II"]["angle"] = [0, 180]
+        d_criteria["II"]["angle"] = [50, 180]
         d_criteria["II"]["distance"] = [2.0,4.0]
         
         d_criteria["III"] = {}
-        d_criteria["III"]["angle"] = [0, 180]
+        d_criteria["III"]["angle"] = [50, 180]
         d_criteria["III"]["distance"] = [2.0,4.0]
         
         d_criteria["IMD"] = {}
-        d_criteria["IMD"]["angle"] = [0, 180]
-        d_criteria["IMD"]["distance"] = [2.0,5.5]
+        d_criteria["IMD"]["angle"] = [0, 90]
+        d_criteria["IMD"]["distance"] = [2.0,5.0]
         
         # change criterion because I change 11-08 the number of angle considered -> need more data
         d_criteria["GAI"] = {}
         d_criteria["GAI"]["angle"] = [0, 180]#[40, 80, 120, 180]
-        d_criteria["GAI"]["distance"] = [2.0,6]#[3.5, 5.5, 3.5, 5.5] #need change distance also !!!!
+        d_criteria["GAI"]["distance"] = [2.0,5]#[3.5, 5.5, 3.5, 5.5] #need change distance also !!!!
         
         d_criteria["COO"] = {}
-        d_criteria["COO"]["angle"] = [0, 180]
+        d_criteria["COO"]["angle"] = [50, 180]
         d_criteria["COO"]["distance"] = [2.0,4.5]
         
         d_criteria["global"] = {}

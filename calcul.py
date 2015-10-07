@@ -519,7 +519,8 @@ def CenterPoint (atom1, atom2):
     
     a_out["serial"] = 0
     a_out["name"] = atom1["name"]
-    a_out["char"] = atom1["char"]
+    try : a_out["char"] = atom1["char"]
+    except : a_out["char"] = " "
     a_out["resName"] = atom1["resName"]
     try : a_out["chainID"] = atom1["chainID"]
     except : a_out["chainID"] = ""

@@ -100,7 +100,7 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
     start, logFile = log.initAction("RUN Statistic")
 # # 
     # proportion salt bridges
-#     CountInteraction (st_atom, pathManage.resultInteraction(pr_result), logFile)
+    CountInteraction (st_atom, pathManage.resultInteraction(pr_result), logFile)
 #     EnvironmentInteraction (st_atom, pathManage.resultInteraction (pr_result, name_in = "conditional"), logFile)
 
     # loose    

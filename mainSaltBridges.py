@@ -180,7 +180,7 @@ RFree_thresold = 0.25
 # main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0, option_stat = 0, option_stat_dataset = 1)
 
 # # PDB
-main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 1, option_bond = 0,  option_stat = 0, option_stat_dataset = 0, option_merge = 0 )
+main ("PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0, option_merge = 0)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 0, option_stat_dataset = 0, option_merge = 0)
 
 # test
@@ -191,13 +191,13 @@ main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX
 ##############################
 #       Volume function      # -> rewrite with new criterion OK
 ##############################
-# pr_result = pathManage.result()
+pr_result = pathManage.result()
 # volumeFonction.AreaPrimary(pr_result)
 # volumeFonction.AreaSecondary(pr_result)
 # volumeFonction.AeraTertiary(pr_result)
 # volumeFonction.AreaImidazole(pr_result)
 # volumeFonction.AreaGuanidium(pr_result)
-
+# volumeFonction.AreaCOO(pr_result)
 
 #######################################
 #      Bond length -> criteria        #
