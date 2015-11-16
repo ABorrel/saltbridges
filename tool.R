@@ -88,26 +88,30 @@ AFC = function (d, path_file){
 	# plot
 	xplot = c(r$row$coord[,1], r$col$coord[,1])
 	yplot = c(r$row$coord[,2], r$col$coord[,2])
+	l_pch = c(rep (20,length (r$row$coord[,1])), rep (18,length (r$col$coord[,2])))
+	l_col_all = c(rep ("#000000", length (r$row$coord[,1])), defColor(names(r$col$coord[,1])))
+	l_col = defColor(names(r$col$coord[,1]))
+	
 	lim_x = max (abs (xplot))
 	lim_y = max (abs (yplot))
 	
-	l_col = defColor(names(r$col$coord[,1]))
 	
-	svg (file = paste (path_file, "_AFC_text.svg", sep = ""), 15, 12)
-	par(mar=c(8,8,3,3))
-	plot (xplot, yplot, type = "n", xlab = paste("DIM 1 : ", round(r$eig[1,2],1), "%", sep = ""), ylab = paste("DIM 2 : ", round(r$eig[2,2],1), "%", sep = ""), cex.lab = 1.8, cex.axis = 1.6, xlim = c(-lim_x, lim_x), ylim = c(-lim_y, lim_y))
+	svg (file = paste (path_file, "_AFC_text.svg", sep = ""), bg = "transparent" ,10, 10)
+	par(mar=c(5,5,2,2))
+	
+	plot (xplot, yplot, xlab = paste("DIM 1 : ", round(r$eig[1,2],1), "%", sep = ""), ylab = paste("DIM 2 : ", round(r$eig[2,2],1), "%", sep = ""), cex.lab = 2.2, cex.axis = 1.8, xlim = c(-lim_x, lim_x), ylim = c(-lim_y, lim_y), pch = l_pch, col = l_col_all, cex = 2.5)
 	text (r$col$coord[,1], r$col$coord[,2], label = names(r$col$coord[,1]), col = l_col, cex = 2, pos = 4)
 	text (r$row$coord[,1], r$row$coord[,2], col = "black", label = names (r$row$coord[,1]), cex = 2.5, pos = 4)
-	abline(h=0,v=0)
+	abline(h=0,v=0, lwd = 2)
 
 	dev.off()
 	
-	svg (file = paste (path_file, "_AFC_point.svg", sep = ""), 15, 12)
-	par(mar=c(8,8,3,3))
-	plot (xplot, yplot, type = "n", xlab = paste("DIM 1 : ", round(r$eig[1,2],1), "%", sep = ""), ylab = paste("DIM 2 : ", round(r$eig[2,2],1), "%", sep = ""), cex.lab = 1.8, cex.axis = 1.6, xlim = c(-lim_x, lim_x), ylim = c(-lim_y, lim_y))
+	svg (file = paste (path_file, "_AFC_point.svg", sep = ""), bg = "transparent", 10, 10)
+	par(mar=c(5,5,2,2))
+	plot (xplot, yplot, type = "n", xlab = paste("DIM 1 : ", round(r$eig[1,2],1), "%", sep = ""), ylab = paste("DIM 2 : ", round(r$eig[2,2],1), "%", sep = ""), cex.lab = 2.2, cex.axis = 1.8, xlim = c(-lim_x, lim_x), ylim = c(-lim_y, lim_y))
 	points (r$col$coord[,1], r$col$coord[,2], col = l_col, cex = 4, pch = 16)
 	text (r$row$coord[,1], r$row$coord[,2], col = "black", label = names (r$row$coord[,1]), cex = 2.5, pos = 4)
-	abline(h=0,v=0)
+	abline(h=0,v=0, lwd = 2)
 	
 	dev.off()
 	
@@ -160,24 +164,45 @@ defColor = function (l_name){
 	colorTyr = "#FFFF00"
 	
 	for (element in l_name){
-	
-		if (attr(regexpr("Cox",element),"match.length") >= 1){
+	  if (attr(regexpr("CI_1",element),"match.length") >= 4){
+	    out = append (out, "#FF6666")
+	  }
+	  else if (attr(regexpr("CI_2",element),"match.length") >= 4){
+	    out = append (out, "#DD4444")
+	  }	  
+	  else if (attr(regexpr("CI_3",element),"match.length") >= 4){
+	    out = append (out, "#BB2222")
+	  }	  
+	  else if (attr(regexpr("CI_4",element),"match.length") >= 4){
+	    out = append (out, "#AA1111")
+	  }
+	  else if (attr(regexpr("More_CI",element),"match.length") >= 4){
+	    out = append (out, "#990000")
+	  }	  
+	  else if (attr(regexpr("Water_Mediated",element),"match.length") >= 6){
+	    out = append (out, "#A67E2E")
+	  }
+	  else if (attr(regexpr("Other", element),"match.length") >= 4 ){
+	    out = append (out, "#D3D3D3")
+	  }
+	  else if (attr(regexpr("Cox",element),"match.length") >= 1){
 			out = append (out, "#5F021F")
 		}
 		else if (attr(regexpr("Oox",element),"match.length") >= 1){
 			out = append (out, "#FF0000")
 		}
-		else if (attr(regexpr("Oh",element),"match.length") >= 1){
+		else if (attr(regexpr("Oh",element, ignore.case = FALSE),"match.length") == 2){
+		  print (element)
 			out = append (out, "#FF6600")
 		}
 		else if (attr(regexpr("Sulfur",element),"match.length") >= 1){
 			out = append (out, "#FFD700")
 		}
-		else if (attr(regexpr("Nim",element),"match.length") >= 1){
-			out = append (out, "#000080")
+		else if (attr(regexpr("Nim",element),"match.length") >= 2){
+			out = append (out, "#7FB6E2")
 		}
-		else if (attr(regexpr("Ngu",element),"match.length") >= 1){
-			out = append (out, "#0000FF")
+		else if (attr(regexpr("Ngu",element),"match.length") >= 2){
+			out = append (out, "#006BFF")
 		}
 	  else if (attr(regexpr("NaI",element),"match.length") >= 1){
 	    out = append (out, "#0000FF")
@@ -186,7 +211,7 @@ defColor = function (l_name){
 			out = append (out, "#9900CC")
 		}
 		else if (attr(regexpr("Oc",element),"match.length") >= 1){
-			out = append (out, "#FF7F50")
+			out = append (out, "#000000")
 		}
 		else if (attr(regexpr("Nam",element),"match.length") >= 1){
 			out = append (out, "#00b200")
@@ -203,6 +228,27 @@ defColor = function (l_name){
 		else if (attr(regexpr("Cgu",element),"match.length") >= 1){
 			out = append (out, "#003366")
 		}
+	  else if (is.integer0 (grep("COO", element))== FALSE){
+	    out = append (out, "#FF0000")
+	  }
+	  else if (attr(regexpr("H2O",element),"match.length") == 3){
+	    out = append (out, "#33FFFF")
+	  }
+	  else if (attr(regexpr("HOH",element, ignore.case = FALSE),"match.length") == 3){
+	    out = append (out, "#33FFFF")	    
+	  }
+	  else if (attr(regexpr("OH",element, ignore.case = FALSE),"match.length") == 2){
+	    out = append (out, "#FF6600")
+	  }
+	  else if (is.integer0 (grep("NH", element))== FALSE){
+	    out = append (out, "#00b200")
+	  }
+	  else if (is.integer0 (grep("N", element))== FALSE){
+	    out = append (out, "#0000FF")
+	  }
+	  else if (is.integer0 (grep("AR", element))== FALSE){
+	    out = append (out, "#d869ff")	  
+	  }
 		else if (is.integer0 (grep("GLU", element))== FALSE){
 			out = append (out, colorCharge)
 		}
@@ -263,24 +309,66 @@ defColor = function (l_name){
 	  else if (is.integer0 (grep("GLY", element))== FALSE){
 	    out = append (out, colorOther)
 	  }	  
-		else if (is.integer0 (grep("COO", element))== FALSE){
-			out = append (out, "#FF0000")
-		}
-	  else if (is.integer0 (grep("HOH", element))== FALSE){
-	    out = append (out, "#33FFFF")
+	  else if (is.integer0 (grep("E", element))== FALSE){
+	    out = append (out, colorCharge)
 	  }
-		else if (is.integer0 (grep("OH", element))== FALSE){
-			out = append (out, "#FF6600")
-		}
-		else if (is.integer0 (grep("NH", element))== FALSE){
-			out = append (out, "#00b200")
-		}
-		else if (is.integer0 (grep("N", element))== FALSE){
-			out = append (out, "#0000FF")
-		}
-		else if (is.integer0 (grep("Other", element))== FALSE){
-			out = append (out, "#D3D3D3")
-		}
+	  else if (is.integer0 (grep("D", element))== FALSE){
+	    out = append (out, colorCharge)
+	  }	
+	  else if (is.integer0 (grep("R", element))== FALSE){
+	    out = append (out, colorCharge2)
+	  }	
+	  else if (is.integer0 (grep("T", element))== FALSE){
+	    out = append (out, colorPolar)
+	  }	
+	  else if (is.integer0 (grep("S", element))== FALSE){
+	    out = append (out, colorPolar)
+	  }	
+	  else if (is.integer0 (grep("C", element))== FALSE){
+	    out = append (out, colorApolar)
+	  }	
+	  else if (is.integer0 (grep("N", element))== FALSE){
+	    out = append (out, colorPolar)
+	  }
+	  else if (is.integer0 (grep("K", element))== FALSE){
+	    out = append (out, colorCharge2)
+	  }
+	  else if (is.integer0 (grep("Q", element))== FALSE){
+	    out = append (out, colorPolar)
+	  }	
+	  else if (is.integer0 (grep("F", element))== FALSE){
+	    out = append (out, colorAr)
+	  }
+	  else if (is.integer0 (grep("H", element))== FALSE){
+	    out = append (out, colorTyr)
+	  }
+	  else if (is.integer0 (grep("W", element))== FALSE){
+	    out = append (out, colorAr)
+	  }
+	  else if (is.integer0 (grep("Y", element))== FALSE){
+	    out = append (out, colorTyr)
+	  }
+	  else if (is.integer0 (grep("A", element))== FALSE){
+	    out = append (out, colorApolar)
+	  }
+	  else if (is.integer0 (grep("I", element))== FALSE){
+	    out = append (out, colorApolar)
+	  }
+	  else if (is.integer0 (grep("L", element))== FALSE){
+	    out = append (out, colorApolar)
+	  }
+	  else if (is.integer0 (grep("M", element))== FALSE){
+	    out = append (out, colorApolar)
+	  }
+	  else if (is.integer0 (grep("P", element))== FALSE){
+	    out = append (out, colorOther)
+	  }
+	  else if (is.integer0 (grep("V", element))== FALSE){
+	    out = append (out, colorApolar)
+	  }
+	  else if (is.integer0 (grep("G", element))== FALSE){
+	    out = append (out, colorOther)
+	  }
 		else {
 			out = append (out, "#000000")
 		}
@@ -376,7 +464,6 @@ signifPvalue = function (a){
 
 GetPercent = function (d_in, sum_in){
   
-  print (d_in)
   d_out = data.frame()
   for (i in seq (1, dim(d_in)[1])){
     if (sum_in == 0){

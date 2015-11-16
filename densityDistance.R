@@ -33,9 +33,9 @@ for (class in l_class){
 max_x = max (all_x)
 max_y = max (all_y)
 
-svg (filename=paste(p_density ,".svg",sep = ""),16 , 12)
+svg (filename=paste(p_density ,".svg",sep = ""), bg = "transparent",16 , 12)
 
-plot (density (d[which (d[,2] == class),1]), main ="", xlim = c(1, max_x), ylim = c(0, max_y), type = "n", xlab = "", cex.axis = 2, ylab = "")
+plot (density (d[which (d[,2] == class),1]), main ="", xlim = c(1, 6), ylim = c(0, max_y), type = "n", xlab = "", cex.axis = 2, ylab = "")
 
 
 for (class in l_class){

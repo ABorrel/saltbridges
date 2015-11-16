@@ -232,5 +232,19 @@ def colorAtomType (l_superimpose) :
             atom ["tempFactor"] = 100 - (12* 8.33)    
 
     
+def DistCalibrate (subs) : 
+    
+    if subs == "I" or subs == "II" or subs == "III" : 
+        return 0.0
+    elif subs == "IMD" : 
+        return 1.126437
+    elif subs == "GAI" : 
+        return  0.9593059
+    elif subs == "COO" : 
+        return 0.7683736
+    
+    return 0.0
+    
+    
        
     

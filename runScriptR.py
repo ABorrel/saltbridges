@@ -345,9 +345,16 @@ def InteractionProportion (p_filin):
     system (cmd_all)
 
 
+def WaterMediated (p_filin):
+    
+    cmd =  pathManage.scriptR() + "barplotWaterMediated.R " + p_filin
+    print cmd
+    system (cmd)
+
+
 def MergeProportionInteractAtLeasNotAtLeast (p_atleast, p_notatleast, pr_out):
     
-    cmd_R = pathManage.scriptR() + "mergeBarplot.R " + str (p_notatleast) + " " + str (p_atleast) + " " + pr_out
+    cmd_R = pathManage.scriptR() + "mergeBarplot.R " + str (p_atleast) + " " + str (p_notatleast) + " " + pr_out
     print cmd_R
     system (cmd_R)
     

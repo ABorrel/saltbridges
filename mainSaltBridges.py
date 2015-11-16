@@ -56,7 +56,7 @@ def main (name_database, max_distance = 5.0, RX = 3.00, RFree = 0.25, option_sup
     # run for every dataset -> with diffrent resolution
     # short cut
 #     l_p_dataset = ["/home/borrel/saltBridgesProject/result/PDB/3.0_0.25_uniquePDB/dataset_3.00.txt" ]
-# #     
+# # #     
     for p_dataset in l_p_dataset : 
         
         pr_result = pathManage.CreatePathDir(p_dataset[:-4] + "/")
@@ -112,10 +112,12 @@ def main (name_database, max_distance = 5.0, RX = 3.00, RFree = 0.25, option_sup
     if option_merge == 1: 
         if option_on_complexes_by_ligand == 1: 
             statistic.MergeDataSet(pathManage.result (name_database + "/" + str (RX) + "_" + str (RFree) + "_uniquePDB"), "dataset_1.50", "dataset_3.00")
+            statistic.MergeDataSet(pathManage.result (name_database + "/" + str (RX) + "_" + str (RFree) + "_uniquePDB"), "dataset_1.50", "dataset_3.00", arom = 1)
+        
         else : 
             statistic.MergeDataSet(pathManage.result (name_database + "/" + str (RX) + "_" + str (RFree)), "dataset_1.50", "dataset_3.00")
         
- 
+
 
 
 def waterGlobal (name_database, limit_acc = 00.0):
@@ -168,7 +170,7 @@ def waterFamily (name_database):
 #   Dataset building PDB file       #
 #####################################
 #Parameters
-max_distance = 5.0
+max_distance = 6.0
 # option_on_complexes_by_ligand = 0
 # option_angle = 1
 

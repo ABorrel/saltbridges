@@ -23,27 +23,27 @@ print (d_atleast)
 
 l_color = defColor(colnames (d_atleast))
 for (sub in rownames(d_atleast)){
-	svg (paste(pr_out, sub, "_combine.svg", sep = ""), 13, 11)
+	svg (paste(pr_out, sub, "_combine.svg", sep = ""), bg = "transparent", 13, 11)
 	nf <- layout(matrix(c(0,0,1,2),2,2,byrow=TRUE), c(1,3), c(0,3), TRUE)
 	par (mar=c(3,8,1,3))
 
 	# transfom %
-	d_atleast[sub,] = GetPercent (d_atleast[sub,], 0)
+	d_percent = GetPercent (d_atleast[sub,], 0)
+	
+	print (d_percent)
 
-	print (d_atleast)
-
-	barplot (t(d_atleast[sub,]), col = l_color, axes = FALSE, axisnames = FALSE)
+	barplot (t(d_percent), col = l_color, axes = FALSE, axisnames = FALSE)
 	
 	#axis 
 	cum = 0
-	for (y in d_atleast[sub,]){
-		axis (2, (cum + y / 2), paste (round(y), "%", sep = ""), las = 2, cex.axis = 2.0)
+	for (y in d_percent){
+		axis (2, (cum + y / 2), paste (round(y), "%", sep = ""), las = 2, cex.axis = 3)
 		cum = cum + y
 	}
 
 
 	# transfom %
-	nb_sub = sum (d_notatleast[sub,])
+	nb_sub = sum (d_atleast[sub,])
 	
 	d_temp = as.double(GetPercent (d_notatleast[sub,], nb_sub))
 	names(d_temp) = colnames(d_notatleast)

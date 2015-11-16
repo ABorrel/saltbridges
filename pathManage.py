@@ -313,6 +313,17 @@ def ResultAngleCriteria (pr_in, name_in) :
     
     
     
+def resultWater(pr_in, name_in = "") : 
     
+    if name_in == "" : 
+        pr_out = pr_in + "waterMediated/"
+    else :
+        pr_out = pr_in + "waterMediated/" + name_in + "/"
+        
+    if not path.isdir(pr_out) : 
+        makedirs(pr_out, mode=0777)
+    else : 
+        pass
+    return pr_out        
     
 

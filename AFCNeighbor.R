@@ -29,9 +29,13 @@ for (sub in l_sub){
   d_count[sub,] = GetPercent (d_count[sub,], 0)
 }
 
-svg(paste(p_filin, ".svg", sep = ""), 16, 10)
+# wirte matrix percentage
+write.csv(x = d_count, file = paste(p_filin,"percent.csv", sep = ""))
+
+
+svg(paste(p_filin, ".svg", sep = ""), bg = "transparent" , 16, 10)
 par (mar=c(4,5,1,2))
-barplot (as.matrix(t(d_count)), col = l_color, cex.lab = 2, ylab = "Frequencies", ylim = c(0,1), cex.names = 1.7, cex.axis = 1.8, beside=FALSE, cex.main = 2.5)
+barplot (as.matrix(t(d_count)), col = l_color, cex.lab = 2, ylab = "Frequencies", ylim = c(0,100), cex.names = 1.7, cex.axis = 1.8, beside=FALSE, cex.main = 2.5)
   
 # grid
 # horizontal

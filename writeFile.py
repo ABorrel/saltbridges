@@ -118,7 +118,7 @@ def neighborStruct(struct_neighbor, struct_global_neighbor, files):
 
 def openFileSummary(pr_out):
 
-    # control if file exsixt
+    # control if file exist
     if not path.isdir(pr_out):
         mkdir(pr_out)
     
@@ -397,20 +397,20 @@ def countNeighborsAll(stCount, pr_result):
     -> need optimized to pass in argument the folder
     """
     l_typeatom = structure.classificationATOM("", out_list= 1)   
-    filout = open (pr_result + "countAll", "w")
-    filout.write ("\t".join(l_typeatom) + "\n")
+    filout_count = open (pr_result + "countAll", "w")
+    filout_count.write ("\t".join(l_typeatom) + "\n")
     
     for sub_struct in stCount.keys() : 
-        filout.write (sub_struct)
+        filout_count.write (sub_struct)
         for class_atom in l_typeatom : 
             count = 0
             for i_neighbor in stCount[sub_struct].keys () :
                 print i_neighbor, ">-----<" 
                 if type(stCount[sub_struct][i_neighbor]) == dict and class_atom in stCount[sub_struct][i_neighbor].keys () : 
                     count = count + stCount[sub_struct][i_neighbor][class_atom]
-            filout.write("\t" + str(count)) # first neighbors
-        filout.write("\n")
-    filout.close ()
+            filout_count.write("\t" + str(count)) # first neighbors
+        filout_count.write("\n")
+    filout_count.close ()
     return [pr_result + "countAll"]
 
 
@@ -418,6 +418,7 @@ def countNeighborsAll(stCount, pr_result):
 def CountNeighborRes (st_count, pr_result):
     
     l_res = structure.l_res
+    l_res_code = structure.l_resCode
     l_sub = structure.ListSub()
     l_sub.append ("global")
     
@@ -428,7 +429,7 @@ def CountNeighborRes (st_count, pr_result):
     p_filout_byres = pr_result + "res_count" 
     filout_byres = open (p_filout_byres, "w")
     
-    filout_byres.write ("\t".join (l_res) + "\n")
+    filout_byres.write ("\t".join (l_res_code) + "\n")
     
     d_file_out["res"].append (p_filout_byres)
     

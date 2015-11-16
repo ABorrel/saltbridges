@@ -18,7 +18,7 @@ d_SD = d[,2]
 names (d_M) = rownames(d)
 print (d_M)
 
-svg (paste(p_file, ".svg", sep = ""), 16, 10)
+svg (paste(p_file, ".svg", sep = ""), bg = "transparent", 16, 10)
 par (mar=c(4,5,1,2))
 barplot(d_M, xlab="", ylab="", col= "grey", ylim = c(0, max(d_M + d_SD)), cex.axis = 2, cex = 1.6, space = 0.5)
 

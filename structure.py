@@ -17,7 +17,7 @@
 # dico_atom_Hyd = {"R":["CZ"], "M":["SD"], "F":["CG", "CZ"], "L":["CG"], "W":["CE3", "CG", "CZ2"], "H":["CG"], "V":["CB"], "P":["CG"], "C":["SG"], "Y":["CG", "CZ"]}
 
 l_res = ["ALA", "ILE", "LEU", "VAL", "MET", "CYS", "PHE", "TRP", "TYR", "HIS", "THR", "SER", "ASN", "GLN", "ASP", "GLU", "ARG", "LYS", "PRO", "GLY"]
-
+l_resCode = ["A", "I", "L", "V", "M", "C", "F", "W", "Y", "H", "T", "S", "N", "Q", "D", "E", "R", "K", "P", "G"]
 
 def classificationATOM (atom="", out_list = 0):
     """Classification atoms 
@@ -559,25 +559,25 @@ def splitAreaDistance ():
     distStruct = {}
     
     distStruct["I"] = {}
-    distStruct["I"]["distance"] = 3.5
+    distStruct["I"]["distance"] = 4.0
     
     distStruct["II"] = {}
-    distStruct["II"]["distance"] = 3.5
+    distStruct["II"]["distance"] = 4.0
     
     distStruct["III"] = {}
-    distStruct["III"]["distance"] = 3.5
+    distStruct["III"]["distance"] = 4.0
     
     distStruct["IMD"] = {}
-    distStruct["IMD"]["distance"] = 3.5
+    distStruct["IMD"]["distance"] = 4.0
     
     distStruct["GAI"] = {}
-    distStruct["GAI"]["distance"] = 4.5
+    distStruct["GAI"]["distance"] = 5.0
     
     distStruct["COO"] = {}
-    distStruct["COO"]["distance"] = 4.25
+    distStruct["COO"]["distance"] = 4.5
     
     distStruct["global"] = {}
-    distStruct["global"]["distance"] = 3.5
+    distStruct["global"]["distance"] = 5.0
     return distStruct
 
 
@@ -939,6 +939,7 @@ def DFile2K (pr_result):
     
     
         d_file_open[interest]["density"] = open (pr_result + str(interest) + "_density", "w")
+        d_file_open[interest]["density_calibrate"] = open (pr_result + str(interest) + "_calibrate_density", "w")
     
     return d_file_open
 

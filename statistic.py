@@ -100,7 +100,8 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
     start, logFile = log.initAction("RUN Statistic")
 # # 
     # proportion salt bridges
-    CountInteraction (st_atom, pathManage.resultInteraction(pr_result), logFile)
+#     CountInteraction (st_atom, pathManage.resultInteraction(pr_result), logFile)
+#     CountInteraction (st_atom, pathManage.resultInteraction(pr_result), logFile, arom = 1)
 #     EnvironmentInteraction (st_atom, pathManage.resultInteraction (pr_result, name_in = "conditional"), logFile)
 
     # loose    
@@ -109,7 +110,7 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
     
 # #  
 # #     # distribution distance interest group and type atoms -> distance type
-#     DistTypeAtom(st_atom, pathManage.resultDistance(pr_result), logFile)
+    DistTypeAtom(st_atom, pathManage.resultDistance(pr_result), logFile)
 # #         
 # #     # angleSubs -> directory angles
 #     AngleSubs(st_atom, pr_result, max_distance)
@@ -123,7 +124,7 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 #     atomByAa(st_atom, pathManage.countGlobalProx (pr_result, name_in = "byAA") ,max_distance, logFile )
 # #         
 # #         
-# #     # analyse number of neighbors -> number of atom type (C, O, N)
+#     # analyse number of neighbors -> number of atom type (C, O, N)
 #     MeansNumberNeighbors (st_atom, pathManage.countNeighbor(pr_result, "MeansNumberNeighbor"))
 #     ResidueClose (st_atom, pathManage.countNeighbor(pr_result, "residuesNeighbor"), logFile)
 #     numberNeighbor (st_atom, pathManage.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
@@ -143,24 +144,32 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 #     superimpose.SuperimposeFirstNeighbors (st_atom, pathManage.combination(pr_result, "superimposed"))
 # #     
     # combination nb neighbor and counter ion
-    CombineNbNeigborInteraction (pathManage.resultInteraction(pr_result), pathManage.countNeighbor(pr_result, "MeansNumberNeighbor"), pr_result)
+#     CombineNbNeigborInteraction (pathManage.resultInteraction(pr_result), pathManage.countNeighbor(pr_result, "MeansNumberNeighbor"), pr_result)
+
+    # water 
+#     WaterMoleculeMediated (st_atom, pathManage.resultWater(pr_result))
 
 
     log.endAction("END Statistic run !!!", start, logFile)
 
 
-def MergeDataSet (pr_result, name_dataset1, name_dataset2):
+def MergeDataSet (pr_result, name_dataset1, name_dataset2, arom = 0):
+    
+    if arom == 1 : 
+        suff = "-arom"
+    else : 
+        suff = ""
     
     # merge proportion interaction
-    pr_merged_portion = pathManage.CreatePathDir(pr_result + "MergeInteractProportion/")
+    pr_merged_portion = pathManage.CreatePathDir(pr_result + "MergeInteractProportion/" + str (suff))
     
     # path file dataset 1
-    p_atleastone1 = pathManage.resultInteraction(pr_result + name_dataset1 + "/") + "interact_dependant"
-    p_atleastonecum1 = pathManage.resultInteraction(pr_result + name_dataset1 + "/") + "interact_independant"
+    p_atleastone1 = pathManage.resultInteraction(pr_result + name_dataset1 + "/") + "interact_dependant" + str (suff)
+    p_atleastonecum1 = pathManage.resultInteraction(pr_result + name_dataset1 + "/") + "interact_independant" + str (suff)
     
     # path file dataset 2
-    p_atleastone2 = pathManage.resultInteraction(pr_result + name_dataset2 + "/") + "interact_dependant"
-    p_atleastonecum2 = pathManage.resultInteraction(pr_result + name_dataset2 + "/") + "interact_independant"
+    p_atleastone2 = pathManage.resultInteraction(pr_result + name_dataset2 + "/") + "interact_dependant" + str (suff)
+    p_atleastonecum2 = pathManage.resultInteraction(pr_result + name_dataset2 + "/") + "interact_independant" + str (suff)
     
 
     if not path.exists(p_atleastone1) or not path.exists(p_atleastonecum1) or not path.exists(p_atleastonecum2) or not path.exists(p_atleastone2) : 
@@ -189,6 +198,11 @@ def DistTypeAtom(stAtm, dir_out, logfile):
                 type_atom = structure.classificationATOM(neighbor)
                 d_file[subs][type_atom].write (str (neighbor["distance"]) + "\t" + subs + "\t" + atom["resName"] + "\n")
                 d_file[subs]["density"].write (str (neighbor["distance"]) + "\t" + type_atom + "\t" + atom["resName"] + "\n")
+                # calibrate
+                dist_calibrate = tool.DistCalibrate (subs)
+                dist_w = neighbor["distance"] - dist_calibrate
+                if dist_w <= 6.0 : 
+                    d_file[subs]["density_calibrate"].write (str (dist_w) + "\t" + type_atom + "\t" + atom["resName"] + "\n")
 
     l_p_file = structure.closeDFile2K(d_file)
         
@@ -798,10 +812,16 @@ def searchMoreClose (l_neighbors, option_lcopy = 0) :
 
 
 
-def CountInteraction (st_atom, pr_result, logFile, restrained = 1, debug = 1):
+def CountInteraction (st_atom, pr_result, logFile, restrained = 1, arom = 0, debug = 1):
     
     st_count = {}
-    l_interactions_search = ["COO", "HOH", "OH", "NH", "N", "Other"]
+    if arom == 1 : 
+        l_interactions_search = ["COO", "HOH", "OH", "NH", "N", "AR", "Other"]
+        suff = "-arom"
+    else : 
+        l_interactions_search = ["COO", "HOH", "OH", "NH", "N", "Other"]
+        suff = ""
+        
     d_pka = structure.Pka()
     
     for type_subs in st_atom.keys ():
@@ -828,8 +848,8 @@ def CountInteraction (st_atom, pr_result, logFile, restrained = 1, debug = 1):
             CountDependant(l_interact_found, st_count[type_subs]["dependant"], type_subs)
             
 
-    p_filout_dependant = pr_result + "interact_dependant"
-    p_filout_independant = pr_result + "interact_independant"
+    p_filout_dependant = pr_result + "interact_dependant" + str (suff)
+    p_filout_independant = pr_result + "interact_independant" + str (suff)
     p_filout_pka = pathManage.CreatePathDir(pr_result + "pKa/") + "pKaVSCounterIon"
     
     filout_dependant = open (p_filout_dependant, "w")
@@ -873,7 +893,7 @@ def CountInteraction (st_atom, pr_result, logFile, restrained = 1, debug = 1):
     runScriptR.CorpKaVSCI(p_filout_pka)
 
     # merge plot 
-    runScriptR.MergeProportionInteractAtLeasNotAtLeast (p_filout_dependant, p_filout_independant, pr_result)
+    runScriptR.MergeProportionInteractAtLeasNotAtLeast (p_filout_dependant, p_filout_independant, pr_result + suff)
     
 
 
@@ -881,7 +901,11 @@ def CountIndependant (l_interaction_found, d_count):
     
     
     for interact in l_interaction_found : 
-        d_count[interact] = d_count[interact] + 1
+        if interact == "AR" : 
+            try : d_count[interact] = d_count[interact] + 1
+            except : pass
+        else : 
+            d_count[interact] = d_count[interact] + 1
 
 def CountDependant (l_interaction_found, d_count, type_subs):
     
@@ -899,6 +923,9 @@ def CountDependant (l_interaction_found, d_count, type_subs):
             d_count["OH"] = d_count["OH"] + 1
         elif "COO" in l_interaction_found : 
             d_count["COO"] = d_count["COO"] + 1
+        elif "AR" in l_interaction_found : #######9-10
+            try : d_count["AR"] = d_count["AR"] + 1 #####9-10
+            except : pass
         else : 
             d_count["Other"] = d_count["Other"] + 1
     else : 
@@ -912,6 +939,9 @@ def CountDependant (l_interaction_found, d_count, type_subs):
             d_count["NH"] = d_count["NH"] + 1
         elif "N" in l_interaction_found : 
             d_count["N"] = d_count["N"] + 1
+        elif "AR" in l_interaction_found : #######9-10
+            try : d_count["AR"] = d_count["AR"] + 1 #####9-10     
+            except : pass   
         else : 
             d_count["Other"] = d_count["Other"] + 1       
         
@@ -966,6 +996,9 @@ def GetInteractions (l_atoms, subs, restrained = 1, debug = 1) :
             elif type_atom == "Nam" : 
                 if not "NH" in l_interact : 
                     l_interact.append ("NH")
+            elif type_atom == "Car" :
+                if not "AR" in l_interact : 
+                    l_interact.append ("AR")
             else : 
                 if not "Other" in l_interact : 
                     l_interact.append ("Other")
@@ -1366,7 +1399,137 @@ def CombineNbNeigborInteraction (pr_interaction, pr_nb_neighbours, pr_result):
     
     
     
+
+def WaterMoleculeMediated (st_atom, pr_result): 
     
+    st_criteria = structure.criteraAngle()
+    d_count = {}
+    
+    for subs in st_atom.keys () : 
+        print subs
+        # implement count structure
+        if not subs in d_count.keys () : 
+            d_count[subs] = {}
+            d_count[subs]["H20-mediated"] = 0
+            d_count[subs]["1 CI"] = 0
+            d_count[subs]["2 CI"] = 0
+            d_count[subs]["3 CI"] = 0
+            d_count[subs]["4 CI"] = 0
+            d_count[subs]["more CI"] = 0
+            d_count[subs]["H2O"] = 0
+            d_count[subs]["Other"] = 0
+        
+        p_filout_sub = pr_result + str (subs) + "_water"
+        filout = open (p_filout_sub, "w")
+        filout.write ("PDB\tquery-atom\tCI-atom\tH2O\tDquery-H2O\tDCI-H2O\tDquery-CI\tAngle\tType\n")
+        
+        for atom_query in st_atom[subs] : 
+            nb_CI = 0
+            nb_h2o = 0
+            nb_mediated = 0
+            for neighbor in atom_query["neighbors"] : 
+                type_atom = structure.classificationATOM(neighbor)
+                d_temp = {}
+                d_temp["H20-mediated"] = 0
+                d_temp["CI"] = 0
+                d_temp["H2O"] = 0
+                
+                if subs == "COO" : 
+                    if type_atom == "Nim" or type_atom == "Ngu" or type_atom == "NaI" : 
+                        criteria = st_criteria[subs]["distance"][-1] 
+                        d_temp = SearchWaterInCI (atom_query["neighbors"], neighbor, atom_query, filout, dist_max_water = criteria)
+
+                else : 
+                    if type_atom == "Oox" : 
+                        criteria = st_criteria[subs]["distance"][-1] 
+                        d_temp = SearchWaterInCI (atom_query["neighbors"], neighbor, atom_query, filout, dist_max_water = criteria)
+                
+                nb_CI = nb_CI + d_temp["CI"]
+                
+                if type_atom == "Ow" and neighbor["distance"] <= st_criteria[subs]["distance"][-1] : 
+                    nb_h2o = nb_h2o + 1
+                nb_h2o = nb_h2o + d_temp["H2O"]
+                nb_mediated = nb_mediated + d_temp["H20-mediated"]
+            
+            if nb_mediated > 0 : 
+                d_count[subs]["H20-mediated"] = d_count[subs]["H20-mediated"] + 1
+            elif nb_CI > 0 : 
+                print nb_CI, "Count", subs
+                #write case counter ion
+                filout.write (atom_query["PDB"] + "\t" + str(atom_query["serial"]) + "-" + str (atom_query["resName"]) + "\t" + str (nb_CI) + "\tNA\tNA\tNA\tNA\tNA\t1\n")
+                
+                if nb_CI < 5 :
+                    kin = str (nb_CI) + " CI"  
+                    d_count[subs][kin] = d_count[subs][kin] + 1
+                else : 
+                    d_count[subs]["more CI"] = d_count[subs]["more CI"] + 1
+            elif nb_h2o > 0 : 
+                d_count[subs]["H2O"] = d_count[subs]["H2O"] + 1
+                filout.write (atom_query["PDB"] + "\t" + str(atom_query["serial"]) + "-" + str (atom_query["resName"]) + "\t" + str (nb_h2o) + "\tNA\tNA\tNA\tNA\tNA\t0\n")
+            else : 
+                d_count[subs]["Other"] = d_count[subs]["Other"] + 1
+        
+        filout.close ()
+    
+    CountCIType (d_count, pr_result)
+    
+ 
+
+
+def SearchWaterInCI (l_atom, atom_CI, atom_central, filout, dist_max_water = 3.0):
+    
+    d_query_CI = calcul.distanceTwoatoms(atom_central, atom_CI)
+
+    d_count_out = {}
+    d_count_out["H20-mediated"] = 0
+    d_count_out["CI"] = 0
+    d_count_out["H2O"] = 0
+
+    for atom in l_atom : 
+        if structure.classificationATOM(atom) == "Ow" : 
+            d_CI_h2O = calcul.distanceTwoatoms(atom_CI, atom)
+            d_query_h2o = calcul.distanceTwoatoms(atom_central, atom)
+            
+            if d_query_h2o <= dist_max_water and d_CI_h2O <= 3.0 : 
+                angle = calcul.Angle3Atoms(atom_central, atom, atom_CI)
+                filout.write (str (atom_central["PDB"]) + "\t" + str(atom_central["serial"]) + "-" + str (atom_central["resName"])  + "\t" + str(atom_CI["resName"]) + "-" + str(atom_CI["serial"]) + "\t" + str (atom["resName"])  + "-" + str(atom["serial"]) + "\t"  + str (d_query_h2o) + "\t" + str (d_CI_h2O) + "\t" + str (d_query_CI) + "\t" + str (angle) + "\t2\n")
+                d_count_out["H20-mediated"] = d_count_out["H20-mediated"] + 1
+            
+            if d_query_h2o <= dist_max_water : 
+                d_count_out["H2O"] = d_count_out["H2O"] + 1
+                
+                
+            if d_query_CI <= dist_max_water : 
+                d_count_out["CI"] = d_count_out["CI"] + 1
+                
+    
+    return d_count_out
+    
+    
+def CountCIType (d_count, pr_result) : 
+    
+    p_filout = pr_result + "CI_type"
+    filout = open (p_filout, "w")
+    
+    l_sub = structure.ListSub()
+    filout.write ("More_CI\tCI_4\tCI_3\tCI_2\tCI_1\tWater_Mediated\tH2O\tOther\n")
+    
+    for sub in l_sub : 
+        filout.write (str (sub) + "\t" + str(d_count[sub]["more CI"]))
+        for i in range (4, 0, -1) :
+            k_in = str (i) + " CI"
+            filout.write ("\t" + str(d_count[sub][k_in]))
+        
+        filout.write ("\t" + str(d_count[sub]["H20-mediated"]) + "\t" + str (d_count[sub]["H2O"]) + "\t" + str (d_count[sub]["Other"])+ "\n") 
+    
+    filout.close ()
+    
+    runScriptR.InteractionProportion(p_filout)
+    runScriptR.WaterMediated(p_filout)
+                
+     
+    
+      
     
     
     
