@@ -554,31 +554,31 @@ def criteraAngle(subs = "", loose = 0):
 
 
 
-def splitAreaDistance ():
+def splitAreaDistance (d_ref = 4.0):
 
-    distStruct = {}
+    dico_dist = {}
     
-    distStruct["I"] = {}
-    distStruct["I"]["distance"] = 4.0
+    dico_dist["I"] = {}
+    dico_dist["I"]["distance"] = d_ref
     
-    distStruct["II"] = {}
-    distStruct["II"]["distance"] = 4.0
+    dico_dist["II"] = {}
+    dico_dist["II"]["distance"] = d_ref
     
-    distStruct["III"] = {}
-    distStruct["III"]["distance"] = 4.0
+    dico_dist["III"] = {}
+    dico_dist["III"]["distance"] = d_ref
     
-    distStruct["IMD"] = {}
-    distStruct["IMD"]["distance"] = 4.0
+    dico_dist["IMD"] = {}
+    dico_dist["IMD"]["distance"] = d_ref + 1.12
     
-    distStruct["GAI"] = {}
-    distStruct["GAI"]["distance"] = 5.0
+    dico_dist["GAI"] = {}
+    dico_dist["GAI"]["distance"] = d_ref + 0.96
     
-    distStruct["COO"] = {}
-    distStruct["COO"]["distance"] = 4.5
+    dico_dist["COO"] = {}
+    dico_dist["COO"]["distance"] = d_ref + 0.77
     
-    distStruct["global"] = {}
-    distStruct["global"]["distance"] = 5.0
-    return distStruct
+    dico_dist["global"] = {}
+    dico_dist["global"]["distance"] = d_ref
+    return dico_dist
 
 
 def substructureCoord (type_substructure):

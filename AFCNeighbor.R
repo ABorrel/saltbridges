@@ -1,6 +1,30 @@
 #!/usr/bin/env Rscript
 source("tool.R")
 
+
+
+barplotCum = function (d_in, l_color, main_plot){
+  # transfom %
+  d_percent = GetPercent(d_in, 0)
+  
+  barplot (t(d_percent), col = l_color, axes = FALSE, axisnames = FALSE, main = main_plot, cex.main = 3.2)
+  
+  #axis 
+  cum = 0
+  for (y in d_percent){
+    if (y > 3){
+      axis (2, (cum + y / 2), paste (round(y), "%", sep = ""), las = 2, cex.axis = 2.9)
+    }
+    cum = cum + y
+  }
+}
+
+
+
+
+
+
+
 #######################
 #      Main           #
 #######################
@@ -33,17 +57,17 @@ for (sub in l_sub){
 write.csv(x = d_count, file = paste(p_filin,"percent.csv", sep = ""))
 
 
-svg(paste(p_filin, ".svg", sep = ""), bg = "transparent" , 16, 10)
-par (mar=c(4,5,1,2))
-barplot (as.matrix(t(d_count)), col = l_color, cex.lab = 2, ylab = "Frequencies", ylim = c(0,100), cex.names = 1.7, cex.axis = 1.8, beside=FALSE, cex.main = 2.5)
-  
-# grid
-# horizontal
-y_grid = seq(0, 1, 0.1)
-for (y in y_grid){
-  segments (0, y, length(d_count)*5 , y, lty = 2, col = "black", lwd = 1.5)
+svg (paste(p_filin, ".svg", sep = ""), bg = "transparent" , 15, 9)
+nf <- layout(matrix(c(0,0,0,0,0,0,0,1,2,3,4,5,6,7),2,7,byrow=TRUE), c(1,1,1,1,1,1,1), c(0,3), TRUE)
+par (mar=c(1,6,2,3))
+
+
+for (sub in rownames(d_count)){
+  if (sub == "global"){
+    barplotCum (d_count[sub,], l_color, "Any atoms")
+  }else{
+    barplotCum (d_count[sub,], l_color, sub)
+  }
 }
 
-legend ("topright",legend = names(l_color), fill = l_color )
 dev.off()
-  

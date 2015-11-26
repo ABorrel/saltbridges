@@ -110,7 +110,7 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
     
 # #  
 # #     # distribution distance interest group and type atoms -> distance type
-    DistTypeAtom(st_atom, pathManage.resultDistance(pr_result), logFile)
+#     DistTypeAtom(st_atom, pathManage.resultDistance(pr_result), logFile)
 # #         
 # #     # angleSubs -> directory angles
 #     AngleSubs(st_atom, pr_result, max_distance)
@@ -131,12 +131,12 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 #     neighborAtomComposition(st_atom, pathManage.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
 #     firstNeighbor (st_atom, pathManage.countNeighbor(pr_result, "firstNeighbor"), logFile)
 #     TypeOfNeighbors (st_atom, pathManage.countNeighbor(pr_result, "AtomType"), logFile)
-    
+     
 # #      
 # #     # with two area defintion
-#     d_area1, d_area2 = splitTwoArea (st_atom)
-#     TypeOfNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1"), logFile)
-#     TypeOfNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
+    d_area1, d_area2 = splitTwoArea (st_atom) # cup 2 area
+    TypeOfNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1"), logFile)
+    TypeOfNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
 # # 
 # # #    # combination
 #     combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
@@ -1218,7 +1218,7 @@ def lenBondAnalysis (struct_neighbor, substruct, p_dir_result ):
 
 def splitTwoArea (st_atom_sub) : 
     
-    st_division = structure.splitAreaDistance()
+    st_division = structure.splitAreaDistance(3.0)
     
     d_area1 = {}
     d_area2 = {}

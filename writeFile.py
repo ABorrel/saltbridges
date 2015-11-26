@@ -400,7 +400,10 @@ def countNeighborsAll(stCount, pr_result):
     filout_count = open (pr_result + "countAll", "w")
     filout_count.write ("\t".join(l_typeatom) + "\n")
     
-    for sub_struct in stCount.keys() : 
+    l_subs = structure.ListSub()
+    l_subs.append ("global")
+    
+    for sub_struct in l_subs : 
         filout_count.write (sub_struct)
         for class_atom in l_typeatom : 
             count = 0
