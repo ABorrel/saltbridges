@@ -161,7 +161,8 @@ def loadCoordSectionPDB (p_PDBin, section = "", remove_H = 0, debug = 0):
     """
     
     l_atom = []
-    filin = open (p_PDBin, "r")
+    try : filin = open (p_PDBin, "r")
+    except : return []
     list_line_PDB = filin.readlines()
     filin.close ()
     
@@ -391,5 +392,25 @@ def retrieveListLigand ( p_file_PDB, debug = 0 ):
                     
     return l_out 
     
+
+
+def BuildDicoRes(l_atoms) :
+    d_res = {}
+    for atom in l_atoms :
+        
+        res_ID = atom["resSeq"]
+        res_name = atom["resName"]
+        res_chain = atom["chainID"]
+        
+        k_in = str(res_name) + "_" + str(res_ID) + "_" + str (res_chain)
+        
+        if not k_in in d_res.keys () :
+            d_res[k_in] = []
+        d_res[k_in].append (atom)
+
+    return d_res
+
+
+
 
 

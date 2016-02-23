@@ -153,6 +153,15 @@ def waterFamily (name_database):
         runScriptR.waterType (path_file)
 
 
+
+def ProteinStat (name_database, pr_out, thresold_interact = 4.0, thresold_max = 12.0):
+
+    l_PDB = managePDB.retriveListPDB(name_database)
+    
+    
+    d_proportion = statistic.SaltBridgeProt (l_PDB, pr_out, thresold_interact, thresold_max)
+    
+
 ##############################
 #           MAIN             #
 ##############################
@@ -182,18 +191,27 @@ RFree_thresold = 0.25
 # main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0, option_stat = 0, option_stat_dataset = 1)
 
 # # PDB
-main ("PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0, option_merge = 0)
+# main ("PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0, option_merge = 0)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 0, option_stat_dataset = 0, option_merge = 0)
 
 # test
 # main ("test", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 1, option_bond = 0, option_stat = 0, option_stat_dataset = 0)
 
 
+###################################
+#    Stat salt bridge protein     #
+###################################
+
+
+ProteinStat("PDB50", pathManage.result("ProtStatPDB50"))
+
+
+
 
 ##############################
 #       Volume function      # -> rewrite with new criterion OK
 ##############################
-pr_result = pathManage.result()
+# pr_result = pathManage.result()
 # volumeFonction.AreaPrimary(pr_result)
 # volumeFonction.AreaSecondary(pr_result)
 # volumeFonction.AeraTertiary(pr_result)

@@ -12,6 +12,7 @@ import tool
 import pathManage
 import superimpose
 import structure
+import parsing
 
 from os import path 
 from copy import deepcopy
@@ -134,9 +135,9 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
      
 # #      
 # #     # with two area defintion
-    d_area1, d_area2 = splitTwoArea (st_atom) # cup 2 area
-    TypeOfNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1"), logFile)
-    TypeOfNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
+#     d_area1, d_area2 = splitTwoArea (st_atom) # cup 2 area
+#     TypeOfNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1"), logFile)
+#     TypeOfNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
 # # 
 # # #    # combination
 #     combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
@@ -144,7 +145,7 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 #     superimpose.SuperimposeFirstNeighbors (st_atom, pathManage.combination(pr_result, "superimposed"))
 # #     
     # combination nb neighbor and counter ion
-#     CombineNbNeigborInteraction (pathManage.resultInteraction(pr_result), pathManage.countNeighbor(pr_result, "MeansNumberNeighbor"), pr_result)
+    CombineNbNeigborInteraction (pathManage.resultInteraction(pr_result), pathManage.countNeighbor(pr_result, "MeansNumberNeighbor"), pr_result)
 
     # water 
 #     WaterMoleculeMediated (st_atom, pathManage.resultWater(pr_result))
@@ -1400,7 +1401,7 @@ def CombineNbNeigborInteraction (pr_interaction, pr_nb_neighbours, pr_result):
     
     
 
-def WaterMoleculeMediated (st_atom, pr_result): 
+def WaterMoleculeMediated (st_atom, pr_result, op_water = 0): 
     
     st_criteria = structure.criteraAngle()
     d_count = {}
@@ -1446,10 +1447,11 @@ def WaterMoleculeMediated (st_atom, pr_result):
                 
                 nb_CI = nb_CI + d_temp["CI"]
                 
-                if type_atom == "Ow" and neighbor["distance"] <= st_criteria[subs]["distance"][-1] : 
-                    nb_h2o = nb_h2o + 1
-                nb_h2o = nb_h2o + d_temp["H2O"]
-                nb_mediated = nb_mediated + d_temp["H20-mediated"]
+                if op_water == 1 : 
+                    if type_atom == "Ow" and neighbor["distance"] <= st_criteria[subs]["distance"][-1] : 
+                        nb_h2o = nb_h2o + 1
+                    nb_h2o = nb_h2o + d_temp["H2O"]
+                    nb_mediated = nb_mediated + d_temp["H20-mediated"]
             
             if nb_mediated > 0 : 
                 d_count[subs]["H20-mediated"] = d_count[subs]["H20-mediated"] + 1
@@ -1531,7 +1533,146 @@ def CountCIType (d_count, pr_result) :
     
       
     
+def SaltBridgeProt (l_PDB, pr_out, thresold_interact = 4.0, thresold_max = 12.0 ): 
+    d_out = {}
+    
+    d_out["ARG"] = {}
+    d_out["ARG"]["bits"] = []
+    d_out["ARG"]["D"] = []
+    d_out["ARG"]["type"] = []
+    
+    d_out["LYS"] = {}
+    d_out["LYS"]["bits"] = []
+    d_out["LYS"]["D"] = []
+    d_out["LYS"]["type"] = []
+       
+    d_out["ASP"] = {}
+    d_out["ASP"]["bits"] = []
+    d_out["ASP"]["D"] = []
+    d_out["ASP"]["type"] = []
+         
+    d_out["HIS"] = {}
+    d_out["HIS"]["bits"] = []
+    d_out["HIS"]["D"] = []
+    d_out["HIS"]["type"] = []
+           
+    d_out["GLU"] = {}
+    d_out["GLU"]["bits"] = []
+    d_out["GLU"]["D"] = []
+    d_out["GLU"]["type"] = []    
     
     
+    
+    for PDB in l_PDB :
+        print PDB
+        l_atom_PDB = parsing.loadCoordSectionPDB(pathManage.pathDitrectoryPDB() + PDB + ".pdb", "ATOM")
+        d_res = parsing.BuildDicoRes(l_atom_PDB)
+        
+        
+        for res1 in d_res.keys () : 
+            
+            dist_min = 100
+            type_res1 = res1.split ("_") [0]
+            d_temp = {}
+            if type_res1 == "LYS" or type_res1 == "HIS" or type_res1 == "ARG": 
+                
+                # search negative
+                for res2 in d_res.keys () : 
+                    type_res2 = res2.split ("_")[0]
+                    
+                    if type_res2 != "GLU" and type_res2 != "ASP" : 
+                        continue
+                    else : 
+                        dist_res = calcul.distanceTwoatoms(d_res[res2][0], d_res[res1][0])
+                        if dist_res > thresold_max : 
+                            continue
+                        else : 
+                            dist_temp = Dmin(d_res[res2], d_res[res1])
+                            if dist_temp < dist_min : 
+                                dist_min = dist_temp
+                                if dist_min <= thresold_interact : 
+                                    d_temp["bits"] = 1
+                                else : 
+                                    d_temp["bits"] = 0
+                                d_temp["type"] = type_res2
+                                d_temp["D"] = dist_min
+                
+                                
+                if d_temp != {} : 
+                    d_out[type_res1]["bits"].append(d_temp["bits"])
+                    d_out[type_res1]["type"].append (d_temp["type"])
+                    d_out[type_res1]["D"].append (d_temp["D"])
+                else : 
+                    d_out[type_res1]["bits"].append(0)
+                    d_out[type_res1]["type"].append ("-")
+                    d_out[type_res1]["D"].append ("-")
+                         
+            
+            elif type_res1 == "GLU" or type_res1 == "ASP": 
+                # search negative
+                for res2 in d_res.keys () : 
+                    type_res2 = res2.split ("_")[0]
+                    
+                    if type_res2 != "LYS" and type_res2 != "HIS" and type_res2 != "ARG": 
+                        continue
+                    else : 
+                        
+                        dist_res = calcul.distanceTwoatoms(d_res[res2][0], d_res[res1][0])
+                        if dist_res > thresold_max : 
+                            continue
+                        else : 
+                            dist_temp = Dmin(d_res[res2], d_res[res1])
+                            if dist_temp < dist_min : 
+                                dist_min = dist_temp
+                                if dist_min <= thresold_interact : 
+                                    d_temp["bits"] = 1
+                                else : 
+                                    d_temp["bits"] = 0
+                                d_temp["type"] = type_res2
+                                d_temp["D"] = dist_min
+                
+                                
+                if d_temp != {} : 
+                    d_out[type_res1]["bits"].append(d_temp["bits"])
+                    d_out[type_res1]["type"].append (d_temp["type"])
+                    d_out[type_res1]["D"].append (d_temp["D"])
+                else : 
+                    d_out[type_res1]["bits"].append(0)
+                    d_out[type_res1]["type"].append ("-")
+                    d_out[type_res1]["D"].append ("-")
+                    
+                    
+    writeFile.OutputProteinSaltBridges(d_out, pr_out)
 
 
+
+
+
+def Dmin (l_atom1, l_atom2):
+    
+    dist_min = 100
+    for atom1 in l_atom1 : 
+        if atom1["resName"] == "ASP" or atom1["resName"] == "GLU" : 
+            if atom1["name"] != "OE1" and atom1["name"] != "OD1" and atom1["name"] != "OE2" and atom1["name"] != "OD2" : 
+                continue
+            else : 
+                for atom2 in l_atom2 : 
+                    if atom2["name"] == "NZ" or atom2["name"] == "ND1" or atom2 ["name"] == "NE2" or atom2 ["name"] == "NH1" or atom2["name"] == "NE" or atom2["name"] == "NH2" :
+                        dist_temp = calcul.distanceTwoatoms(atom1, atom2) 
+                        if dist_temp < dist_min : 
+                            dist_min = dist_temp
+        
+        
+        elif atom1["resName"] == "LYS" or atom1["resName"] == "HIS" or atom1["resName"] == "ARG": 
+            if atom1["name"] != "NZ" and atom1["name"] != "ND1" and atom1["name"] != "NE2" and atom1["name"] != "NH1" and atom1["name"] != "NE" and atom1["name"] == "NH2": 
+                continue
+            else : 
+                for atom2 in l_atom2 : 
+                    if atom2["name"] == "OE1" or atom2["name"] == "OD1" or atom2 ["name"] == "OE2" or atom2 ["name"] == "OD2":
+                        dist_temp = calcul.distanceTwoatoms(atom1, atom2) 
+                        if dist_temp < dist_min : 
+                            dist_min = dist_temp
+    
+    
+    return dist_min
+                        
