@@ -409,3 +409,16 @@ def CorpKaVSNb (p_file_pka):
     
     print cmd_run
     system (cmd_run)        
+
+
+
+def ProtAnalysis (p_filin) : 
+    
+    p_filout = p_filin + "_sum"
+    cmd_run = pathManage.scriptR() + "protSaltBridge.R " + p_filin + " > " + str (p_filout) 
+    print cmd_run
+    system (cmd_run)
+
+
+
+

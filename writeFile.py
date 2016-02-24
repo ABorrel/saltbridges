@@ -832,20 +832,16 @@ def RelationAngleDistNeighbors (d_relation_neighbors, pr_result) :
 
 def OutputProteinSaltBridges(d_in, pr_out): 
     
-    print d_in
-    
-    
+    l_p_filout = []
     for k_in in d_in.keys() : 
-        
         p_filout = pr_out + str(k_in)
+        l_p_filout.append (p_filout)
         filout = open (p_filout, "w")
-        
         for i in range (0, len (d_in[k_in]["bits"])) :
-            
             filout.write (str(d_in[k_in]["type"][i]) + "\t" + str(d_in[k_in]["D"][i]) + "\t" + str(d_in[k_in]["bits"][i]) + "\n")
-            
         filout.close() 
 
+    return l_p_filout
 
 
 

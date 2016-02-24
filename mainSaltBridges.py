@@ -159,7 +159,16 @@ def ProteinStat (name_database, pr_out, thresold_interact = 4.0, thresold_max = 
     l_PDB = managePDB.retriveListPDB(name_database)
     
     
-    d_proportion = statistic.SaltBridgeProt (l_PDB, pr_out, thresold_interact, thresold_max)
+    l_p_file_byaa = statistic.SaltBridgeProt (l_PDB, pr_out, thresold_interact, thresold_max)
+    for p_file_byaa in l_p_file_byaa : 
+        print p_file_byaa
+        
+        runScriptR.ProtAnalysis (p_file_byaa)
+        
+        
+    
+    
+    
     
 
 ##############################

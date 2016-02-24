@@ -14,7 +14,7 @@ import superimpose
 import structure
 import parsing
 
-from os import path 
+from os import path, listdir
 from copy import deepcopy
 from numpy import sum, mean, std
 from re import search
@@ -1534,28 +1534,32 @@ def CountCIType (d_count, pr_result) :
       
     
 def SaltBridgeProt (l_PDB, pr_out, thresold_interact = 4.0, thresold_max = 12.0 ): 
-    d_out = {}
+    # short cup if file exist
+    l_file = listdir(pr_out)
+    l_p_out = []
+    if l_file != [] : 
+        for name_file in l_file : 
+            if len (name_file) == 3 : 
+                l_p_out.append (pr_out + name_file)
+        return l_p_out
     
+    d_out = {}
     d_out["ARG"] = {}
     d_out["ARG"]["bits"] = []
     d_out["ARG"]["D"] = []
     d_out["ARG"]["type"] = []
-    
     d_out["LYS"] = {}
     d_out["LYS"]["bits"] = []
     d_out["LYS"]["D"] = []
     d_out["LYS"]["type"] = []
-       
     d_out["ASP"] = {}
     d_out["ASP"]["bits"] = []
     d_out["ASP"]["D"] = []
     d_out["ASP"]["type"] = []
-         
     d_out["HIS"] = {}
     d_out["HIS"]["bits"] = []
     d_out["HIS"]["D"] = []
     d_out["HIS"]["type"] = []
-           
     d_out["GLU"] = {}
     d_out["GLU"]["bits"] = []
     d_out["GLU"]["D"] = []
@@ -1642,7 +1646,7 @@ def SaltBridgeProt (l_PDB, pr_out, thresold_interact = 4.0, thresold_max = 12.0 
                     d_out[type_res1]["D"].append ("-")
                     
                     
-    writeFile.OutputProteinSaltBridges(d_out, pr_out)
+    return writeFile.OutputProteinSaltBridges(d_out, pr_out)
 
 
 
