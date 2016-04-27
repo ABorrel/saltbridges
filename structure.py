@@ -554,7 +554,7 @@ def criteraAngle(subs = "", loose = 0):
 
 
 
-def splitAreaDistance (d_ref = 4.0):
+def CalibrateTwoArea (d_ref = 4.0):
 
     dico_dist = {}
     
@@ -568,17 +568,35 @@ def splitAreaDistance (d_ref = 4.0):
     dico_dist["III"]["distance"] = d_ref
     
     dico_dist["IMD"] = {}
-    dico_dist["IMD"]["distance"] = d_ref + 1.12
+    dico_dist["IMD"]["distance"] = d_ref + 1.15
     
     dico_dist["GAI"] = {}
-    dico_dist["GAI"]["distance"] = d_ref + 0.96
+    dico_dist["GAI"]["distance"] = d_ref + 1.1
     
     dico_dist["COO"] = {}
-    dico_dist["COO"]["distance"] = d_ref + 0.77
+    dico_dist["COO"]["distance"] = d_ref + 1.3
     
     dico_dist["global"] = {}
     dico_dist["global"]["distance"] = d_ref
     return dico_dist
+
+
+def CalibrateDistanceNeighbor ():
+    
+    dico_dist = {}
+    
+    dico_dist["I"] = 0.0
+    dico_dist["II"] = 0.0
+    dico_dist["III"] = 0.0
+    dico_dist["IMD"] = 1.5
+    dico_dist["GAI"] = 1.1
+    dico_dist["COO"] = 1.3
+    dico_dist["global"] = 0
+
+    return dico_dist
+    
+    
+    
 
 
 def substructureCoord (type_substructure):
@@ -1018,4 +1036,29 @@ def Pka (subs = ""):
     else : 
         return d_pka
     
+def DProtAtomSaltBridge ():
     
+    d_out = {}
+    d_out["ASP"] = {}
+    d_out["ASP"]["atom"] = ["CG"]
+    d_out["ASP"]["subs"] = "COO"
+    
+    d_out["ARG"] = {}
+    d_out["ARG"]["atom"] = ["CZ"]
+    d_out["ARG"]["subs"] = "GAI"
+    
+    d_out["LYS"] = {}
+    d_out["LYS"]["atom"] = ["NZ"]
+    d_out["LYS"]["subs"] = "I"
+    
+    d_out["GLU"] = {}
+    d_out["GLU"]["atom"] = ["CD"]
+    d_out["GLU"]["subs"] = "COO"
+    
+    d_out["HIS"] = {}
+    d_out["HIS"]["atom"] = ["ND1", "NE2"]
+    d_out["HIS"]["subs"] = "IMD"
+    
+    return d_out
+    
+        

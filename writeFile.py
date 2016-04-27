@@ -99,7 +99,8 @@ def resultDistance(count, pr_result):
 def neighborStruct(struct_neighbor, struct_global_neighbor, files):
 
     # global -> append structure
-    struct_neighbor["global"] = struct_global_neighbor
+    try : struct_neighbor["global"] = struct_global_neighbor
+    except : pass
     for type_search in struct_neighbor.keys():
         if struct_neighbor[type_search] == [] : 
             continue
@@ -113,19 +114,23 @@ def neighborStruct(struct_neighbor, struct_global_neighbor, files):
                 lineWrite = lineWrite + "//"
             lineWrite = lineWrite + "\n"
             files[type_search].write(lineWrite)
-    del struct_neighbor["global"] 
+    try: del struct_neighbor["global"] 
+    except : pass
 
 
-def openFileSummary(pr_out):
+def openFileSummary(pr_out, type_sum = "Lig"):
 
     # control if file exist
     if not path.isdir(pr_out):
         mkdir(pr_out)
     
-    
-    l_sub = structure.ListSub()
-    l_sub.append("global")
-
+    # case where is prot-ligqnd 
+    if type_sum == "Lig" : 
+        l_sub = structure.ListSub()
+        l_sub.append("global")
+    # case where is prot only
+    else : 
+        l_sub = ["I", "GAI", "IMD", "COO"]
     d_filin = {}
 
     for element in l_sub:
@@ -404,6 +409,8 @@ def countNeighborsAll(stCount, pr_result):
     l_subs.append ("global")
     
     for sub_struct in l_subs : 
+        if not sub_struct in stCount.keys () : 
+            continue
         filout_count.write (sub_struct)
         for class_atom in l_typeatom : 
             count = 0
@@ -437,6 +444,8 @@ def CountNeighborRes (st_count, pr_result):
     d_file_out["res"].append (p_filout_byres)
     
     for sub in l_sub : 
+        if not sub in st_count.keys () : 
+            continue
         p_filout_count = pr_result + "global_count_" + str (sub) 
         
         filout_count = open (p_filout_count, "w")
@@ -459,30 +468,6 @@ def CountNeighborRes (st_count, pr_result):
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-         
-         
-        
-        
-        
-    
-    
-    pr_result
-    
-    
-    return 
-    
-    
-    
-
-
         
 def resultNeighbor (countStruct, pr_result) : 
     """
@@ -838,7 +823,7 @@ def OutputProteinSaltBridges(d_in, pr_out):
         l_p_filout.append (p_filout)
         filout = open (p_filout, "w")
         for i in range (0, len (d_in[k_in]["bits"])) :
-            filout.write (str(d_in[k_in]["type"][i]) + "\t" + str(d_in[k_in]["D"][i]) + "\t" + str(d_in[k_in]["bits"][i]) + "\n")
+            filout.write (str(d_in[k_in]["type"][i]) + "\t" + str(d_in[k_in]["D"][i]) + "\t" + str(d_in[k_in]["bits"][i]) + "\t" + str (d_in[k_in]["ID"][i]) + "\n")
         filout.close() 
 
     return l_p_filout

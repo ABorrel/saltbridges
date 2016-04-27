@@ -304,7 +304,7 @@ def anglePrimaryAmine(atomNitrogen, atomCounterIon, atomLigands):
     matrix = atomNitrogen["connect"]
     if len(matrix) < 2:
         print "Atom does not 1 bonds !!"
-        return
+        return []
 
     else:
 
@@ -379,7 +379,10 @@ def angleAcidCarboxylic(central_atom, atom_check, l_atom_lig) :
         if connect_matrix == ["O", "C"] : 
             l_O_temp.append (atom_connect)
     
-    
+    # remove case of alternative position
+    if len (l_O_temp) != 2 : 
+        return ["ERROR"]
+
     at_considered = CenterPoint(l_O_temp[0], l_O_temp[1])    
         
     
@@ -412,9 +415,10 @@ def angleGuanidium(central_atom, atom_check, l_atom_lig) :
         if len(l_N_temp) == 2 :
             at_considered = CenterPoint(l_N_temp[0], l_N_temp[-1])
     else : 
-        return "ERROR"
+        return []
         
-    return [angleVector(central_atom, at_considered, atom_check)]
+    try : return [angleVector(central_atom, at_considered, atom_check)]
+    except : return []
     
     
 

@@ -22,14 +22,14 @@ def atomConnect (l_atom_lig, serial_atom):
     in: list atom ligand, serial atom
     out: list atoms connect and connect matrix element"""
 
-    atomN = serial(serial_atom, l_atom_lig)
+    atom_in = serial(serial_atom, l_atom_lig)
     conect = []
     l_atom_out = []
 
-    if atomN == 0:
+    if atom_in == 0:
         return l_atom_out, conect
 
-    matrixConect = atomN["connect"]
+    matrixConect = atom_in["connect"]
        
 
     for elementMatrixConect in matrixConect:

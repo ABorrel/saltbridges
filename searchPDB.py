@@ -580,9 +580,76 @@ def globalSearch (dist_thresold, p_file_dataset,  pr_result, debug = 1):
     # case where load directly substructure => why do not load directly in dictionnary
     d_neighbor["global"] = l_neighbor_global
     return d_neighbor
+
+
+
+def SearchEnvironmentSaltBridgeProt(pr_result, l_PDB, max_dist, debug = 1):
+    """
+    This is for the intra-protein environment
+    """
+    
+    pr_summary = pr_result + "Sum/"
+    
+    if debug == 1 : print "Directory summary", pr_summary
+    
+    
+    # load structure in summary ---> if use need place option one PDB by ligand
+    d_neighbor = loadFile.loadCloseStruct (pr_summary)
+    
+    if d_neighbor != None : 
+        if debug : 
+            print "Type of structure stock -> run building"
+        return d_neighbor
+     
+    
+    nb_PDB = len (l_PDB)
+    
+    # ##Write summary file
+    d_files_summary = writeFile.openFileSummary(pr_summary, type_sum = "prot")# summary result
+    
+    i = 0
+    while i < nb_PDB :
+        print l_PDB[i]
+        InterestResForSaltBridge (d_files_summary, l_PDB[i], max_dist)
+        
+        i = i + 1
+            
+    writeFile.closeFileSummary(d_files_summary)
+    
+    # return non because files were created but not loaded in tempory memory
+    return SearchEnvironmentSaltBridgeProt(pr_result, l_PDB, max_dist)
+    
     
 
-
+def InterestResForSaltBridge (d_filout, PDB_ID, max_distance):
+    
+    d_atom_interest = structure.DProtAtomSaltBridge()
+    
+    # double parsing - list of atom and dictionary
+    l_atom_PDB = parsing.loadCoordSectionPDB(pathManage.pathDitrectoryPDB() + PDB_ID.lower() + ".pdb", "ATOM")
+    d_res_PDB = parsing.BuildDicoRes(l_atom_PDB)
+    
+    
+    for res_PDB in d_res_PDB.keys () :
+        res = res_PDB.split ("_")[0]
+        if  res in d_atom_interest.keys () :
+            atom_and_neighbor = {} # control for write
+            atom_and_neighbor[d_atom_interest[res]["subs"]] = {}
+            l_atom_res = calcul.buildConnectMatrix(d_res_PDB[res_PDB])
+            l_temp = []
+            for atom in d_res_PDB[res_PDB] : 
+                if atom["name"] in d_atom_interest[res]["atom"] : 
+                    if len (d_atom_interest[res]["atom"]) == 1 : 
+                        atom_and_neighbor[d_atom_interest[res]["subs"]] = [buildAtom(max_distance + structure.CalibrateDistanceNeighbor()[d_atom_interest[res]["subs"]], atom, PDB_ID, d_atom_interest[res]["subs"], l_atom_res)]
+                    else : 
+                        l_temp.append (atom)
+                        if len (l_temp) == 2 : 
+                            atom_and_neighbor[d_atom_interest[res]["subs"]] = [buildAtom(max_distance + structure.CalibrateDistanceNeighbor()[d_atom_interest[res]["subs"]], calcul.CenterPoint(l_temp[0], l_temp[1]), PDB_ID, d_atom_interest[res]["subs"], l_atom_res)]
+            
+              
+            writeFile.neighborStruct(atom_and_neighbor, [], d_filout)        
+                    
+    
 def interestGroup (max_distance, l_atom_lig, name_PDB, d_stock_neighbor, more_flex = 0):
     """Search different groups
     in : ligands in namePDB
@@ -601,9 +668,9 @@ def interestGroup (max_distance, l_atom_lig, name_PDB, d_stock_neighbor, more_fl
         l_atom_connectN, conect = retrieveAtom.atomConnect(l_atom_lig, serialN)
         # check every substructure
         if imidazole(l_atom_connectN, l_atom_lig)[0] == 1:
-            implementNeighborStruct (max_distance + 1.5, l_atom_connectN, name_PDB, l_atom_lig, "IMD", d_stock_neighbor)
+            implementNeighborStruct (max_distance + structure.CalibrateDistanceNeighbor["IMD"], l_atom_connectN, name_PDB, l_atom_lig, "IMD", d_stock_neighbor)
         elif Guanidium(l_atom_connectN, l_atom_lig)[0] == 1:
-            implementNeighborStruct (max_distance + 1.1, l_atom_connectN, name_PDB, l_atom_lig, "GAI", d_stock_neighbor)
+            implementNeighborStruct (max_distance + structure.CalibrateDistanceNeighbor["GAI"], l_atom_connectN, name_PDB, l_atom_lig, "GAI", d_stock_neighbor)
 #         elif diAmine(l_atom_connectN, l_atom_lig) == 1:
 #             implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Diamine", d_dia_temp)
 #         elif pyridine(l_atom_connectN, l_atom_lig) == 1:
@@ -620,7 +687,7 @@ def interestGroup (max_distance, l_atom_lig, name_PDB, d_stock_neighbor, more_fl
     for serialO in l_serialO :
         l_atom_connectO, conect = retrieveAtom.atomConnect(l_atom_lig, serialO)
         if acidCarboxylic(l_atom_connectO, l_atom_lig)[0] == 1:
-            implementNeighborStruct (max_distance + 1.3, l_atom_connectO, name_PDB, l_atom_lig, "COO", d_stock_neighbor)
+            implementNeighborStruct (max_distance + structure.CalibrateDistanceNeighbor["COO"], l_atom_connectO, name_PDB, l_atom_lig, "COO", d_stock_neighbor)
             
 
 #######regroup neighbors case of imidazole, Guanidium and diamine###########
@@ -773,83 +840,6 @@ def checkListAngle (l_angle, d_limit):
         
     
     
-    
-      
-
-
-
-##################################Serine Protease #############################################
-
-# def cycle(atomInitial, firstPosition, atomLigand, nbTest, listRetrieve, serialTest):
-#
-#    #print nbTest
-#    if atomInitial == 0 or len(atomInitial["connect"]) < 3 or atomInitial["serial"] == serialTest : 
-# #        print "OUT1"
-#        del listRetrieve
-#        return 0, []
-#    else : 
-#        appendAtomConnect(atomInitial, listRetrieve, atomLigand)
-#    
-#    if nbTest == 0 : 
-#        if firstPosition in atomInitial["connect"] [1:] and firstPosition != serialTest:
-#            appendAtomConnect(atomInitial, listRetrieve, atomLigand)
-#            appendAtomConnect(retrieveAtom.serial(firstPosition, atomLigand), listRetrieve, atomLigand)
-#            return 1 , listRetrieve
-#        else : 
-# #            print "OUT2"
-#            del listRetrieve
-#            return 0 , []
-#    else : 
-#        #print "in"
-#        #appendAtomConnect(atomInitial, listRetrieve, atomLigand)
-#        connectMatrix = atomInitial["connect"]
-#        for serialConnect in connectMatrix :
-#            #print serialConnect
-#            
-#            if serialConnect != atomInitial["serial"] and serialConnect != serialTest:  
-#                atomtest = retrieveAtom.serial(serialConnect, atomLigand)
-#                result, listRetrieve = cycle(atomtest, firstPosition, atomLigand, nbTest - 1, listRetrieve, atomInitial["serial"])
-#                if result == 1 : 
-#                    return 1, listRetrieve
-#    
-#    
-#        del listRetrieve            
-#        return 0, []
-#            
-#
-#
-#
-# def cycle2(atomInitial, firstPosition, atomLigand, nbTest, strSerialList, serialTest):
-#
-#    #print nbTest
-#    if atomInitial == 0 or len(atomInitial["connect"]) < 3 or atomInitial["serial"] == serialTest : 
-# #        print "OUT1"
-#        return 0, ""
-#    else : 
-#        strSerialList = strSerialList + "_" + str(atomInitial["serial"])
-#    
-#    if nbTest == 0 : 
-#        if firstPosition in atomInitial["connect"] [1:] and firstPosition != serialTest:
-#            return 1 , strSerialList
-#        else : 
-# #            print "OUT2"
-#            return 0 , ""
-#    else : 
-#        #print "in"
-#        #appendAtomConnect(atomInitial, listRetrieve, atomLigand)
-#        connectMatrix = atomInitial["connect"]
-#        for serialConnect in connectMatrix :
-#            #print serialConnect
-#            if serialConnect != atomInitial["serial"] and serialConnect != serialTest:  
-#                atomtest = retrieveAtom.serial(serialConnect, atomLigand)
-#                result , strSerialList = cycle2(atomtest, firstPosition, atomLigand, nbTest - 1, strSerialList, atomInitial["serial"])
-#                if result == 1 : 
-#                    return 1, strSerialList
-#    
-#    
-#        return 0, ""
-
-
         
 def appendAtomConnect(atom, listRetrive, atomLigand):
     

@@ -21,6 +21,7 @@ import bondLength
 # global
 import os
 from time import sleep
+from re import search
 
 
 
@@ -55,7 +56,7 @@ def main (name_database, max_distance = 5.0, RX = 3.00, RFree = 0.25, option_sup
 #
     # run for every dataset -> with diffrent resolution
     # short cut
-#     l_p_dataset = ["/home/borrel/saltBridgesProject/result/PDB/3.0_0.25_uniquePDB/dataset_3.00.txt" ]
+    l_p_dataset = ["/home/borrel/saltBridgesProject/result/PDB/3.0_0.25_uniquePDB/dataset_3.00.txt" ]
 # # #     
     for p_dataset in l_p_dataset : 
         
@@ -154,16 +155,33 @@ def waterFamily (name_database):
 
 
 
-def ProteinStat (name_database, pr_out, thresold_interact = 4.0, thresold_max = 12.0):
+def ProteinStat (name_database, option_on_complexes_by_ligand, RX, RFree, max_distance):
 
-    l_PDB = managePDB.retriveListPDB(name_database)
+
+    l_p_dataset = datasetFinal.Builder(name_database, RX, RFree, option_on_complexes_by_ligand)
+
+    for p_dataset in l_p_dataset : 
+        if search (str (RX), p_dataset.split ("/")[-1]) :
+            l_PDB = [] 
+            l_dataset = loadFile.resultFilterPDBLigand(p_dataset)
+            for lig in l_dataset : 
+                for PDB in lig["PDB"] : 
+                    if not PDB in l_PDB : 
+                        l_PDB.append (PDB)
+            
+            
+            print len (l_PDB)
     
+            pr_out = pathManage.result("ProtStat" + str (name_database) + str (RX) + "-" + str (RFree))
+            d_protein = searchPDB.SearchEnvironmentSaltBridgeProt(pr_out, l_PDB, max_distance, 1)
     
-    l_p_file_byaa = statistic.SaltBridgeProt (l_PDB, pr_out, thresold_interact, thresold_max)
-    for p_file_byaa in l_p_file_byaa : 
-        print p_file_byaa
-        
-        runScriptR.ProtAnalysis (p_file_byaa)
+    # statistic -> identic to protein-ligand
+    statistic.globalRunStatistic(d_protein, max_distance, pr_out)
+    
+#     l_p_file_byaa = statistic.SaltBridgeProt (l_PDB, pr_out, thresold_interact, thresold_max)
+#     for p_file_byaa in l_p_file_byaa : 
+#         print p_file_byaa
+#         runScriptR.ProtAnalysis (p_file_byaa)
         
         
     
@@ -200,7 +218,7 @@ RFree_thresold = 0.25
 # main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0, option_stat = 0, option_stat_dataset = 1)
 
 # # PDB
-# main ("PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0, option_merge = 0)
+main ("PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0, option_merge = 0)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 0, option_stat_dataset = 0, option_merge = 0)
 
 # test
@@ -212,10 +230,8 @@ RFree_thresold = 0.25
 ###################################
 
 
-ProteinStat("PDB50", pathManage.result("ProtStatPDB50"))
-
-
-
+#ProteinStat("PDB", option_on_complexes_by_ligand = 1, RX = 1.5, RFree = RFree_thresold, max_distance = max_distance)
+# ProteinStat("PDB", option_on_complexes_by_ligand = 1, RX = 3.0, RFree = RFree_thresold, max_distance = max_distance)
 
 ##############################
 #       Volume function      # -> rewrite with new criterion OK

@@ -104,32 +104,32 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 #     CountInteraction (st_atom, pathManage.resultInteraction(pr_result), logFile)
 #     CountInteraction (st_atom, pathManage.resultInteraction(pr_result), logFile, arom = 1)
 #     EnvironmentInteraction (st_atom, pathManage.resultInteraction (pr_result, name_in = "conditional"), logFile)
-
-    # loose    
+# 
+#     # loose    
 #     CountInteraction (st_atom, pathManage.resultInteraction(pr_result, "loose"), logFile, restrained = 0)
 #     EnvironmentInteraction (st_atom, pathManage.resultInteraction (pr_result, name_in = "loose/conditional"), logFile, restrained = 0)    
-    
-# #  
-# #     # distribution distance interest group and type atoms -> distance type
+#     
+# # #  
+# # #     # distribution distance interest group and type atoms -> distance type
 #     DistTypeAtom(st_atom, pathManage.resultDistance(pr_result), logFile)
-# #         
-# #     # angleSubs -> directory angles
+# # #         
+# # #     # angleSubs -> directory angles
 #     AngleSubs(st_atom, pr_result, max_distance)
 #     AngleSelect (st_atom, pr_result)
-# #         
-# #     # global analysis proximity -1 atom ligand // -2 aa type // -3 atom classification
+# # #         
+# # #     # global analysis proximity -1 atom ligand // -2 aa type // -3 atom classification
 #     ligandProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "hetProx"), max_distance, logFile)
 #     atomProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "atmProx"), max_distance, logFile)
 #     resProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "resProx"), max_distance, logFile)
 #     classifResProx(st_atom, pathManage.countGlobalProx (pr_result, name_in = "classifAtmProx"), max_distance, logFile)
 #     atomByAa(st_atom, pathManage.countGlobalProx (pr_result, name_in = "byAA") ,max_distance, logFile )
-# #         
-# #         
-#     # analyse number of neighbors -> number of atom type (C, O, N)
+# # #         
+# # #         
+# #     # analyse number of neighbors -> number of atom type (C, O, N)
 #     MeansNumberNeighbors (st_atom, pathManage.countNeighbor(pr_result, "MeansNumberNeighbor"))
 #     ResidueClose (st_atom, pathManage.countNeighbor(pr_result, "residuesNeighbor"), logFile)
-#     numberNeighbor (st_atom, pathManage.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
-#     neighborAtomComposition(st_atom, pathManage.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
+    numberNeighbor (st_atom, pathManage.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
+    neighborAtomComposition(st_atom, pathManage.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
 #     firstNeighbor (st_atom, pathManage.countNeighbor(pr_result, "firstNeighbor"), logFile)
 #     TypeOfNeighbors (st_atom, pathManage.countNeighbor(pr_result, "AtomType"), logFile)
      
@@ -140,12 +140,12 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 #     TypeOfNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
 # # 
 # # #    # combination
-#     combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
+    combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
 #     combinationNeighborsAngle (st_atom, pathManage.combination(pr_result, "angleSubs"))
-#     superimpose.SuperimposeFirstNeighbors (st_atom, pathManage.combination(pr_result, "superimposed"))
+#     superimpose.SuperimposeFirstNeighbors (st_atom, pathManage.combination(pr_result, "superimposed")) # not work with protein analysis
 # #     
     # combination nb neighbor and counter ion
-    CombineNbNeigborInteraction (pathManage.resultInteraction(pr_result), pathManage.countNeighbor(pr_result, "MeansNumberNeighbor"), pr_result)
+#     CombineNbNeigborInteraction (pathManage.resultInteraction(pr_result), pathManage.countNeighbor(pr_result, "MeansNumberNeighbor"), pr_result)
 
     # water 
 #     WaterMoleculeMediated (st_atom, pathManage.resultWater(pr_result))
@@ -236,7 +236,8 @@ def AngleSubs(st_atom, pr_result, d_max):
                     if subs == "IMD" :
                         angle =  central_atom["neighbors"][i]["angleSubs"][0]
                         if angle >= 90.0 : 
-                            angle = 180.0 - angle
+                            try : angle = 180.0 - float(angle)
+                            except : pass
                         d_count_global[subs][classif_neighbor]["angles"].append([angle])
                     else : 
                         d_count_global[subs][classif_neighbor]["angles"].append(central_atom["neighbors"][i]["angleSubs"])
@@ -281,7 +282,8 @@ def AngleSelect (st_atom, pr_result) :
                             d_file[sub][type_atom] = open (p_filetype, "w")
                         for angle in neighbor["angleSubs"] : 
                             if sub == "IMD" and angle >= 90 : 
-                                angle = 180 - angle
+                                try: angle = 180 - angle
+                                except: pass
                             d_file[sub][type_atom].write(str (angle) + "\t" + str(neighbor["distance"]) + "\t" + str (type_atom) + "\t" + str(atom_central["resName"]) + "\t" + str (atom_central["PDB"]) + "\n")
             i = i + 2
         
@@ -517,6 +519,9 @@ def MeansNumberNeighbors (st_atom, pr_result) :
     l_sub = structure.ListSub()
     l_sub.append ("global")
     for subs in l_sub : 
+        if not subs in d_list.keys () : 
+            continue
+        
         filout.write (str(subs) + "\t" + str (mean (d_list[subs]["Nb"])) + "\t" + str (std (d_list[subs]["Nb"])))
 
         # pKa
@@ -662,6 +667,8 @@ def ResidueClose (st_atom, pr_result, logFile) :
     l_sub = structure.ListSub()
     l_sub.append ("global")
     for subs in l_sub : 
+        if not subs in d_count.keys () : 
+            continue
         filout.write (str(subs) + "\t" + str (mean (d_count[subs]["count"])) + "\t" + str (std (d_count[subs]["count"])))
         for res in l_res : 
             filout.write ("\t" + str (mean (d_list[subs][res])) + "\t" + str (std (d_list[subs][res])))
@@ -1219,7 +1226,7 @@ def lenBondAnalysis (struct_neighbor, substruct, p_dir_result ):
 
 def splitTwoArea (st_atom_sub) : 
     
-    st_division = structure.splitAreaDistance(3.0)
+    st_division = structure.CalibrateTwoArea(3.0)
     
     d_area1 = {}
     d_area2 = {}
@@ -1517,6 +1524,8 @@ def CountCIType (d_count, pr_result) :
     filout.write ("More_CI\tCI_4\tCI_3\tCI_2\tCI_1\tWater_Mediated\tH2O\tOther\n")
     
     for sub in l_sub : 
+        if not sub in d_count.keys () : 
+            continue
         filout.write (str (sub) + "\t" + str(d_count[sub]["more CI"]))
         for i in range (4, 0, -1) :
             k_in = str (i) + " CI"
@@ -1537,6 +1546,7 @@ def SaltBridgeProt (l_PDB, pr_out, thresold_interact = 4.0, thresold_max = 12.0 
     # short cup if file exist
     l_file = listdir(pr_out)
     l_p_out = []
+    # controll if already result
     if l_file != [] : 
         for name_file in l_file : 
             if len (name_file) == 3 : 
@@ -1547,22 +1557,27 @@ def SaltBridgeProt (l_PDB, pr_out, thresold_interact = 4.0, thresold_max = 12.0 
     d_out["ARG"] = {}
     d_out["ARG"]["bits"] = []
     d_out["ARG"]["D"] = []
+    d_out["ARG"]["ID"] = []
     d_out["ARG"]["type"] = []
     d_out["LYS"] = {}
     d_out["LYS"]["bits"] = []
     d_out["LYS"]["D"] = []
+    d_out["LYS"]["ID"] = []
     d_out["LYS"]["type"] = []
     d_out["ASP"] = {}
     d_out["ASP"]["bits"] = []
     d_out["ASP"]["D"] = []
+    d_out["ASP"]["ID"] = []
     d_out["ASP"]["type"] = []
     d_out["HIS"] = {}
     d_out["HIS"]["bits"] = []
     d_out["HIS"]["D"] = []
+    d_out["HIS"]["ID"] = []
     d_out["HIS"]["type"] = []
     d_out["GLU"] = {}
     d_out["GLU"]["bits"] = []
     d_out["GLU"]["D"] = []
+    d_out["GLU"]["ID"] = []
     d_out["GLU"]["type"] = []    
     
     
@@ -1572,6 +1587,7 @@ def SaltBridgeProt (l_PDB, pr_out, thresold_interact = 4.0, thresold_max = 12.0 
         l_atom_PDB = parsing.loadCoordSectionPDB(pathManage.pathDitrectoryPDB() + PDB + ".pdb", "ATOM")
         d_res = parsing.BuildDicoRes(l_atom_PDB)
         
+        ID_temp = PDB
         
         for res1 in d_res.keys () : 
             
@@ -1600,17 +1616,19 @@ def SaltBridgeProt (l_PDB, pr_out, thresold_interact = 4.0, thresold_max = 12.0 
                                     d_temp["bits"] = 0
                                 d_temp["type"] = type_res2
                                 d_temp["D"] = dist_min
+                                d_temp["ID"] = PDB + "-" + str (res2) + "-" + str (res1)
                 
                                 
                 if d_temp != {} : 
                     d_out[type_res1]["bits"].append(d_temp["bits"])
                     d_out[type_res1]["type"].append (d_temp["type"])
                     d_out[type_res1]["D"].append (d_temp["D"])
+                    d_out[type_res1]["ID"].append (d_temp["ID"])                    
                 else : 
                     d_out[type_res1]["bits"].append(0)
                     d_out[type_res1]["type"].append ("-")
                     d_out[type_res1]["D"].append ("-")
-                         
+                    d_out[type_res1]["ID"].append ("-")                                             
             
             elif type_res1 == "GLU" or type_res1 == "ASP": 
                 # search negative
@@ -1634,16 +1652,19 @@ def SaltBridgeProt (l_PDB, pr_out, thresold_interact = 4.0, thresold_max = 12.0 
                                     d_temp["bits"] = 0
                                 d_temp["type"] = type_res2
                                 d_temp["D"] = dist_min
-                
+                                d_temp["ID"] = PDB + "-" + str (res2) + "-" + str (res1)
+
                                 
                 if d_temp != {} : 
                     d_out[type_res1]["bits"].append(d_temp["bits"])
                     d_out[type_res1]["type"].append (d_temp["type"])
                     d_out[type_res1]["D"].append (d_temp["D"])
+                    d_out[type_res1]["ID"].append (d_temp["ID"])
                 else : 
                     d_out[type_res1]["bits"].append(0)
                     d_out[type_res1]["type"].append ("-")
                     d_out[type_res1]["D"].append ("-")
+                    d_out[type_res1]["ID"].append ("-")
                     
                     
     return writeFile.OutputProteinSaltBridges(d_out, pr_out)
