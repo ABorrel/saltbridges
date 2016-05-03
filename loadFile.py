@@ -1,5 +1,6 @@
 from re import search, sub
 from os import path, listdir
+from random import shuffle
 
 import calcul
 import parsing
@@ -209,7 +210,7 @@ def LigandInPDB(p_file_lig):
 
 
 
-def loadCloseStruct (pr_result, control_empty_file = 1) :
+def loadCloseStruct (pr_result, nb_lines = 150000, control_empty_file = 1) :
     
     if not path.isdir(pr_result) : 
         return None
@@ -226,7 +227,7 @@ def loadCloseStruct (pr_result, control_empty_file = 1) :
                 flag_file_empty = flag_file_empty + 1
             else : 
                 sub_struct = name_file.split ("_")[-1].split (".")[0]
-                d_summarize[sub_struct] = loadSummary(pr_result + name_file)
+                d_summarize[sub_struct] = loadSummary(pr_result + name_file, nb_lines)
                     
     if control_empty_file == 1 and flag_file_empty > 2 : # case file empty -> need control 
             # run the extraction
@@ -242,7 +243,7 @@ def loadCloseStruct (pr_result, control_empty_file = 1) :
             
         
     
-def loadSummary (p_summary) : 
+def loadSummary (p_summary, nb_lines_out) : 
     
     
     l_out = []
@@ -251,8 +252,23 @@ def loadSummary (p_summary) :
     l_lines = filin.readlines ()
     filin.close ()
     
+    nb_line_file = len (l_lines)
     
-    for l in l_lines : 
+    if nb_line_file > nb_lines_out : 
+        # random lines
+        
+        l = [i for i in range(nb_line_file)]
+        shuffle(l)
+        l_index = l[:nb_lines_out]
+        l_lines_considered = [l_lines[i] for i in l_index]
+        print len (l_lines_considered), len (l_lines)
+
+    else : 
+        l_lines_considered = l_lines
+        
+    
+    
+    for l in l_lines_considered : 
         d_line = {}
         l_s = l.split ("\t")
         d_line["PDB"] = l_s[0]

@@ -575,28 +575,100 @@ def barplotThreeAtomBarplot (countStruct, dir_out):
 #         filout_side_chain.close()
 
 
-def resultResProx(stCount, distance_max, pr_result):
+def ResultByInterval(stCount, distance_max, pr_in, l_elem):
+
 
     l_p_filout = []
     l_distance = structure.listDistance(distance_max)
-    l_aa = ["HOH", "ASP", "GLU", "THR", "SER", "ASN", "GLN", "TYR", "HIS", "LYS", "ARG", "PHE", "TRP", "ALA", "ILE", "LEU", "MET", "VAL", "CYS", "GLY", "PRO"]
+    
+    
+    for substruct in stCount.keys () : 
+        if stCount[substruct] == {} : 
+            continue
+        p_filout = pr_in + substruct
+        l_p_filout.append (p_filout)
+        filout = open (p_filout, "w")
+        
+        # header 
+        h = []
+        for dist in l_distance : 
+            h.append (str (float (dist) - 0.5) + "-" + str (dist))
+        filout.write ("\t".join(h) + "\n")
+            
+        for elem in l_elem : 
+            line_w = str (elem)
+            for distance in l_distance : 
+                count = stCount[substruct][distance][elem]
+                
+                dist_temp = float (distance) - 0.5
+                dist_temp = str("%.1f" % dist_temp)
+                
+                print dist_temp
+                if dist_temp in stCount[substruct].keys () : 
+                    count = count - stCount[substruct][dist_temp][elem]
+                
+                line_w = line_w + "\t" + str(count)
+            line_w = line_w + "\n"
+            filout.write (line_w)
+        filout.close ()
+    
+    return l_p_filout
+    
+
+
+def ResultByDist(stCount, distance_max, pr_in, l_elem):
+
+
+    l_p_filout = []
+    l_distance = structure.listDistance(distance_max)
+    
+    
+    for substruct in stCount.keys () : 
+        if stCount[substruct] == {} : 
+            continue
+        p_filout = pr_in + substruct
+        l_p_filout.append (p_filout)
+        filout = open (p_filout, "w")
+        
+        # header 
+        filout.write ("\t".join(l_distance) + "\n")
+            
+        for elem in l_elem : 
+            line_w = str (elem)
+            for distance in l_distance : 
+                count = stCount[substruct][distance][elem]
+                line_w = line_w + "\t" + str(count)
+            line_w = line_w + "\n"
+            filout.write (line_w)
+        filout.close ()
+    
+    return l_p_filout
+    
+
+
+
+
+def resultAtomProx(stCount, distance_max, pr_result):
+
+    l_p_filout = []
+    l_distance = structure.listDistance(distance_max)
+    l_type = structure.classificationATOM (out_list = 1)
     
     for substruct in stCount.keys () : 
         print substruct, "-----"
         print stCount[substruct]
         if stCount[substruct] == {} : 
             continue
-        p_filout = pr_result + substruct + "resCount"
+        p_filout = pr_result + substruct + "AtomCount"
         l_p_filout.append (p_filout)
         filout = open (p_filout, "w")
-        for aa in l_aa : 
-            line_w = str (aa)
+        for atom_type in l_type : 
+            line_w = str (atom_type)
             for distance in l_distance : 
-                line_w = line_w + "\t" + str(stCount[substruct][distance][aa])
+                line_w = line_w + "\t" + str(stCount[substruct][distance][atom_type])
             line_w = line_w + "\n"
             filout.write (line_w)
         filout.close ()
-    
     return l_p_filout
     
 

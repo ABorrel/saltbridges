@@ -583,7 +583,7 @@ def globalSearch (dist_thresold, p_file_dataset,  pr_result, debug = 1):
 
 
 
-def SearchEnvironmentSaltBridgeProt(pr_result, l_PDB, max_dist, debug = 1):
+def SearchEnvironmentSaltBridgeProt(pr_result, l_PDB, max_dist, nb_lines = 150000, debug = 1):
     """
     This is for the intra-protein environment
     """
@@ -594,7 +594,7 @@ def SearchEnvironmentSaltBridgeProt(pr_result, l_PDB, max_dist, debug = 1):
     
     
     # load structure in summary ---> if use need place option one PDB by ligand
-    d_neighbor = loadFile.loadCloseStruct (pr_summary)
+    d_neighbor = loadFile.loadCloseStruct (pr_summary, nb_lines)
     
     if d_neighbor != None : 
         if debug : 
@@ -609,7 +609,7 @@ def SearchEnvironmentSaltBridgeProt(pr_result, l_PDB, max_dist, debug = 1):
     
     i = 0
     while i < nb_PDB :
-        print l_PDB[i]
+        print l_PDB[i], i
         InterestResForSaltBridge (d_files_summary, l_PDB[i], max_dist)
         
         i = i + 1
@@ -668,9 +668,9 @@ def interestGroup (max_distance, l_atom_lig, name_PDB, d_stock_neighbor, more_fl
         l_atom_connectN, conect = retrieveAtom.atomConnect(l_atom_lig, serialN)
         # check every substructure
         if imidazole(l_atom_connectN, l_atom_lig)[0] == 1:
-            implementNeighborStruct (max_distance + structure.CalibrateDistanceNeighbor["IMD"], l_atom_connectN, name_PDB, l_atom_lig, "IMD", d_stock_neighbor)
+            implementNeighborStruct (max_distance + structure.CalibrateDistanceNeighbor()["IMD"], l_atom_connectN, name_PDB, l_atom_lig, "IMD", d_stock_neighbor)
         elif Guanidium(l_atom_connectN, l_atom_lig)[0] == 1:
-            implementNeighborStruct (max_distance + structure.CalibrateDistanceNeighbor["GAI"], l_atom_connectN, name_PDB, l_atom_lig, "GAI", d_stock_neighbor)
+            implementNeighborStruct (max_distance + structure.CalibrateDistanceNeighbor()["GAI"], l_atom_connectN, name_PDB, l_atom_lig, "GAI", d_stock_neighbor)
 #         elif diAmine(l_atom_connectN, l_atom_lig) == 1:
 #             implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "Diamine", d_dia_temp)
 #         elif pyridine(l_atom_connectN, l_atom_lig) == 1:
@@ -687,7 +687,8 @@ def interestGroup (max_distance, l_atom_lig, name_PDB, d_stock_neighbor, more_fl
     for serialO in l_serialO :
         l_atom_connectO, conect = retrieveAtom.atomConnect(l_atom_lig, serialO)
         if acidCarboxylic(l_atom_connectO, l_atom_lig)[0] == 1:
-            implementNeighborStruct (max_distance + structure.CalibrateDistanceNeighbor["COO"], l_atom_connectO, name_PDB, l_atom_lig, "COO", d_stock_neighbor)
+            
+            implementNeighborStruct (max_distance + structure.CalibrateDistanceNeighbor()["COO"], l_atom_connectO, name_PDB, l_atom_lig, "COO", d_stock_neighbor)
             
 
 #######regroup neighbors case of imidazole, Guanidium and diamine###########

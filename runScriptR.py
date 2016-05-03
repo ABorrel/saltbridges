@@ -164,7 +164,7 @@ def barplotResDist (p_filin, logFile):
     in: log file_side
     out: execute CMD"""
     
-    cmd = pathManage.scriptR() + "barplotResidueDistance.R " + p_filin + " all"
+    cmd = pathManage.scriptR() + "barplotResidueDistance.R " + p_filin
     logFile.write (cmd + "\n")
     system(cmd)
     print cmd

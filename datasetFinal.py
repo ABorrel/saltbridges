@@ -33,6 +33,7 @@ def Builder(name_database, RX = 3.00, RFree = 0.25, one_PDB_by_lig = 0, debug = 
     # short cut
     l_file_dataset = pathManage.retriveDataSetFile (pr_result)
     if len(l_file_dataset) != 0 : 
+        print "INNNN"
         return l_file_dataset
 
 

@@ -126,10 +126,11 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 # # #         
 # # #         
 # #     # analyse number of neighbors -> number of atom type (C, O, N)
-#     MeansNumberNeighbors (st_atom, pathManage.countNeighbor(pr_result, "MeansNumberNeighbor"))
+    MeansNumberNeighbors (st_atom, pathManage.countNeighbor(pr_result, "MeansNumberNeighbor"), 2.8)
+    MeansNumberNeighbors (st_atom, pathManage.countNeighbor(pr_result, "MeansNumberNeighbor"), 4.0)
 #     ResidueClose (st_atom, pathManage.countNeighbor(pr_result, "residuesNeighbor"), logFile)
-    numberNeighbor (st_atom, pathManage.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
-    neighborAtomComposition(st_atom, pathManage.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
+#     numberNeighbor (st_atom, pathManage.countNeighbor(pr_result, "numberHist"), max_distance, logFile)
+#     neighborAtomComposition(st_atom, pathManage.countNeighbor(pr_result, "propotionPosition"), max_distance, logFile)
 #     firstNeighbor (st_atom, pathManage.countNeighbor(pr_result, "firstNeighbor"), logFile)
 #     TypeOfNeighbors (st_atom, pathManage.countNeighbor(pr_result, "AtomType"), logFile)
      
@@ -140,7 +141,7 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 #     TypeOfNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
 # # 
 # # #    # combination
-    combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
+#     combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
 #     combinationNeighborsAngle (st_atom, pathManage.combination(pr_result, "angleSubs"))
 #     superimpose.SuperimposeFirstNeighbors (st_atom, pathManage.combination(pr_result, "superimposed")) # not work with protein analysis
 # #     
@@ -148,7 +149,7 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 #     CombineNbNeigborInteraction (pathManage.resultInteraction(pr_result), pathManage.countNeighbor(pr_result, "MeansNumberNeighbor"), pr_result)
 
     # water 
-#     WaterMoleculeMediated (st_atom, pathManage.resultWater(pr_result))
+#     WaterMoleculeMediated (st_atom, pathManage.resultWater(pr_result), op_water = 1)
 
 
     log.endAction("END Statistic run !!!", start, logFile)
@@ -396,33 +397,50 @@ def classifResProx(st_atom, pr_result, max_distance, logFile):
     
     # variable
     l_distance = structure.listDistance(max_distance)
-    l_amino_acid = ["ILE", "LEU", "LYS", "PHE", "TYR", "VAL", "SER", "MET", "ARG", "TRP", "PRO", "GLY", "GLU", "ASN", "HIS", "ALA", "ASP", "GLN", "THR", "CYS", "HOH"]
+    l_aa = ["HOH", "ASP", "GLU", "THR", "SER", "ASN", "GLN", "TYR", "HIS", "LYS", "ARG", "PHE", "TRP", "ALA", "ILE", "LEU", "MET", "VAL", "CYS", "GLY", "PRO"]
+    l_type_neighbor = structure.classificationATOM(out_list = 1)
     
     for subs in st_atom.keys(): 
         if subs == "global" : continue
         stCount[subs] = {}
-        for atom_central in st_atom[subs]:
-            if atom_central["neighbors"] == []:
-                continue
-            l_check = []
-            for neighbor in atom_central["neighbors"]: 
-                for distance in l_distance : 
-                    if not distance in stCount[subs].keys (): 
-                        stCount[subs][distance]={}
-                        for aa in l_amino_acid : 
-                            stCount[subs][distance][aa]=0
-                    if neighbor["distance"]< float(distance) and not neighbor["resSeq"] in l_check: 
-                        res = neighbor["resName"]
-                        if not res in l_amino_acid : 
-                            continue
-                        else : 
-                            stCount[subs][distance][res] = stCount[subs][distance][res] + 1
-                            l_check.append (neighbor["resSeq"])
+        
+        for distance in l_distance : 
+            if not distance in stCount[subs].keys (): 
+                stCount[subs][distance]={}
+                for aa in l_aa : 
+                    stCount[subs][distance][aa]=0
+                for type_neighbor in l_type_neighbor : 
+                    stCount[subs][distance][type_neighbor]=0
+        
+            for atom_central in st_atom[subs]:
+                if atom_central["neighbors"] == []:
+                    continue
+                l_check = []
+                for neighbor in atom_central["neighbors"] : 
+                    distance_neighboor = neighbor ["distance"] - structure.CalibrateDistanceNeighbor()[subs]
+                    type_atom = structure.classificationATOM(neighbor)
+                    if float(distance_neighboor) <= float(distance): 
+                        stCount[subs][distance][type_atom] = stCount[subs][distance][type_atom] + 1
+                        if not neighbor["resSeq"] in l_check: 
+                            res = neighbor["resName"]
+                            if not res in l_aa : 
+                                continue
+                            else : 
+                                stCount[subs][distance][res] = stCount[subs][distance][res] + 1
+                                l_check.append (neighbor["resSeq"])
+                            
+                        
     
     # write file
-    l_files_result = writeFile.resultResProx(stCount, max_distance ,pr_result)
-    for file_result in l_files_result : 
-        runScriptR.barplotResDist(file_result, logFile)
+    l_file_result = []
+    l_file_result = l_file_result + writeFile.ResultByInterval(stCount, max_distance, pr_result + "resCountInter_", l_aa)
+    l_file_result = l_file_result + writeFile.ResultByInterval(stCount, max_distance, pr_result + "TypeCountInter_", l_type_neighbor)
+    l_file_result = l_file_result + writeFile.ResultByDist(stCount, max_distance, pr_result + "resCount_", l_aa)
+    l_file_result = l_file_result + writeFile.ResultByDist(stCount, max_distance, pr_result + "TypeCount_", l_type_neighbor)
+    
+    for file_result_res in l_file_result : 
+        runScriptR.barplotResDist(file_result_res, logFile)
+
         
     
 def atomByAa(st_atom, pr_result ,max_distance, logFile ):
@@ -465,9 +483,8 @@ def atomByAa(st_atom, pr_result ,max_distance, logFile ):
 
 
 
-def MeansNumberNeighbors (st_atom, pr_result) : 
+def MeansNumberNeighbors (st_atom, pr_result, distance_thresold) : 
     
-    criteria = structure.criteraAngle()
     l_atom_type = structure.classificationATOM(out_list = 1)
     d_pka = structure.Pka()
     
@@ -490,7 +507,7 @@ def MeansNumberNeighbors (st_atom, pr_result) :
             
             
             for atom_neighbor in atom_sub["neighbors"] :
-                if atom_neighbor["distance"] >= criteria[subs]["distance"][0] and atom_neighbor["distance"] <= criteria[subs]["distance"][1] : 
+                if atom_neighbor["distance"] <= float (distance_thresold + structure.CalibrateDistanceNeighbor()[subs]) : 
                     type_atom = structure.classificationATOM(atom_neighbor)
                     d_count[type_atom] = d_count[type_atom] + 1
                     d_count["Nb"] = d_count["Nb"] + 1
@@ -501,7 +518,7 @@ def MeansNumberNeighbors (st_atom, pr_result) :
     
     
     
-    p_filout = pr_result + "meanNumberofNeighbors"
+    p_filout = pr_result + "meanNumberofNeighbors_" + str (distance_thresold)
     p_filout_pka = pathManage.CreatePathDir(pr_result + "pKa/") + "pKaVSnumberNeighbor"
     filout = open (p_filout, "w")
     filout_pka = open (p_filout_pka, "w")
@@ -846,8 +863,6 @@ def CountInteraction (st_atom, pr_result, logFile, restrained = 1, arom = 0, deb
                 st_count[type_subs]["independant"][interact] = 0
                 st_count[type_subs]["dependant"][interact] = 0
             
-            print st_count
-            
             
         for atom_central in st_atom[type_subs] : 
             l_interact_found = GetInteractions (atom_central["neighbors"], type_subs, restrained)
@@ -917,7 +932,7 @@ def CountIndependant (l_interaction_found, d_count):
 
 def CountDependant (l_interaction_found, d_count, type_subs):
     
-    print l_interaction_found, type_subs
+#     print l_interaction_found, type_subs
     
     # for group COO
     if type_subs == "COO" : 
@@ -1399,10 +1414,6 @@ def CombineNbNeigborInteraction (pr_interaction, pr_nb_neighbours, pr_result):
     p_file_interact = pr_interaction + "interact_dependant"
     p_file_nb_neighbor = pr_nb_neighbours + "meanNumberofNeighbors"
     
-    print p_file_interact
-    print p_file_nb_neighbor
-    
-    
     runScriptR.CorInteractionVSNbNeighbours (p_file_interact, p_file_nb_neighbor, pr_result)
     
     
@@ -1414,7 +1425,6 @@ def WaterMoleculeMediated (st_atom, pr_result, op_water = 0):
     d_count = {}
     
     for subs in st_atom.keys () : 
-        print subs
         # implement count structure
         if not subs in d_count.keys () : 
             d_count[subs] = {}
@@ -1451,6 +1461,7 @@ def WaterMoleculeMediated (st_atom, pr_result, op_water = 0):
                     if type_atom == "Oox" : 
                         criteria = st_criteria[subs]["distance"][-1] 
                         d_temp = SearchWaterInCI (atom_query["neighbors"], neighbor, atom_query, filout, dist_max_water = criteria)
+                
                 
                 nb_CI = nb_CI + d_temp["CI"]
                 
@@ -1583,7 +1594,6 @@ def SaltBridgeProt (l_PDB, pr_out, thresold_interact = 4.0, thresold_max = 12.0 
     
     
     for PDB in l_PDB :
-        print PDB
         l_atom_PDB = parsing.loadCoordSectionPDB(pathManage.pathDitrectoryPDB() + PDB + ".pdb", "ATOM")
         d_res = parsing.BuildDicoRes(l_atom_PDB)
         
