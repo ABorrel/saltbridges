@@ -69,5 +69,23 @@ def runNACESS (path_file_in, pr_result, probe = "", verbose = 1, multi_run = 0):
     return "ERROR"
     
       
-        
+def needle (path_file_fasta1, path_file_fasta2, path_filout, gapopen = 10, gapextend = 0.5, debug = 0):
+    """
+    Run water from emboss with 2 fasta files and gap open option and gap extend
+    args: -> file fasta 1
+          -> file fasta 2
+          -> gap open value
+          -> gap extend value
+    return: -> water file
+    """
+    
+    if os.path.exists(path_filout) and os.path.getsize(path_filout) != 0 : 
+        return path_filout
+    cmd = "needle -asequence " + path_file_fasta1 + " -bsequence " + path_file_fasta2 + " -outfile " + path_filout + " -gapopen " + str(gapopen) + " -gapextend " + str(gapextend)
+    
+    if debug : 
+        print cmd
+    os.system (cmd)
+ 
+    return path_filout        
         

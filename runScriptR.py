@@ -420,5 +420,12 @@ def ProtAnalysis (p_filin) :
     system (cmd_run)
 
 
+def MatrixPlot (p_filin, type_plot):
+    
+    cmd = "./matrixPlot.R " + p_filin + " " + type_plot
+    print cmd
+    system(cmd)    
+    
+    return 
 
 

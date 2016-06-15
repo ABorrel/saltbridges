@@ -39,14 +39,31 @@ def main (name_database, max_distance = 5.0, RX = 3.00, RFree = 0.25, option_sup
     
     # dataset with resolution
     l_p_dataset = datasetFinal.Builder(name_database, RX, RFree, option_on_complexes_by_ligand)
-    
+    l_p_dataset = ["/home/borrel/saltBridgesProject/result/PDB/3.0_0.25_uniquePDB/dataset_3.00.txt"]#, "/home/borrel/saltBridgesProject/result/PDB/3.0_0.25_uniquePDB/dataset_1.50.txt"]
+#     l_p_dataset = ["/home/borrel/saltBridgesProject/result/PDB/3.0_0.25_uniquePDB/dataset_1.50.txt"]
+
+    #l_p_dataset = ["/home/borrel/saltBridgesProject/result/PDB/3.0_0.25_uniquePDB/dataset_1.50.txt"]
+
+
 #     ########################
 #     #   Parsing dataset   #
 #     ########################
 # # 
     if option_stat_dataset == 1 : 
         for p_dataset in l_p_dataset : 
-            statistic.ParseDataSet(p_dataset)
+#             statistic.ParseDataSet(p_dataset)
+            
+            # identity sequence
+            name_dataset = p_dataset.split ("/")
+            name_dataset = name_dataset[-1][0:-4]
+            l_PDB = [] 
+            l_dataset = loadFile.resultFilterPDBLigand(p_dataset)
+            for lig in l_dataset : 
+                for PDB in lig["PDB"] : 
+                    if not PDB in l_PDB : 
+                        l_PDB.append (PDB)
+            
+            datasetFinal.RedondanceAnalysis(l_PDB, name_dataset)
         
      
 #     ####################
@@ -179,6 +196,7 @@ def ProteinStat (name_database, option_on_complexes_by_ligand, RX, RFree, max_di
         d_protein = searchPDB.SearchEnvironmentSaltBridgeProt(pr_out, l_PDB, max_distance, nb_cases, 1)
         statistic.globalRunStatistic(d_protein, max_distance, pathManage.CreatePathDir(pr_out + str (nb_cases) + "_" + str (i + 1) + "/"))
     
+          
     
     
 #     l_p_file_byaa = statistic.SaltBridgeProt (l_PDB, pr_out, thresold_interact, thresold_max)
@@ -235,8 +253,8 @@ main ("PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX 
 ###################################
 
 
-# ProteinStat("PDB", option_on_complexes_by_ligand = 1, RX = 1.5, RFree = RFree_thresold, max_distance = max_distance, nb_cases = 20000, nb_run= 5)
-# ProteinStat("PDB", option_on_complexes_by_ligand = 1, RX = 3.0, RFree = RFree_thresold, max_distance = max_distance, nb_cases = 20000, nb_run= 5)
+# ProteinStat("PDB", option_on_complexes_by_ligand = 1, RX = 1.5, RFree = RFree_thresold, max_distance = max_distance, nb_cases = 20000, nb_run= 1)
+# ProteinStat("PDB", option_on_complexes_by_ligand = 1, RX = 3.0, RFree = RFree_thresold, max_distance = max_distance, nb_cases = 20000, nb_run= 1)
 
 # ProteinStat("PDB50", option_on_complexes_by_ligand = 1, RX = 1.5, RFree = RFree_thresold, max_distance = max_distance, nb_cases = 20000, nb_run= 5)
 # ProteinStat("PDB50", option_on_complexes_by_ligand = 1, RX = 3.0, RFree = RFree_thresold, max_distance = max_distance, nb_cases = 20000, nb_run= 5)

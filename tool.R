@@ -165,20 +165,23 @@ defColor = function (l_name){
 	
 	for (element in l_name){
 	  if (attr(regexpr("CI_1",element),"match.length") >= 4){
-	    out = append (out, "#FF6666")
+	    out = append (out, "#FF0000")
 	  }
 	  else if (attr(regexpr("CI_2",element),"match.length") >= 4){
-	    out = append (out, "#DD4444")
+	    out = append (out, "#FF0000")
 	  }	  
 	  else if (attr(regexpr("CI_3",element),"match.length") >= 4){
-	    out = append (out, "#BB2222")
+	    out = append (out, "#FF0000")
 	  }	  
 	  else if (attr(regexpr("CI_4",element),"match.length") >= 4){
-	    out = append (out, "#AA1111")
+	    out = append (out, "#FF0000")
 	  }
 	  else if (attr(regexpr("More_CI",element),"match.length") >= 4){
+	    out = append (out, "#FF0000")
+	  }
+	  else if (attr(regexpr("Oox_long",element),"match.length") >= 4){
 	    out = append (out, "#990000")
-	  }	  
+	  }
 	  else if (attr(regexpr("Water_Mediated",element),"match.length") >= 6){
 	    out = append (out, "#A67E2E")
 	  }

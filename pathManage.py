@@ -327,3 +327,14 @@ def resultWater(pr_in, name_in = "") :
     return pr_out        
     
 
+def AlignmentFolder (pr_int):
+    
+    if pr_int == "" : 
+        rep = repInit + pr_int + "/SequenceID/"
+    else : 
+        rep = repInit + "SequenceID/"
+        
+    try: makedirs(rep, mode=0777)
+    except: pass
+    return rep    
+    

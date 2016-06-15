@@ -10,6 +10,9 @@ import calcul
 import toolSubstructure
 import runScriptR
 import parsing
+import tool
+import runOtherSoft
+import parseEMBOSS
 
 
 def Builder(name_database, RX = 3.00, RFree = 0.25, one_PDB_by_lig = 0, debug = 1):
@@ -181,4 +184,51 @@ def BuilderDatasetDict(PDB_ID, name_lig, RX, d_dataset, debug = 1):
             d_dataset[RX_build][name_lig].append(PDB_ID)
         else : 
             continue
+ 
+ 
+ 
+def RedondanceAnalysis (l_PDB, name_dataset):
+    
+    
+    d_out = {}
+    pr_align = pathManage.AlignmentFolder(name_dataset)
+    
+    i = 0
+    nb_pdb = len (l_PDB)
+    while i < nb_pdb :
+        j = i + 1
+        PDB1 = l_PDB[i]
+        if not PDB1 in d_out.keys () : 
+            d_out[PDB1] = {}
+        while j < nb_pdb : 
+            PDB2 = l_PDB[j]
+            if not PDB2 in d_out[PDB1].keys () : 
+                d_out[PDB1] [PDB2] = {}
+            try : d_align = GetIDSeqAndSimilarity(PDB1, PDB2, pr_align)
+            except : 
+                d_align["IDseq"] = "NA"
+                d_align["Similarity"] = "NA"
+            d_out[PDB1][PDB2]["IDseq"] = d_align["IDseq"]
+            d_out[PDB1][PDB2]["Similarity"] = d_align["Similarity"]
+            j = j + 1
+        i = i + 1
+    
+    
+    pr_result = pathManage.result("protAlign")
+    l_fmatrix = writeFile.MatrixID(d_out, pr_result + "matrix")
+    runScriptR.MatrixPlot (l_fmatrix[0], "IDseq")
+    runScriptR.MatrixPlot (l_fmatrix[1], "Similarity")
+
+
+
+def GetIDSeqAndSimilarity (PDB1, PDB2, pr_out, p_fastaPDB = "/home/borrel/saltBridgesProject/pdb_seqres.txt"):
+    
+    pr_fasta = pathManage.CreatePathDir(pathManage.repInit + "fastaFile/")
+    p_fasta1 = tool.ImportFasta(PDB1, pr_fasta, fastaGlobal = p_fastaPDB)
+    p_fasta2 = tool.ImportFasta(PDB2, pr_fasta, fastaGlobal = p_fastaPDB)
+    p_seq = runOtherSoft.needle(p_fasta1, p_fasta2, pr_out + str (PDB1) + "_" + str (PDB2))
+    return parseEMBOSS.embossFile(p_seq)
+ 
+ 
+ 
             

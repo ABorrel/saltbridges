@@ -901,4 +901,36 @@ def OutputProteinSaltBridges(d_in, pr_out):
     return l_p_filout
 
 
+def MatrixID (d_in, p_filout):
+    
+    filout_IDseq = open (p_filout + "_IDseq", "w")
+    filout_Similarity = open (p_filout + "_Similarity", "w")
+    
+    l_PDB = d_in.keys ()
+    print len (l_PDB)
+    
+    filout_IDseq.write ("\t".join(l_PDB) + "\n")
+    filout_Similarity.write ("\t".join(l_PDB) + "\n")
+    
+    for PDB1 in l_PDB : 
+        filout_IDseq.write (str (PDB1))
+        filout_Similarity.write (str (PDB1))
+        for PDB2 in l_PDB :
+            if PDB1 == PDB2 : 
+                filout_IDseq.write ("\t100")
+                filout_Similarity.write ("\t100")
+            else : 
+                try : filout_IDseq.write ("\t" + d_in[PDB1][PDB2]["IDseq"])
+                except : filout_IDseq.write ("\t" + d_in[PDB2][PDB1]["IDseq"])
+                
+                try : filout_Similarity.write ("\t" + d_in[PDB1][PDB2]["Similarity"])
+                except : filout_Similarity.write ("\t" + d_in[PDB2][PDB1]["Similarity"])
+                
+        filout_IDseq.write ("\n")
+        filout_Similarity.write ("\n")
+    filout_IDseq.close ()
+    filout_Similarity.close ()
+    
+    return [p_filout + "_IDseq", p_filout + "_Similarity"]
+    
 
