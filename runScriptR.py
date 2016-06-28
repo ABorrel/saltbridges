@@ -429,3 +429,18 @@ def MatrixPlot (p_filin, type_plot):
     return 
 
 
+def CompareContingencyTable (p_filin):
+    
+    
+    cmd = "./CompareContingency.R " + str (p_filin)
+    print (cmd)
+    system (cmd)
+    
+
+def CompareTwoTablesContingency (p_file1, p_file2):
+    
+    cmd = "./Compare2Contingency.R " + p_file1 + " " + p_file2
+    print cmd
+    system (cmd) 
+    
+    

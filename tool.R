@@ -1,15 +1,10 @@
 #!/usr/bin/env Rscript
 
 
-
-
 is.integer0 <- function(x)
 {
   is.integer(x) && length(x) == 0L
 }
-
-
-
 
 
 ############
@@ -187,6 +182,12 @@ defColor = function (l_name){
 	  }
 	  else if (attr(regexpr("Other", element),"match.length") >= 4 ){
 	    out = append (out, "#D3D3D3")
+	  }
+	  else if (attr(regexpr("Oph", element),"match.length") >= 3 ){
+	    out = append (out, "#F9E79F")
+	  }
+	  else if (attr(regexpr("Su", element),"match.length") >= 1 ){
+	    out = append (out, "#626567")
 	  }
 	  else if (attr(regexpr("Cox",element),"match.length") >= 1){
 			out = append (out, "#5F021F")

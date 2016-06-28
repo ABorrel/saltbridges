@@ -102,7 +102,7 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 # # 
     # proportion salt bridges
     CountInteraction (st_atom, pathManage.resultInteraction(pr_result), logFile)
-#     CountInteraction (st_atom, pathManage.resultInteraction(pr_result), logFile, arom = 1)
+    CountInteraction (st_atom, pathManage.resultInteraction(pr_result), logFile, arom = 1)
 #     EnvironmentInteraction (st_atom, pathManage.resultInteraction (pr_result, name_in = "conditional"), logFile)
 # 
 #     # loose    
@@ -111,8 +111,8 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 #     
 # # #  
 # # #     # distribution distance interest group and type atoms -> distance type
-    DistTypeAtom(st_atom, pathManage.resultDistance(pr_result), logFile)
-# # #         
+#     DistTypeAtom(st_atom, pathManage.resultDistance(pr_result), logFile)
+# #         
 # # #     # angleSubs -> directory angles
 #     AngleSubs(st_atom, pr_result, max_distance)
 #     AngleSelect (st_atom, pr_result)
@@ -135,10 +135,16 @@ def globalRunStatistic(st_atom, max_distance, pr_result):
 #     TypeOfNeighbors (st_atom, pathManage.countNeighbor(pr_result, "AtomType"), logFile)
      
 # #      
-# #     # with two area defintion
-#     d_area1, d_area2 = splitTwoArea (st_atom) # cup 2 area
-#     TypeOfNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1"), logFile)
-#     TypeOfNeighbors (d_area2, pathManage.twoArea(pr_result, "neighborArea2"), logFile)
+# #     # When 
+    d_area1, d_area2 = splitTwoArea (st_atom, 3.0) # cup 2 area
+    p_filecount3 = TypeOfNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1_3.0"), logFile)
+#     
+    d_area1, d_area2 = splitTwoArea (st_atom, 4.0) # cup 2 area
+    p_filecount4 = TypeOfNeighbors (d_area1, pathManage.twoArea(pr_result, "neighborArea1_4.0"), logFile)
+    
+    # significativity
+    runScriptR.CompareTwoTablesContingency(p_filecount3[0], p_filecount4[0])
+
 # # 
 # # #    # combination
 #     combinationNeighbors (st_atom, pathManage.combination(pr_result), logFile)
@@ -192,7 +198,7 @@ def DistTypeAtom(stAtm, dir_out, logfile):
 
     # implement structure
     for subs in stAtm.keys():
-        #if subs == "global" : continue
+        if subs == "global" : continue
         for atom in stAtm[subs]:
             if atom["neighbors"] == []:
                 continue
@@ -632,12 +638,13 @@ def TypeOfNeighbors (st_atom, pr_result, logFile):
         st_count[subs] = {}
         searchNeighbor (st_atom, st_count, subs)
     
-    # write files
+    # write files # why list -> clean ??
     l_files_result = writeFile.countNeighborsAll(st_count, pr_result)
     
     for file_result in l_files_result : 
         runScriptR.AFCBarplot (file_result, logFile)        
     
+    return l_files_result
 
 
 def ResidueClose (st_atom, pr_result, logFile) : 
@@ -910,10 +917,13 @@ def CountInteraction (st_atom, pr_result, logFile, restrained = 1, arom = 0, deb
     filout_independant.close ()
     filout_pka.close ()
     
-    
+    # plot
     runScriptR.InteractionProportion(p_filout_dependant)
     runScriptR.InteractionProportion(p_filout_independant)
     runScriptR.CorpKaVSCI(p_filout_pka)
+
+    #significance
+    runScriptR.CompareContingencyTable (p_filout_independant)
 
     # merge plot 
     runScriptR.MergeProportionInteractAtLeasNotAtLeast (p_filout_dependant, p_filout_independant, pr_result + suff)
@@ -1013,7 +1023,7 @@ def GetInteractions (l_atoms, subs, restrained = 1, debug = 1) :
             elif type_atom == "Ow" : 
                 if not "HOH" in l_interact : 
                     l_interact.append ("HOH")
-            elif type_atom == "Oh" : 
+            elif type_atom == "Oh" or type_atom == "Oph": 
                 if not "OH" in l_interact : 
                     l_interact.append ("OH")
             elif type_atom == "Nam" : 
@@ -1239,9 +1249,9 @@ def lenBondAnalysis (struct_neighbor, substruct, p_dir_result ):
              
             
 
-def splitTwoArea (st_atom_sub) : 
+def splitTwoArea (st_atom_sub, dist_cut = 3.0) : 
     
-    st_division = structure.CalibrateTwoArea(4.0)
+    st_division = structure.CalibrateTwoArea(dist_cut)
     
     d_area1 = {}
     d_area2 = {}
@@ -1763,6 +1773,70 @@ def Dmin (l_atom1, l_atom2):
     
     return dist_min
                         
+
+
+def CompareMultiRun (l_filin, p_filout): 
+    
+    d_count = {}
+    l_group = []
+    for i in range(1,len (l_filin)): 
+        print i
+        d_count[i] = {}
+        
+        filin = open (l_filin[i-1], "r")
+        l_lines = filin.readlines ()
+        filin.close ()
+        l_atom_type = l_lines[0].strip ().replace ("\"", "").split (",")[1:]
+        print l_atom_type
+        
+        
+        
+        for line_percent in l_lines[1:] :
+            l_elem = line_percent.strip ().replace ("\"", "").split (",")
+            group = l_elem [0]
+            if not group in l_group : l_group.append (group)
+            d_count[i][group] = {}
+            
+            j = 0 
+            while j < len (l_atom_type) :
+                print j
+                if not l_atom_type[j] in d_count[i][group].keys () : 
+                    d_count[i][group][l_atom_type[j]] = float(l_elem[j+1])
+
+                j = j + 1
+        
+    
+    print d_count
+
+    d_out = {}
+    for group in l_group : 
+        if not group in d_out.keys (): d_out[group] = {}
+        for atom_type in l_atom_type : 
+            diff = 0
+            i = 1
+            while i < len (d_count.keys ())  : 
+                j = i + 1
+                while j < len (d_count.keys ()) : 
+                    diff = diff + abs (d_count[i][group][atom_type] - d_count[j][group][atom_type])
+                    j = j + 1
+                i = i + 1
+            print diff
+            d_out[group][atom_type] = float (diff)/float (len (d_count.keys ()))
+    
+    print d_out
+                
+    filout = open (p_filout, "w")
+    filout.write ("\t".join(l_atom_type) + "\n")
+    for group in l_group : 
+        filout.write (group) 
+    
+        for atom_type in l_atom_type : 
+            filout.write("\t" + str (d_out[group][atom_type]))
+        filout.write ("\n")
+    filout.close ()
+    
+
+
 
 #MergeDataSet ("/home/borrel/saltBridgesProject/result/", "ProtStatPDB1.5-0.25/20000_1/", "ProtStatPDB3.0-0.25/20000_1", arom = 1)
 

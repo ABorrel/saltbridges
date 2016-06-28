@@ -25,7 +25,8 @@ def classificationATOM (atom="", out_list = 0):
     out: classification (string)"""
     
 #     l_classif = ["Oox", "Cox", "Oh", "Oc", "Ow", "Nam", "Nim", "Ngu", "Cgu", "NaI", "Car", "Xot"]
-    l_classif = ["Oox", "Oh", "Oc", "Ow", "Nam", "Nim", "Ngu", "NaI", "Car", "Xot"]
+    #l_classif_origin = ["Oox", "Oh", "Oc", "Ow", "Nam", "Nim", "Ngu", "NaI", "Car", "Xot"]
+    l_classif = ["Oox", "Oh", "Oph",  "Oc", "Ow", "Nam", "Nim", "Ngu", "NaI", "Car","Su", "Xot"]
     if out_list : 
         return l_classif
     
@@ -48,7 +49,7 @@ def classificationATOM (atom="", out_list = 0):
     # Oxygen Donnor/acceptor
     if atom["resName"] == "TYR":
         if atom["name"] == "OH":
-            return "Oh"
+            return "Oph"
 
     if atom["resName"] == "THR":
         if atom["name"] == "OG1":
@@ -122,6 +123,10 @@ def classificationATOM (atom="", out_list = 0):
         if atom["name"] == "C" :
             return "Oc"     
     
+    # sulfur
+    if atom["resName"] in l_res : 
+        if atom["element"] == "S" : 
+            return "Su"
     
 
     

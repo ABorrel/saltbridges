@@ -7,7 +7,7 @@ barplotCum = function (d_in, l_color, main_plot){
   # transfom %
   d_percent = GetPercent(d_in, 0)
   
-  barplot (t(d_percent), col = l_color, axes = FALSE, axisnames = FALSE, main = main_plot, cex.main = 2)
+  barplot (t(d_percent), col = l_color, axes = FALSE, axisnames = FALSE, main = main_plot, cex.main = 3)
   
   #axis 
   cum = 0

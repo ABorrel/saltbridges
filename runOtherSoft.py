@@ -89,3 +89,4 @@ def needle (path_file_fasta1, path_file_fasta2, path_filout, gapopen = 10, gapex
  
     return path_filout        
         
+
