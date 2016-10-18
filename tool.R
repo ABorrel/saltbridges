@@ -191,7 +191,7 @@ defColor = function (l_name){
 	  }
 	  else if (attr(regexpr("Cox",element),"match.length") >= 1){
 			out = append (out, "#5F021F")
-		}
+	  }
 		else if (attr(regexpr("Oox",element),"match.length") >= 1){
 			out = append (out, "#FF0000")
 		}
@@ -241,6 +241,10 @@ defColor = function (l_name){
 	  else if (attr(regexpr("HOH",element, ignore.case = FALSE),"match.length") == 3){
 	    out = append (out, "#33FFFF")	    
 	  }
+	  else if (attr(regexpr("OC",element),"match.length") >= 1){
+	    out = append (out, "#000000")
+	  }
+
 	  else if (attr(regexpr("OH",element, ignore.case = FALSE),"match.length") == 2){
 	    out = append (out, "#FF6600")
 	  }

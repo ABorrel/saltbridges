@@ -44,7 +44,7 @@ if (is.integer0 (i_null) == FALSE){
 l_sub = rownames (d_count)
 
 
-AFC (d_count, p_filin)
+#AFC (d_count, p_filin)
 
 # barplot by proportion res
 l_color = defColor (colnames (d_count))

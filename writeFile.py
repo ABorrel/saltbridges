@@ -130,7 +130,7 @@ def openFileSummary(pr_out, type_sum = "Lig"):
         l_sub.append("global")
     # case where is prot only
     else : 
-        l_sub = ["I", "GAI", "IMD", "COO"]
+        l_sub = ["I", "GAI", "IMD", "COO", "global"]
     d_filin = {}
 
     for element in l_sub:

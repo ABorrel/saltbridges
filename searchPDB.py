@@ -1,6 +1,11 @@
 from os import listdir, path 
 from re import search
 from copy import deepcopy
+# random
+import random
+r = random.random() # corse random
+
+
 import calcul
 import loadFile
 import log
@@ -131,14 +136,13 @@ def cncc(l_atom_connectN, l_atom_lig, more_flex = 0):
     """
 
     connect_element = toolSubstructure.matrixElement(l_atom_connectN)
-    
+
     if connect_element == ["N", "C", "C", "C"]:
-        
         if more_flex == 1 : 
             #if toolSubstructure.checkCoplanar(l_atom_connectN[0], l_atom_lig) == 1:
             #    if toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[1], d_min = 1.34) == 1 and toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[2], d_min = 1.34) == 1 and toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[3], d_min = 1.34) == 1:
             return 1
-        else :     
+        else:
             if toolSubstructure.checkConectOnlyC(l_atom_connectN[1], l_atom_lig) == 1 and toolSubstructure.checkConectOnlyC(l_atom_connectN[2], l_atom_lig) == 1 and toolSubstructure.checkConectOnlyC(l_atom_connectN[3], l_atom_lig) == 1:
                 if toolSubstructure.checkCoplanar(l_atom_connectN[0], l_atom_lig) == 1:
                     if toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[1]) == 1 and toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[2]) == 1 and toolSubstructure.checkSingleBond(l_atom_connectN[0], l_atom_connectN[3]) == 1:
@@ -163,8 +167,7 @@ def Guanidium(l_at_connect_N, l_atom_lig):
             groupAtomN2, conect_N2 = retrieveAtom.atomConnect(l_atom_lig , int (l_at_connect_c[0]["connect"][2]))
             groupAtomN3, conect_N3 = retrieveAtom.atomConnect(l_atom_lig , int (l_at_connect_c[0]["connect"][3]))
             l_conect = [conect_N1, conect_N2, conect_N3]
-            l_group_atom =  [groupAtomN1, groupAtomN2, groupAtomN3]
-            
+            l_group_atom =  [groupAtomN1, groupAtomN2, groupAtomN]
             i = 0
             while i < 3 :  
                 if l_conect[i] == ["N", "C"] : 
@@ -604,13 +607,17 @@ def SearchEnvironmentSaltBridgeProt(pr_result, l_PDB, max_dist, nb_lines = 15000
     
     nb_PDB = len (l_PDB)
     
+    # fix number of global atom in summary file
+    nb_global_atom = nb_lines * 10
+    nb_line_prot = int (nb_global_atom/nb_PDB)
+    
     # ##Write summary file
     d_files_summary = writeFile.openFileSummary(pr_summary, type_sum = "prot")# summary result
     
     i = 0
     while i < nb_PDB :
         print l_PDB[i], i
-        InterestResForSaltBridge (d_files_summary, l_PDB[i], max_dist)
+        InterestResForSaltBridge (d_files_summary, l_PDB[i], max_dist, nb_line_prot)
         
         i = i + 1
             
@@ -621,13 +628,21 @@ def SearchEnvironmentSaltBridgeProt(pr_result, l_PDB, max_dist, nb_lines = 15000
     
     
 
-def InterestResForSaltBridge (d_filout, PDB_ID, max_distance):
-    
+def InterestResForSaltBridge (d_filout, PDB_ID, max_distance, nb_atomforglobal):
+
     d_atom_interest = structure.DProtAtomSaltBridge()
-    
     # double parsing - list of atom and dictionary
     l_atom_PDB = parsing.loadCoordSectionPDB(pathManage.pathDitrectoryPDB() + PDB_ID.lower() + ".pdb", "ATOM")
     d_res_PDB = parsing.BuildDicoRes(l_atom_PDB)
+
+    # for global -> randomly atom protein considered
+    random.shuffle (l_atom_PDB, lambda:r)
+    l_atom_forglobal = l_atom_PDB[:nb_atomforglobal]
+    l_out_global = []
+    for atom_forglobal in l_atom_forglobal :
+        l_atom_res_temp = d_res_PDB[str(atom_forglobal["resName"]) + "_" + str (atom_forglobal["resSeq"]) + "_" + str (atom_forglobal["chainID"])]
+        l_out_global.append(buildAtom(max_distance + structure.CalibrateDistanceNeighbor()["global"], atom_forglobal, PDB_ID, "global", l_atom_res_temp))
+    writeFile.neighborStruct({}, l_out_global, d_filout) 
     
     
     for res_PDB in d_res_PDB.keys () :
@@ -648,8 +663,8 @@ def InterestResForSaltBridge (d_filout, PDB_ID, max_distance):
             
               
             writeFile.neighborStruct(atom_and_neighbor, [], d_filout)        
-                    
-    
+
+
 def interestGroup (max_distance, l_atom_lig, name_PDB, d_stock_neighbor, more_flex = 0):
     """Search different groups
     in : ligands in namePDB
@@ -658,11 +673,10 @@ def interestGroup (max_distance, l_atom_lig, name_PDB, d_stock_neighbor, more_fl
     imidazole + 1.1
     and acid carboxylic + 1.3
     append more flex to GPCR study"""
-    
+
     l_serialN = ListSerialElement(l_atom_lig, "N")
     l_serialO = ListSerialElement(l_atom_lig, "O")
-    
-    
+
     # different d_stock_neighbor
     for serialN in l_serialN:
         l_atom_connectN, conect = retrieveAtom.atomConnect(l_atom_lig, serialN)
@@ -682,14 +696,12 @@ def interestGroup (max_distance, l_atom_lig, name_PDB, d_stock_neighbor, more_fl
             implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "II", d_stock_neighbor)
         elif cncc(l_atom_connectN, l_atom_lig, more_flex = more_flex) == 1:
             implementNeighborStruct (max_distance, l_atom_connectN, name_PDB, l_atom_lig, "III", d_stock_neighbor)
-            
-               
+
     for serialO in l_serialO :
         l_atom_connectO, conect = retrieveAtom.atomConnect(l_atom_lig, serialO)
         if acidCarboxylic(l_atom_connectO, l_atom_lig)[0] == 1:
-            
             implementNeighborStruct (max_distance + structure.CalibrateDistanceNeighbor()["COO"], l_atom_connectO, name_PDB, l_atom_lig, "COO", d_stock_neighbor)
-            
+
 
 #######regroup neighbors case of imidazole, Guanidium and diamine###########
 
@@ -739,27 +751,43 @@ def buildAtom(rayon, at_central, PDB, subs, l_atom_lig):
 
 
 
-def neighbors(rayon, atom_central, pdb, subs = "global", l_atom_lig = [] ): # change the name because in the same time function and variable
+def neighbors(rayon, atom_central, pdb, subs = "global", l_atom_lig = [], dresmax=12 ): # change the name because in the same time function and variable
     """Search neighbors for all ligand
     in : rayon where is atoms, central atom, pdb file
     out : list atoms found"""
 
-    l_atom = []
-    linesPDB = loadFile.openPdbFile(pdb)
-    for line in linesPDB:
-        if search("^ATOM", line) or search("^HETATM", line): 
-            atom = parsing.lineCoords(line)
-            if atom != {} and atom["element"] != "H":
-                distance = calcul.distanceTwoatoms(atom_central, atom)
-                if distance <= rayon and distance != 0.0:
-                    if atom_central["resSeq"] != atom["resSeq"]: # check if variation
-                        if tool.atomInList(l_atom, atom) == 0:
-                            atom["distance"] = distance
-                            atom["angleSubs"] = calcul.angleSubs(atom_central, atom, l_atom_lig, subs)
-                            atom["classification"] = structure.classificationATOM(atom)
-                            l_atom.append(atom)
+    # old based on list of atom not used a dictionnary of residue faster
+    #l_atom = []
+    #linesPDB = loadFile.openPdbFile(pdb)
+    #for line in linesPDB:
+    #    if search("^ATOM", line) or search("^HETATM", line): 
+    #        atom = parsing.lineCoords(line)
+    #        if atom != {} and atom["element"] != "H":
+    #            distance = calcul.distanceTwoatoms(atom_central, atom)
+    #            if distance <= rayon and distance != 0.0:
+    #                if atom_central["resSeq"] != atom["resSeq"]: # check if variation
+    #                    if tool.atomInList(l_atom, atom) == 0:
+    #                        atom["distance"] = distance
+    #                        atom["angleSubs"] = calcul.angleSubs(atom_central, atom, l_atom_lig, subs)
+    #                        atom["classification"] = structure.classificationATOM(atom)
+    #                        l_atom.append(atom)
+    #return l_atom
 
-    return l_atom
+    dres = parsing.BuildByRes(pdb)
+    lout = []
+    for res in dres.keys():
+        for atom in dres[res]:
+            dist = calcul.distanceTwoatoms(atom_central, atom)
+            if dist > dresmax:
+                break
+            elif dist <= rayon and dist != 0.0:
+                if atom_central["resSeq"] != atom["resSeq"]: # check if variation
+                    atom["distance"] = dist
+                    atom["angleSubs"] = calcul.angleSubs(atom_central, atom, l_atom_lig, subs)
+                    atom["classification"] = structure.classificationATOM(atom)
+                    if not atom in lout:
+                        lout.append(deepcopy(atom))
+    return lout
 
 
 def repetitionInPDB(ligand, pdb):

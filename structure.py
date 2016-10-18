@@ -129,7 +129,6 @@ def classificationATOM (atom="", out_list = 0):
             return "Su"
     
 
-    
 #     print atom["resName"], atom["name"]
     
     return "Xot"

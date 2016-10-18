@@ -1,7 +1,7 @@
 import formatCharacter
 import loadFile
 import calcul
-
+import pathManage
 
 from re import search, sub
 from copy import deepcopy
@@ -410,6 +410,35 @@ def BuildDicoRes(l_atoms) :
 
     return d_res
 
+
+def BuildByRes(PDBid):
+
+    rep = pathManage.openPdbFile()
+    pfilin = rep + PDBid + ".pdb"
+
+
+    if not path.exists(pfilin):
+        print "ERROR l-417 parsing"
+        return {}
+    else:
+        filin = open(pfilin, "r")
+        llines = filin.readlines()
+        filin.close()
+
+    dres = {}
+    for linefile in llines:
+        if search("^ATOM", linefile) or search("^HETATM", linefile):
+            atom = lineCoords(linefile)
+            if atom != {} and atom["element"] != "H":
+                res_ID = atom["resSeq"]
+                res_name = atom["resName"]
+                res_chain = atom["chainID"]
+                # key by residues
+                k_in = str(res_name) + "_" + str(res_ID) + "_" + str (res_chain)
+                if not k_in in dres.keys():
+                    dres[k_in] = []
+                dres[k_in].append(atom)
+    return dres
 
 
 
