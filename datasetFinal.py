@@ -184,15 +184,13 @@ def BuilderDatasetDict(PDB_ID, name_lig, RX, d_dataset, debug = 1):
             d_dataset[RX_build][name_lig].append(PDB_ID)
         else : 
             continue
- 
- 
- 
+
+
 def RedondanceAnalysis (l_PDB, name_dataset):
-    
-    
+
     d_out = {}
     pr_align = pathManage.AlignmentFolder(name_dataset)
-    
+
     i = 0
     nb_pdb = len (l_PDB)
     while i < nb_pdb :
@@ -212,8 +210,7 @@ def RedondanceAnalysis (l_PDB, name_dataset):
             d_out[PDB1][PDB2]["Similarity"] = d_align["Similarity"]
             j = j + 1
         i = i + 1
-    
-    
+
     pr_result = pathManage.result("protAlign")
     l_fmatrix = writeFile.MatrixID(d_out, pr_result + "matrix")
     runScriptR.MatrixPlot (l_fmatrix[0], "IDseq")

@@ -843,10 +843,10 @@ def CountInteraction (st_atom, pr_result, logFile, restrained = 1, arom = 0, deb
     
     st_count = {}
     if arom == 1 : 
-        l_interactions_search = ["COO", "HOH", "OH", "OC", "NH", "N", "AR", "Other"]
+        l_interactions_search = ["COO", "HOH", "OH", "NH", "N", "AR", "OC", "Other"]
         suff = "-arom"
     else:
-        l_interactions_search = ["COO", "HOH", "OH", "OC", "NH", "N", "Other"]
+        l_interactions_search = ["COO", "HOH", "OH", "NH", "N", "OC", "Other"]
         suff = ""
 
     d_pka = structure.Pka()
@@ -1822,6 +1822,6 @@ def CompareMultiRun (l_filin, p_filout):
 
 
 
-#MergeDataSet ("/home/borrel/saltBridgesProject/result/", "ProtStatPDB1.5-0.25/20000_1/", "ProtStatPDB3.0-0.25/20000_1", arom = 1)
+#MergeDataSet ("/home/borrel/saltBridgesProject/result/", "ProtStatPDB1.5-0.25/20000_1", "ProtStatPDB3.0-0.25/20000_1", arom = 1)
 
 

@@ -234,7 +234,7 @@ RFree_thresold = 0.25
 # main ("PDB50", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0, option_stat = 1, option_stat_dataset = 1)
 
 # # PDB
-# main ("PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0, option_merge = 1)
+main ("PDB", max_distance = max_distance, option_on_complexes_by_ligand = 1, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 1, option_stat_dataset = 0, option_merge = 1)
 # main ( "PDB", max_distance = max_distance, option_on_complexes_by_ligand = 0, RX = RX_thresold, RFree = RFree_thresold, option_superimpose = 0, option_bond = 0,  option_stat = 0, option_stat_dataset = 0, option_merge = 0)
 
 # test
@@ -247,7 +247,7 @@ RFree_thresold = 0.25
 
 
 #ProteinStat("PDB", option_on_complexes_by_ligand = 1, RX = 1.5, RFree = RFree_thresold, max_distance = max_distance, nb_cases = 20000, nb_run= 1)
-ProteinStat("PDB", option_on_complexes_by_ligand = 1, RX = 3.0, RFree = RFree_thresold, max_distance = max_distance, nb_cases = 20000, nb_run= 1)
+#ProteinStat("PDB", option_on_complexes_by_ligand = 1, RX = 3.0, RFree = RFree_thresold, max_distance = max_distance, nb_cases = 20000, nb_run= 1)
 
 # ProteinStat("PDB50", option_on_complexes_by_ligand = 1, RX = 1.5, RFree = RFree_thresold, max_distance = max_distance, nb_cases = 20000, nb_run= 5)
 # ProteinStat("PDB50", option_on_complexes_by_ligand = 1, RX = 3.0, RFree = RFree_thresold, max_distance = max_distance, nb_cases = 20000, nb_run= 5)

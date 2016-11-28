@@ -53,13 +53,11 @@ def interestStructure (l_atom_lig, more_flex = 0, debug = 0):
             l_substruct.append("II")
         elif cncc(l_atom_connectN, l_atom_lig, more_flex = more_flex) == 1:
             l_substruct.append("III")
-       
 
     for serial_oxygen in l_serial_O:
         l_atom_connectO, connect = retrieveAtom.atomConnect(l_atom_lig, serial_oxygen)
         if acidCarboxylic(l_atom_connectO, l_atom_lig)[0] == 1:
             l_substruct.append("COO")
-    
     return l_substruct
 
 
@@ -590,23 +588,22 @@ def SearchEnvironmentSaltBridgeProt(pr_result, l_PDB, max_dist, nb_lines = 15000
     """
     This is for the intra-protein environment
     """
-    
+
     pr_summary = pr_result + "Sum/"
-    
+
     if debug == 1 : print "Directory summary", pr_summary
-    
-    
+
     # load structure in summary ---> if use need place option one PDB by ligand
     d_neighbor = loadFile.loadCloseStruct (pr_summary, nb_lines)
-    
+
     if d_neighbor != None : 
         if debug : 
             print "Type of structure stock -> run building"
+        print d_neighbor.keys(), "line 602 searchPDB.py control output"
         return d_neighbor
-     
-    
+
     nb_PDB = len (l_PDB)
-    
+
     # fix number of global atom in summary file
     nb_global_atom = nb_lines * 10
     nb_line_prot = int (nb_global_atom/nb_PDB)
